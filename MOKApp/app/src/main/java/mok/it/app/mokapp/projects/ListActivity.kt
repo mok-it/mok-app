@@ -5,6 +5,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -32,7 +33,7 @@ class ListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_list)
 
-        mAuth = FirebaseAuth.getInstance()
+        /*mAuth = FirebaseAuth.getInstance()
         if(mAuth.currentUser == null) {
             // TODO handle null user - is this enough?
             val intent = Intent(this, LoginActivity::class.java)
@@ -40,7 +41,7 @@ class ListActivity : AppCompatActivity() {
             finish()
         } else {
             currentUser = mAuth.currentUser!!
-        }
+        }*/
 
         val query = firestore.collection(projectCollectionPath)
         val options = FirestoreRecyclerOptions.Builder<ProjectListElement>().setQuery(query, ProjectListElement::class.java)
@@ -58,8 +59,10 @@ class ListActivity : AppCompatActivity() {
             ) {
                 val tvName: TextView = holder.itemView.findViewById(R.id.projectName)
                 val tvDesc: TextView = holder.itemView.findViewById(R.id.projectDescription)
+                val ivImg: ImageView = holder.itemView.findViewById(R.id.projectIcon)
                 tvName.text = model.name
                 tvDesc.text = model.description
+
                 //TODO project icon
                 //val imgIcon: Image = ...
                 // ?? Glide.with(this).load(currentUser?.photoUrl).into(imageView)

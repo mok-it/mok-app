@@ -10,16 +10,17 @@
     android:layout_marginRight="16dp"
     android:clickable="true"
     android:foreground="?selectableItemBackground"
-    card_view:cardBackgroundColor="#FFFF"
+    card_view:cardBackgroundColor="@color/green_light"
     card_view:cardCornerRadius="8dp"
     card_view:contentPadding="10dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:background="@color/white">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/projectIcon"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:scaleType="fitCenter"
@@ -32,7 +33,7 @@
             android:layout_height="wrap_content"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toEndOf="parent"
-            card_view:layout_constraintStart_toEndOf="@+id/imageView"
+            card_view:layout_constraintStart_toEndOf="@+id/projectIcon"
             card_view:layout_constraintTop_toTopOf="parent">
 
             <TextView
@@ -42,8 +43,10 @@
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="8dp"
                 android:layout_marginEnd="16dp"
+                android:ellipsize="end"
                 android:gravity="top"
-                android:text="@string/project_description"
+                android:maxLines="2"
+                android:text="@string/loremipsum_long"
                 card_view:layout_constraintEnd_toStartOf="@+id/progress"
                 card_view:layout_constraintStart_toStartOf="parent"
                 card_view:layout_constraintTop_toBottomOf="@+id/projectName" />

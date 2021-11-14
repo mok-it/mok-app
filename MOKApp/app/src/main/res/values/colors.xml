@@ -14,6 +14,7 @@
     <color name="szumma_blue">#135FAA</color>
     <color name="szumma_darkblue">#193F90</color>
     <color name="green">#5ABB9F</color>
+    <color name="green_light">#AADBCF</color>
     <color name="yellow">#FFCB00</color>
     <color name="orange">#FF8000</color>
 </resources>

@@ -10,7 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MOKApp">
         <activity
-            android:name=".ListActivity"
+            android:name=".projects.ListActivity"
             android:exported="false" />
         <activity
             android:name=".MainActivity"
@@ -22,7 +22,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".auth.LoginActivity"
             android:exported="false">
         </activity>
     </application>

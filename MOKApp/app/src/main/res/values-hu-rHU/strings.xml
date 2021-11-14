@@ -3,4 +3,8 @@
     <string name="app_name">MÖKApp</string>
     <string name="action_settings">Beállítások</string>
     <string name="project_list">Projektek</string>
+    <string name="project_name">Projektnév</string>
+    <string name="project_description">Projektleírás</string>
+    <string name="name">Név</string>
+    <string name="description">Leírás</string>
 </resources>

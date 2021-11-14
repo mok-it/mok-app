@@ -2,4 +2,8 @@
     <string name="app_name">MOKApp</string>
     <string name="action_settings">Settings</string>
     <string name="project_list">Projects</string>
+    <string name="project_name">Project name</string>
+    <string name="project_description">Project description</string>
+    <string name="name">Name</string>
+    <string name="description">Description</string>
 </resources>

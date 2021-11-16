@@ -42,6 +42,13 @@ class ListActivity : AppCompatActivity() {
         } else {
             currentUser = mAuth.currentUser!!
         }*/
+        mAuth = FirebaseAuth.getInstance()
+        button.setOnClickListener{
+            mAuth.signOut()
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
         val query = firestore.collection(projectCollectionPath)
         val options = FirestoreRecyclerOptions.Builder<ProjectListElement>().setQuery(query, ProjectListElement::class.java)

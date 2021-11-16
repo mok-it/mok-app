@@ -18,13 +18,6 @@ class MainActivity : AppCompatActivity() {
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth.currentUser
 
-        // TODO Remove intent and return statement to exit debug mode
-
-        val intent = Intent(this, ListActivity::class.java)
-        startActivity(intent)
-        finish()
-
-        return
 
         Handler().postDelayed({
             if(user != null){

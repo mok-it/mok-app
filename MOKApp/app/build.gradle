@@ -67,6 +67,9 @@ dependencies {
     //FirebaseUI
     implementation 'com.firebaseui:firebase-ui-firestore:8.0.0'
     implementation 'com.firebaseui:firebase-ui-database:8.0.0'
+
+    //Picasso
+    implementation 'com.squareup.picasso:picasso:2.71828'
 }
 
 apply plugin: 'com.google.gms.google-services'

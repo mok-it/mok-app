@@ -15,6 +15,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_list.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.auth.LoginActivity
@@ -69,6 +70,8 @@ class ListActivity : AppCompatActivity() {
                 val ivImg: ImageView = holder.itemView.findViewById(R.id.projectIcon)
                 tvName.text = model.name
                 tvDesc.text = model.description
+                Picasso.get().setLoggingEnabled(true)
+                Picasso.get().load("http://i.imgur.com/DvpvklR.png").into(ivImg) //"http://i.imgur.com/DvpvklR.png"
 
                 //TODO project icon
                 //val imgIcon: Image = ...

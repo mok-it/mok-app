@@ -10,20 +10,27 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MOKApp">
         <activity
-            android:name=".projects.ListActivity"
-            android:exported="false" />
-        <activity
-            android:name=".MainActivity"
-            android:exported="true" >
+            android:name=".projects.ContainerActivity"
+            android:exported="true"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
-            android:name=".auth.LoginActivity"
-            android:exported="false">
+            android:name=".projects.ListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+
         </activity>
+        <activity
+            android:name=".auth.LoginActivity"
+            android:exported="false"></activity>
     </application>
 
 </manifest>

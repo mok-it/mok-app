@@ -17,6 +17,9 @@
             <item android:id="@+id/nav_mail"
                 android:icon="@drawable/ic_mail"
                 android:title="Küldj üzenetet!"/>
+            <item android:id="@+id/nav_logout"
+                android:icon="@drawable/ic_logout"
+                android:title="Kijelentkezés"/>
         </menu>
 
     </item>

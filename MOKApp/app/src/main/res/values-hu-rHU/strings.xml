@@ -7,4 +7,6 @@
     <string name="project_description">Projektleírás</string>
     <string name="name">Név</string>
     <string name="description">Leírás</string>
+    <string name="navigation_drawer_open">Navigációs menü nyitás</string>
+    <string name="navigation_drawer_close">Navigációs menü zárás</string>
 </resources>

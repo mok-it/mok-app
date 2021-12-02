@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import com.google.firebase.auth.FirebaseAuth
 import mok.it.app.mokapp.auth.LoginActivity
+import mok.it.app.mokapp.projects.ContainerActivity
 import mok.it.app.mokapp.projects.ListActivity
 
 class MainActivity : AppCompatActivity() {
@@ -21,8 +22,8 @@ class MainActivity : AppCompatActivity() {
 
         Handler().postDelayed({
             if(user != null){
-                val listIntent = Intent(this, ListActivity::class.java)
-                startActivity(listIntent)
+                val contIntent = Intent(this, ContainerActivity::class.java)
+                startActivity(contIntent)
                 finish()
             }
             else {

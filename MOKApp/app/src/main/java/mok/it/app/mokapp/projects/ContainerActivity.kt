@@ -1,6 +1,7 @@
 package mok.it.app.mokapp.projects
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
@@ -29,6 +30,8 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private lateinit var mAuth: FirebaseAuth
     private lateinit var currentUser: FirebaseUser
+    var hirlevelUrl = "https://drive.google.com/drive/folders/1KJX4tPXiFGN1OTNMZkBqHGswRTVfLPsQ?usp=sharing"
+    var feladatUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf4-Pje-gPDa1mVTsVgI2qw37e5u9eJMK1bN3xolIQCJWPHmA/viewform"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -84,10 +87,24 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         when (item.itemId){
             R.id.nav_list -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment()).commit()
             R.id.nav_profile -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
+            R.id.nav_hirlevel -> openHirlevel()
+            R.id.nav_feladat -> openFeladat()
             R.id.nav_logout -> logOut()
         }
         drawer_layout.closeDrawer(GravityCompat.START)
         return true;
+    }
+
+    fun openHirlevel(){
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(hirlevelUrl)
+        startActivity(intent)
+    }
+
+    fun openFeladat(){
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(feladatUrl)
+        startActivity(intent)
     }
 
     fun logOut(){

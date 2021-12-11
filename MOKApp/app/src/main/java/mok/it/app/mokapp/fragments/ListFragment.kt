@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.annotation.NonNull
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
@@ -20,6 +21,10 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.auth.LoginActivity
 import mok.it.app.mokapp.projects.ProjectListElement
 import mok.it.app.mokapp.projects.ProjectViewHolder
+import android.R.string.no
+
+
+
 
 class ListFragment : Fragment() {
 
@@ -40,7 +45,6 @@ class ListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         val query = firestore.collection(projectCollectionPath)
         val options = FirestoreRecyclerOptions.Builder<ProjectListElement>().setQuery(query, ProjectListElement::class.java)
             .setLifecycleOwner(this).build()
@@ -65,6 +69,9 @@ class ListFragment : Fragment() {
 
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.adapter = adapter
-        recyclerView.layoutManager = LinearLayoutManager(this.context)
+        recyclerView.layoutManager =
+            WrapContentLinearLayoutManager(this.context)
+        //recyclerView.layoutManager = LinearLayoutManager(this.context)
+
     }
 }

@@ -22,12 +22,13 @@ import mok.it.app.mokapp.auth.LoginActivity
 import mok.it.app.mokapp.projects.ProjectListElement
 import mok.it.app.mokapp.projects.ProjectViewHolder
 import android.R.string.no
-
-
+import android.util.Log
+import com.squareup.picasso.Picasso
 
 
 class ListFragment : Fragment() {
 
+    private val TAG = "ListActivity"
     private lateinit var recyclerView: RecyclerView
     val firestore = Firebase.firestore;
     val projectCollectionPath: String = "/projects";
@@ -64,6 +65,8 @@ class ListFragment : Fragment() {
                 val ivImg: ImageView = holder.itemView.findViewById(R.id.projectIcon)
                 tvName.text = model.name
                 tvDesc.text = model.description
+
+                loadImage(ivImg, model.iconPath)
             }
         }
 
@@ -73,5 +76,38 @@ class ListFragment : Fragment() {
             WrapContentLinearLayoutManager(this.context)
         //recyclerView.layoutManager = LinearLayoutManager(this.context)
 
+    }
+
+    /**
+     * Tries to load the image provided into the given view. If that did not
+     * succeed, it tries to load the default 'broken' image. If that also
+     * fails, leaves the image empty and logs an error message.
+     */
+    private fun loadImage(imageView: ImageView, imageURL: String) {
+
+        if (tryLoadingImage(imageView, imageURL)) return
+        if (tryLoadingImage(imageView, getString(R.string.url_no_image))) return
+
+        Log.e(TAG, "Both the provided and the default image failed to load. Leaving empty.")
+
+    }
+
+    /**
+     * Tries to load an image into the given image view. If for some reason
+     * the provided URL does not point to a valid image file, false is returned.
+     *
+     * @return true if the function succeeded, false if failed
+     */
+    private fun tryLoadingImage(imageView: ImageView, imageURL: String): Boolean {
+        return try {
+            Picasso.get().apply {
+                load(imageURL).into(imageView)
+            }
+            true
+        } catch (e: Exception) {
+            Log.w(TAG, "Image not found: $imageURL")
+            Log.w(TAG, "Picasso message: " + e.message)
+            false
+        }
     }
 }

@@ -11,5 +11,6 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="url_no_image" translatable="false">"https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/no-image-icon.png?alt=media&amp;token=6cdc86db-cd93-402c-af09-f98748b5a1b6"</string>
 
 </resources>

@@ -17,9 +17,11 @@
     <style name="Theme.MOKApp.NoActionBar">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
     </style>
 
     <style name="Theme.MOKApp.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.MOKApp.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
 </resources>

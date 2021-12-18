@@ -13,6 +13,7 @@ import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_login.*
 import mok.it.app.mokapp.projects.ListActivity
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.projects.ContainerActivity
 
 class LoginActivity : AppCompatActivity() {
 
@@ -78,7 +79,7 @@ class LoginActivity : AppCompatActivity() {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d("LoginActivity", "signInWithCredential:success")
                     val user = mAuth.currentUser
-                    val intent = Intent(this, ListActivity::class.java)
+                    val intent = Intent(this, ContainerActivity::class.java)
                     startActivity(intent)
                     finish()
                 } else {

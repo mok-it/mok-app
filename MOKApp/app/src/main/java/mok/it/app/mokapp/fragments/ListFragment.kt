@@ -1,6 +1,5 @@
 package mok.it.app.mokapp.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,22 +7,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.NonNull
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_list.*
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.auth.LoginActivity
-import mok.it.app.mokapp.projects.ProjectListElement
-import mok.it.app.mokapp.projects.ProjectViewHolder
-import android.R.string.no
+import mok.it.app.mokapp.model.ProjectListElement
+import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import android.util.Log
 import com.squareup.picasso.Picasso
+import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
 
 class ListFragment : Fragment() {
@@ -56,9 +51,9 @@ class ListFragment : Fragment() {
             }
 
             override fun onBindViewHolder(
-                holder: ProjectViewHolder,
-                position: Int,
-                model: ProjectListElement
+                    holder: ProjectViewHolder,
+                    position: Int,
+                    model: ProjectListElement
             ) {
                 val tvName: TextView = holder.itemView.findViewById(R.id.projectName)
                 val tvDesc: TextView = holder.itemView.findViewById(R.id.projectDescription)
@@ -66,14 +61,14 @@ class ListFragment : Fragment() {
                 tvName.text = model.name
                 tvDesc.text = model.description
 
-                loadImage(ivImg, model.iconPath)
+                loadImage(ivImg, model.icon)
             }
         }
 
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.adapter = adapter
         recyclerView.layoutManager =
-            WrapContentLinearLayoutManager(this.context)
+                WrapContentLinearLayoutManager(this.context)
         //recyclerView.layoutManager = LinearLayoutManager(this.context)
 
     }

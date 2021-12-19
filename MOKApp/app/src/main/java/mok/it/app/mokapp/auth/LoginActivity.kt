@@ -11,9 +11,8 @@ import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import kotlinx.android.synthetic.main.activity_login.*
-import mok.it.app.mokapp.projects.ListActivity
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.projects.ContainerActivity
+import mok.it.app.mokapp.activity.ContainerActivity
 
 class LoginActivity : AppCompatActivity() {
 

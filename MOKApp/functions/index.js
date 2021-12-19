@@ -3,6 +3,7 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 admin.initializeApp();
 
+const db = admin.firestore();
 /*
 users:
 Zalán: 1cKA2ZV58q8oQAylZbRx
@@ -128,4 +129,36 @@ exports.populate = functions.firestore
       icon: "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/pet_y.png?alt=media&token=6f996b4e-6ce6-4a3f-8589-d6b0e3fc2c8a",
     });*/
     return null;
+  });
+
+  // User létrehozásánál a userc collectionban létrehozzuk a neki megfelelő documentet a szükséges attribútumokkal
+  exports.createUser = functions.auth.user().onCreate((user) => {
+    console.log('user created', user.email, user.uid)
+    db.collection("users").add({
+      id: user.uid,
+      email: user.email,
+      name: user.displayName,
+      isCreator: false,
+      isOwner: false,
+      // ide minden más attribute jöhet majd
+    })
+    return null;
+  });
+
+  // Ha törlünk egy usert, a neki megfelelő dokumentum is törlődik a users collectionból
+  // Kérdés, hogy élesben kell-e ez nekünk, mert így véletlen törlésnél elvesznek az adatok
+  exports.deleteUser = functions.auth.user().onDelete((user) => {
+    var user_to_delete = db.collection('users').where('id','==',user.uid);
+    user_to_delete.get().then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+        doc.ref.delete();
+        console.log('user deleted', user.email, user.uid)
+      });
+    });
+    return null;
+  });
+
+  exports.userOpenedApp = functions.https.onRequest((req, res) => {
+    var user = db.collection('users').where('id','==',req.userId);
+    
   });

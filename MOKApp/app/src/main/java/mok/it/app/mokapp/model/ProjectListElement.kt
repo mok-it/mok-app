@@ -6,5 +6,5 @@ import android.media.Image
 data class ProjectListElement(
     val name: String = "",
     val description: String = "",
-    val iconPath: String = ""
+    val icon: String = ""
 )

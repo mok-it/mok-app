@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.projects
+package mok.it.app.mokapp.model
 
 import android.media.Image
 

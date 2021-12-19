@@ -14,10 +14,10 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_list.*
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.model.ProjectListElement
-import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import android.util.Log
 import com.squareup.picasso.Picasso
+import mok.it.app.mokapp.model.ProjectListElement
+import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
 

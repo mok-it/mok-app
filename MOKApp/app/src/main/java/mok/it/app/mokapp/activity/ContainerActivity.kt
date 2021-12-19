@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.projects
+package mok.it.app.mokapp.activity
 
 import android.content.Intent
 import android.net.Uri

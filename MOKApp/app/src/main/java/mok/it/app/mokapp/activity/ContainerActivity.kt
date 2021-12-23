@@ -24,9 +24,10 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.auth.LoginActivity
 import mok.it.app.mokapp.fragments.ListFragment
 import mok.it.app.mokapp.fragments.ProfileFragment
+import mok.it.app.mokapp.fragments.DetailsFragment
 
 
-class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener  {
+class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ListFragment.ItemClickedListener  {
 
     private lateinit var mAuth: FirebaseAuth
     private lateinit var currentUser: FirebaseUser
@@ -62,7 +63,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment()).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment(this)).commit()
         nav_view.setCheckedItem(R.id.nav_list)
     }
 
@@ -85,7 +86,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
-            R.id.nav_list -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment()).commit()
+            R.id.nav_list -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment(this)).commit()
             R.id.nav_profile -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
             R.id.nav_hirlevel -> openHirlevel()
             R.id.nav_feladat -> openFeladat()
@@ -112,5 +113,9 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    override fun onItemClicked(badgeId: String) {
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(badgeId)).commit()
     }
 }

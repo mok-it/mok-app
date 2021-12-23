@@ -15,17 +15,15 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_list.*
 import mok.it.app.mokapp.R
 import android.util.Log
-import android.widget.Toast
-import android.widget.Toast.makeText
 import com.squareup.picasso.Picasso
-import mok.it.app.mokapp.activity.ContainerActivity
-import mok.it.app.mokapp.model.ProjectListElement
+import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
 
-class ListFragment : Fragment() {
+class ListFragment(listener: ItemClickedListener) : Fragment() {
 
+    val listener = listener
     private val TAG = "ListActivity"
     private lateinit var recyclerView: RecyclerView
     val firestore = Firebase.firestore;
@@ -45,9 +43,9 @@ class ListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val query = firestore.collection(projectCollectionPath)
-        val options = FirestoreRecyclerOptions.Builder<ProjectListElement>().setQuery(query, ProjectListElement::class.java)
+        val options = FirestoreRecyclerOptions.Builder<Project>().setQuery(query, Project::class.java)
             .setLifecycleOwner(this).build()
-        val adapter = object: FirestoreRecyclerAdapter<ProjectListElement, ProjectViewHolder>(options){
+        val adapter = object: FirestoreRecyclerAdapter<Project, ProjectViewHolder>(options){
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
                 val view = LayoutInflater.from(this@ListFragment.context).inflate(R.layout.project_card, parent, false)
                 return ProjectViewHolder(view)
@@ -56,7 +54,7 @@ class ListFragment : Fragment() {
             override fun onBindViewHolder(
                     holder: ProjectViewHolder,
                     position: Int,
-                    model: ProjectListElement
+                    model: Project
             ) {
                 val tvName: TextView = holder.itemView.findViewById(R.id.projectName)
                 val tvDesc: TextView = holder.itemView.findViewById(R.id.projectDescription)
@@ -66,7 +64,8 @@ class ListFragment : Fragment() {
                 loadImage(ivImg, model.icon)
 
                 holder.itemView.setOnClickListener{
-                    Toast.makeText(context, model.id, Toast.LENGTH_SHORT).show()
+                    listener.onItemClicked(model.id)
+                    //Toast.makeText(context, model.id, Toast.LENGTH_SHORT).show()
                 }
             }
         }
@@ -110,5 +109,9 @@ class ListFragment : Fragment() {
             Log.w(TAG, "Picasso message: " + e.message)
             false
         }
+    }
+
+    interface ItemClickedListener{
+        fun onItemClicked(badgeId: String)
     }
 }

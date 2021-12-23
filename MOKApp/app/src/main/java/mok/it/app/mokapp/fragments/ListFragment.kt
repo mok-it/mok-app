@@ -15,7 +15,10 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_list.*
 import mok.it.app.mokapp.R
 import android.util.Log
+import android.widget.Toast
+import android.widget.Toast.makeText
 import com.squareup.picasso.Picasso
+import mok.it.app.mokapp.activity.ContainerActivity
 import mok.it.app.mokapp.model.ProjectListElement
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
@@ -60,8 +63,11 @@ class ListFragment : Fragment() {
                 val ivImg: ImageView = holder.itemView.findViewById(R.id.projectIcon)
                 tvName.text = model.name
                 tvDesc.text = model.description
-
                 loadImage(ivImg, model.icon)
+
+                holder.itemView.setOnClickListener{
+                    Toast.makeText(context, model.id, Toast.LENGTH_SHORT).show()
+                }
             }
         }
 

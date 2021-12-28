@@ -3,6 +3,8 @@ package mok.it.app.mokapp.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.telecom.Call
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -19,18 +21,24 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_container.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.auth.LoginActivity
 import mok.it.app.mokapp.fragments.ListFragment
 import mok.it.app.mokapp.fragments.ProfileFragment
 import mok.it.app.mokapp.fragments.DetailsFragment
+import mok.it.app.mokapp.model.Project
 
 
 class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ListFragment.ItemClickedListener  {
 
+    private lateinit var model: Project
     private lateinit var mAuth: FirebaseAuth
     private lateinit var currentUser: FirebaseUser
+    val firestore = Firebase.firestore;
+    val projectCollectionPath: String = "/projects";
     var hirlevelUrl = "https://drive.google.com/drive/folders/1KJX4tPXiFGN1OTNMZkBqHGswRTVfLPsQ?usp=sharing"
     var feladatUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf4-Pje-gPDa1mVTsVgI2qw37e5u9eJMK1bN3xolIQCJWPHmA/viewform"
 
@@ -82,6 +90,9 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         else{
             super.onBackPressed()
         }
+
+        // Ha DetailsFragmenten vagyunk, akkor a ListFragmentre navigáljunk vissza
+        //...
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
@@ -116,6 +127,6 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     override fun onItemClicked(badgeId: String) {
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(badgeId)).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(badgeId), "DetailsFragment").commit()
     }
 }

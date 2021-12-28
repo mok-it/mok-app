@@ -9,14 +9,14 @@ data class Project(
     @DocumentId
     val id: String = "",
 
-    val created: Date,
-    val creator: String,
-    val deadline: Date,
+    val created: Date = Date(),
+    val creator: String = "",
+    val deadline: Date = Date(),
     val description: String = "",
-    val editors: List<String>,
+    val editors: List<String> = ArrayList(),
     val icon: String = "",
-    val members: List<String>,
+    val members: List<String> = ArrayList(),
     val name: String = "",
-    val overall_progress: Int,
-    val tasks: List<String>,
+    val overall_progress: Int = 0,
+    val tasks: List<String> = ArrayList(),
 )

@@ -156,7 +156,7 @@ exports.populate = functions.firestore
       });
     });
     return null;
-  });
+  }); 
 
   exports.userOpenedApp = functions.https.onRequest((req, res) => {
     var user = db.collection('users').where('id','==',req.userId);

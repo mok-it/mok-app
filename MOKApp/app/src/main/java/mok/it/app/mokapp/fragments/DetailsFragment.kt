@@ -6,7 +6,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -34,6 +36,7 @@ class DetailsFragment(badgeId: String) : Fragment(){
     lateinit var model: Project
     lateinit var memberUsers: ArrayList<User>
     private lateinit var avatarImageView: ImageView
+    private lateinit var joinButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -47,61 +50,26 @@ class DetailsFragment(badgeId: String) : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val docRef = firestore.collection(projectCollectionPath).document(badgeId)
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
-                    model = document.toObject(Project::class.java)!!
-                    //getMembers(model.members)
-                    //Log.d(TAG, "Model data: ${model}")
-                } else {
-                    Log.d(TAG, "No such document")
-                }
-            }
-    }
-
-    suspend fun initData(members: List<String>?): Unit = coroutineScope {
-        val one = async { getMembers(members) }
-        one.await()
-        val two = async { initLayout() }
+        initLayout()
     }
 
     fun initLayout(){
-        //recyclerView = this.requireView().findViewById(R.id.recyclerView)
         avatarImageView = this.requireView().findViewById(R.id.avatar_imagebutton) as ImageView
 
-        /*val mAuth = FirebaseAuth.getInstance()
+        val mAuth = FirebaseAuth.getInstance()
         val currentUser = mAuth.currentUser!!
         var requestOptions = RequestOptions()
         requestOptions = requestOptions.transforms(CenterCrop(), RoundedCorners(26))
         Glide
             .with(this)
             .load(currentUser?.photoUrl)
-            .apply( requestOptions.override(100, 100))
-            .into(avatarImageView)*/
+            .into(avatarImageView)
+
+        joinButton = this.requireView().findViewById(R.id.join_button) as Button
+        joinButton.setOnClickListener {
+            Toast.makeText(getContext(), "Congrats, you joined!", Toast.LENGTH_SHORT).show()
+        }
 
         // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
-    }
-
-    fun getMembers(members: List<String>?){
-        memberUsers = ArrayList<User>()
-        Log.d(TAG, "LIST: ${members}")
-        members?.forEach {
-            val docRef = firestore.collection(userCollectionPath).document(it)
-            docRef.get()
-                .addOnSuccessListener { document ->
-                    if (document != null) {
-                        val user = document.toObject(User::class.java)!!
-                        memberUsers.add(user)
-                        Log.d(TAG, "MEMBERS: ${memberUsers}")
-
-                        /*if (members.size == memberUsers.size){
-                            initRecyclerView()
-                        }*/
-                    }
-                }
-
-        }
     }
 }

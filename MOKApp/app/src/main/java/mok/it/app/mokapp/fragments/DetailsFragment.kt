@@ -6,13 +6,20 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
+import android.widget.ImageView
+import android.widget.Toast
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.load.resource.bitmap.CenterCrop
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.tasks.Tasks
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
-import kotlinx.coroutines.tasks.await
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
@@ -28,7 +35,8 @@ class DetailsFragment(badgeId: String) : Fragment(){
     val TAG = "DetailsFragment"
     lateinit var model: Project
     lateinit var memberUsers: ArrayList<User>
-    private lateinit var recyclerView: RecyclerView
+    private lateinit var avatarImageView: ImageView
+    private lateinit var joinButton: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "Detail")
@@ -43,51 +51,26 @@ class DetailsFragment(badgeId: String) : Fragment(){
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val docRef = firestore.collection(projectCollectionPath).document(badgeId)
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
-                    model = document.toObject(Project::class.java)!!
-                    getMembers(model.members)
-                    Log.d(TAG, "Model data: ${model}")
-                } else {
-                    Log.d(TAG, "No such document")
-                }
-            }
+        initLayout()
     }
 
-    suspend fun initData(members: List<String>?): Unit = coroutineScope {
-        val one = async { getMembers(members) }
-        one.await()
-        val two = async { initRecyclerView() }
-    }
+    fun initLayout(){
+        avatarImageView = this.requireView().findViewById(R.id.avatar_imagebutton) as ImageView
 
-    fun initRecyclerView(){
-        recyclerView = this.requireView().findViewById(R.id.recyclerView)
-        recyclerView.adapter = MembersAdapter(memberUsers)
-        recyclerView.layoutManager =
-            WrapContentLinearLayoutManager(this.context)
-    }
+        val mAuth = FirebaseAuth.getInstance()
+        val currentUser = mAuth.currentUser!!
+        var requestOptions = RequestOptions()
+        requestOptions = requestOptions.transforms(CenterCrop(), RoundedCorners(26))
+        Glide
+            .with(this)
+            .load(currentUser?.photoUrl)
+            .into(avatarImageView)
 
-    fun getMembers(members: List<String>?){
-        memberUsers = ArrayList<User>()
-        Log.d(TAG, "LIST: ${members}")
-        members?.forEach {
-            val docRef = firestore.collection(userCollectionPath).document(it)
-            docRef.get()
-                .addOnSuccessListener { document ->
-                    if (document != null) {
-                        val user = document.toObject(User::class.java)!!
-                        memberUsers.add(user)
-                        Log.d(TAG, "MEMBERS: ${memberUsers}")
-
-                        if (members.size == memberUsers.size){
-                            initRecyclerView()
-                        }
-                    }
-                }
-
+        joinButton = this.requireView().findViewById(R.id.join_button) as Button
+        joinButton.setOnClickListener {
+            Toast.makeText(getContext(), "Congrats, you joined!", Toast.LENGTH_SHORT).show()
         }
+
+        // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
     }
 }

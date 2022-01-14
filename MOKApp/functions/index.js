@@ -135,11 +135,12 @@ exports.populate = functions.firestore
   exports.createUser = functions.auth.user().onCreate((user) => {
     console.log('user created', user.email, user.uid)
     db.collection("users").add({
-      id: user.uid,
+      uid: user.uid,
       email: user.email,
       name: user.displayName,
       isCreator: false,
       isOwner: false,
+      photoURL: user.photoURL,
       // ide minden más attribute jöhet majd
     })
     return null;
@@ -148,7 +149,7 @@ exports.populate = functions.firestore
   // Ha törlünk egy usert, a neki megfelelő dokumentum is törlődik a users collectionból
   // Kérdés, hogy élesben kell-e ez nekünk, mert így véletlen törlésnél elvesznek az adatok
   exports.deleteUser = functions.auth.user().onDelete((user) => {
-    var user_to_delete = db.collection('users').where('id','==',user.uid);
+    var user_to_delete = db.collection('users').where('uid','==',user.uid);
     user_to_delete.get().then(function(querySnapshot) {
       querySnapshot.forEach(function(doc) {
         doc.ref.delete();
@@ -158,7 +159,19 @@ exports.populate = functions.firestore
     return null;
   }); 
 
-  exports.userOpenedApp = functions.https.onRequest((req, res) => {
-    var user = db.collection('users').where('id','==',req.userId);
-    
+  exports.userLoggedIn = functions.https.onRequest((req, res) => {
+    const newDocumentBody = {
+      picture: req.pictureURL
+    }
+    var user = db.collection('users').where('uid','==',req.uid);
+    user.get().then( querySnapshot => {
+      let batch = firebase.firestore().batch()
+      querySnapshot.forEach( doc => {
+        const docRef = firebase.firestore().collection('users').doc(doc.id)
+        batch.update(docRef, newDocumentBody)
+      });
+      batch.commit();
+    });
+    return null;
   });
+

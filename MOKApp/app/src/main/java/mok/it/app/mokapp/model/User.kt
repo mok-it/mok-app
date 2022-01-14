@@ -14,4 +14,5 @@ data class User(
     val isCreator: Boolean = false,
     val isOwner: Boolean = false,
     val name: String = "",
+    val photoURL: String = "",
 )

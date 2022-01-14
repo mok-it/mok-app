@@ -31,6 +31,7 @@ class DetailsFragment(badgeId: String) : Fragment(){
     private lateinit var recyclerView: RecyclerView
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "Detail")
         super.onCreate(savedInstanceState)
     }
 

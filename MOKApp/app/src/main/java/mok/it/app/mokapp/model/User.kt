@@ -10,7 +10,7 @@ data class User(
     val documentId: String = "",
 
     val email: String = "",
-    val id: String = "",
+    val uid: String = "",
     val isCreator: Boolean = false,
     val isOwner: Boolean = false,
     val name: String = "",

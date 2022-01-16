@@ -1,6 +1,8 @@
 /*eslint-disable no-eval*/
+const FieldValue = require("@google-cloud/firestore");
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+
 admin.initializeApp();
 
 const db = admin.firestore();
@@ -134,13 +136,15 @@ exports.populate = functions.firestore
   // User létrehozásánál a userc collectionban létrehozzuk a neki megfelelő documentet a szükséges attribútumokkal
   exports.createUser = functions.auth.user().onCreate((user) => {
     console.log('user created', user.email, user.uid)
-    db.collection("users").add({
+    db.collection("users").doc(user.uid).set({
       uid: user.uid,
       email: user.email,
       name: user.displayName,
       isCreator: false,
       isOwner: false,
       photoURL: user.photoURL,
+      joinedBadges: [],
+      collectedBadges: [],
       // ide minden más attribute jöhet majd
     })
     return null;
@@ -174,4 +178,17 @@ exports.populate = functions.firestore
     });
     return null;
   });
+
+
+  exports.joinBadge = functions.https.onCall((data, context) => {
+    const uid = data.uid;
+    const badgeid = data.badgeid;
+    console.log('user wants to join', uid, badgeid)
+    db.collection('projects').doc(badgeid).update({
+      members: FieldValue.arrayUnion(uid)
+    })
+    db.collection('users').doc(uid).update({
+      joinedBadges: FieldValue.arrayUnion(badgeid)
+    })
+  })
 

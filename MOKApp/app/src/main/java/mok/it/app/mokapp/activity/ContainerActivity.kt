@@ -87,12 +87,16 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if (drawer_layout.isDrawerOpen(GravityCompat.START)){
             drawer_layout.closeDrawer(GravityCompat.START)
         }
-        else{
-            super.onBackPressed()
+        else {
+            val detailsFragment: DetailsFragment? =
+                supportFragmentManager.findFragmentByTag("DetailsFragment") as DetailsFragment?
+            if (detailsFragment != null && detailsFragment.isVisible()) {
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment(this)).commit()
+            }
+            else{
+                super.onBackPressed()
+            }
         }
-
-        // Ha DetailsFragmenten vagyunk, akkor a ListFragmentre navigáljunk vissza
-        //...
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {

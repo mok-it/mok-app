@@ -16,12 +16,14 @@ import com.bumptech.glide.request.RequestOptions
 import kotlinx.coroutines.withContext
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.activity.ContainerActivity
+import mok.it.app.mokapp.fragments.ListFragment
 import mok.it.app.mokapp.model.User
 import kotlin.coroutines.coroutineContext
 
-class MembersAdapter(private val dataSet: List<User>) :
+class MembersAdapter(private val dataSet: List<User>, listener: MemberClickedListener) :
         RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
 
+    val listener = listener
     var context: Context? = null
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
         val textView: TextView
@@ -35,7 +37,6 @@ class MembersAdapter(private val dataSet: List<User>) :
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
                 .inflate(R.layout.member_card, viewGroup, false)
-
         return ViewHolder(view)
     }
 
@@ -50,6 +51,13 @@ class MembersAdapter(private val dataSet: List<User>) :
             .load(model.photoURL)
             .apply( requestOptions.override(250, 250))
             .into(viewHolder.imageView)
+
+        viewHolder.itemView.setOnLongClickListener {
+            listener.onMemberClicked(model.documentId)
+            true
+        }
+
+
     }
 
     override fun getItemCount() = dataSet.size
@@ -57,5 +65,9 @@ class MembersAdapter(private val dataSet: List<User>) :
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         context = recyclerView.context
+    }
+
+    interface MemberClickedListener{
+        fun onMemberClicked(userId: String)
     }
 }

@@ -52,6 +52,7 @@ class DetailsFragment(badgeId: String) : Fragment(){
         super.onViewCreated(view, savedInstanceState)
 
         initLayout()
+        getMembers()
     }
 
     fun initLayout(){
@@ -72,5 +73,9 @@ class DetailsFragment(badgeId: String) : Fragment(){
         }
 
         // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
+    }
+
+    fun getMembers(){
+        
     }
 }

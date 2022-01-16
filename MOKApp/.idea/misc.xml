@@ -8,6 +8,7 @@
         <entry key="..\:/AndroidStudioProjects/MOKApp/app/src/main/res/layout/fragment_first.xml" value="0.25416666666666665" />
         <entry key="..\:/AndroidStudioProjects/MOKApp/app/src/main/res/layout/fragment_second.xml" value="0.25416666666666665" />
         <entry key="..\:/AndroidStudioProjects/MOKApp/app/src/main/res/menu/menu_main.xml" value="0.25416666666666665" />
+<<<<<<< refs/remotes/origin/main
         <entry key="..\:/Documents/Projects/AndroidStudioProjects/moek-app/MOKApp/app/src/main/res/layout/activity_addproject.xml" value="0.12360688956433637" />
         <entry key="..\:/Documents/Projects/AndroidStudioProjects/moek-app/MOKApp/app/src/main/res/layout/activity_container.xml" value="0.1956521739130435" />
         <entry key="..\:/Documents/Projects/AndroidStudioProjects/moek-app/MOKApp/app/src/main/res/layout/activity_list.xml" value="0.12360688956433637" />
@@ -19,6 +20,8 @@
         <entry key="..\:/Documents/Projects/AndroidStudioProjects/moek-app/MOKApp/app/src/main/res/layout/nav_header.xml" value="0.1956521739130435" />
         <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/drawable/ic_baseline_done_outline_24.xml" value="0.18541666666666667" />
         <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/drawable/ic_profile.xml" value="0.22760416666666666" />
+=======
+>>>>>>> Upload new badge cloud function
         <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/layout/activity_addproject.xml" value="0.2125" />
         <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/layout/activity_container.xml" value="0.2" />
         <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/layout/activity_list.xml" value="0.2" />
@@ -37,6 +40,7 @@
         <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/menu/drawer_menu.xml" value="0.25416666666666665" />
         <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/menu/menu_main.xml" value="0.25416666666666665" />
         <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.13802083333333334" />
+<<<<<<< refs/remotes/origin/main
         <entry key="..\:/Users/roiol/source/repos/Android studio/moek-app/MOKApp/app/src/main/res/drawable/ic_arrow_down.xml" value="0.219" />
         <entry key="..\:/Users/roiol/source/repos/Android studio/moek-app/MOKApp/app/src/main/res/drawable/ic_arrow_up.xml" value="0.219" />
         <entry key="..\:/Users/roiol/source/repos/Android studio/moek-app/MOKApp/app/src/main/res/drawable/ic_list.xml" value="0.219" />
@@ -55,6 +59,9 @@
         <entry key="..\:/Users/roiol/source/repos/Android studio/moek-app/MOKApp/app/src/main/res/layout/project_card.xml" value="0.19706180344478216" />
         <entry key="..\:/Users/roiol/source/repos/Android studio/moek-app/MOKApp/app/src/main/res/menu/drawer_menu.xml" value="0.40520833333333334" />
         <entry key="..\:/Users/roiol/source/repos/Android studio/moek-app/MOKApp/app/src/main/res/menu/menu_main.xml" value="0.40520833333333334" />
+=======
+        <entry key="..\:/Users/roiol/source/repos/Android studio/moek-app/MOKApp/app/src/main/res/layout/project_card.xml" value="0.22826086956521738" />
+>>>>>>> Upload new badge cloud function
         <entry key="..\:/iwn/work/java/git/moek-app/MOKApp/app/src/main/res/layout/activity_list.xml" value="0.25" />
         <entry key="..\:/iwn/work/java/git/moek-app/MOKApp/app/src/main/res/layout/activity_main.xml" value="0.22" />
         <entry key="..\:/iwn/work/java/git/moek-app/MOKApp/app/src/main/res/layout/project_card.xml" value="0.33" />

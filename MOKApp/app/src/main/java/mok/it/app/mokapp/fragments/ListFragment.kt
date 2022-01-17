@@ -15,6 +15,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_list.*
 import mok.it.app.mokapp.R
 import android.util.Log
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.squareup.picasso.Picasso
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
@@ -75,6 +76,14 @@ class ListFragment(listener: ItemClickedListener) : Fragment() {
         recyclerView.layoutManager =
                 WrapContentLinearLayoutManager(this.context)
         //recyclerView.layoutManager = LinearLayoutManager(this.context)
+
+        view.findViewById<FloatingActionButton>(R.id.addBadgeButton).also { actionButton ->
+            actionButton.setOnClickListener {
+
+                // TODO handle by opening create badge fragment
+
+            }
+        }
 
     }
 

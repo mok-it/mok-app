@@ -10,4 +10,8 @@
     <string name="navigation_drawer_open">Navigációs menü nyitás</string>
     <string name="navigation_drawer_close">Navigációs menü zárás</string>
     <string name="hello_blank_fragment">Hello üres fragment</string>
+    <string name="new_badge">Új korong</string>
+    <string name="badge_name">Korong neve</string>
+    <string name="choose_icon">Ikon kiválasztása</string>
+    <string name="create">Létrehozás</string>
 </resources>

@@ -1,6 +1,8 @@
 package mok.it.app.mokapp.recyclerview
 
 import android.content.Context
+import android.provider.Settings.Global.getString
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,46 +13,35 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.squareup.picasso.Picasso
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 
-class MembersAdapter(private val dataSet: ArrayList<User>, listener: MemberClickedListener) :
-        RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
+class BadgesAdapter(private val dataSet: List<Project>, listener: BadgeClickedListener) :
+    RecyclerView.Adapter<BadgesAdapter.ViewHolder>() {
 
     val listener = listener
     var context: Context? = null
+
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textView: TextView
         val imageView: ImageView
+
         init {
-            textView = view.findViewById(R.id.textView)
             imageView = view.findViewById(R.id.imageView)
         }
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
-                .inflate(R.layout.member_card, viewGroup, false)
+            .inflate(R.layout.badge_card, viewGroup, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         var model = dataSet[position]
-        viewHolder.textView.text = model.name
-        //kép
-        var requestOptions = RequestOptions()
-        requestOptions = requestOptions.transforms(CenterCrop(), RoundedCorners(26))
-        Glide
-            .with(context!!)
-            .load(model.photoURL)
-            .apply( requestOptions.override(250, 250))
-            .into(viewHolder.imageView)
-
-        viewHolder.itemView.setOnLongClickListener {
-            listener.onMemberClicked(model.documentId)
-            true
-        }
+        val ivImg: ImageView = viewHolder.itemView.findViewById(R.id.imageView)
+        loadImage(ivImg, model.icon)
     }
 
     override fun getItemCount() = dataSet.size
@@ -60,7 +51,22 @@ class MembersAdapter(private val dataSet: ArrayList<User>, listener: MemberClick
         context = recyclerView.context
     }
 
-    interface MemberClickedListener{
-        fun onMemberClicked(userId: String)
+    private fun loadImage(imageView: ImageView, imageURL: String) {
+        if (tryLoadingImage(imageView, imageURL)) return
+    }
+
+    private fun tryLoadingImage(imageView: ImageView, imageURL: String): Boolean {
+        return try {
+            Picasso.get().apply {
+                load(imageURL).into(imageView)
+            }
+            true
+        } catch (e: Exception) {
+            false
+        }
+    }
+
+    interface BadgeClickedListener {
+        fun onBadgeClicked(badgeId: String)
     }
 }

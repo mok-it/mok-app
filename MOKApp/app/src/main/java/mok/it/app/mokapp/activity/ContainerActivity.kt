@@ -29,6 +29,7 @@ import mok.it.app.mokapp.auth.LoginActivity
 import mok.it.app.mokapp.fragments.ListFragment
 import mok.it.app.mokapp.fragments.ProfileFragment
 import mok.it.app.mokapp.fragments.DetailsFragment
+import mok.it.app.mokapp.fragments.MyBadgesFragment
 import mok.it.app.mokapp.model.Project
 
 
@@ -102,6 +103,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
             R.id.nav_list -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment(this)).commit()
+            R.id.nav_completed -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, MyBadgesFragment()).commit()
             R.id.nav_profile -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
             R.id.nav_hirlevel -> openHirlevel()
             R.id.nav_feladat -> openFeladat()

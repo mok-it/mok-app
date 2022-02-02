@@ -143,11 +143,6 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
             }
     }
 
-    fun comment(){
-        val newsRef = firestore.collection("projects").document(badgeId).collection("news").add(
-
-        )
-    }
 
     fun completed(userId: String){
         Log.d("DetailsFragment", "completed")

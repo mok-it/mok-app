@@ -6,25 +6,26 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.Toast
+import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
+import com.squareup.picasso.Picasso
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.MembersAdapter
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import java.text.SimpleDateFormat
 
 class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClickedListener,
     BadgeAcceptMemberDialogFragment.SuccessListener {
@@ -40,6 +41,12 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
     private lateinit var joinButton: Button
     private lateinit var functions: FirebaseFunctions
     private var selectedMember = ""
+    private lateinit var badgeName: TextView
+    private lateinit var badgeDescription: TextView
+    private lateinit var badgeCreator: TextView
+    private lateinit var badgeDeadline: TextView
+    private lateinit var badgeProgress: ProgressBar
+    private lateinit var badgeIcon: ImageView
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -76,7 +83,29 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
             Toast.makeText(getContext(), "Congrats, you joined!", Toast.LENGTH_SHORT).show()
             join()
         }
+        //bind the badge name, description, progress bar and icon controls
+        badgeName = this.requireView().findViewById(R.id.disc_name_textview)
+        badgeDescription = this.requireView().findViewById(R.id.description_textview)
+        badgeCreator = this.requireView().findViewById(R.id.creator_textview)
+        badgeDeadline = this.requireView().findViewById(R.id.deadline_textview)
+        badgeProgress = this.requireView().findViewById(R.id.progressBar)
+        badgeIcon = this.requireView().findViewById(R.id.imageView)
 
+        firestore.collection(projectCollectionPath).document(badgeId).get().addOnSuccessListener { document->
+            if(document != null){
+                badgeName.text = document.get("name") as String
+                badgeDescription.text = document.get("description") as String
+                firestore.collection(userCollectionPath).document(document.get("creator") as String).get().addOnSuccessListener { creatorDoc->
+                    if(creatorDoc?.get("name") != null) {
+                        badgeCreator.text = creatorDoc.get("name") as String
+                    }
+                }
+                val formatter = SimpleDateFormat("yyyy.MM.dd")
+                badgeDeadline.text = formatter.format((document.get("deadline") as Timestamp).toDate())
+                badgeProgress.setProgress((document.get("overall_progress") as Number).toInt())
+                Picasso.get().load(document.get("icon") as String).into(badgeIcon)
+            }
+        }
         // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
     }
 

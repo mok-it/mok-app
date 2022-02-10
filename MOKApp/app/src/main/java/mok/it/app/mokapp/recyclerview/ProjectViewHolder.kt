@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.projects
+package mok.it.app.mokapp.recyclerview
 
 import android.view.View
 import androidx.recyclerview.widget.RecyclerView

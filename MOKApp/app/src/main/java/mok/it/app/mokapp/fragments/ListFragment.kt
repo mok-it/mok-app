@@ -1,6 +1,5 @@
 package mok.it.app.mokapp.fragments
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,26 +7,23 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.annotation.NonNull
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_list.*
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.auth.LoginActivity
-import mok.it.app.mokapp.projects.ProjectListElement
-import mok.it.app.mokapp.projects.ProjectViewHolder
-import android.R.string.no
 import android.util.Log
 import com.squareup.picasso.Picasso
+import mok.it.app.mokapp.model.Project
+import mok.it.app.mokapp.recyclerview.ProjectViewHolder
+import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
 
-class ListFragment : Fragment() {
+class ListFragment(listener: ItemClickedListener) : Fragment() {
 
+    val listener = listener
     private val TAG = "ListActivity"
     private lateinit var recyclerView: RecyclerView
     val firestore = Firebase.firestore;
@@ -47,33 +43,37 @@ class ListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val query = firestore.collection(projectCollectionPath)
-        val options = FirestoreRecyclerOptions.Builder<ProjectListElement>().setQuery(query, ProjectListElement::class.java)
+        val options = FirestoreRecyclerOptions.Builder<Project>().setQuery(query, Project::class.java)
             .setLifecycleOwner(this).build()
-        val adapter = object: FirestoreRecyclerAdapter<ProjectListElement, ProjectViewHolder>(options){
+        val adapter = object: FirestoreRecyclerAdapter<Project, ProjectViewHolder>(options){
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
                 val view = LayoutInflater.from(this@ListFragment.context).inflate(R.layout.project_card, parent, false)
                 return ProjectViewHolder(view)
             }
 
             override fun onBindViewHolder(
-                holder: ProjectViewHolder,
-                position: Int,
-                model: ProjectListElement
+                    holder: ProjectViewHolder,
+                    position: Int,
+                    model: Project
             ) {
                 val tvName: TextView = holder.itemView.findViewById(R.id.projectName)
                 val tvDesc: TextView = holder.itemView.findViewById(R.id.projectDescription)
                 val ivImg: ImageView = holder.itemView.findViewById(R.id.projectIcon)
                 tvName.text = model.name
                 tvDesc.text = model.description
+                loadImage(ivImg, model.icon)
 
-                loadImage(ivImg, model.iconPath)
+                holder.itemView.setOnClickListener{
+                    listener.onItemClicked(model.id)
+                    //Toast.makeText(context, model.id, Toast.LENGTH_SHORT).show()
+                }
             }
         }
 
         recyclerView = view.findViewById(R.id.recyclerView)
         recyclerView.adapter = adapter
         recyclerView.layoutManager =
-            WrapContentLinearLayoutManager(this.context)
+                WrapContentLinearLayoutManager(this.context)
         //recyclerView.layoutManager = LinearLayoutManager(this.context)
 
     }
@@ -109,5 +109,9 @@ class ListFragment : Fragment() {
             Log.w(TAG, "Picasso message: " + e.message)
             false
         }
+    }
+
+    interface ItemClickedListener{
+        fun onItemClicked(badgeId: String)
     }
 }

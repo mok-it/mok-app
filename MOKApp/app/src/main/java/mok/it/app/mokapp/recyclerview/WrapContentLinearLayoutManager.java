@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.fragments;
+package mok.it.app.mokapp.recyclerview;
 
 import android.content.Context;
 import android.util.Log;

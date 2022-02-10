@@ -1,8 +1,11 @@
 /*eslint-disable no-eval*/
+const FieldValue = require("@google-cloud/firestore");
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
+
 admin.initializeApp();
 
+const db = admin.firestore();
 /*
 users:
 Zalán: 1cKA2ZV58q8oQAylZbRx
@@ -129,3 +132,63 @@ exports.populate = functions.firestore
     });*/
     return null;
   });
+
+  // User létrehozásánál a userc collectionban létrehozzuk a neki megfelelő documentet a szükséges attribútumokkal
+  exports.createUser = functions.auth.user().onCreate((user) => {
+    console.log('user created', user.email, user.uid)
+    db.collection("users").doc(user.uid).set({
+      uid: user.uid,
+      email: user.email,
+      name: user.displayName,
+      isCreator: false,
+      isOwner: false,
+      photoURL: user.photoURL,
+      joinedBadges: [],
+      collectedBadges: [],
+      // ide minden más attribute jöhet majd
+    })
+    return null;
+  });
+
+  // Ha törlünk egy usert, a neki megfelelő dokumentum is törlődik a users collectionból
+  // Kérdés, hogy élesben kell-e ez nekünk, mert így véletlen törlésnél elvesznek az adatok
+  exports.deleteUser = functions.auth.user().onDelete((user) => {
+    var user_to_delete = db.collection('users').where('uid','==',user.uid);
+    user_to_delete.get().then(function(querySnapshot) {
+      querySnapshot.forEach(function(doc) {
+        doc.ref.delete();
+        console.log('user deleted', user.email, user.uid)
+      });
+    });
+    return null;
+  }); 
+
+  exports.userLoggedIn = functions.https.onRequest((req, res) => {
+    const newDocumentBody = {
+      picture: req.pictureURL
+    }
+    var user = db.collection('users').where('uid','==',req.uid);
+    user.get().then( querySnapshot => {
+      let batch = firebase.firestore().batch()
+      querySnapshot.forEach( doc => {
+        const docRef = firebase.firestore().collection('users').doc(doc.id)
+        batch.update(docRef, newDocumentBody)
+      });
+      batch.commit();
+    });
+    return null;
+  });
+
+
+  exports.joinBadge = functions.https.onCall((data, context) => {
+    const uid = data.uid;
+    const badgeid = data.badgeid;
+    console.log('user wants to join', uid, badgeid)
+    db.collection('projects').doc(badgeid).update({
+      members: FieldValue.arrayUnion(uid)
+    })
+    db.collection('users').doc(uid).update({
+      joinedBadges: FieldValue.arrayUnion(badgeid)
+    })
+  })
+

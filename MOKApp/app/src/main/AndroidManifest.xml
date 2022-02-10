@@ -10,15 +10,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MOKApp">
         <activity
-            android:name=".projects.ContainerActivity"
+            android:name=".activity.ContainerActivity"
             android:exported="true"
             android:theme="@style/Theme.MOKApp.NoActionBar">
         </activity>
         <activity
-            android:name=".projects.ListActivity"
+            android:name=".activity.ListActivity"
             android:exported="false" />
         <activity
-            android:name=".MainActivity"
+            android:name=".auth.SplashActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -1,8 +1,10 @@
-package mok.it.app.mokapp.projects
+package mok.it.app.mokapp.activity
 
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.telecom.Call
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -19,17 +21,25 @@ import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_container.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.auth.LoginActivity
 import mok.it.app.mokapp.fragments.ListFragment
 import mok.it.app.mokapp.fragments.ProfileFragment
+import mok.it.app.mokapp.fragments.DetailsFragment
+import mok.it.app.mokapp.fragments.MyBadgesFragment
+import mok.it.app.mokapp.model.Project
 
 
-class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener  {
+class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ListFragment.ItemClickedListener  {
 
+    private lateinit var model: Project
     private lateinit var mAuth: FirebaseAuth
     private lateinit var currentUser: FirebaseUser
+    val firestore = Firebase.firestore;
+    val projectCollectionPath: String = "/projects";
     var hirlevelUrl = "https://drive.google.com/drive/folders/1KJX4tPXiFGN1OTNMZkBqHGswRTVfLPsQ?usp=sharing"
     var feladatUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf4-Pje-gPDa1mVTsVgI2qw37e5u9eJMK1bN3xolIQCJWPHmA/viewform"
 
@@ -62,7 +72,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment()).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment(this)).commit()
         nav_view.setCheckedItem(R.id.nav_list)
     }
 
@@ -78,14 +88,22 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if (drawer_layout.isDrawerOpen(GravityCompat.START)){
             drawer_layout.closeDrawer(GravityCompat.START)
         }
-        else{
-            super.onBackPressed()
+        else {
+            val detailsFragment: DetailsFragment? =
+                supportFragmentManager.findFragmentByTag("DetailsFragment") as DetailsFragment?
+            if (detailsFragment != null && detailsFragment.isVisible()) {
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment(this)).commit()
+            }
+            else{
+                super.onBackPressed()
+            }
         }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
-            R.id.nav_list -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment()).commit()
+            R.id.nav_list -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment(this)).commit()
+            R.id.nav_completed -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, MyBadgesFragment()).commit()
             R.id.nav_profile -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
             R.id.nav_hirlevel -> openHirlevel()
             R.id.nav_feladat -> openFeladat()
@@ -112,5 +130,9 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    override fun onItemClicked(badgeId: String) {
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(badgeId), "DetailsFragment").commit()
     }
 }

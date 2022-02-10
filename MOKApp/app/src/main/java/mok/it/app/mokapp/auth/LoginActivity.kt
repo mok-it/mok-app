@@ -9,11 +9,17 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
+
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.functions.FirebaseFunctions
+import com.google.firebase.functions.ktx.functions
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_login.*
-import mok.it.app.mokapp.projects.ListActivity
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.projects.ContainerActivity
+import mok.it.app.mokapp.activity.ContainerActivity
+import mok.it.app.mokapp.model.User
 
 class LoginActivity : AppCompatActivity() {
 
@@ -21,7 +27,9 @@ class LoginActivity : AppCompatActivity() {
         private const val RC_SIGN_IN = 813
     }
     private lateinit var mAuth: FirebaseAuth
+    private lateinit var user: FirebaseUser
     private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var functions: FirebaseFunctions
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -36,6 +44,7 @@ class LoginActivity : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this, gso)
         googleSignInClient.signOut()
         mAuth = FirebaseAuth.getInstance()
+        functions = Firebase.functions
 
         sign_in_button.setOnClickListener {
             signIn()
@@ -78,7 +87,8 @@ class LoginActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d("LoginActivity", "signInWithCredential:success")
-                    val user = mAuth.currentUser
+                    user = mAuth.currentUser!!
+
                     val intent = Intent(this, ContainerActivity::class.java)
                     startActivity(intent)
                     finish()
@@ -87,5 +97,16 @@ class LoginActivity : AppCompatActivity() {
                     Log.w("LoginActivity", "signInWithCredential:failure", task.exception)
                 }
             }
+    }
+
+    private fun updateProfilePic(){
+        val data = hashMapOf(
+            "pictureURL" to user.photoUrl,
+            "uid" to user.uid
+        )
+
+        functions
+            .getHttpsCallable("userLoggedIn")
+            .call(data)
     }
 }

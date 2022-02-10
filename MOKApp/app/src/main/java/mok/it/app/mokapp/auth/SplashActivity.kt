@@ -1,15 +1,14 @@
-package mok.it.app.mokapp
+package mok.it.app.mokapp.auth
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import com.google.firebase.auth.FirebaseAuth
-import mok.it.app.mokapp.auth.LoginActivity
-import mok.it.app.mokapp.projects.ContainerActivity
-import mok.it.app.mokapp.projects.ListActivity
+import mok.it.app.mokapp.R
+import mok.it.app.mokapp.activity.ContainerActivity
 
-class MainActivity : AppCompatActivity() {
+class SplashActivity : AppCompatActivity() {
 
     private lateinit var mAuth: FirebaseAuth
     override fun onCreate(savedInstanceState: Bundle?) {

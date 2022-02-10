@@ -1,5 +1,6 @@
 package mok.it.app.mokapp.fragments
 
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -7,8 +8,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.annotation.RequiresApi
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
@@ -37,7 +39,6 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
     lateinit var model: Project
     lateinit var memberUsers: ArrayList<User>
     private lateinit var recyclerView: RecyclerView
-    private lateinit var avatarImageView: ImageView
     private lateinit var joinButton: Button
     private lateinit var functions: FirebaseFunctions
     private var selectedMember = ""
@@ -59,6 +60,7 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
         return inflater.inflate(R.layout.fragment_details, container, false)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         functions = Firebase.functions
@@ -66,17 +68,18 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
         initLayout()
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     fun initLayout(){
-        avatarImageView = this.requireView().findViewById(R.id.avatar_imagebutton) as ImageView
-
+        val membersBtn = this.requireView().findViewById(R.id.toggleMembersButton) as Button
+        membersBtn.setOnClickListener{
+            membersBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(
+                if(recyclerView.isVisible) R.drawable.ic_arrow_down else R.drawable.ic_arrow_up, 0, 0, 0)
+            recyclerView.isVisible = !recyclerView.isVisible
+        }
         val mAuth = FirebaseAuth.getInstance()
         val currentUser = mAuth.currentUser!!
         var requestOptions = RequestOptions()
         requestOptions = requestOptions.transforms(CenterCrop(), RoundedCorners(26))
-        Glide
-            .with(this)
-            .load(currentUser?.photoUrl)
-            .into(avatarImageView)
 
         joinButton = this.requireView().findViewById(R.id.join_button) as Button
         joinButton.setOnClickListener {
@@ -91,21 +94,6 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
         badgeProgress = this.requireView().findViewById(R.id.progressBar)
         badgeIcon = this.requireView().findViewById(R.id.imageView)
 
-        firestore.collection(projectCollectionPath).document(badgeId).get().addOnSuccessListener { document->
-            if(document != null){
-                badgeName.text = document.get("name") as String
-                badgeDescription.text = document.get("description") as String
-                firestore.collection(userCollectionPath).document(document.get("creator") as String).get().addOnSuccessListener { creatorDoc->
-                    if(creatorDoc?.get("name") != null) {
-                        badgeCreator.text = creatorDoc.get("name") as String
-                    }
-                }
-                val formatter = SimpleDateFormat("yyyy.MM.dd")
-                badgeDeadline.text = formatter.format((document.get("deadline") as Timestamp).toDate())
-                badgeProgress.setProgress((document.get("overall_progress") as Number).toInt())
-                Picasso.get().load(document.get("icon") as String).into(avatarImageView)
-            }
-        }
         // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
     }
 

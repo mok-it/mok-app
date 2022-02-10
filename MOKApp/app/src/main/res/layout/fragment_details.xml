@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     tools:context=".fragments.DetailsFragment">
 
     <LinearLayout
@@ -38,25 +39,76 @@
                     android:layout_height="match_parent"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:id="@+id/disc_name_textview"
+                    <LinearLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3"
+                        android:orientation="horizontal">
+
+                        <ImageView
+                            android:id="@+id/imageView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="1"
+                            android:minWidth="25pt"
+                            android:minHeight="25pt"
+                            android:scaleType="centerInside"
+                            app:srcCompat="@drawable/googleg_standard_color_18"
+                            tools:src="@tools:sample/avatars" />
+
+                        <TextView
+                            android:id="@+id/disc_name_textview"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:layout_weight="3"
+                            android:gravity="center"
+                            android:minHeight="10pt"
+                            android:text="Korong neve"
+                            android:textSize="24sp" />
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="93dp"
+                        android:layout_weight="1"
+                        android:orientation="vertical">
+
+                        <ProgressBar
+                            android:id="@+id/progressBar"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:layout_weight="3"
+                            android:minWidth="200dip"
+                            android:scaleY="8" />
+                    </LinearLayout>
+
+                </LinearLayout>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="83dp"
+                android:layout_weight="1"
+                android:orientation="horizontal">
+
+                <LinearLayout
+                    android:layout_width="126dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/creator_textview"
+                        android:layout_width="wrap_content"
+                        android:layout_height="9dp"
                         android:layout_weight="3"
                         android:gravity="center"
-                        android:minHeight="10pt"
-                        android:text="Korong neve"
-                        android:textSize="24sp" />
-
-                    <ProgressBar
-                        android:id="@+id/progressBar"
-                        style="?android:attr/progressBarStyleHorizontal"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:layout_weight="3"
-                        android:minWidth="200dip"
-                        android:scaleY="8" />
+                        android:text="korong készítője"
+                        android:textAlignment="center" />
 
                     <TextView
                         android:id="@+id/deadline_textview"
@@ -64,35 +116,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:gravity="center"
-                        android:text="határidő" />
+                        android:text="határidő"
+                        android:textAlignment="viewStart" />
                 </LinearLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:id="@+id/imageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:layout_weight="1"
-                    android:minWidth="25pt"
-                    android:minHeight="25pt"
-                    app:srcCompat="@drawable/googleg_standard_color_18"
-                    tools:src="@tools:sample/avatars" />
-
-                <TextView
-                    android:id="@+id/creator_textview"
-                    android:layout_width="wrap_content"
-                    android:layout_height="match_parent"
-                    android:layout_weight="3"
-                    android:gravity="center"
-                    android:text="korong készítője"
-                    android:textAlignment="center" />
 
                 <Button
                     android:id="@+id/email_button"
@@ -121,6 +147,28 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:text="leírás" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/textView3"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Tagok" />
+
+                    <Button
+                        android:id="@+id/toggleMembersButton"
+                        style="@style/Widget.AppCompat.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        app:icon="@drawable/ic_arrow_up" />
+                </LinearLayout>
 
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/recyclerView"

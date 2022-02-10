@@ -22,6 +22,7 @@ import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_details.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
@@ -92,7 +93,6 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
         badgeCreator = this.requireView().findViewById(R.id.creator_textview)
         badgeDeadline = this.requireView().findViewById(R.id.deadline_textview)
         badgeProgress = this.requireView().findViewById(R.id.progressBar)
-        badgeIcon = this.requireView().findViewById(R.id.imageView)
 
         firestore.collection(projectCollectionPath).document(badgeId).get().addOnSuccessListener { document->
             if(document != null){
@@ -106,7 +106,7 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
                 val formatter = SimpleDateFormat("yyyy.MM.dd")
                 badgeDeadline.text = formatter.format((document.get("deadline") as Timestamp).toDate())
                 badgeProgress.setProgress((document.get("overall_progress") as Number).toInt())
-                Picasso.get().load(document.get("icon") as String).into(avatarImageView)
+                Picasso.get().load(document.get("icon") as String).into(avatar_imagebutton)
             }
         }
         // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()

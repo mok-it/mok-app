@@ -26,11 +26,9 @@
 
                 <ImageButton
                     android:id="@+id/avatar_imagebutton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
+                    android:layout_width="100dp"
+                    android:layout_height="100dp"
                     android:layout_gravity="center"
-                    android:minWidth="50pt"
-                    android:minHeight="50pt"
                     android:src="@android:drawable/ic_menu_myplaces"
                     tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck"
                     tools:src="@android:drawable/ic_menu_myplaces" />

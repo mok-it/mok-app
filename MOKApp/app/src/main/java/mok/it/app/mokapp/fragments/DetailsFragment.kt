@@ -103,7 +103,7 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
                 val formatter = SimpleDateFormat("yyyy.MM.dd")
                 badgeDeadline.text = formatter.format((document.get("deadline") as Timestamp).toDate())
                 badgeProgress.setProgress((document.get("overall_progress") as Number).toInt())
-                Picasso.get().load(document.get("icon") as String).into(badgeIcon)
+                Picasso.get().load(document.get("icon") as String).into(avatarImageView)
             }
         }
         // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()

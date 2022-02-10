@@ -60,7 +60,7 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
         return inflater.inflate(R.layout.fragment_details, container, false)
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         functions = Firebase.functions
@@ -68,7 +68,7 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
         initLayout()
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
+
     fun initLayout(){
         val membersBtn = this.requireView().findViewById(R.id.toggleMembersButton) as Button
         membersBtn.setOnClickListener{
@@ -94,6 +94,21 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
         badgeProgress = this.requireView().findViewById(R.id.progressBar)
         badgeIcon = this.requireView().findViewById(R.id.imageView)
 
+        firestore.collection(projectCollectionPath).document(badgeId).get().addOnSuccessListener { document->
+            if(document != null){
+                badgeName.text = document.get("name") as String
+                badgeDescription.text = document.get("description") as String
+                firestore.collection(userCollectionPath).document(document.get("creator") as String).get().addOnSuccessListener { creatorDoc->
+                    if(creatorDoc?.get("name") != null) {
+                        badgeCreator.text = creatorDoc.get("name") as String
+                    }
+                }
+                val formatter = SimpleDateFormat("yyyy.MM.dd")
+                badgeDeadline.text = formatter.format((document.get("deadline") as Timestamp).toDate())
+                badgeProgress.setProgress((document.get("overall_progress") as Number).toInt())
+                Picasso.get().load(document.get("icon") as String).into(avatarImageView)
+            }
+        }
         // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
     }
 

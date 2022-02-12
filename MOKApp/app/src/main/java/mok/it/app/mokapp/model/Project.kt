@@ -19,4 +19,5 @@ data class Project(
     val name: String = "",
     val overall_progress: Int = 0,
     val tasks: List<String> = ArrayList(),
+    val comments: List<String> = ArrayList(),
 )

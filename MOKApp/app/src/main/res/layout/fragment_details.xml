@@ -168,13 +168,27 @@
             </LinearLayout>
         </ScrollView>
 
-        <TextView
-            android:id="@+id/progress_textview"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:padding="5pt"
-            android:text="előrehaladás" />
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/progress_textview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="5pt"
+                android:paddingEnd="5pt"
+                android:text="@string/newest_comment" />
+
+            <TextView
+                android:id="@+id/comments_textview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5pt"
+                android:text="@string/a_projekt_megalkotasa" />
+        </LinearLayout>
 
         <LinearLayout
             android:layout_width="match_parent"

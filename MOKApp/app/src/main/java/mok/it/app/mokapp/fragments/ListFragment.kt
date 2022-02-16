@@ -17,6 +17,7 @@ import mok.it.app.mokapp.R
 import android.util.Log
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.squareup.picasso.Picasso
+import mok.it.app.mokapp.activity.CreateBadgeFragment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
@@ -81,6 +82,9 @@ class ListFragment(listener: ItemClickedListener) : Fragment() {
             actionButton.setOnClickListener {
 
                 // TODO handle by opening create badge fragment
+
+                val dialog = CreateBadgeFragment()
+                dialog.show(parentFragmentManager, "CreateBadgeDialog")
 
             }
         }

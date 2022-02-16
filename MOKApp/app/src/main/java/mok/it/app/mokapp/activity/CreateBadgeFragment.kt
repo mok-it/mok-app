@@ -22,20 +22,26 @@ class CreateBadgeFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_create_badge, container, false).also { dialogView ->
+        return inflater.inflate(R.layout.fragment_create_badge, container, false);
+    }
 
-            val builder = AlertDialog.Builder(context)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-            val displayRectangle = Rect(100, 100, 100, 100)
+        /*val builder = AlertDialog.Builder(context)
 
-            dialogView.minimumWidth = (displayRectangle.width() * 1f).toInt()
-            dialogView.minimumHeight = (displayRectangle.height() * 1f).toInt()
-            builder.setView(dialogView)
-            val alertDialog = builder.create()
-            val buttonOk: Button = dialogView.findViewById(R.id.button2)
-            buttonOk.setOnClickListener(View.OnClickListener { alertDialog.dismiss() })
-            alertDialog.show()
-        }
+        val displayRectangle = Rect(0, 0, 200, 100)
+
+        view.minimumWidth = (displayRectangle.width() * 1f).toInt()
+        view.minimumHeight = (displayRectangle.height() * 1f).toInt()*/
+
+
+        /*builder.setView(view)
+        val alertDialog = builder.create()
+        val buttonOk: Button = view.findViewById(R.id.button2)
+        buttonOk.setOnClickListener(View.OnClickListener { alertDialog.dismiss() })
+        alertDialog.show()*/
+        
     }
 
     companion object {

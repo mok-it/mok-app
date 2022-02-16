@@ -42,6 +42,10 @@ class BadgesAdapter(private val dataSet: List<Project>, listener: BadgeClickedLi
         var model = dataSet[position]
         val ivImg: ImageView = viewHolder.itemView.findViewById(R.id.imageView)
         loadImage(ivImg, model.icon)
+
+        viewHolder.itemView.setOnClickListener{
+            listener.onBadgeClicked(model.id)
+        }
     }
 
     override fun getItemCount() = dataSet.size

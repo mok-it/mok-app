@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frameLayout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="match_parent"
     app:layout_constrainedHeight="true"
     app:layout_constraintHeight_max="0dp"
     tools:context=".activity.CreateBadgeFragment">
@@ -21,7 +21,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageButton
-            android:id="@+id/imageButton2"
+            android:id="@+id/close_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:background="@android:color/transparent"
@@ -41,7 +41,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/imageButton2" />
+            app:layout_constraintTop_toTopOf="@+id/close_button" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.core.widget.NestedScrollView
@@ -49,12 +49,12 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
-        android:layout_marginBottom="16dp"
         android:fillViewport="true"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="@id/linearLayout2"
         app:layout_constraintRight_toRightOf="@id/linearLayout2"
-        app:layout_constraintTop_toBottomOf="@+id/linearLayout2">
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+        app:layout_constraintVertical_bias="0.0">
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -72,6 +72,7 @@
                 app:boxCornerRadiusTopStart="@dimen/design_corner_radius">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/badge_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/badge_name"
@@ -86,6 +87,7 @@
                 android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/badge_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:hint="@string/description"
@@ -96,6 +98,7 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <androidx.cardview.widget.CardView
+                android:id="@+id/icon_select_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/darker_gray"
@@ -138,7 +141,7 @@
                 android:layout_height="wrap_content">
 
                 <Button
-                    android:id="@+id/button2"
+                    android:id="@+id/create_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:backgroundTint="@color/szumma_darkblue"

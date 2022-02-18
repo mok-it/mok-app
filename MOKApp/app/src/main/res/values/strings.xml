@@ -15,4 +15,6 @@
     <string name="newest_comment_text">%s %s: %s</string>
     <string name="newest_comment">Legújabb fejlemény:</string>
     <string name="a_projekt_megalkotasa">A projekt megalkotása!</string>
+    <string name="sender">Feladó</string>
+    <string name="default_date">2022.02.18.</string>
 </resources>

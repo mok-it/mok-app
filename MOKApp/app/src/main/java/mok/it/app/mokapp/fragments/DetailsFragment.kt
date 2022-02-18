@@ -1,16 +1,15 @@
 package mok.it.app.mokapp.fragments
 
 import android.annotation.SuppressLint
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
@@ -29,6 +28,7 @@ import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.MembersAdapter
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import mok.it.app.mokapp.fragments.CommentsFragment
 import java.text.SimpleDateFormat
 import java.time.format.DateTimeFormatter
 import kotlin.collections.ArrayList
@@ -101,6 +101,9 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
         badgeDeadline = this.requireView().findViewById(R.id.deadline_textview)
         badgeProgress = this.requireView().findViewById(R.id.progressBar)
         badgeComments = this.requireView().findViewById(R.id.comments_textview)
+        badgeComments.setOnClickListener{
+            parentFragmentManager.beginTransaction().replace(R.id.fragment_container, CommentsFragment(badgeId)).commit()
+        }
 
         firestore.collection(projectCollectionPath).document(badgeId).get().addOnSuccessListener { document->
             if(document != null){

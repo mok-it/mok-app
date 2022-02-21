@@ -15,8 +15,10 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_list.*
 import mok.it.app.mokapp.R
 import android.util.Log
+import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
 import mok.it.app.mokapp.model.Project
+import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
@@ -28,6 +30,9 @@ class ListFragment(listener: ItemClickedListener) : Fragment() {
     private lateinit var recyclerView: RecyclerView
     val firestore = Firebase.firestore;
     val projectCollectionPath: String = "/projects";
+    var mAuth = FirebaseAuth.getInstance()
+    var currentUser = mAuth.currentUser
+    lateinit var userModel: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -42,39 +47,7 @@ class ListFragment(listener: ItemClickedListener) : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val query = firestore.collection(projectCollectionPath)
-        val options = FirestoreRecyclerOptions.Builder<Project>().setQuery(query, Project::class.java)
-            .setLifecycleOwner(this).build()
-        val adapter = object: FirestoreRecyclerAdapter<Project, ProjectViewHolder>(options){
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
-                val view = LayoutInflater.from(this@ListFragment.context).inflate(R.layout.project_card, parent, false)
-                return ProjectViewHolder(view)
-            }
-
-            override fun onBindViewHolder(
-                    holder: ProjectViewHolder,
-                    position: Int,
-                    model: Project
-            ) {
-                val tvName: TextView = holder.itemView.findViewById(R.id.projectName)
-                val tvDesc: TextView = holder.itemView.findViewById(R.id.projectDescription)
-                val ivImg: ImageView = holder.itemView.findViewById(R.id.projectIcon)
-                tvName.text = model.name
-                tvDesc.text = model.description
-                loadImage(ivImg, model.icon)
-
-                holder.itemView.setOnClickListener{
-                    listener.onItemClicked(model.id)
-                    //Toast.makeText(context, model.id, Toast.LENGTH_SHORT).show()
-                }
-            }
-        }
-
-        recyclerView = view.findViewById(R.id.recyclerView)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager =
-                WrapContentLinearLayoutManager(this.context)
-        //recyclerView.layoutManager = LinearLayoutManager(this.context)
+        getUser(currentUser!!.uid)
 
     }
 
@@ -109,6 +82,54 @@ class ListFragment(listener: ItemClickedListener) : Fragment() {
             Log.w(TAG, "Picasso message: " + e.message)
             false
         }
+    }
+
+    fun initRecyclerView(){
+        val query = firestore.collection(projectCollectionPath)
+        val options = FirestoreRecyclerOptions.Builder<Project>().setQuery(query, Project::class.java)
+            .setLifecycleOwner(this).build()
+        val adapter = object: FirestoreRecyclerAdapter<Project, ProjectViewHolder>(options){
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
+                val view = LayoutInflater.from(this@ListFragment.context).inflate(R.layout.project_card, parent, false)
+                return ProjectViewHolder(view)
+            }
+
+            override fun onBindViewHolder(
+                holder: ProjectViewHolder,
+                position: Int,
+                model: Project
+            ) {
+                val tvName: TextView = holder.itemView.findViewById(R.id.projectName)
+                val tvDesc: TextView = holder.itemView.findViewById(R.id.projectDescription)
+                val ivImg: ImageView = holder.itemView.findViewById(R.id.projectIcon)
+                tvName.text = model.name
+                tvDesc.text = model.description
+                loadImage(ivImg, model.icon)
+
+                if (userModel.collectedBadges.contains(model.id)){
+                    holder.itemView.setBackgroundResource(R.drawable.gradient1)
+                }
+
+                holder.itemView.setOnClickListener{
+                    listener.onItemClicked(model.id)
+                }
+            }
+        }
+
+        recyclerView = requireView().findViewById(R.id.recyclerView)
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager =
+            WrapContentLinearLayoutManager(this.context)
+    }
+    fun getUser(uid: String) {
+        Firebase.firestore.collection("users").document(uid)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    userModel = document.toObject(User::class.java)!!
+                    initRecyclerView()
+                }
+            }
     }
 
     interface ItemClickedListener{

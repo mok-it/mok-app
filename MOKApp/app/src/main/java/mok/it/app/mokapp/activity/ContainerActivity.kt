@@ -3,8 +3,10 @@ package mok.it.app.mokapp.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Debug
 import android.telecom.Call
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
@@ -31,6 +33,7 @@ import mok.it.app.mokapp.fragments.ProfileFragment
 import mok.it.app.mokapp.fragments.DetailsFragment
 import mok.it.app.mokapp.fragments.MyBadgesFragment
 import mok.it.app.mokapp.model.Project
+import mok.it.app.mokapp.model.User
 
 
 class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ListFragment.ItemClickedListener  {
@@ -38,6 +41,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private lateinit var model: Project
     private lateinit var mAuth: FirebaseAuth
     private lateinit var currentUser: FirebaseUser
+    lateinit var userModel: User
     val firestore = Firebase.firestore;
     val projectCollectionPath: String = "/projects";
     var hirlevelUrl = "https://drive.google.com/drive/folders/1KJX4tPXiFGN1OTNMZkBqHGswRTVfLPsQ?usp=sharing"
@@ -74,6 +78,29 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         nav_view.setNavigationItemSelectedListener(this)
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment(this)).commit()
         nav_view.setCheckedItem(R.id.nav_list)
+        getUser(currentUser.uid)
+    }
+
+    fun setMenuVisibility(){
+        val navView = findViewById<NavigationView>(R.id.nav_view)
+        val menu = navView.menu
+
+        val it = menu.findItem(R.id.it)
+        val ped = menu.findItem(R.id.ped)
+        val fel = menu.findItem(R.id.fel)
+        val kre = menu.findItem(R.id.kre)
+        val gra = menu.findItem(R.id.gra)
+
+        if (!userModel.categories.contains("IT"))
+            it?.setVisible(false)
+        if (!userModel.categories.contains("Pedagógia"))
+            ped?.setVisible(false)
+        if (!userModel.categories.contains("Feladatsor"))
+            fel?.setVisible(false)
+        if (!userModel.categories.contains("Kreatív"))
+            kre?.setVisible(false)
+        if (!userModel.categories.contains("Grafika"))
+            gra?.setVisible(false)
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -130,6 +157,17 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    fun getUser(uid: String) {
+        Firebase.firestore.collection("users").document(uid)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    userModel = document.toObject(User::class.java)!!
+                    setMenuVisibility()
+                }
+            }
     }
 
     override fun onItemClicked(badgeId: String) {

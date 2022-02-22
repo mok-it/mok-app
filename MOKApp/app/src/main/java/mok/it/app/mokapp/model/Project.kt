@@ -9,6 +9,7 @@ data class Project(
     @DocumentId
     val id: String = "",
 
+    val category: String = "",
     val created: Date = Date(),
     val creator: String = "",
     val deadline: Date = Date(),

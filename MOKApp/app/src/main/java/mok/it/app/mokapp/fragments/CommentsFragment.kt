@@ -1,16 +1,22 @@
 package mok.it.app.mokapp.fragments
 
+import android.app.Activity
+import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.Timestamp
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
@@ -44,6 +50,7 @@ class CommentsFragment(badgeId: String) : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         val query = firestore.collection(projectCollectionPath).document(badgeId).collection(commentsId)
         val options = FirestoreRecyclerOptions.Builder<Comment>().setQuery(query, Comment::class.java)
             .setLifecycleOwner(this).build()
@@ -77,6 +84,30 @@ class CommentsFragment(badgeId: String) : Fragment() {
                             tryLoadingImage(ivImg, getString(R.string.url_no_image))
                     }
                 }
+
+                val commentEditText: EditText = view.findViewById(R.id.comment_input_edit_text)
+                val fab: View = view.findViewById(R.id.send_comment_fab)
+                fab.setOnClickListener { view ->
+                    val comment = Comment(
+                        commentsId,
+                        commentEditText.text.toString(),
+                        Timestamp.now(),
+                        FirebaseAuth.getInstance().currentUser!!.uid
+                    )
+
+                    firestore.collection(projectCollectionPath).document(badgeId).collection(commentsId)
+                        .add(comment)
+                        .addOnSuccessListener { documentReference ->
+                            Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
+                        }
+                        .addOnFailureListener { e ->
+                            Log.w(TAG, "Error adding document", e)
+                        }
+
+                    commentEditText.text.clear()
+                    commentEditText.clearFocus()
+                    hideKeyboard();
+                }
             }
         }
 
@@ -84,6 +115,19 @@ class CommentsFragment(badgeId: String) : Fragment() {
         recyclerView.adapter = adapter
         recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
         recyclerView.smoothScrollToPosition(adapter.getItemCount());
+    }
+
+    fun Fragment.hideKeyboard() {
+        view?.let { activity?.hideKeyboard(it) }
+    }
+
+    fun Activity.hideKeyboard() {
+        hideKeyboard(currentFocus ?: View(this))
+    }
+
+    fun Context.hideKeyboard(view: View) {
+        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     /**

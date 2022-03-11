@@ -28,10 +28,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_container.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.auth.LoginActivity
-import mok.it.app.mokapp.fragments.ListFragment
-import mok.it.app.mokapp.fragments.ProfileFragment
-import mok.it.app.mokapp.fragments.DetailsFragment
-import mok.it.app.mokapp.fragments.MyBadgesFragment
+import mok.it.app.mokapp.fragments.*
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 
@@ -76,7 +73,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         toggle.syncState()
 
         nav_view.setNavigationItemSelectedListener(this)
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment(this)).commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "Univerzális")).commit()
         nav_view.setCheckedItem(R.id.nav_list)
         getUser(currentUser.uid)
     }
@@ -129,12 +126,18 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
-            R.id.nav_list -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment(this)).commit()
+            R.id.nav_list -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "Univerzális")).commit()
             R.id.nav_completed -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, MyBadgesFragment()).commit()
             R.id.nav_profile -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
             R.id.nav_hirlevel -> openHirlevel()
             R.id.nav_feladat -> openFeladat()
             R.id.nav_logout -> logOut()
+            R.id.it -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "IT")).commit()
+            R.id.fel -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "Feladatsor")).commit()
+            R.id.gra -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "Grafika")).commit()
+            R.id.kre -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "Kreatív")).commit()
+            R.id.ped -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "Pedagógia")).commit()
+            //további jövőbeli munkacsoportok hasonlóan
         }
         drawer_layout.closeDrawer(GravityCompat.START)
         return true;

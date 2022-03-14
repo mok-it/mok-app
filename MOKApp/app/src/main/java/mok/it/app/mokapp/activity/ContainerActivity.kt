@@ -41,6 +41,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     val firestore = Firebase.firestore;
     var hirlevelUrl = "https://drive.google.com/drive/folders/1KJX4tPXiFGN1OTNMZkBqHGswRTVfLPsQ?usp=sharing"
     var feladatUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf4-Pje-gPDa1mVTsVgI2qw37e5u9eJMK1bN3xolIQCJWPHmA/viewform"
+    var previousCategory = "Univerzális"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,7 +115,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             val detailsFragment: DetailsFragment? =
                 supportFragmentManager.findFragmentByTag("DetailsFragment") as DetailsFragment?
             if (detailsFragment != null && detailsFragment.isVisible()) {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "Univerzális")).commit()
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, previousCategory)).commit()
             }
             else{
                 super.onBackPressed()
@@ -124,21 +125,26 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
-            R.id.nav_list -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "Univerzális")).commit()
+            R.id.nav_list -> changeCategoryFragment("Univerzális")
             R.id.nav_completed -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, MyBadgesFragment()).commit()
             R.id.nav_profile -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
             R.id.nav_hirlevel -> openHirlevel()
             R.id.nav_feladat -> openFeladat()
             R.id.nav_logout -> logOut()
-            R.id.it -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "IT")).commit()
-            R.id.fel -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "Feladatsor")).commit()
-            R.id.gra -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "Grafika")).commit()
-            R.id.kre -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "Kreatív")).commit()
-            R.id.ped -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "Pedagógia")).commit()
+            R.id.it -> changeCategoryFragment("IT")
+            R.id.fel -> changeCategoryFragment("Feladatsor")
+            R.id.gra -> changeCategoryFragment("Grafika")
+            R.id.kre -> changeCategoryFragment("Kreatív")
+            R.id.ped -> changeCategoryFragment("Pedagógia")
             //további jövőbeli munkacsoportok hasonlóan
         }
         drawer_layout.closeDrawer(GravityCompat.START)
         return true;
+    }
+
+    fun changeCategoryFragment(category: String){
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, category)).commit()
+        previousCategory = category
     }
 
     fun openHirlevel(){
@@ -171,7 +177,8 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             }
     }
 
-    override fun onItemClicked(badgeId: String) {
+    override fun onItemClicked(badgeId: String, category: String) {
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(badgeId), "DetailsFragment").commit()
+        previousCategory = category
     }
 }

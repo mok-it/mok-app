@@ -6,28 +6,22 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
-class CategoryFragment(listener: ItemClickedListener, val category: String) : Fragment() {
+class CategoryFragment(val listener: ItemClickedListener, val category: String) : BaseFireFragment() {
 
-    val listener = listener
     private lateinit var recyclerView: RecyclerView
-    val firestore = Firebase.firestore;
-    val projectCollectionPath: String = "/projects";
-    var mAuth = FirebaseAuth.getInstance()
-    var currentUser = mAuth.currentUser
     lateinit var userModel: User
 
     override fun onCreateView(
@@ -40,7 +34,6 @@ class CategoryFragment(listener: ItemClickedListener, val category: String) : Fr
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getUser(currentUser!!.uid)
-
     }
 
     /**
@@ -97,7 +90,7 @@ class CategoryFragment(listener: ItemClickedListener, val category: String) : Fr
                 }
 
                 holder.itemView.setOnClickListener{
-                    listener.onItemClicked(model.id)
+                    listener.onItemClicked(model.id, category)
                 }
             }
         }
@@ -107,6 +100,7 @@ class CategoryFragment(listener: ItemClickedListener, val category: String) : Fr
         recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)
     }
+
     fun getUser(uid: String) {
         Firebase.firestore.collection("users").document(uid)
             .get()
@@ -119,6 +113,6 @@ class CategoryFragment(listener: ItemClickedListener, val category: String) : Fr
     }
 
     interface ItemClickedListener{
-        fun onItemClicked(badgeId: String)
+        fun onItemClicked(badgeId: String, category: String)
     }
 }

@@ -20,7 +20,7 @@ import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
-class CategoryFragment(listener: ListFragment.ItemClickedListener, val category: String) : Fragment() {
+class CategoryFragment(listener: ItemClickedListener, val category: String) : Fragment() {
 
     val listener = listener
     private lateinit var recyclerView: RecyclerView
@@ -116,5 +116,9 @@ class CategoryFragment(listener: ListFragment.ItemClickedListener, val category:
                     initRecyclerView()
                 }
             }
+    }
+
+    interface ItemClickedListener{
+        fun onItemClicked(badgeId: String)
     }
 }

@@ -33,7 +33,7 @@ import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 
 
-class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ListFragment.ItemClickedListener  {
+class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CategoryFragment.ItemClickedListener  {
 
     private lateinit var mAuth: FirebaseAuth
     private lateinit var currentUser: FirebaseUser
@@ -114,7 +114,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             val detailsFragment: DetailsFragment? =
                 supportFragmentManager.findFragmentByTag("DetailsFragment") as DetailsFragment?
             if (detailsFragment != null && detailsFragment.isVisible()) {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ListFragment(this)).commit()
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "Univerzális")).commit()
             }
             else{
                 super.onBackPressed()

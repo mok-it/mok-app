@@ -1,5 +1,6 @@
 package mok.it.app.mokapp.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -8,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
+import androidx.fragment.app.Fragment
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
@@ -19,26 +21,32 @@ import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_details.*
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.MembersAdapter
+import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import mok.it.app.mokapp.fragments.CommentsFragment
 import java.text.SimpleDateFormat
+import java.time.format.DateTimeFormatter
+import kotlin.collections.ArrayList
 
 class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.MemberClickedListener,
     BadgeAcceptMemberDialogFragment.SuccessListener {
     val badgeId = badgeId
     val TAG = "DetailsFragment"
     lateinit var memberUsers: ArrayList<User>
+    lateinit var memberComments: ArrayList<Comment>
     private lateinit var recyclerView: RecyclerView
     private lateinit var joinButton: Button
     private var selectedMember = ""
-    private lateinit var badgeName: TextView
-    private lateinit var badgeDescription: TextView
-    private lateinit var badgeCreator: TextView
-    private lateinit var badgeDeadline: TextView
-    private lateinit var badgeProgress: ProgressBar
-    private lateinit var badgeIcon: ImageView
+
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d(TAG, "Detail")
+        super.onCreate(savedInstanceState)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -49,6 +57,7 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getMemberIds()
+        getCommentIds()
         initLayout()
     }
 
@@ -69,12 +78,13 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
             join()
         }
         //bind the badge name, description, progress bar and icon controls
-        badgeName = this.requireView().findViewById(R.id.disc_name_textview)
-        badgeDescription = this.requireView().findViewById(R.id.description_textview)
-        badgeCreator = this.requireView().findViewById(R.id.creator_textview)
-        badgeDeadline = this.requireView().findViewById(R.id.deadline_textview)
-        badgeProgress = this.requireView().findViewById(R.id.progressBar)
 
+        badgeComments.setOnClickListener{
+            parentFragmentManager.beginTransaction().replace(R.id.fragment_container, CommentsFragment(badgeId)).commit()
+        }
+
+        firestore.collection(projectCollectionPath).document(badgeId).get().addOnSuccessListener { document->
+            if(document != null){
         documentOnSuccess(projectCollectionPath, badgeId) { document ->
             if (document != null) {
                 badgeName.text = document.get("name") as String
@@ -129,6 +139,52 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
                 }
         }
         initRecyclerView(MembersAdapter(memberUsers, this))
+    }
+
+    @SuppressLint("SimpleDateFormat")
+    fun getCommentIds(){
+        memberComments = ArrayList<Comment>()
+        val collectionRef =
+            firestore.collection(projectCollectionPath).document(badgeId).collection(commentsId)
+        collectionRef.get()
+            .addOnSuccessListener { collection ->
+                if (collection != null && collection.documents.size > 0) {
+                    for (document in collection.documents) {
+                        val comment = document.toObject(Comment::class.java)!!
+                        memberComments.add(comment)
+                    }
+                    memberComments.sortByDescending { comment: Comment -> comment.time.toDate() }
+
+                    val formatter = SimpleDateFormat("yyyy.MM.dd. hh:mm")
+                    val timeString : String = formatter.format(memberComments[0].time.toDate())
+
+                    // Search user with given uid among the members
+                    var sender : String = "anonymous"
+                    val docRef = firestore.collection(userCollectionPath).document(memberComments[0].uid)
+                    docRef.get()
+                        .addOnSuccessListener { document ->
+                            if (document != null) {
+                                val user = document.toObject(User::class.java)!!
+                                sender = user.name
+                            }
+                            badgeComments.text = getString(
+                                R.string.newest_comment_text,
+                                timeString,
+                                sender,
+                                memberComments[0].text
+                            )
+                        }
+                } else {
+                    Log.d(TAG, "No such collection")
+                }
+            }
+    }
+
+    fun initRecyclerView(){
+        recyclerView = this.requireView().findViewById(R.id.recyclerView)
+        recyclerView.adapter = MembersAdapter(memberUsers, this)
+        recyclerView.layoutManager =
+            WrapContentLinearLayoutManager(this.context)
     }
 
     fun join(){

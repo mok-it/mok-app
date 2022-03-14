@@ -10,4 +10,9 @@
     <string name="navigation_drawer_open">Navigációs menü nyitás</string>
     <string name="navigation_drawer_close">Navigációs menü zárás</string>
     <string name="hello_blank_fragment">Hello üres fragment</string>
+    <string name="newest_comment_text">%s %s: %s</string>
+    <string name="newest_comment">Legújabb fejlemény:</string>
+    <string name="a_projekt_megalkotasa">A projekt megalkotása!</string>
+    <string name="send_comment">Komment küldése</string>
+    <string name="comment_edit_text_hint">Írd be, hogy mivel haladtál!</string>
 </resources>

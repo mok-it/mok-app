@@ -1,43 +1,36 @@
 package mok.it.app.mokapp.fragments
 
-import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.annotation.RequiresApi
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.functions.FirebaseFunctions
 import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_details.*
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.MembersAdapter
-import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import java.text.SimpleDateFormat
 
-class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClickedListener,
+class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.MemberClickedListener,
     BadgeAcceptMemberDialogFragment.SuccessListener {
     val badgeId = badgeId
-    val firestore = Firebase.firestore;
     val projectCollectionPath: String = "/projects";
     val userCollectionPath: String = "/users";
     val TAG = "DetailsFragment"
-    lateinit var model: Project
     lateinit var memberUsers: ArrayList<User>
     private lateinit var recyclerView: RecyclerView
     private lateinit var joinButton: Button
@@ -77,8 +70,6 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
                 if(recyclerView.isVisible) R.drawable.ic_arrow_down else R.drawable.ic_arrow_up, 0, 0, 0)
             recyclerView.isVisible = !recyclerView.isVisible
         }
-        val mAuth = FirebaseAuth.getInstance()
-        val currentUser = mAuth.currentUser!!
         var requestOptions = RequestOptions()
         requestOptions = requestOptions.transforms(CenterCrop(), RoundedCorners(26))
 
@@ -94,17 +85,19 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
         badgeDeadline = this.requireView().findViewById(R.id.deadline_textview)
         badgeProgress = this.requireView().findViewById(R.id.progressBar)
 
-        firestore.collection(projectCollectionPath).document(badgeId).get().addOnSuccessListener { document->
-            if(document != null){
+        documentOnSuccess(projectCollectionPath, badgeId) { document ->
+            if (document != null) {
                 badgeName.text = document.get("name") as String
                 badgeDescription.text = document.get("description") as String
-                firestore.collection(userCollectionPath).document(document.get("creator") as String).get().addOnSuccessListener { creatorDoc->
-                    if(creatorDoc?.get("name") != null) {
-                        badgeCreator.text = creatorDoc.get("name") as String
+                firestore.collection(userCollectionPath).document(document.get("creator") as String)
+                    .get().addOnSuccessListener { creatorDoc ->
+                        if (creatorDoc?.get("name") != null) {
+                            badgeCreator.text = creatorDoc.get("name") as String
+                        }
                     }
-                }
                 val formatter = SimpleDateFormat("yyyy.MM.dd")
-                badgeDeadline.text = formatter.format((document.get("deadline") as Timestamp).toDate())
+                badgeDeadline.text =
+                    formatter.format((document.get("deadline") as Timestamp).toDate())
                 badgeProgress.setProgress((document.get("overall_progress") as Number).toInt())
                 Picasso.get().load(document.get("icon") as String).into(avatar_imagebutton)
             }
@@ -140,26 +133,15 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
                         Log.d(TAG, "MEMBERS: ${memberUsers}")
 
                         if (members.size == memberUsers.size){
-                            initRecyclerView()
+                            initRecyclerView(MembersAdapter(memberUsers, this))
                         }
                     }
                 }
         }
-        initRecyclerView()
-    }
-
-    fun initRecyclerView(){
-        recyclerView = this.requireView().findViewById(R.id.recyclerView)
-        recyclerView.adapter = MembersAdapter(memberUsers, this)
-        recyclerView.layoutManager =
-            WrapContentLinearLayoutManager(this.context)
+        initRecyclerView(MembersAdapter(memberUsers, this))
     }
 
     fun join(){
-        val mAuth = FirebaseAuth.getInstance()
-        val currentUser = mAuth.currentUser!!
-        currentUser.uid
-
         val data = hashMapOf(
             "uid" to currentUser.uid,
             "badgeid" to badgeId

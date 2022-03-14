@@ -35,6 +35,7 @@ import kotlin.collections.ArrayList
 class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.MemberClickedListener,
     BadgeAcceptMemberDialogFragment.SuccessListener {
     val badgeId = badgeId
+    val commentsId = "comments"
     val TAG = "DetailsFragment"
     lateinit var memberUsers: ArrayList<User>
     lateinit var memberComments: ArrayList<Comment>
@@ -77,14 +78,9 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
             Toast.makeText(getContext(), "Congrats, you joined!", Toast.LENGTH_SHORT).show()
             join()
         }
-        //bind the badge name, description, progress bar and icon controls
-
         badgeComments.setOnClickListener{
             parentFragmentManager.beginTransaction().replace(R.id.fragment_container, CommentsFragment(badgeId)).commit()
         }
-
-        firestore.collection(projectCollectionPath).document(badgeId).get().addOnSuccessListener { document->
-            if(document != null){
         documentOnSuccess(projectCollectionPath, badgeId) { document ->
             if (document != null) {
                 badgeName.text = document.get("name") as String

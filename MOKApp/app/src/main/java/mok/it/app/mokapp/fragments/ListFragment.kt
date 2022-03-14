@@ -17,26 +17,19 @@ import mok.it.app.mokapp.R
 import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import com.squareup.picasso.Picasso
+import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
 
-class ListFragment(listener: ItemClickedListener) : Fragment() {
+class ListFragment(listener: ItemClickedListener) : BaseFireFragment() {
+    private val TAG = "ListActivity"
 
     val listener = listener
-    private val TAG = "ListActivity"
     private lateinit var recyclerView: RecyclerView
-    val firestore = Firebase.firestore;
-    val projectCollectionPath: String = "/projects";
-    var mAuth = FirebaseAuth.getInstance()
-    var currentUser = mAuth.currentUser
     lateinit var userModel: User
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

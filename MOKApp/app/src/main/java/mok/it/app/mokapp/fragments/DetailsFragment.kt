@@ -28,13 +28,10 @@ import java.text.SimpleDateFormat
 class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.MemberClickedListener,
     BadgeAcceptMemberDialogFragment.SuccessListener {
     val badgeId = badgeId
-    val projectCollectionPath: String = "/projects";
-    val userCollectionPath: String = "/users";
     val TAG = "DetailsFragment"
     lateinit var memberUsers: ArrayList<User>
     private lateinit var recyclerView: RecyclerView
     private lateinit var joinButton: Button
-    private lateinit var functions: FirebaseFunctions
     private var selectedMember = ""
     private lateinit var badgeName: TextView
     private lateinit var badgeDescription: TextView
@@ -42,12 +39,6 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
     private lateinit var badgeDeadline: TextView
     private lateinit var badgeProgress: ProgressBar
     private lateinit var badgeIcon: ImageView
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, "Detail")
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -57,7 +48,6 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        functions = Firebase.functions
         getMemberIds()
         initLayout()
     }

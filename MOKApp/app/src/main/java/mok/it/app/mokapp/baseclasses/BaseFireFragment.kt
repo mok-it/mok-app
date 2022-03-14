@@ -24,11 +24,16 @@ import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import java.text.SimpleDateFormat
 
 open class BaseFireFragment : Fragment() {
-    val firestore = Firebase.firestore;
-    lateinit var model: Project
-    private lateinit var recyclerView: RecyclerView
+    val projectCollectionPath: String = "/projects"
+    val userCollectionPath: String = "/users"
+
+    val firestore = Firebase.firestore
     var mAuth = FirebaseAuth.getInstance()
     var currentUser = mAuth.currentUser!!
+
+    lateinit var model: Project
+    private lateinit var recyclerView: RecyclerView
+
 
     fun documentOnSuccess(collectionPath : String, document : String,  onSuccesListener : (DocumentSnapshot) -> (Unit)){
         firestore.collection(collectionPath).document(document).get().addOnSuccessListener(onSuccesListener);
@@ -40,4 +45,5 @@ open class BaseFireFragment : Fragment() {
         recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)
     }
+
 }

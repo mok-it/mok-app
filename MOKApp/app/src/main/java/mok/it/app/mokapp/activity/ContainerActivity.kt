@@ -35,12 +35,10 @@ import mok.it.app.mokapp.model.User
 
 class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, ListFragment.ItemClickedListener  {
 
-    private lateinit var model: Project
     private lateinit var mAuth: FirebaseAuth
     private lateinit var currentUser: FirebaseUser
     lateinit var userModel: User
     val firestore = Firebase.firestore;
-    val projectCollectionPath: String = "/projects";
     var hirlevelUrl = "https://drive.google.com/drive/folders/1KJX4tPXiFGN1OTNMZkBqHGswRTVfLPsQ?usp=sharing"
     var feladatUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf4-Pje-gPDa1mVTsVgI2qw37e5u9eJMK1bN3xolIQCJWPHmA/viewform"
 

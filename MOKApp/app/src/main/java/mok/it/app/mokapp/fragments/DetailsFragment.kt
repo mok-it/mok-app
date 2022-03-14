@@ -48,14 +48,6 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
     private lateinit var joinButton: Button
     private lateinit var functions: FirebaseFunctions
     private var selectedMember = ""
-    private lateinit var badgeName: TextView
-    private lateinit var badgeDescription: TextView
-    private lateinit var badgeCreator: TextView
-    private lateinit var badgeDeadline: TextView
-    private lateinit var badgeProgress: ProgressBar
-    private lateinit var badgeIcon: ImageView
-    private lateinit var badgeComments : TextView
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         Log.d(TAG, "Detail")
@@ -95,12 +87,7 @@ class DetailsFragment(badgeId: String) : Fragment(), MembersAdapter.MemberClicke
             join()
         }
         //bind the badge name, description, progress bar and icon controls
-        badgeName = this.requireView().findViewById(R.id.disc_name_textview)
-        badgeDescription = this.requireView().findViewById(R.id.description_textview)
-        badgeCreator = this.requireView().findViewById(R.id.creator_textview)
-        badgeDeadline = this.requireView().findViewById(R.id.deadline_textview)
-        badgeProgress = this.requireView().findViewById(R.id.progressBar)
-        badgeComments = this.requireView().findViewById(R.id.comments_textview)
+
         badgeComments.setOnClickListener{
             parentFragmentManager.beginTransaction().replace(R.id.fragment_container, CommentsFragment(badgeId)).commit()
         }

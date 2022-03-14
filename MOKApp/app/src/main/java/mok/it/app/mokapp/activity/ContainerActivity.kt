@@ -42,6 +42,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     var hirlevelUrl = "https://drive.google.com/drive/folders/1KJX4tPXiFGN1OTNMZkBqHGswRTVfLPsQ?usp=sharing"
     var feladatUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf4-Pje-gPDa1mVTsVgI2qw37e5u9eJMK1bN3xolIQCJWPHmA/viewform"
     var previousCategory = "Univerzális"
+    var previousBadge = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -114,8 +115,13 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         else {
             val detailsFragment: DetailsFragment? =
                 supportFragmentManager.findFragmentByTag("DetailsFragment") as DetailsFragment?
+            val commentsFragment: CommentsFragment? =
+                supportFragmentManager.findFragmentByTag("CommentsFragment") as CommentsFragment?
             if (detailsFragment != null && detailsFragment.isVisible()) {
                 supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, previousCategory)).commit()
+            }
+            else if (commentsFragment != null && commentsFragment.isVisible()) {
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(previousBadge), "DetailsFragment").commit()
             }
             else{
                 super.onBackPressed()
@@ -180,5 +186,6 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun onItemClicked(badgeId: String, category: String) {
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(badgeId), "DetailsFragment").commit()
         previousCategory = category
+        previousBadge = badgeId
     }
 }

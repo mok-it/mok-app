@@ -39,7 +39,6 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
     val TAG = "DetailsFragment"
     lateinit var memberUsers: ArrayList<User>
     lateinit var memberComments: ArrayList<Comment>
-    private lateinit var recyclerView: RecyclerView
     private lateinit var joinButton: Button
     private var selectedMember = ""
 
@@ -60,18 +59,14 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
         getMemberIds()
         getCommentIds()
         initLayout()
+
     }
 
 
     fun initLayout(){
-        val membersBtn = this.requireView().findViewById(R.id.toggleMembersButton) as Button
-        membersBtn.setOnClickListener{
-            membersBtn.setCompoundDrawablesRelativeWithIntrinsicBounds(
-                if(recyclerView.isVisible) R.drawable.ic_arrow_down else R.drawable.ic_arrow_up, 0, 0, 0)
-            recyclerView.isVisible = !recyclerView.isVisible
+        buttonMembers.setOnClickListener{
+            openMembersDialog()
         }
-        var requestOptions = RequestOptions()
-        requestOptions = requestOptions.transforms(CenterCrop(), RoundedCorners(26))
 
         joinButton = this.requireView().findViewById(R.id.join_button) as Button
         joinButton.setOnClickListener {
@@ -79,7 +74,7 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
             join()
         }
         badgeComments.setOnClickListener{
-            parentFragmentManager.beginTransaction().replace(R.id.fragment_container, CommentsFragment(badgeId)).commit()
+            parentFragmentManager.beginTransaction().replace(R.id.fragment_container, CommentsFragment(badgeId), "CommentsFragment").commit()
         }
         documentOnSuccess(projectCollectionPath, badgeId) { document ->
             if (document != null) {
@@ -129,12 +124,16 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
                         Log.d(TAG, "MEMBERS: ${memberUsers}")
 
                         if (members.size == memberUsers.size){
-                            initRecyclerView(MembersAdapter(memberUsers, this))
+                            //initRecyclerView(MembersAdapter(memberUsers, this))
+                            //initRecyclerView()
+                            initMembers()
                         }
                     }
                 }
         }
-        initRecyclerView(MembersAdapter(memberUsers, this))
+        //initRecyclerView(MembersAdapter(memberUsers, this))
+        //initRecyclerView()
+        initMembers()
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -176,11 +175,33 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
             }
     }
 
-    fun initRecyclerView(){
-        recyclerView = this.requireView().findViewById(R.id.recyclerView)
-        recyclerView.adapter = MembersAdapter(memberUsers, this)
-        recyclerView.layoutManager =
-            WrapContentLinearLayoutManager(this.context)
+    //fun initRecyclerView(){
+    //    recyclerView = this.requireView().findViewById(R.id.recyclerView)
+    //    recyclerView.adapter = MembersAdapter(memberUsers, this)
+    //    recyclerView.layoutManager =
+    //        WrapContentLinearLayoutManager(this.context)
+    //}
+
+    fun initMembers(){
+        member1.isVisible = false
+        member2.isVisible = false
+        member3.isVisible = false
+        member4.isVisible = false
+        if (memberUsers.size > 0){
+            Picasso.get().load(memberUsers[0].photoURL).into(member1)
+            member1.isVisible = true
+        }
+        if (memberUsers.size > 1){
+            Picasso.get().load(memberUsers[1].photoURL).into(member2)
+            member2.isVisible = true
+        }
+        if (memberUsers.size > 2){
+            Picasso.get().load(memberUsers[2].photoURL).into(member3)
+            member3.isVisible = true
+        }
+        if (memberUsers.size > 2){
+            member4.isVisible = true
+        }
     }
 
     fun join(){
@@ -212,6 +233,11 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
                 Log.d("DetailsFragment", "removed")
             }
 
+    }
+
+    fun openMembersDialog(){
+        val dialog = BadgeAllMemberDialogFragment(memberUsers, this)
+        dialog.show(parentFragmentManager, "MembersDialog")
     }
 
     override fun onMemberClicked(userId: String) {

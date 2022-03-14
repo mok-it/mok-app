@@ -31,7 +31,9 @@
         <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/layout/activity_main.xml" value="0.10885416666666667" />
         <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/layout/badge_card.xml" value="0.19166666666666668" />
         <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/layout/fragment_badge_accept_member_dialog.xml" value="0.19375" />
-        <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/layout/fragment_details.xml" value="0.2" />
+        <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/layout/fragment_badge_all_members_dialog.xml" value="0.6569767441860465" />
+        <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/layout/fragment_comments.xml" value="0.16145833333333334" />
+        <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/layout/fragment_details.xml" value="0.264" />
         <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/layout/fragment_details_fragmentesdf.xml" value="0.17864583333333334" />
         <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/layout/fragment_list.xml" value="0.2" />
         <entry key="..\:/Git/moek-app/MOKApp/app/src/main/res/layout/fragment_my_badges.xml" value="0.16927083333333334" />

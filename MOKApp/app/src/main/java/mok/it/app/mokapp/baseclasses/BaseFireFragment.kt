@@ -32,18 +32,16 @@ open class BaseFireFragment : Fragment() {
     var currentUser = mAuth.currentUser!!
 
     lateinit var model: Project
-    private lateinit var recyclerView: RecyclerView
-
 
     fun documentOnSuccess(collectionPath : String, document : String,  onSuccesListener : (DocumentSnapshot) -> (Unit)){
         firestore.collection(collectionPath).document(document).get().addOnSuccessListener(onSuccesListener);
     }
 
-    fun initRecyclerView(adapter : RecyclerView.Adapter<MembersAdapter.ViewHolder>){
-        recyclerView = this.requireView().findViewById(R.id.recyclerView)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager =
-            WrapContentLinearLayoutManager(this.context)
-    }
+    //fun initRecyclerView(adapter : RecyclerView.Adapter<MembersAdapter.ViewHolder>){
+    //    recyclerView = this.requireView().findViewById(R.id.recyclerView)
+    //    recyclerView.adapter = adapter
+    //    recyclerView.layoutManager =
+    //        WrapContentLinearLayoutManager(this.context)
+    //}
 
 }

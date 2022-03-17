@@ -20,7 +20,9 @@ import mok.it.app.mokapp.R
 
 
 /**
- * TODO description
+ * When the 'Add' button is pressed in the badge list, a dialog opens up, prompting data
+ * for a new badge. After all required fields are complete, the user can upload this new
+ * badge to the server.
  */
 
 class CreateBadgeFragment : DialogFragment() {
@@ -44,9 +46,7 @@ class CreateBadgeFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         view.apply {
-
             nameTIET = findViewById(R.id.badge_name)
             descriptionTIET = findViewById(R.id.badge_description)
             iconSelectCard = findViewById(R.id.icon_select_card)
@@ -69,9 +69,8 @@ class CreateBadgeFragment : DialogFragment() {
 
         dialog?.also {
             val width = ViewGroup.LayoutParams.MATCH_PARENT
-            val height = ViewGroup.LayoutParams.MATCH_PARENT
+            val height = ViewGroup.LayoutParams.WRAP_CONTENT // TODO fix tall layout scrolling
             it.window?.setLayout(width, height)
-
             isCancelable = false
         }
     }
@@ -80,7 +79,6 @@ class CreateBadgeFragment : DialogFragment() {
      * Called if the dialog needs to be closed.
      */
     private fun closeDialog() {
-        Toast.makeText(context, "Close dialog", Toast.LENGTH_SHORT).show() // todo remove
         dialog?.dismiss() ?: run {
             Log.w(TAG, "Can not close dialog, it is null.")
         }
@@ -96,9 +94,8 @@ class CreateBadgeFragment : DialogFragment() {
             return
         }
 
-        /**
-         * The user has unsaved changes, thus warning them before closing the dialog
-         */
+        // The user has unsaved changes, thus warning them before closing the dialog
+
         AlertDialog.Builder(context)
             .setCancelable(false)
             .setMessage(R.string.unsaved_changes)
@@ -113,10 +110,12 @@ class CreateBadgeFragment : DialogFragment() {
 
     /**
      *  Creates a new badge in the database.
-     *  @return
+     *  @return true if successful
      */
     private fun commitNewBadgeToDatabase(): Boolean {
         // TODO upload badge metadata to firebase
+        toast(R.string.not_implemented)
+        return false
     }
 
     /**
@@ -130,7 +129,13 @@ class CreateBadgeFragment : DialogFragment() {
 
         val success = commitNewBadgeToDatabase()
 
-        return success
+        return if (success) {
+            true
+        } else {
+            toast(R.string.error_occurred)
+            false
+        }
+
     }
 
     /**
@@ -163,30 +168,26 @@ class CreateBadgeFragment : DialogFragment() {
      */
     private fun isComplete(showWarning: Boolean): Boolean = when {
         isNameRequired && nameTIET.text.isNullOrBlank() -> {
-            if (showWarning) Toast.makeText(
-                context,
-                R.string.badge_name_is_required,
-                Toast.LENGTH_SHORT
-            ).show() // TODO snackbar
+            if (showWarning) toast(R.string.badge_name_is_required) // TODO snackbar
             false
         }
 
         isDescriptionRequired && descriptionTIET.text.isNullOrBlank() -> {
-            if (showWarning) Toast.makeText(
-                context,
-                R.string.badge_description_is_required,
-                Toast.LENGTH_SHORT
-            ).show() // TODO snackbar
+            if (showWarning) toast(R.string.badge_description_is_required) // TODO snackbar
             false
         }
 
         else -> true
     }
 
+    fun toast(textResource: Int) = Toast.makeText(
+        context,
+        textResource,
+        Toast.LENGTH_SHORT
+    ).show()
+
     companion object {
         val TAG = "CreateBadgeFragment"
-
         fun newInstance() = CreateBadgeFragment()
-
     }
 }

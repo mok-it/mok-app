@@ -21,5 +21,7 @@
     <string name="discard">Discard</string>
     <string name="badge_name_is_required">Set a name for the badge!</string>
     <string name="badge_description_is_required">Set a description for the badge!</string>
+    <string name="error_occurred">An error occurred.</string>
+    <string name="not_implemented">NOT_IMPLEMENTED</string>
 
 </resources>

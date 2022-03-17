@@ -46,17 +46,17 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(mok.it.app.mokapp.R.layout.activity_container)
+        setContentView(R.layout.activity_container)
 
         mAuth = FirebaseAuth.getInstance()
         currentUser = mAuth.currentUser!!
 
         val header: View = nav_view.getHeaderView(0)
-        var nameTextView = header.findViewById(mok.it.app.mokapp.R.id.nameText) as TextView
+        var nameTextView = header.findViewById(R.id.nameText) as TextView
         nameTextView.setText(currentUser.displayName)
-        var emailTextView = header.findViewById(mok.it.app.mokapp.R.id.emailText) as TextView
+        var emailTextView = header.findViewById(R.id.emailText) as TextView
         emailTextView.setText(currentUser.email)
-        var imageView = header.findViewById(mok.it.app.mokapp.R.id.image) as ImageView
+        var imageView = header.findViewById(R.id.image) as ImageView
 
         var requestOptions = RequestOptions()
         requestOptions = requestOptions.transforms(CenterCrop(), RoundedCorners(26))
@@ -101,7 +101,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == mok.it.app.mokapp.R.id.nav_logout) {
+        if (item.itemId == R.id.nav_logout) {
             Toast.makeText(this, "OK", Toast.LENGTH_SHORT)
         }
 

@@ -12,6 +12,18 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="url_no_image" translatable="false">"https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/no-image-icon.png?alt=media&amp;token=6cdc86db-cd93-402c-af09-f98748b5a1b6"</string>
+    <string name="new_badge">New badge</string>
+    <string name="badge_name">Badge name</string>
+    <string name="choose_icon">Choose icon</string>
+    <string name="create">Create</string>
+    <string name="unsaved_changes">You have unsaved changes. Do you want to continue?</string>
+    <string name="edit">Edit</string>
+    <string name="discard">Discard</string>
+    <string name="badge_name_is_required">Set a name for the badge!</string>
+    <string name="badge_description_is_required">Set a description for the badge!</string>
+    <string name="error_occurred">An error occurred.</string>
+    <string name="not_implemented">NOT_IMPLEMENTED</string>
+
     <string name="newest_comment_text">%s %s: %s</string>
     <string name="newest_comment">Legújabb fejlemény:</string>
     <string name="a_projekt_megalkotasa">A projekt megalkotása!</string>

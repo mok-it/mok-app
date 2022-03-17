@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.FragmentAllMembersBinding
 
 import mok.it.app.mokapp.fragments.placeholder.PlaceholderContent.PlaceholderItem
-import mok.it.app.mokapp.fragments.databinding.FragmentAllMembersBinding
 
 /**
  * [RecyclerView.Adapter] that can display a [PlaceholderItem].
@@ -21,11 +21,13 @@ class AllMembersAdapter(
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         return ViewHolder(
+
             FragmentAllMembersBinding.inflate(
                 LayoutInflater.from(parent.context),
                 parent,
                 false
             )
+
         )
 
     }
@@ -40,8 +42,15 @@ class AllMembersAdapter(
 
     inner class ViewHolder(binding: FragmentAllMembersBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        val idView: TextView = binding.itemNumber
-        val contentView: TextView = binding.content
+
+        /* TODO fix this, binding can't be found
+            The app does not use these, this is a
+            temporary solution.
+         */
+        //val idView: TextView = binding.itemNumber
+        //val contentView: TextView = binding.content
+        lateinit var idView: TextView
+        lateinit var contentView: TextView
 
         override fun toString(): String {
             return super.toString() + " '" + contentView.text + "'"

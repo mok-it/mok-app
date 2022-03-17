@@ -53,6 +53,7 @@ class MyBadgesFragment : Fragment(), BadgesAdapter.BadgeClickedListener {
 
     fun getBadges(badges: List<String>?) {
         collectedBadges = ArrayList<Project>()
+        initRecyclerView()
         badges?.forEach {
             val docRef = Firebase.firestore.collection("projects").document(it)
             docRef.get()

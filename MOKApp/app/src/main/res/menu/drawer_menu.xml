@@ -13,6 +13,21 @@
         <item android:id="@+id/nav_completed"
             android:icon="@drawable/ic_check"
             android:title="Badgeim"/>
+        <item android:id="@+id/it"
+            android:icon="@drawable/ic_smiley"
+            android:title="IT"/>
+        <item android:id="@+id/ped"
+            android:icon="@drawable/ic_smiley"
+            android:title="Pedagógia"/>
+        <item android:id="@+id/fel"
+            android:icon="@drawable/ic_smiley"
+            android:title="Feladatsor"/>
+        <item android:id="@+id/kre"
+            android:icon="@drawable/ic_smiley"
+            android:title="Kreatív"/>
+        <item android:id="@+id/gra"
+            android:icon="@drawable/ic_smiley"
+            android:title="Grafika"/>
     </group>
 
     <item android:title="További felületek">

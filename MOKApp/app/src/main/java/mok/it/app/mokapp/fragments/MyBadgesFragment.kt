@@ -12,20 +12,15 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.activity.ContainerActivity.Companion.currentUser
+import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.BadgesAdapter
 
 class MyBadgesFragment : Fragment(), BadgesAdapter.BadgeClickedListener {
-    var mAuth = FirebaseAuth.getInstance()
-    var currentUser = mAuth.currentUser
-    lateinit var userModel: User
     private lateinit var recyclerView: RecyclerView
     lateinit var collectedBadges: ArrayList<Project>
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,23 +31,12 @@ class MyBadgesFragment : Fragment(), BadgesAdapter.BadgeClickedListener {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getUser(currentUser!!.uid)
-
-    }
-
-    fun getUser(uid: String) {
-        Firebase.firestore.collection("users").document(uid)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    userModel = document.toObject(User::class.java)!!
-                    getBadges(userModel.collectedBadges)
-                }
-            }
+        getBadges(userModel.collectedBadges)
     }
 
     fun getBadges(badges: List<String>?) {
         collectedBadges = ArrayList<Project>()
+        initRecyclerView()
         badges?.forEach {
             val docRef = Firebase.firestore.collection("projects").document(it)
             docRef.get()

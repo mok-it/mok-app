@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="mok.it.app.mokapp">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -10,10 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MOKApp">
         <activity
+            android:name=".activity.CreateBadgeActivity"
+            android:exported="false" />
+        <activity
             android:name=".activity.ContainerActivity"
             android:exported="true"
-            android:theme="@style/Theme.MOKApp.NoActionBar">
-        </activity>
+            android:theme="@style/Theme.MOKApp.NoActionBar"></activity>
         <activity
             android:name=".activity.ListActivity"
             android:exported="false" />
@@ -28,7 +32,7 @@
         </activity>
         <activity
             android:name=".auth.LoginActivity"
-            android:exported="false"></activity>
+            android:exported="false" />
     </application>
 
 </manifest>

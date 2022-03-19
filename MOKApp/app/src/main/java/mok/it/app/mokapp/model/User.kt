@@ -9,6 +9,7 @@ data class User(
     @DocumentId
     val documentId: String = "",
 
+    val categories: List<String> = ArrayList(),
     val collectedBadges: List<String> = ArrayList(),
     val email: String = "",
     val isCreator: Boolean = false,

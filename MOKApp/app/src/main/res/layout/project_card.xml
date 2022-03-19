@@ -5,12 +5,9 @@
     android:id="@+id/project_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginLeft="16dp"
-    android:layout_marginTop="12dp"
-    android:layout_marginRight="16dp"
+    android:layout_marginBottom="8dp"
     android:clickable="true"
     android:foreground="?selectableItemBackground"
-    card_view:cardBackgroundColor="@color/green_light"
     card_view:cardCornerRadius="8dp"
     card_view:contentPadding="10dp">
 
@@ -23,6 +20,9 @@
             android:id="@+id/projectIcon"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:paddingBottom="4dp"
             android:scaleType="fitCenter"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent"

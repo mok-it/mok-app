@@ -80,7 +80,7 @@ class CommentsFragment(badgeId: String) : Fragment() {
                         if (senderDoc.get("name") != null)
                             tvSender.text = senderDoc.get("name") as String
 
-                        if (senderDoc.get("photoRUL") != null)
+                        if (senderDoc.get("photoURL") != null)
                             tryLoadingImage(ivImg, senderDoc.get("photoURL") as String)
                         else
                             tryLoadingImage(ivImg, getString(R.string.url_no_image))

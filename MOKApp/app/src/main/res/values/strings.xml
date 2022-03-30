@@ -31,4 +31,5 @@
     <string name="default_date">2022.02.18.</string>
     <string name="send_comment">Komment küldése</string>
     <string name="comment_edit_text_hint">Írd be, hogy mivel haladtál!</string>
+    <string name="choose_category">Choose a category</string>
 </resources>

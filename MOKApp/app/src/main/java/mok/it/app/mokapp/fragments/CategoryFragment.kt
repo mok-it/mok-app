@@ -39,19 +39,6 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String) 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
-        getUser(currentUser!!.uid)
-
-        addBadgeButton.also { actionButton ->
-            actionButton.setOnClickListener {
-
-                // TODO handle by opening create badge fragment
-
-                val dialog = CreateBadgeFragment()
-                dialog.show(parentFragmentManager, "CreateBadgeDialog")
-
-            }
-        }
-
     }
 
     /**

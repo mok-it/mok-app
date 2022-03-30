@@ -15,18 +15,14 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 
-class MembersAdapter(private val dataSet: ArrayList<User>, listener: MemberClickedListener) :
+class MembersAdapter(private val dataSet: ArrayList<User>, private val listener: MemberClickedListener) :
         RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
 
-    val listener = listener
     var context: Context? = null
+
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textView: TextView
-        val imageView: ImageView
-        init {
-            textView = view.findViewById(R.id.textView)
-            imageView = view.findViewById(R.id.imageView)
-        }
+        val textView: TextView = view.findViewById(R.id.textView)
+        val imageView: ImageView = view.findViewById(R.id.imageView)
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
@@ -36,7 +32,7 @@ class MembersAdapter(private val dataSet: ArrayList<User>, listener: MemberClick
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        var model = dataSet[position]
+        val model = dataSet[position]
         viewHolder.textView.text = model.name
         //kép
         var requestOptions = RequestOptions()

@@ -8,69 +8,51 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.isVisible
-import androidx.recyclerview.widget.RecyclerView
-import androidx.fragment.app.Fragment
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.bumptech.glide.request.RequestOptions
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
-import com.google.firebase.functions.FirebaseFunctions
-import com.google.firebase.functions.ktx.functions
-import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_details.*
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.activity.ContainerActivity.Companion.currentUser
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.MembersAdapter
-import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
-import mok.it.app.mokapp.fragments.CommentsFragment
 import java.text.SimpleDateFormat
-import java.time.format.DateTimeFormatter
 import kotlin.collections.ArrayList
 
 class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.MemberClickedListener,
     BadgeAcceptMemberDialogFragment.SuccessListener {
-    val badgeId = badgeId
-    val commentsId = "comments"
-    val TAG = "DetailsFragment"
+
+    private val badgeId = badgeId
+    private val commentsId = "comments"
+    private val TAG = "DetailsFragment"
     lateinit var memberUsers: ArrayList<User>
     lateinit var memberComments: ArrayList<Comment>
     private lateinit var joinButton: Button
     private var selectedMember = ""
-
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        Log.d(TAG, "Detail")
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_details, container, false)
     }
 
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         getMemberIds()
         getCommentIds()
         initLayout()
-
     }
 
-
-    fun initLayout(){
+    private fun initLayout(){
         buttonMembers.setOnClickListener{
             openMembersDialog()
         }
 
         joinButton = this.requireView().findViewById(R.id.join_button) as Button
         joinButton.setOnClickListener {
-            Toast.makeText(getContext(), "Congrats, you joined!", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Congrats, you joined!", Toast.LENGTH_SHORT).show()
             join()
         }
         badgeComments.setOnClickListener{
@@ -87,16 +69,15 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
                         }
                     }
                 val formatter = SimpleDateFormat("yyyy.MM.dd")
-                badgeDeadline.text =
-                    formatter.format((document.get("deadline") as Timestamp).toDate())
-                badgeProgress.setProgress((document.get("overall_progress") as Number).toInt())
+                badgeDeadline.text = formatter.format((document.get("deadline") as Timestamp).toDate())
+                badgeProgress.progress = (document.get("overall_progress") as Number).toInt()
                 Picasso.get().load(document.get("icon") as String).into(avatar_imagebutton)
             }
         }
         // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
     }
 
-    fun getMemberIds(){
+    private fun getMemberIds(){
         val docRef = firestore.collection(projectCollectionPath).document(badgeId)
         docRef.get()
             .addOnSuccessListener { document ->
@@ -111,8 +92,8 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
             }
     }
 
-    fun getMembers(members: List<String>?){
-        memberUsers = ArrayList<User>()
+    private fun getMembers(members: List<String>?){
+        memberUsers = ArrayList()
         Log.d(TAG, "LIST: ${members}")
         members?.forEach {
             val docRef = firestore.collection(userCollectionPath).document(it)
@@ -124,15 +105,11 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
                         Log.d(TAG, "MEMBERS: ${memberUsers}")
 
                         if (members.size == memberUsers.size){
-                            //initRecyclerView(MembersAdapter(memberUsers, this))
-                            //initRecyclerView()
                             initMembers()
                         }
                     }
                 }
         }
-        //initRecyclerView(MembersAdapter(memberUsers, this))
-        //initRecyclerView()
         initMembers()
     }
 
@@ -154,7 +131,7 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
                     val timeString : String = formatter.format(memberComments[0].time.toDate())
 
                     // Search user with given uid among the members
-                    var sender : String = "anonymous"
+                    var sender = "anonymous"
                     val docRef = firestore.collection(userCollectionPath).document(memberComments[0].uid)
                     docRef.get()
                         .addOnSuccessListener { document ->
@@ -175,14 +152,7 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
             }
     }
 
-    //fun initRecyclerView(){
-    //    recyclerView = this.requireView().findViewById(R.id.recyclerView)
-    //    recyclerView.adapter = MembersAdapter(memberUsers, this)
-    //    recyclerView.layoutManager =
-    //        WrapContentLinearLayoutManager(this.context)
-    //}
-
-    fun initMembers(){
+    private fun initMembers(){
         member1.isVisible = false
         member2.isVisible = false
         member3.isVisible = false
@@ -204,12 +174,7 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
         }
     }
 
-    fun join(){
-        val data = hashMapOf(
-            "uid" to currentUser.uid,
-            "badgeid" to badgeId
-        )
-
+    private fun join(){
         val userRef = firestore.collection("users").document(currentUser.uid)
         userRef.update("joinedBadges", FieldValue.arrayUnion(badgeId))
 
@@ -221,7 +186,7 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
     }
 
 
-    fun completed(userId: String){
+    private fun completed(userId: String){
         Log.d("DetailsFragment", "completed")
         val userRef = firestore.collection("users").document(userId)
         userRef.update("joinedBadges", FieldValue.arrayRemove(badgeId))
@@ -232,10 +197,9 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
                 getMemberIds()
                 Log.d("DetailsFragment", "removed")
             }
-
     }
 
-    fun openMembersDialog(){
+    private fun openMembersDialog(){
         val dialog = BadgeAllMemberDialogFragment(memberUsers, this)
         dialog.show(parentFragmentManager, "MembersDialog")
     }
@@ -244,7 +208,6 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
         selectedMember = userId
         val dialog = BadgeAcceptMemberDialogFragment(this)
         dialog.show(parentFragmentManager, "AcceptDialog")
-
     }
 
     override fun onSuccess() {

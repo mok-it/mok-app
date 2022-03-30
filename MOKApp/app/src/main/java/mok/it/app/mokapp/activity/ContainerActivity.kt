@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_container.*
+import kotlinx.android.synthetic.main.nav_header.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.auth.LoginActivity
 import mok.it.app.mokapp.fragments.*
@@ -35,50 +36,49 @@ import mok.it.app.mokapp.model.User
 
 class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CategoryFragment.ItemClickedListener  {
 
-    private lateinit var mAuth: FirebaseAuth
-    private lateinit var currentUser: FirebaseUser
-    lateinit var userModel: User
     val firestore = Firebase.firestore;
     var hirlevelUrl = "https://drive.google.com/drive/folders/1KJX4tPXiFGN1OTNMZkBqHGswRTVfLPsQ?usp=sharing"
     var feladatUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf4-Pje-gPDa1mVTsVgI2qw37e5u9eJMK1bN3xolIQCJWPHmA/viewform"
     var previousCategory = "Univerzális"
     var previousBadge = ""
 
+    companion object {
+        val currentUser = FirebaseAuth.getInstance().currentUser!!
+        lateinit var userModel: User
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_container)
+        //usermodel lejön
+        getUser(currentUser.uid)
+    }
 
-        mAuth = FirebaseAuth.getInstance()
-        currentUser = mAuth.currentUser!!
+    private fun setHeader(){
+        nameText.text = currentUser.displayName
+        emailText.text = currentUser.email
 
-        val header: View = nav_view.getHeaderView(0)
-        var nameTextView = header.findViewById(R.id.nameText) as TextView
-        nameTextView.setText(currentUser.displayName)
-        var emailTextView = header.findViewById(R.id.emailText) as TextView
-        emailTextView.setText(currentUser.email)
-        var imageView = header.findViewById(R.id.image) as ImageView
-
-        var requestOptions = RequestOptions()
-        requestOptions = requestOptions.transforms(CenterCrop(), RoundedCorners(26))
+        val requestOptions = RequestOptions().transforms(CenterCrop(), RoundedCorners(26))
         Glide
             .with(this)
             .load(currentUser?.photoUrl)
             .apply( requestOptions.override(250, 250))
-            .into(imageView)
+            .into(image)
 
-        var toolbar = findViewById<Toolbar>(R.id.toolbar)
-        var toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar,
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar,
             R.string.navigation_drawer_open, R.string.navigation_drawer_close)
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
+    }
 
+    private fun initialNavigation(){
         nav_view.setNavigationItemSelectedListener(this)
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "Univerzális")).commit()
         nav_view.setCheckedItem(R.id.nav_list)
-        getUser(currentUser.uid)
     }
 
-    fun setMenuVisibility(){
+    private fun setMenuVisibility(){
         val navView = findViewById<NavigationView>(R.id.nav_view)
         val menu = navView.menu
 
@@ -102,7 +102,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.nav_logout) {
-            Toast.makeText(this, "OK", Toast.LENGTH_SHORT)
+            Toast.makeText(this, "OK", Toast.LENGTH_SHORT).show()
         }
 
         return super.onOptionsItemSelected(item)
@@ -166,7 +166,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     fun logOut(){
-        mAuth.signOut()
+        FirebaseAuth.getInstance().signOut()
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
@@ -178,7 +178,9 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             .addOnSuccessListener { document ->
                 if (document != null) {
                     userModel = document.toObject(User::class.java)!!
+                    setHeader()
                     setMenuVisibility()
+                    initialNavigation()
                 }
             }
     }

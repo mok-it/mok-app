@@ -28,8 +28,6 @@ open class BaseFireFragment : Fragment() {
     val userCollectionPath: String = "/users"
 
     val firestore = Firebase.firestore
-    var mAuth = FirebaseAuth.getInstance()
-    var currentUser = mAuth.currentUser!!
 
     lateinit var model: Project
 

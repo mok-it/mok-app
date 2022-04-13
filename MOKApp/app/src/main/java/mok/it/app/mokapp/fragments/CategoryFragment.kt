@@ -9,12 +9,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_list.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.currentUser
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
+import mok.it.app.mokapp.activity.CreateBadgeFragment
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
@@ -36,7 +39,6 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String) 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
-        //getUser(currentUser!!.uid)
     }
 
     /**
@@ -102,6 +104,13 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String) 
         recyclerView.adapter = adapter
         recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)
+
+        addBadgeButton.setOnClickListener {
+            val dialog = CreateBadgeFragment()
+            dialog.show(parentFragmentManager, "CreateBadgeDialog")
+
+        }
+
     }
 
     fun getUser(uid: String) {

@@ -26,6 +26,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_container.*
+import kotlinx.android.synthetic.main.nav_header.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.auth.LoginActivity
 import mok.it.app.mokapp.fragments.*
@@ -51,26 +52,18 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         setContentView(R.layout.activity_container)
         //usermodel lejön
         getUser(currentUser.uid)
-
-
-
     }
 
     private fun setHeader(){
-        val header: View = nav_view.getHeaderView(0)
-        val nameTextView = header.findViewById(R.id.nameText) as TextView
-        nameTextView.setText(currentUser.displayName)
-        val emailTextView = header.findViewById(R.id.emailText) as TextView
-        emailTextView.setText(currentUser.email)
-        val imageView = header.findViewById(R.id.image) as ImageView
+        nameText.text = currentUser.displayName
+        emailText.text = currentUser.email
 
-        var requestOptions = RequestOptions()
-        requestOptions = requestOptions.transforms(CenterCrop(), RoundedCorners(26))
+        val requestOptions = RequestOptions().transforms(CenterCrop(), RoundedCorners(26))
         Glide
             .with(this)
             .load(currentUser?.photoUrl)
             .apply( requestOptions.override(250, 250))
-            .into(imageView)
+            .into(image)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar,

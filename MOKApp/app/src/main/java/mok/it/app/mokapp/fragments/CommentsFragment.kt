@@ -17,6 +17,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
@@ -52,6 +53,7 @@ class CommentsFragment(badgeId: String) : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val query = firestore.collection(projectCollectionPath).document(badgeId).collection(commentsId)
+            .orderBy("time", Query.Direction.DESCENDING)
         val options = FirestoreRecyclerOptions.Builder<Comment>().setQuery(query, Comment::class.java)
             .setLifecycleOwner(this).build()
         val adapter = object: FirestoreRecyclerAdapter<Comment, CommentViewHolder>(options){
@@ -78,7 +80,7 @@ class CommentsFragment(badgeId: String) : Fragment() {
                         if (senderDoc.get("name") != null)
                             tvSender.text = senderDoc.get("name") as String
 
-                        if (senderDoc.get("photoRUL") != null)
+                        if (senderDoc.get("photoURL") != null)
                             tryLoadingImage(ivImg, senderDoc.get("photoURL") as String)
                         else
                             tryLoadingImage(ivImg, getString(R.string.url_no_image))

@@ -157,10 +157,10 @@ class CreateBadgeFragment : DialogFragment() {
      */
     private fun isBlank() = when {
 
-        nameTIET.text.isNullOrBlank() -> true
-        descriptionTIET.text.isNullOrBlank() -> true
+        !nameTIET.text.isNullOrBlank() -> false
+        !descriptionTIET.text.isNullOrBlank() -> false
 
-        else -> false
+        else -> true
     }
 
     /**

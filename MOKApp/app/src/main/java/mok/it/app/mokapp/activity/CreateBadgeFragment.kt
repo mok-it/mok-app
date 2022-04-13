@@ -16,7 +16,14 @@ import androidx.activity.OnBackPressedCallback
 import androidx.cardview.widget.CardView
 import androidx.fragment.app.DialogFragment
 import com.google.android.material.textfield.TextInputEditText
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
+import com.google.protobuf.LazyStringArrayList
+import kotlinx.android.synthetic.main.fragment_create_badge.*
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.dialog.SelectEditorDialogFragment
+import mok.it.app.mokapp.model.Project
+import mok.it.app.mokapp.model.User
 
 
 /**
@@ -25,13 +32,21 @@ import mok.it.app.mokapp.R
  * badge to the server.
  */
 
-class CreateBadgeFragment : DialogFragment() {
+class CreateBadgeFragment(val category: String) : DialogFragment() {
 
     lateinit var nameTIET: TextInputEditText
     lateinit var descriptionTIET: TextInputEditText
     lateinit var iconSelectCard: CardView
     lateinit var closeButton: ImageButton
     lateinit var createButton: Button
+
+    lateinit var users: ArrayList<User>
+    val userCollectionPath: String = "/users"
+    val firestore = Firebase.firestore
+
+    lateinit var names: Array<String>
+    lateinit var checkedNames: BooleanArray
+    var selectedMembers: ArrayList<String> = ArrayList()
 
     private val isNameRequired = true
     private val isDescriptionRequired = true
@@ -59,6 +74,10 @@ class CreateBadgeFragment : DialogFragment() {
 
             createButton.setOnClickListener {
                 onCreateBadgePressed()
+            }
+
+            editorSelect.setOnClickListener {
+                getUsers()
             }
         }
     }
@@ -115,6 +134,7 @@ class CreateBadgeFragment : DialogFragment() {
     private fun commitNewBadgeToDatabase(): Boolean {
         // TODO upload badge metadata to firebase
         toast(R.string.not_implemented)
+        Log.d("Create", nameTIET.text.toString())
         return false
     }
 
@@ -186,8 +206,48 @@ class CreateBadgeFragment : DialogFragment() {
         Toast.LENGTH_SHORT
     ).show()
 
+    private fun getUsers(){
+        users = ArrayList()
+
+        firestore.collection(userCollectionPath)
+            .whereArrayContains("categories", category)
+            .get()
+            .addOnSuccessListener { documents ->
+                if (documents != null) {
+                    for (document in documents) {
+                        users.add(document.toObject(User::class.java)!!)
+                        Log.d("Users", users.toString())
+                    }
+                    names = Array(users.size){i->users[i].name}
+                    checkedNames = BooleanArray(users.size){false}
+                    initEditorsDialog()
+                }
+            }
+    }
+
+    private fun initEditorsDialog(){
+        val builder = AlertDialog.Builder(context)
+        builder.setTitle("Válassz kezelőt")
+        builder.setMultiChoiceItems(names, checkedNames){dialog, which, isChecked ->
+            checkedNames[which] = isChecked
+        }
+        builder.setPositiveButton("Ok"){dialog, which ->
+            selectedMembers = ArrayList()
+            for (i in names.indices){
+                if (checkedNames[i]){
+                    Log.d("Selected", names[i])
+                    selectedMembers.add(users[i].uid)
+                }
+            }
+        }
+        builder.setNegativeButton("Mégsem"){dialog, which ->
+            dialog.cancel()
+        }
+        val dialog: AlertDialog = builder.create()
+        dialog.show()
+    }
     companion object {
         val TAG = "CreateBadgeFragment"
-        fun newInstance() = CreateBadgeFragment()
+        fun newInstance() = CreateBadgeFragment("")
     }
 }

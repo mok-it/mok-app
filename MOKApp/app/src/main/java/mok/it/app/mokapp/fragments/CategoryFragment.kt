@@ -106,9 +106,8 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String) 
             WrapContentLinearLayoutManager(this.context)
 
         addBadgeButton.setOnClickListener {
-            val dialog = CreateBadgeFragment()
+            val dialog = CreateBadgeFragment(category)
             dialog.show(parentFragmentManager, "CreateBadgeDialog")
-
         }
 
     }

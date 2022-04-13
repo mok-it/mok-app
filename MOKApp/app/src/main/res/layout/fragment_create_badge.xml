@@ -135,9 +135,13 @@
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </androidx.cardview.widget.CardView>
-
+            <DatePicker
+                android:id="@+id/datePicker"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+            </DatePicker>
             <androidx.cardview.widget.CardView
-                android:id="@+id/icon_select_category"
+                android:id="@+id/editorSelect"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@android:color/darker_gray"
@@ -156,7 +160,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
-                        android:text="@string/choose_category"
+                        android:text="Válassz kezelőt"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"

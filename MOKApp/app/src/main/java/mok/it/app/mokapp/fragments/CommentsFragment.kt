@@ -21,26 +21,20 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_comments.*
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.recyclerview.CommentViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import java.text.SimpleDateFormat
 
-class CommentsFragment(badgeId: String) : Fragment() {
+class CommentsFragment(private val badgeId: String) : BaseFireFragment() {
 
-    val badgeId = badgeId
-    val commentsId = "comments"
+    private val commentsId = "comments"
     private val TAG = "CommentsFragment"
     private lateinit var recyclerView: RecyclerView
-    val firestore = Firebase.firestore;
-    val projectCollectionPath: String = "/projects";
-    val userCollectionPath: String = "/users";
     val formatter = SimpleDateFormat("yyyy.MM.dd. hh:mm")
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -86,30 +80,30 @@ class CommentsFragment(badgeId: String) : Fragment() {
                             tryLoadingImage(ivImg, getString(R.string.url_no_image))
                     }
                 }
+            }
+        }
 
-                val commentEditText: EditText = view.findViewById(R.id.comment_input_edit_text)
-                val fab: View = view.findViewById(R.id.send_comment_fab)
-                fab.setOnClickListener { view ->
-                    val comment = Comment(
-                        commentsId,
-                        commentEditText.text.toString(),
-                        Timestamp.now(),
-                        FirebaseAuth.getInstance().currentUser!!.uid
-                    )
+        send_comment_fab.setOnClickListener { view ->
+            if (commentEditText.text.toString() != "") {
+                val comment = Comment(
+                    commentsId,
+                    commentEditText.text.toString(),
+                    Timestamp.now(),
+                    FirebaseAuth.getInstance().currentUser!!.uid
+                )
 
-                    firestore.collection(projectCollectionPath).document(badgeId).collection(commentsId)
-                        .add(comment)
-                        .addOnSuccessListener { documentReference ->
-                            Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
-                        }
-                        .addOnFailureListener { e ->
-                            Log.w(TAG, "Error adding document", e)
-                        }
+                firestore.collection(projectCollectionPath).document(badgeId).collection(commentsId)
+                    .add(comment)
+                    .addOnSuccessListener { documentReference ->
+                        Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w(TAG, "Error adding document", e)
+                    }
 
-                    commentEditText.text.clear()
-                    commentEditText.clearFocus()
-                    hideKeyboard();
-                }
+                commentEditText.text.clear()
+                commentEditText.clearFocus()
+                hideKeyboard();
             }
         }
 
@@ -119,25 +113,15 @@ class CommentsFragment(badgeId: String) : Fragment() {
         recyclerView.smoothScrollToPosition(adapter.getItemCount());
     }
 
-    fun Fragment.hideKeyboard() {
+    private fun Fragment.hideKeyboard() {
         view?.let { activity?.hideKeyboard(it) }
     }
 
-    fun Activity.hideKeyboard() {
-        hideKeyboard(currentFocus ?: View(this))
-    }
-
-    fun Context.hideKeyboard(view: View) {
+    private fun Context.hideKeyboard(view: View) {
         val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    /**
-     * Tries to load an image into the given image view. If for some reason
-     * the provided URL does not point to a valid image file, false is returned.
-     *
-     * @return true if the function succeeded, false if failed
-     */
     private fun tryLoadingImage(imageView: ImageView, imageURL: String): Boolean {
         return try {
             Picasso.get().apply {

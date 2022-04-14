@@ -48,7 +48,7 @@
         app:contentPadding="2dp">
 
         <EditText
-            android:id="@+id/comment_input_edit_text"
+            android:id="@+id/commentEditText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"

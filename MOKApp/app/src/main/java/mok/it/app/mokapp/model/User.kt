@@ -9,11 +9,11 @@ data class User(
     @DocumentId
     val documentId: String = "",
 
+    val admin: Boolean = false,
     val categories: List<String> = ArrayList(),
     val collectedBadges: List<String> = ArrayList(),
     val email: String = "",
     val isCreator: Boolean = false,
-    val isOwner: Boolean = false,
     val joinedBadges: List<String> = ArrayList(),
     val name: String = "",
     val photoURL: String = "",

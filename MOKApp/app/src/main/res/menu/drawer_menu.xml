@@ -28,6 +28,9 @@
         <item android:id="@+id/gra"
             android:icon="@drawable/ic_smiley"
             android:title="Grafika"/>
+        <item android:id="@+id/admin"
+            android:icon="@drawable/ic_admin"
+            android:title="Admin"/>
     </group>
 
     <item android:title="További felületek">

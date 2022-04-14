@@ -82,6 +82,8 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val navView = findViewById<NavigationView>(R.id.nav_view)
         val menu = navView.menu
 
+
+        //MCS Kategóriák láthatósága
         val it = menu.findItem(R.id.it)
         val ped = menu.findItem(R.id.ped)
         val fel = menu.findItem(R.id.fel)
@@ -98,6 +100,14 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             kre?.setVisible(false)
         if (!userModel.categories.contains("Grafika"))
             gra?.setVisible(false)
+
+
+        //Admin láthatósága
+        val adm = menu.findItem(R.id.admin)
+        if (!userModel.admin)
+            adm?.setVisible(false)
+
+
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -134,6 +144,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             R.id.nav_list -> changeCategoryFragment("Univerzális")
             R.id.nav_completed -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, MyBadgesFragment()).commit()
             R.id.nav_profile -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
+            R.id.admin -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, AdminFragment()).commit()
             R.id.nav_hirlevel -> openHirlevel()
             R.id.nav_feladat -> openFeladat()
             R.id.nav_logout -> logOut()

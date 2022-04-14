@@ -21,9 +21,12 @@ import com.google.firebase.ktx.Firebase
 import com.google.protobuf.LazyStringArrayList
 import kotlinx.android.synthetic.main.fragment_create_badge.*
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
 import mok.it.app.mokapp.dialog.SelectEditorDialogFragment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 /**
@@ -134,7 +137,36 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
     private fun commitNewBadgeToDatabase(): Boolean {
         // TODO upload badge metadata to firebase
         toast(R.string.not_implemented)
-        Log.d("Create", nameTIET.text.toString())
+        Log.d("Create name", nameTIET.text.toString())
+        Log.d("Create desc", descriptionTIET.text.toString())
+        Log.d("Create creator", userModel.uid)
+        Log.d("Create category", category)
+        val deadline = Date(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
+        val deadl = Date()
+        Log.d("Create date", deadline.toString())
+        Log.d("Create editors", selectedMembers.toString())
+
+        val newBadge = hashMapOf(
+            "category" to category,
+            "created" to Date(),
+            "creator" to userModel.uid,
+            "deadline" to deadline,
+            "description" to descriptionTIET.text.toString(),
+            "editors" to selectedMembers,
+            "icon" to "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/Hexagon-PNG-Clipart.png?alt=media&token=e7034461-e180-4be6-ba8e-a246455910fe",
+            "name" to nameTIET.text.toString(),
+            "overall_progress" to 0
+        )
+
+        firestore.collection("/projects")
+            .add(newBadge)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error adding document", e)
+            }
+
         return false
     }
 

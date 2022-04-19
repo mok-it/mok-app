@@ -12,7 +12,6 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 
 class MembersAdapter(private val dataSet: ArrayList<User>, private val listener: MemberClickedListener) :
@@ -27,7 +26,7 @@ class MembersAdapter(private val dataSet: ArrayList<User>, private val listener:
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
-                .inflate(R.layout.member_card, viewGroup, false)
+                .inflate(R.layout.card_member, viewGroup, false)
         return ViewHolder(view)
     }
 

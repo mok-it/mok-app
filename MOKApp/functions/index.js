@@ -141,7 +141,7 @@ exports.createUser = functions.auth.user().onCreate((user) => {
     email: user.email,
     name: user.displayName,
     isCreator: false,
-    admin: false,
+    isOwner: false,
     // ide minden más attribute jöhet majd
   });
   return null;
@@ -192,3 +192,34 @@ exports.uploadNewBadge = functions.https.onRequest((req, res) => {
   res.status(200).send('{"success":true}');
 });
 
+exports.userOpenedApp = functions.https.onRequest((req, res) => {
+  var user = db.collection("users").where("id", "==", req.userId);
+});
+
+exports.uploadNewBadge = functions.https.onRequest((req, res) => {
+  //adatok:
+  //(ld. lent) minden mező, ami benne van a projects collection documentumaiban
+  // + owner
+  //ebből kötelező: name, description, deadline, creator
+  //a többi opcionális
+  const defaultIcon =
+    "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/no-image-icon.png?alt=media&token=6cdc86db-cd93-402c-af09-f98748b5a1b6";
+  db.collection("projects").add({
+    name: req.body.name,
+    description: req.body.description,
+    deadline: new Date(
+      req.body.deadline.year,
+      req.body.deadline.month,
+      req.body.deadline.day
+    ),
+    created: admin.firestore.Timestamp.now(),
+    overall_progress: 0,
+    icon: req.body.hasOwnProperty("icon") ? req.body.icon : defaultIcon,
+    creator: req.body.creator,
+    owner: req.body.hasOwnProperty("owner") ? req.body.owner : req.body.creator,
+    editors: req.body.editors ? req.body.editors : [],
+    members: req.body.members ? req.body.members : [],
+    tasks: req.body.tasks ? req.body.tasks : [],
+  });
+  res.status(200).send('{"success":true}');
+});

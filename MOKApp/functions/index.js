@@ -137,11 +137,15 @@ exports.populate = functions.firestore
 exports.createUser = functions.auth.user().onCreate((user) => {
   console.log("user created", user.email, user.uid);
   db.collection("users").add({
-    id: user.uid,
+    uid: user.uid,
     email: user.email,
     name: user.displayName,
     isCreator: false,
-    isOwner: false,
+    admin: false,
+    photoURL: user.photoURL,
+    joinedBadges: [],
+    collectedBadges: [],
+    categories: ["Univerzális"]
     // ide minden más attribute jöhet majd
   });
   return null;

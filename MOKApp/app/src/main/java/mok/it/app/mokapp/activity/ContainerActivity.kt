@@ -43,14 +43,19 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     var previousBadge = ""
 
     companion object {
-        val currentUser = FirebaseAuth.getInstance().currentUser!!
+        var currentUser = FirebaseAuth.getInstance().currentUser!!
         lateinit var userModel: User
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_container)
-        //usermodel lejön
+    }
+
+    override fun onStart() {
+        super.onStart()
+
+        currentUser = FirebaseAuth.getInstance().currentUser!!
         getUser(currentUser.uid)
     }
 

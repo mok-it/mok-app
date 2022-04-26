@@ -52,8 +52,8 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         setContentView(R.layout.activity_container)
     }
 
-    override fun onStart() {
-        super.onStart()
+    override fun onResume() {
+        super.onResume()
 
         currentUser = FirebaseAuth.getInstance().currentUser!!
         getUser(currentUser.uid)

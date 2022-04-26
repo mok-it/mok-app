@@ -136,7 +136,7 @@ exports.populate = functions.firestore
 // User létrehozásánál a userc collectionban létrehozzuk a neki megfelelő documentet a szükséges attribútumokkal
 exports.createUser = functions.auth.user().onCreate((user) => {
   console.log("user created", user.email, user.uid);
-  db.collection("users").add({
+  db.collection("users").doc(user.uid).set({
     uid: user.uid,
     email: user.email,
     name: user.displayName,

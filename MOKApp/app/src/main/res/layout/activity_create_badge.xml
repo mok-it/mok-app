@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     app:layout_constrainedHeight="true"
     app:layout_constraintHeight_max="0dp"
-    tools:context=".activity.CreateBadgeFragment">
+    tools:context=".fragments.CreateBadgeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout2"

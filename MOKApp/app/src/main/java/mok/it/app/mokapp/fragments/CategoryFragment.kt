@@ -102,11 +102,7 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String) 
         recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)
 
-        addBadgeButton.setOnClickListener {
-            val dialog = CreateBadgeFragment(category)
-            dialog.show(parentFragmentManager, "CreateBadgeDialog")
-        }
-
+        initAddButton()
     }
 
     fun getUser(uid: String) {
@@ -118,6 +114,18 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String) 
                     initRecyclerView()
                 }
             }
+    }
+
+    private fun initAddButton(){
+        if (!userModel.isCreator) {
+            addBadgeButton.visibility = View.INVISIBLE
+        }
+        else{
+            addBadgeButton.setOnClickListener {
+                val dialog = CreateBadgeFragment(category)
+                dialog.show(parentFragmentManager, "CreateBadgeDialog")
+            }
+        }
     }
 
     interface ItemClickedListener{

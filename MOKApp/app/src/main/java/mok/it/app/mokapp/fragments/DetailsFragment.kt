@@ -17,16 +17,18 @@ import mok.it.app.mokapp.activity.ContainerActivity.Companion.currentUser
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
+import mok.it.app.mokapp.interfaces.UserRefreshedListener
+import mok.it.app.mokapp.interfaces.UserRefresher
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.MembersAdapter
 import java.text.SimpleDateFormat
 import kotlin.collections.ArrayList
 
-class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.MemberClickedListener,
-    BadgeAcceptMemberDialogFragment.SuccessListener {
+class DetailsFragment(private val badgeId: String, private val userRefresher: UserRefresher) : BaseFireFragment(), MembersAdapter.MemberClickedListener,
+    BadgeAcceptMemberDialogFragment.SuccessListener, UserRefreshedListener{
 
-    private val badgeId = badgeId
+    lateinit var badgeModel: Project
     private val commentsId = "comments"
     private val TAG = "DetailsFragment"
     lateinit var memberUsers: ArrayList<User>
@@ -54,14 +56,17 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
 
         joinButton = this.requireView().findViewById(R.id.join_button) as Button
         joinButton.setOnClickListener {
-            Toast.makeText(context, "Congrats, you joined!", Toast.LENGTH_SHORT).show()
             join()
+            userRefresher.refreshUser(this)
         }
         badgeComments.setOnClickListener{
             parentFragmentManager.beginTransaction().replace(R.id.fragment_container, CommentsFragment(badgeId), "CommentsFragment").commit()
         }
         documentOnSuccess(projectCollectionPath, badgeId) { document ->
             if (document != null) {
+
+                badgeModel = document.toObject(Project::class.java)!!
+
                 badgeName.text = document.get("name") as String
                 badgeDescription.text = document.get("description") as String
                 firestore.collection(userCollectionPath).document(document.get("creator") as String)
@@ -75,10 +80,7 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
                 badgeProgress.progress = (document.get("overall_progress") as Number).toInt()
                 Picasso.get().load(document.get("icon") as String).into(avatar_imagebutton)
 
-                val editors = document.get("editors") as List<String>
-                if (editors.contains(userModel.uid)){
-                    userIsEditor = true
-                }
+                changeVisibilities()
             }
         }
         // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
@@ -160,36 +162,52 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
     }
 
     private fun initMembers(){
-        member1.isVisible = false
-        member2.isVisible = false
-        member3.isVisible = false
-        member4.isVisible = false
-        if (memberUsers.size > 0){
-            Picasso.get().load(memberUsers[0].photoURL).into(member1)
-            member1.isVisible = true
-        }
-        if (memberUsers.size > 1){
-            Picasso.get().load(memberUsers[1].photoURL).into(member2)
-            member2.isVisible = true
-        }
-        if (memberUsers.size > 2){
-            Picasso.get().load(memberUsers[2].photoURL).into(member3)
-            member3.isVisible = true
-        }
-        if (memberUsers.size > 2){
-            member4.isVisible = true
+        if (member1 != null && member2 != null && member3 != null && member4 != null){
+            member1.isVisible = false
+            member2.isVisible = false
+            member3.isVisible = false
+            member4.isVisible = false
+            if (memberUsers.size > 0){
+                Picasso.get().load(memberUsers[0].photoURL).into(member1)
+                member1.isVisible = true
+            }
+            if (memberUsers.size > 1){
+                Picasso.get().load(memberUsers[1].photoURL).into(member2)
+                member2.isVisible = true
+            }
+            if (memberUsers.size > 2){
+                Picasso.get().load(memberUsers[2].photoURL).into(member3)
+                member3.isVisible = true
+            }
+            if (memberUsers.size > 2){
+                member4.isVisible = true
+            }
         }
     }
 
     private fun join(){
-        val userRef = firestore.collection("users").document(currentUser.uid)
-        userRef.update("joinedBadges", FieldValue.arrayUnion(badgeId))
+        if (userModel.joinedBadges.contains(badgeId)){
+            val userRef = firestore.collection("users").document(currentUser.uid)
+            userRef.update("joinedBadges", FieldValue.arrayRemove(badgeId))
 
-        val badgeRef = firestore.collection("projects").document(badgeId)
-        badgeRef.update("members", FieldValue.arrayUnion(currentUser.uid))
-            .addOnCompleteListener {
-                getMemberIds()
-            }
+            val badgeRef = firestore.collection("projects").document(badgeId)
+            badgeRef.update("members", FieldValue.arrayRemove(currentUser.uid))
+                .addOnCompleteListener {
+                    Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT).show()
+                    getMemberIds()
+                }
+        }
+        else {
+            val userRef = firestore.collection("users").document(currentUser.uid)
+            userRef.update("joinedBadges", FieldValue.arrayUnion(badgeId))
+
+            val badgeRef = firestore.collection("projects").document(badgeId)
+            badgeRef.update("members", FieldValue.arrayUnion(currentUser.uid))
+                .addOnCompleteListener {
+                    Toast.makeText(context, "Sikeresen csatlakoztál!", Toast.LENGTH_SHORT).show()
+                    getMemberIds()
+                }
+        }
     }
 
 
@@ -219,5 +237,22 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
 
     override fun onSuccess() {
         completed(selectedMember)
+    }
+
+    private fun changeVisibilities(){
+        if (userModel.collectedBadges.contains(badgeModel.id))
+            join_button.visibility = View.GONE
+        else if (userModel.joinedBadges.contains(badgeModel.id))
+            join_button.text = "Lecsatlakozás"
+        else if (!userModel.joinedBadges.contains(badgeModel.id))
+            join_button.text = "Csatlakozás"
+
+        if (badgeModel.editors.contains(userModel.uid)){
+            userIsEditor = true
+        }
+    }
+
+    override fun userRefreshed() {
+        changeVisibilities()
     }
 }

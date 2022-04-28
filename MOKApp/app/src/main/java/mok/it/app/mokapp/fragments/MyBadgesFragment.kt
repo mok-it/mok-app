@@ -12,8 +12,10 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.activity.ContainerActivity
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.currentUser
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
+import mok.it.app.mokapp.interfaces.UserRefresher
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.BadgesAdapter
@@ -60,7 +62,8 @@ class MyBadgesFragment : Fragment(), BadgesAdapter.BadgeClickedListener {
     }
 
     override fun onBadgeClicked(badgeId: String) {
+        ///ez még szar
         parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, DetailsFragment(badgeId), "DetailsFragment").commit()
+            .replace(R.id.fragment_container, DetailsFragment(badgeId, userRefresher = ContainerActivity as UserRefresher), "DetailsFragment").commit()
     }
 }

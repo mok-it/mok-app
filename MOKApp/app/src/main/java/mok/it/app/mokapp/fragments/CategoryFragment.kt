@@ -117,7 +117,7 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String) 
     }
 
     private fun initAddButton(){
-        if (!userModel.isCreator) {
+        if (!userModel.isCreator && !userModel.admin) {
             addBadgeButton.visibility = View.INVISIBLE
         }
         else{

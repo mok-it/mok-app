@@ -30,11 +30,13 @@ import kotlinx.android.synthetic.main.nav_header.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.auth.LoginActivity
 import mok.it.app.mokapp.fragments.*
+import mok.it.app.mokapp.interfaces.UserRefreshedListener
+import mok.it.app.mokapp.interfaces.UserRefresher
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 
 
-class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CategoryFragment.ItemClickedListener  {
+class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CategoryFragment.ItemClickedListener, UserRefresher{
 
     val firestore = Firebase.firestore;
     var hirlevelUrl = "https://drive.google.com/drive/folders/1KJX4tPXiFGN1OTNMZkBqHGswRTVfLPsQ?usp=sharing"
@@ -136,7 +138,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, previousCategory)).commit()
             }
             else if (commentsFragment != null && commentsFragment.isVisible()) {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(previousBadge), "DetailsFragment").commit()
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(previousBadge, this), "DetailsFragment").commit()
             }
             else{
                 super.onBackPressed()
@@ -188,7 +190,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         finish()
     }
 
-    fun getUser(uid: String) {
+    fun getUser(uid: String){
         Firebase.firestore.collection("users").document(uid)
             .get()
             .addOnSuccessListener { document ->
@@ -202,8 +204,22 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     override fun onItemClicked(badgeId: String, category: String) {
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(badgeId), "DetailsFragment").commit()
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(badgeId, this), "DetailsFragment").commit()
         previousCategory = category
         previousBadge = badgeId
+    }
+
+    override fun refreshUser(listener: UserRefreshedListener){
+        currentUser = FirebaseAuth.getInstance().currentUser!!
+        Firebase.firestore.collection("users").document(currentUser.uid)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    userModel = document.toObject(User::class.java)!!
+                    setHeader()
+                    setMenuVisibility()
+                    listener.userRefreshed()
+                }
+            }
     }
 }

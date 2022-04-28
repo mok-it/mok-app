@@ -14,6 +14,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_details.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.currentUser
+import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.model.Project
@@ -30,6 +31,7 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
     private val TAG = "DetailsFragment"
     lateinit var memberUsers: ArrayList<User>
     lateinit var memberComments: ArrayList<Comment>
+    var userIsEditor: Boolean = false
     private lateinit var joinButton: Button
     private var selectedMember = ""
 
@@ -72,6 +74,11 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
                 badgeDeadline.text = formatter.format((document.get("deadline") as Timestamp).toDate())
                 badgeProgress.progress = (document.get("overall_progress") as Number).toInt()
                 Picasso.get().load(document.get("icon") as String).into(avatar_imagebutton)
+
+                val editors = document.get("editors") as List<String>
+                if (editors.contains(userModel.uid)){
+                    userIsEditor = true
+                }
             }
         }
         // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
@@ -200,7 +207,7 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
     }
 
     private fun openMembersDialog(){
-        val dialog = BadgeAllMemberDialogFragment(memberUsers, this)
+        val dialog = BadgeAllMemberDialogFragment(memberUsers, this, userIsEditor)
         dialog.show(parentFragmentManager, "MembersDialog")
     }
 

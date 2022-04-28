@@ -12,10 +12,10 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.model.Project
+import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
 import mok.it.app.mokapp.model.User
 
-class MembersAdapter(private val dataSet: ArrayList<User>, private val listener: MemberClickedListener) :
+class MembersAdapter(private val dataSet: ArrayList<User>, private val listener: MemberClickedListener, private val userIsEditor: Boolean) :
         RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
 
     var context: Context? = null
@@ -43,9 +43,12 @@ class MembersAdapter(private val dataSet: ArrayList<User>, private val listener:
             .apply( requestOptions.override(250, 250))
             .into(viewHolder.imageView)
 
-        viewHolder.itemView.setOnLongClickListener {
-            listener.onMemberClicked(model.documentId)
-            true
+
+        if (canAccept()){
+            viewHolder.itemView.setOnLongClickListener {
+                listener.onMemberClicked(model.documentId)
+                true
+            }
         }
     }
 
@@ -54,6 +57,12 @@ class MembersAdapter(private val dataSet: ArrayList<User>, private val listener:
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         context = recyclerView.context
+    }
+
+    //ha creator, editor vagy admin a felhasználó
+    fun canAccept(): Boolean{
+        if (userModel.admin || userModel.isCreator || userIsEditor) return true
+        return false
     }
 
     interface MemberClickedListener{

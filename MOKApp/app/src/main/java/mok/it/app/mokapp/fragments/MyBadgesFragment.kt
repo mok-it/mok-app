@@ -5,10 +5,8 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import mok.it.app.mokapp.R
@@ -17,7 +15,7 @@ import mok.it.app.mokapp.activity.ContainerActivity.Companion.currentUser
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
 import mok.it.app.mokapp.interfaces.UserRefresher
 import mok.it.app.mokapp.model.Project
-import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.recyclerview.BadgeCategoriesAdapter
 import mok.it.app.mokapp.recyclerview.BadgesAdapter
 
 class MyBadgesFragment : Fragment(), BadgesAdapter.BadgeClickedListener {
@@ -55,10 +53,24 @@ class MyBadgesFragment : Fragment(), BadgesAdapter.BadgeClickedListener {
     }
 
     fun initRecyclerView() {
+        val categoryBadges : ArrayList<ArrayList<Project>> = ArrayList<ArrayList<Project>>()
+
+        for (c in 0..(userModel.categories.size - 1)) {
+            categoryBadges.add(ArrayList<Project>())
+            for (badge in collectedBadges) {
+                if (badge.category == userModel.categories[c]) {
+                    categoryBadges[c].add(badge)
+                }
+            }
+        }
+
         recyclerView = this.requireView().findViewById(R.id.recyclerView)
-        recyclerView.adapter = BadgesAdapter(collectedBadges, this)
+        recyclerView.adapter = BadgeCategoriesAdapter(
+            userModel.categories,
+            categoryBadges,
+            this)
         recyclerView.layoutManager =
-            GridLayoutManager(this.context, 2, LinearLayoutManager.VERTICAL, false)
+            LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
     }
 
     override fun onBadgeClicked(badgeId: String) {

@@ -27,7 +27,7 @@ class MembersAdapter(private val dataSet: ArrayList<User>, private val listener:
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
-                .inflate(R.layout.member_card, viewGroup, false)
+                .inflate(R.layout.card_member, viewGroup, false)
         return ViewHolder(view)
     }
 

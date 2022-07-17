@@ -15,13 +15,11 @@ class BadgesAdapter(private val dataSet: List<Project>, private val listener: Ba
 
     var context: Context? = null
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val imageView: ImageView = view.findViewById(R.id.imageView)
-    }
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.badge_card, viewGroup, false)
+            .inflate(R.layout.card_badge, viewGroup, false)
         return ViewHolder(view)
     }
 

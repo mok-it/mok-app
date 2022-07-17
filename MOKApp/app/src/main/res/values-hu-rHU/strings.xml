@@ -27,4 +27,6 @@
     <string name="send_comment">Komment küldése</string>
     <string name="comment_edit_text_hint">Írd be, hogy mivel haladtál!</string>
     <string name="choose_category">Válassz kategóriát</string>
+    <string name="category">Kategória</string>
+    <string name="no_collected_badge_text">A kategóriában még nincs megszerzett badge</string>
 </resources>

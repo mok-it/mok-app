@@ -54,7 +54,8 @@ class DetailsFragment(badgeId: String) : BaseFireFragment(), MembersAdapter.Memb
     }
 
     private fun initLayout() {
-        buttonMembers.setOnClickListener {
+
+        members_overlay_button.setOnClickListener {
             openMembersDialog()
         }
 

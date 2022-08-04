@@ -10,7 +10,7 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Teljesítette?"
+        android:text="@string/did_they_complete"
         android:textSize="30sp"
         android:layout_marginBottom="10dp"
         app:layout_constraintBottom_toTopOf="@+id/textView2"
@@ -22,7 +22,7 @@
         android:id="@+id/textView2"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Zalán"
+        android:text="@string/example_name_first"
         android:textSize="16sp"
         android:layout_marginBottom="18dp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
@@ -45,14 +45,14 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight=".5"
-            android:text="Ok" />
+            android:text="@string/ok" />
 
         <Button
             android:id="@+id/CancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight=".5"
-            android:text="Mégsem" />
+            android:text="@string/cancel" />
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

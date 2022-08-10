@@ -47,6 +47,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     companion object {
         var currentUser = FirebaseAuth.getInstance().currentUser!!
         lateinit var userModel: User
+        val TAG = "ContainerActivity"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -194,6 +195,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         Firebase.firestore.collection("users").document(uid)
             .get()
             .addOnSuccessListener { document ->
+                Log.d(TAG, "getUser(): got document ${document.id}")
                 if (document != null) {
                     userModel = document.toObject(User::class.java)!!
                     setHeader()

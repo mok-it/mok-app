@@ -75,7 +75,9 @@ class LoginActivity : AppCompatActivity() {
                 }
             }
             else{
-                Log.w("LoginActivity", exception.toString())
+                Log.w("LoginActivity", exception?.let {
+                    it.stackTraceToString()
+                } ?: exception.toString())
             }
         }
     }

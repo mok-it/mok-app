@@ -129,8 +129,6 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
      *  @return true if successful
      */
     private fun commitNewBadgeToDatabase(): Boolean {
-        // TODO upload badge metadata to firebase
-        toast(R.string.not_implemented)
         Log.d("Create name", nameTIET.text.toString())
         Log.d("Create desc", descriptionTIET.text.toString())
         Log.d("Create creator", userModel.uid)
@@ -151,7 +149,6 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
             "name" to nameTIET.text.toString(),
             "overall_progress" to 0
         )
-
         firestore.collection("/projects")
             .add(newBadge)
             .addOnSuccessListener { documentReference ->
@@ -161,7 +158,7 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
                 Log.w(TAG, "Error adding document", e)
             }
 
-        return false
+        return true
     }
 
     /**

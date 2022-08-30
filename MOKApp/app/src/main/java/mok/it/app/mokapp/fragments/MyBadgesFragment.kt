@@ -13,12 +13,13 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.activity.ContainerActivity
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.currentUser
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
+import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.interfaces.UserRefresher
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.BadgeCategoriesAdapter
 import mok.it.app.mokapp.recyclerview.BadgesAdapter
 
-class MyBadgesFragment : Fragment(), BadgesAdapter.BadgeClickedListener {
+class MyBadgesFragment(val listener: CategoryFragment.ItemClickedListener) : BaseFireFragment(), BadgesAdapter.BadgeClickedListener {
     private lateinit var recyclerView: RecyclerView
     lateinit var collectedBadges: ArrayList<Project>
 
@@ -74,8 +75,9 @@ class MyBadgesFragment : Fragment(), BadgesAdapter.BadgeClickedListener {
     }
 
     override fun onBadgeClicked(badgeId: String) {
+        listener.onItemClicked(badgeId, "Univerzális")
         ///ez még szar
-        parentFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, DetailsFragment(badgeId, userRefresher = ContainerActivity as UserRefresher), "DetailsFragment").commit()
+        //parentFragmentManager.beginTransaction()
+        //    .replace(R.id.fragment_container, DetailsFragment(badgeId, userRefresher = ContainerActivity as UserRefresher), "DetailsFragment").commit()
     }
 }

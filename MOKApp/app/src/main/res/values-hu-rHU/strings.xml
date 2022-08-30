@@ -23,10 +23,26 @@
     <string name="not_implemented">NOT_IMPLEMENTED</string>
     <string name="newest_comment_text">%s %s: %s</string>
     <string name="newest_comment">Legújabb fejlemény:</string>
-    <string name="a_projekt_megalkotasa">A projekt megalkotása!</string>
+    <string name="create_project">A projekt megalkotása!</string>
     <string name="send_comment">Komment küldése</string>
     <string name="comment_edit_text_hint">Írd be, hogy mivel haladtál!</string>
     <string name="choose_category">Válassz kategóriát</string>
+    <string name="sender">Feladó</string>
+    <string name="project_icon">Projektikon</string>
+    <string name="choose_manager">Válassz kezelőt</string>
+    <string name="log_out">Kijelentkezés</string>
+    <string name="did_they_complete">Teljesítette?</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Mégsem</string>
+    <string name="badge_creator">Korong készítője</string>
+    <string name="deadline">Határidő</string>
+    <string name="members">Résztvevők</string>
+    <string name="join">Csatlakozás</string>
+    <string name="my_badges">Korongjaim</string>
+    <string name="profile">Profil</string>
+    <string name="example_name_full">Minta János</string>
+    <string name="example_name_first">János</string>
+    <string name="example_email">minta.janos@pelda.hu</string>
     <string name="category">Kategória</string>
     <string name="no_collected_badge_text">A kategóriában még nincs megszerzett badge</string>
 </resources>

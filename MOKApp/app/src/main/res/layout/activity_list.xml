@@ -10,7 +10,7 @@
         android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="50dp"
-        android:background="@color/szumma_blue"
+        android:background="@color/blue"
         app:layout_constraintTop_toTopOf="parent">
 
         <TextView
@@ -44,8 +44,8 @@
         android:id="@+id/button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/szumma_blue"
-        android:text="Logout"
+        android:backgroundTint="@color/blue"
+        android:text="@string/log_out"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

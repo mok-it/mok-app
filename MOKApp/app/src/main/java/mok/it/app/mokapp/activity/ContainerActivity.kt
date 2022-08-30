@@ -109,13 +109,10 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if (!userModel.categories.contains("Grafika"))
             gra?.setVisible(false)
 
-
         //Admin láthatósága
         val adm = menu.findItem(R.id.admin)
         if (!userModel.admin)
             adm?.setVisible(false)
-
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -150,7 +147,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
             R.id.nav_list -> changeCategoryFragment("Univerzális")
-            R.id.nav_completed -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, MyBadgesFragment()).commit()
+            R.id.nav_completed -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, MyBadgesFragment(this)).commit()
             R.id.nav_profile -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
             R.id.admin -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, AdminFragment()).commit()
             R.id.nav_hirlevel -> openHirlevel()

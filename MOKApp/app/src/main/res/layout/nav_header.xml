@@ -3,7 +3,7 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="196dp"
-    android:background="@color/szumma_blue"
+    android:background="@color/blue"
     android:gravity="bottom"
     android:padding="16dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
@@ -20,17 +20,17 @@
         android:layout_height="wrap_content"
         android:paddingTop="8dp"
         android:id="@+id/nameText"
-        android:text="Zalán Gyarmati"
+        android:text="@string/example_name_full"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/emailText"
-            android:text="gyarzal@gmail.com"/>
-
+            android:text="@string/example_email"/>
         <Button
             android:id="@+id/button2"
             android:layout_width="50dp"

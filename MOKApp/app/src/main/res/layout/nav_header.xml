@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="196dp"
@@ -15,27 +16,37 @@
         android:layout_marginTop="8dp"
         android:src="@mipmap/ic_launcher_round"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:paddingTop="8dp"
-        android:id="@+id/nameText"
-        android:text="@string/example_name_full"
-        android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
-        <TextView
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/emailText"
-            android:text="@string/example_email"/>
-        <Button
-            android:id="@+id/button2"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:id="@+id/nameText"
+                android:text="@string/example_name_full"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/emailText"
+                android:text="@string/example_email"/>
+
+        </LinearLayout>
+
+        <ImageButton
+            android:id="@+id/refreshButton"
             android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:drawableStart="@drawable/ic_refresh"/>
+            android:layout_height="match_parent"
+            android:background="@color/blue"
+            android:src="@drawable/ic_refresh" />
     </LinearLayout>
 
 

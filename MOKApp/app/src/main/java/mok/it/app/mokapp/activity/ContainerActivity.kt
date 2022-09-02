@@ -57,7 +57,6 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     override fun onResume() {
         super.onResume()
-
         currentUser = FirebaseAuth.getInstance().currentUser!!
         getUser(currentUser.uid)
     }
@@ -65,7 +64,10 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun setHeader(){
         nameText.text = currentUser.displayName
         emailText.text = currentUser.email
-
+        refreshButton.setOnClickListener{
+            currentUser = FirebaseAuth.getInstance().currentUser!!
+            getUser(currentUser.uid)
+        }
         val requestOptions = RequestOptions().transforms(CenterCrop(), RoundedCorners(26))
         Glide
             .with(this)
@@ -89,7 +91,6 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun setMenuVisibility(){
         val navView = findViewById<NavigationView>(R.id.nav_view)
         val menu = navView.menu
-
 
         //MCS Kategóriák láthatósága
         val it = menu.findItem(R.id.it)

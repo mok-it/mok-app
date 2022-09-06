@@ -91,7 +91,10 @@
                     app:layout_constraintTop_toTopOf="@+id/badgeCreator" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/blue"/>
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -109,6 +112,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_weight="1"
+                    android:textStyle="bold"
                     android:text="@string/description" />
 
                 <TextView
@@ -187,7 +191,10 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
         </ScrollView>
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/blue"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -198,6 +205,7 @@
                 android:id="@+id/progress_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textStyle="bold"
                 android:paddingStart="5pt"
                 android:paddingEnd="5pt"
                 android:text="@string/newest_comment" />

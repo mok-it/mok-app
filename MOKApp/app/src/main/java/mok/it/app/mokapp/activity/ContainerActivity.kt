@@ -4,6 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Debug
+import android.os.Handler
+import android.os.Looper
 import android.telecom.Call
 import android.util.Log
 import android.view.Menu
@@ -88,6 +90,9 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         nav_view.setCheckedItem(R.id.nav_list)
     }
 
+    private fun removeSpinner(){
+        spinner.visibility = View.GONE
+    }
     private fun setMenuVisibility(){
         val navView = findViewById<NavigationView>(R.id.nav_view)
         val menu = navView.menu
@@ -189,16 +194,23 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         finish()
     }
 
-    fun getUser(uid: String){
+    private fun getUser(uid: String){
         Firebase.firestore.collection("users").document(uid)
             .get()
             .addOnSuccessListener { document ->
-                Log.d(TAG, "getUser(): got document ${document.id}")
-                if (document != null) {
-                    userModel = document.toObject(User::class.java)!!
+                val userToBe = document.toObject(User::class.java)
+                Log.d(TAG, "getUser(): got document ${userToBe.toString()}")
+                if (userToBe != null) {
+                    userModel = userToBe
                     setHeader()
                     setMenuVisibility()
+                    removeSpinner()
                     initialNavigation()
+                }
+                else {
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        getUser(uid)
+                    }, 1000)
                 }
             }
     }

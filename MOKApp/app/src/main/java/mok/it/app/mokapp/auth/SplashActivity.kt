@@ -18,7 +18,6 @@ class SplashActivity : AppCompatActivity() {
         mAuth = FirebaseAuth.getInstance()
         val user = mAuth.currentUser
 
-
         Handler().postDelayed({
             if(user != null){
                 val contIntent = Intent(this, ContainerActivity::class.java)

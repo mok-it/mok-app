@@ -38,7 +38,6 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
     lateinit var memberUsers: ArrayList<User>
     lateinit var memberComments: ArrayList<Comment>
     var userIsEditor: Boolean = false
-    private lateinit var joinButton: Button
     private var selectedMember = ""
 
     override fun onCreateView(
@@ -56,13 +55,10 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
     }
 
     private fun initLayout() {
-
         members_overlay_button.setOnClickListener {
             openMembersDialog()
         }
-
-        joinButton = this.requireView().findViewById(R.id.join_button) as Button
-        joinButton.setOnClickListener {
+        join_button.setOnClickListener {
             join()
             userRefresher.refreshUser(this)
         }

@@ -49,7 +49,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     companion object {
         var currentUser = FirebaseAuth.getInstance().currentUser!!
         lateinit var userModel: User
-        val TAG = "ContainerActivity"
+        const val TAG = "ContainerActivity"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,20 +105,20 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val gra = menu.findItem(R.id.gra)
 
         if (!userModel.categories.contains("IT"))
-            it?.setVisible(false)
+            it?.isVisible = false
         if (!userModel.categories.contains("Pedagógia"))
-            ped?.setVisible(false)
+            ped?.isVisible = false
         if (!userModel.categories.contains("Feladatsor"))
-            fel?.setVisible(false)
+            fel?.isVisible = false
         if (!userModel.categories.contains("Kreatív"))
-            kre?.setVisible(false)
+            kre?.isVisible = false
         if (!userModel.categories.contains("Grafika"))
-            gra?.setVisible(false)
+            gra?.isVisible = false
 
         //Admin láthatósága
         val adm = menu.findItem(R.id.admin)
         if (!userModel.admin)
-            adm?.setVisible(false)
+            adm?.isVisible = false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -138,10 +138,10 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 supportFragmentManager.findFragmentByTag("DetailsFragment") as DetailsFragment?
             val commentsFragment: CommentsFragment? =
                 supportFragmentManager.findFragmentByTag("CommentsFragment") as CommentsFragment?
-            if (detailsFragment != null && detailsFragment.isVisible()) {
+            if (detailsFragment != null && detailsFragment.isVisible) {
                 supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, previousCategory)).commit()
             }
-            else if (commentsFragment != null && commentsFragment.isVisible()) {
+            else if (commentsFragment != null && commentsFragment.isVisible) {
                 supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(previousBadge, this), "DetailsFragment").commit()
             }
             else{
@@ -156,8 +156,8 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             R.id.nav_completed -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, MyBadgesFragment(this)).commit()
             R.id.nav_profile -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
             R.id.admin -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, AdminFragment()).commit()
-            R.id.nav_hirlevel -> openHirlevel()
-            R.id.nav_feladat -> openFeladat()
+            R.id.nav_hirlevel -> openLink(hirlevelUrl)
+            R.id.nav_feladat -> openLink(feladatUrl)
             R.id.nav_logout -> logOut()
             R.id.it -> changeCategoryFragment("IT")
             R.id.fel -> changeCategoryFragment("Feladatsor")
@@ -170,24 +170,18 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         return true;
     }
 
-    fun changeCategoryFragment(category: String){
+    private fun changeCategoryFragment(category: String){
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, category)).commit()
         previousCategory = category
     }
 
-    fun openHirlevel(){
+    private fun openLink(url: String){
         val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(hirlevelUrl)
+        intent.data = Uri.parse(url)
         startActivity(intent)
     }
 
-    fun openFeladat(){
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(feladatUrl)
-        startActivity(intent)
-    }
-
-    fun logOut(){
+    private fun logOut(){
         FirebaseAuth.getInstance().signOut()
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)

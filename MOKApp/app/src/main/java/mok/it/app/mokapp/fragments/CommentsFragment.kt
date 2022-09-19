@@ -30,7 +30,6 @@ class CommentsFragment(private val badgeId: String) : BaseFireFragment() {
 
     private val commentsId = "comments"
     private val TAG = "CommentsFragment"
-    private lateinit var recyclerView: RecyclerView
     val formatter = SimpleDateFormat("yyyy.MM.dd. hh:mm")
 
     override fun onCreateView(
@@ -104,10 +103,9 @@ class CommentsFragment(private val badgeId: String) : BaseFireFragment() {
             }
         }
 
-        recyclerView = view.findViewById(R.id.comments_recyclerView)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
-        recyclerView.smoothScrollToPosition(adapter.getItemCount());
+        comments_recyclerView.adapter = adapter
+        comments_recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
+        comments_recyclerView.smoothScrollToPosition(adapter.itemCount);
     }
 
     private fun Fragment.hideKeyboard() {

@@ -26,7 +26,6 @@ import java.text.SimpleDateFormat
 open class BaseFireFragment : Fragment() {
     val projectCollectionPath: String = "/projects"
     val userCollectionPath: String = "/users"
-
     val firestore = Firebase.firestore
 
     lateinit var model: Project

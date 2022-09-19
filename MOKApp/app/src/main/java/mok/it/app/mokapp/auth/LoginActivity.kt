@@ -101,6 +101,7 @@ class LoginActivity : AppCompatActivity() {
             }
     }
 
+    //TODO ha változik a profile pic, az új képet elmenteni
     private fun updateProfilePic(){
         val data = hashMapOf(
             "pictureURL" to user.photoUrl,

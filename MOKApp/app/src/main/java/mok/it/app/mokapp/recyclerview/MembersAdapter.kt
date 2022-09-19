@@ -46,7 +46,7 @@ class MembersAdapter(private val dataSet: ArrayList<User>, private val listener:
 
         if (canAccept()){
             viewHolder.itemView.setOnLongClickListener {
-                listener.onMemberClicked(model.documentId)
+                listener.onMemberClicked(model.name)
                 true
             }
         }
@@ -60,7 +60,7 @@ class MembersAdapter(private val dataSet: ArrayList<User>, private val listener:
     }
 
     //ha creator, editor vagy admin a felhasználó
-    fun canAccept(): Boolean{
+    private fun canAccept(): Boolean{
         if (userModel.admin || userModel.isCreator || userIsEditor) return true
         return false
     }

@@ -264,7 +264,7 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
 
     override fun onMemberClicked(userId: String) {
         selectedMember = userId
-        val dialog = BadgeAcceptMemberDialogFragment(this)
+        val dialog = BadgeAcceptMemberDialogFragment(this, selectedMember)
         dialog.show(parentFragmentManager, "AcceptDialog")
     }
 

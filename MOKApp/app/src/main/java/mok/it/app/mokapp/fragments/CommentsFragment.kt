@@ -8,7 +8,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -18,8 +17,6 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_comments.*
 import mok.it.app.mokapp.R
@@ -33,7 +30,6 @@ class CommentsFragment(private val badgeId: String) : BaseFireFragment() {
 
     private val commentsId = "comments"
     private val TAG = "CommentsFragment"
-    private lateinit var recyclerView: RecyclerView
     val formatter = SimpleDateFormat("yyyy.MM.dd. hh:mm")
 
     override fun onCreateView(
@@ -52,7 +48,7 @@ class CommentsFragment(private val badgeId: String) : BaseFireFragment() {
             .setLifecycleOwner(this).build()
         val adapter = object: FirestoreRecyclerAdapter<Comment, CommentViewHolder>(options){
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
-                val view = LayoutInflater.from(this@CommentsFragment.context).inflate(R.layout.comment_card, parent, false)
+                val view = LayoutInflater.from(this@CommentsFragment.context).inflate(R.layout.card_comment, parent, false)
                 return CommentViewHolder(view)
             }
 
@@ -107,10 +103,9 @@ class CommentsFragment(private val badgeId: String) : BaseFireFragment() {
             }
         }
 
-        recyclerView = view.findViewById(R.id.comments_recyclerView)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
-        recyclerView.smoothScrollToPosition(adapter.getItemCount());
+        comments_recyclerView.adapter = adapter
+        comments_recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
+        comments_recyclerView.smoothScrollToPosition(adapter.itemCount);
     }
 
     private fun Fragment.hideKeyboard() {

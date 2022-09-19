@@ -21,7 +21,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
 
@@ -36,57 +36,66 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="100dp"
                     android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/badgeName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="3"
-                            android:gravity="center"
-                            android:minHeight="10pt"
-                            android:text="Korong neve"
-                            android:textSize="24sp" />
+                    <TextView
+                        android:id="@+id/badgeName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="3"
+                        android:gravity="center"
+                        android:minHeight="10pt"
+                        android:text="@string/badge_name"
+                        android:textSize="24sp"
+                        android:textStyle="bold"/>
 
-                        <ProgressBar
-                            android:id="@+id/badgeProgress"
-                            style="?android:attr/progressBarStyleHorizontal"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="center"
-                            android:layout_weight="3"
-                            android:minWidth="200dip"
-                            android:scaleY="8" />
+                    <TextView
+                        android:id="@+id/categoryName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:minHeight="10pt"
+                        android:text="@string/category"
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
 
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:id="@+id/linearLayout3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="3"
-                android:orientation="horizontal">
+                android:layout_weight="3">
 
                 <TextView
                     android:id="@+id/badgeCreator"
-                    android:layout_height="wrap_content"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="korong készítője"
-                    android:textAlignment="center"  />
+                    android:text="@string/badge_creator"
+                    android:textAlignment="center"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/badgeDeadline"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/badgeDeadline"
-                    android:layout_height="wrap_content"
                     android:layout_width="0dp"
-                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="határidő"
-                    android:textAlignment="center" />
-            </LinearLayout>
+                    android:text="@string/deadline"
+                    android:textAlignment="center"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/badgeCreator"
+                    app:layout_constraintTop_toTopOf="@+id/badgeCreator" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/blue"/>
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -99,67 +108,94 @@
                 android:padding="5pt">
 
                 <TextView
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:layout_weight="1"
+                    android:textStyle="bold"
+                    android:text="@string/description" />
+
+                <TextView
                     android:id="@+id/badgeDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="leírás" />
+                    android:text="@string/description" />
 
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_weight="1"
-                    android:orientation="horizontal">
+                <androidx.constraintlayout.widget.ConstraintLayout
+                    android:id="@+id/members"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:layout_marginBottom="8dp">
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/member1"
+                        android:layout_width="@dimen/profile_circle_icon_size"
+                        android:layout_height="@dimen/profile_circle_icon_size"
+                        android:src="@android:drawable/sym_def_app_icon"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/member2"
+                        android:layout_width="@dimen/profile_circle_icon_size"
+                        android:layout_height="@dimen/profile_circle_icon_size"
+                        android:layout_marginStart="@dimen/profile_circle_icon_overlap"
+                        android:src="@android:drawable/sym_def_app_icon"
+                        app:layout_constraintStart_toEndOf="@id/member1"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/member3"
+                        android:layout_width="@dimen/profile_circle_icon_size"
+                        android:layout_height="@dimen/profile_circle_icon_size"
+                        android:layout_marginStart="@dimen/profile_circle_icon_overlap"
+                        android:src="@android:drawable/sym_def_app_icon"
+                        app:layout_constraintStart_toEndOf="@id/member2"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <de.hdodenhof.circleimageview.CircleImageView
+                        android:id="@+id/members_left"
+                        android:layout_width="@dimen/profile_circle_icon_size"
+                        android:layout_height="@dimen/profile_circle_icon_size"
+                        android:layout_marginStart="@dimen/profile_circle_icon_overlap"
+                        android:src="@color/darker_gray"
+                        app:layout_constraintStart_toEndOf="@id/member3"
+                        app:layout_constraintTop_toTopOf="parent" />
+
+                    <TextView
+                        android:id="@+id/members_left_number"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="+8"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/profile_circle_leftover_text_size_1_digit"
+                        app:layout_constraintBottom_toBottomOf="@+id/members_left"
+                        app:layout_constraintEnd_toEndOf="@+id/members_left"
+                        app:layout_constraintStart_toStartOf="@+id/members_left"
+                        app:layout_constraintTop_toTopOf="@+id/members_left" />
 
                     <Button
-                        android:id="@+id/buttonMembers"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Tagok" />
-
-                </LinearLayout>
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content">
-
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        app:layout_constraintTop_toTopOf="parent"
+                        android:id="@+id/members_overlay_button"
+                        android:layout_width="0dp"
+                        android:layout_height="0dp"
+                        android:alpha="0"
+                        android:insetTop="0dp"
+                        android:insetBottom="0dp"
+                        app:layout_constraintBottom_toBottomOf="@+id/member1"
+                        app:layout_constraintEnd_toEndOf="@+id/members_left"
                         app:layout_constraintStart_toStartOf="parent"
-                        android:id="@+id/member1"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp">
-                    </de.hdodenhof.circleimageview.CircleImageView>
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/member1"
-                        android:layout_marginStart="-10dp"
-                        android:id="@+id/member2"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp">
-                    </de.hdodenhof.circleimageview.CircleImageView>
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/member2"
-                        android:layout_marginStart="-10dp"
-                        android:id="@+id/member3"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp">
-                    </de.hdodenhof.circleimageview.CircleImageView>
-                    <de.hdodenhof.circleimageview.CircleImageView
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:layout_constraintStart_toEndOf="@id/member3"
-                        android:layout_marginStart="-10dp"
-                        android:layout_marginTop="8dp"
-                        android:id="@+id/member4"
-                        android:layout_width="25dp"
-                        android:layout_height="25dp"
-                        android:src="@drawable/ic_three_dots">
-                    </de.hdodenhof.circleimageview.CircleImageView>
+                        app:layout_constraintTop_toTopOf="@+id/member1" />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
         </ScrollView>
-
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/blue"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -170,6 +206,7 @@
                 android:id="@+id/progress_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:textStyle="bold"
                 android:paddingStart="5pt"
                 android:paddingEnd="5pt"
                 android:text="@string/newest_comment" />
@@ -179,7 +216,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="5pt"
-                android:text="@string/a_projekt_megalkotasa" />
+                android:text="@string/create_project" />
         </LinearLayout>
 
         <LinearLayout
@@ -188,12 +225,24 @@
             android:layout_weight="1"
             android:orientation="vertical">
 
-            <Button
-                android:id="@+id/join_button"
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:insetBottom="0dp"
-                android:text="CSATLAKOZÁS" />
+                android:layout_height="match_parent">
+
+                <Button
+                    android:id="@+id/join_button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginEnd="16dp"
+                    android:insetBottom="0dp"
+                    android:text="@string/join"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

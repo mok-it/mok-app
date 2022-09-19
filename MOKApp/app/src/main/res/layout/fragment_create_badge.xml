@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true">
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -29,7 +34,7 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="@+id/textView3"
             app:layout_constraintTop_toTopOf="parent"
-            app:tint="@android:color/holo_red_dark" />
+            app:tint="@color/red_dark" />
 
         <TextView
             android:id="@+id/textView3"
@@ -101,13 +106,13 @@
                 android:id="@+id/icon_select_card"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:background="@android:color/darker_gray"
+                android:background="@color/darker_gray"
                 app:cardCornerRadius="@dimen/design_corner_radius">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/browser_actions_bg_grey">
+                    android:background="@color/lighter_gray">
 
                     <TextView
                         android:id="@+id/textView4"
@@ -126,7 +131,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
-                        android:contentDescription="exitButton"
+                        android:contentDescription="@string/project_icon"
                         android:scaleType="fitCenter"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
@@ -152,7 +157,7 @@
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/browser_actions_bg_grey">
+                    android:background="@color/lighter_gray">
 
                     <TextView
                         android:id="@+id/textView5"
@@ -162,7 +167,7 @@
                         android:layout_marginTop="8dp"
                         android:layout_marginEnd="8dp"
                         android:layout_marginBottom="8dp"
-                        android:text="Válassz kezelőt"
+                        android:text="@string/choose_manager"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
                         app:layout_constraintStart_toStartOf="parent"
@@ -180,7 +185,7 @@
                     android:id="@+id/create_button"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:backgroundTint="@color/szumma_darkblue"
+                    android:backgroundTint="@color/blue_dark"
                     android:text="@string/create"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -192,3 +197,5 @@
     </androidx.core.widget.NestedScrollView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

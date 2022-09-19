@@ -27,7 +27,7 @@ class MembersAdapter(private val dataSet: ArrayList<User>, private val listener:
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
-                .inflate(R.layout.member_card, viewGroup, false)
+                .inflate(R.layout.card_member, viewGroup, false)
         return ViewHolder(view)
     }
 
@@ -46,7 +46,7 @@ class MembersAdapter(private val dataSet: ArrayList<User>, private val listener:
 
         if (canAccept()){
             viewHolder.itemView.setOnLongClickListener {
-                listener.onMemberClicked(model.documentId)
+                listener.onMemberClicked(model.name)
                 true
             }
         }
@@ -60,7 +60,7 @@ class MembersAdapter(private val dataSet: ArrayList<User>, private val listener:
     }
 
     //ha creator, editor vagy admin a felhasználó
-    fun canAccept(): Boolean{
+    private fun canAccept(): Boolean{
         if (userModel.admin || userModel.isCreator || userIsEditor) return true
         return false
     }

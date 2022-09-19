@@ -9,10 +9,9 @@
     android:layout_marginTop="12dp"
     android:layout_marginRight="16dp"
     android:foreground="?selectableItemBackground"
-    card_view:cardBackgroundColor="@color/szumma_darkblue"
-    card_view:cardCornerRadius="8dp"
-    card_view:contentPadding="10dp"
-    >
+    card_view:cardBackgroundColor="@color/blue_dark"
+    card_view:cardCornerRadius="4dp"
+    card_view:contentPadding="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -23,7 +22,11 @@
             android:id="@+id/comment_icon"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:layout_marginStart="4dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="4dp"
             android:scaleType="fitCenter"
+            card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent"
             tools:srcCompat="@tools:sample/avatars" />

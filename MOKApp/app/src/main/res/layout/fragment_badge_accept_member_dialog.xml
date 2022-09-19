@@ -10,32 +10,29 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Teljesítette?"
-        android:textSize="30sp"
         android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toTopOf="@+id/textView2"
+        android:text="@string/did_they_complete"
+        android:textSize="30sp"
+        app:layout_constraintBottom_toTopOf="@+id/nameText"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-    </TextView>
+        app:layout_constraintStart_toStartOf="parent" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/nameText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Zalán"
-        android:textSize="16sp"
         android:layout_marginBottom="18dp"
+        android:text="@string/example_name_first"
+        android:textSize="16sp"
         app:layout_constraintBottom_toTopOf="@+id/linearLayout2"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent">
-    </TextView>
+        app:layout_constraintStart_toStartOf="parent" />
 
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/linearLayout2"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:weightSum="1.0"
+        android:layout_marginBottom="8dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent">
@@ -44,15 +41,21 @@
             android:id="@+id/OkButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:text="Ok" />
+            android:text="@string/ok"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/CancelButton"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <Button
             android:id="@+id/CancelButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight=".5"
-            android:text="Mégsem" />
-    </LinearLayout>
+            android:text="@string/cancel"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toEndOf="@+id/OkButton" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

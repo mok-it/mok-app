@@ -4,6 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Debug
+import android.os.Handler
+import android.os.Looper
 import android.telecom.Call
 import android.util.Log
 import android.view.Menu
@@ -30,11 +32,13 @@ import kotlinx.android.synthetic.main.nav_header.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.auth.LoginActivity
 import mok.it.app.mokapp.fragments.*
+import mok.it.app.mokapp.interfaces.UserRefreshedListener
+import mok.it.app.mokapp.interfaces.UserRefresher
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 
 
-class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CategoryFragment.ItemClickedListener  {
+class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CategoryFragment.ItemClickedListener, UserRefresher{
 
     val firestore = Firebase.firestore;
     var hirlevelUrl = "https://drive.google.com/drive/folders/1KJX4tPXiFGN1OTNMZkBqHGswRTVfLPsQ?usp=sharing"
@@ -45,6 +49,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     companion object {
         var currentUser = FirebaseAuth.getInstance().currentUser!!
         lateinit var userModel: User
+        const val TAG = "ContainerActivity"
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,7 +59,6 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     override fun onResume() {
         super.onResume()
-
         currentUser = FirebaseAuth.getInstance().currentUser!!
         getUser(currentUser.uid)
     }
@@ -62,7 +66,10 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun setHeader(){
         nameText.text = currentUser.displayName
         emailText.text = currentUser.email
-
+        refreshButton.setOnClickListener{
+            currentUser = FirebaseAuth.getInstance().currentUser!!
+            getUser(currentUser.uid)
+        }
         val requestOptions = RequestOptions().transforms(CenterCrop(), RoundedCorners(26))
         Glide
             .with(this)
@@ -83,10 +90,12 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         nav_view.setCheckedItem(R.id.nav_list)
     }
 
+    private fun removeSpinner(){
+        spinner.visibility = View.GONE
+    }
     private fun setMenuVisibility(){
         val navView = findViewById<NavigationView>(R.id.nav_view)
         val menu = navView.menu
-
 
         //MCS Kategóriák láthatósága
         val it = menu.findItem(R.id.it)
@@ -96,23 +105,20 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val gra = menu.findItem(R.id.gra)
 
         if (!userModel.categories.contains("IT"))
-            it?.setVisible(false)
+            it?.isVisible = false
         if (!userModel.categories.contains("Pedagógia"))
-            ped?.setVisible(false)
+            ped?.isVisible = false
         if (!userModel.categories.contains("Feladatsor"))
-            fel?.setVisible(false)
+            fel?.isVisible = false
         if (!userModel.categories.contains("Kreatív"))
-            kre?.setVisible(false)
+            kre?.isVisible = false
         if (!userModel.categories.contains("Grafika"))
-            gra?.setVisible(false)
-
+            gra?.isVisible = false
 
         //Admin láthatósága
         val adm = menu.findItem(R.id.admin)
         if (!userModel.admin)
-            adm?.setVisible(false)
-
-
+            adm?.isVisible = false
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -132,11 +138,11 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 supportFragmentManager.findFragmentByTag("DetailsFragment") as DetailsFragment?
             val commentsFragment: CommentsFragment? =
                 supportFragmentManager.findFragmentByTag("CommentsFragment") as CommentsFragment?
-            if (detailsFragment != null && detailsFragment.isVisible()) {
+            if (detailsFragment != null && detailsFragment.isVisible) {
                 supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, previousCategory)).commit()
             }
-            else if (commentsFragment != null && commentsFragment.isVisible()) {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(previousBadge), "DetailsFragment").commit()
+            else if (commentsFragment != null && commentsFragment.isVisible) {
+                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(previousBadge, this), "DetailsFragment").commit()
             }
             else{
                 super.onBackPressed()
@@ -147,11 +153,11 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
             R.id.nav_list -> changeCategoryFragment("Univerzális")
-            R.id.nav_completed -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, MyBadgesFragment()).commit()
+            R.id.nav_completed -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, MyBadgesFragment(this)).commit()
             R.id.nav_profile -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
             R.id.admin -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, AdminFragment()).commit()
-            R.id.nav_hirlevel -> openHirlevel()
-            R.id.nav_feladat -> openFeladat()
+            R.id.nav_hirlevel -> openLink(hirlevelUrl)
+            R.id.nav_feladat -> openLink(feladatUrl)
             R.id.nav_logout -> logOut()
             R.id.it -> changeCategoryFragment("IT")
             R.id.fel -> changeCategoryFragment("Feladatsor")
@@ -164,46 +170,62 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         return true;
     }
 
-    fun changeCategoryFragment(category: String){
+    private fun changeCategoryFragment(category: String){
         supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, category)).commit()
         previousCategory = category
     }
 
-    fun openHirlevel(){
+    private fun openLink(url: String){
         val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(hirlevelUrl)
+        intent.data = Uri.parse(url)
         startActivity(intent)
     }
 
-    fun openFeladat(){
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(feladatUrl)
-        startActivity(intent)
-    }
-
-    fun logOut(){
+    private fun logOut(){
         FirebaseAuth.getInstance().signOut()
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
     }
 
-    fun getUser(uid: String) {
+    private fun getUser(uid: String){
         Firebase.firestore.collection("users").document(uid)
+            .get()
+            .addOnSuccessListener { document ->
+                val userToBe = document.toObject(User::class.java)
+                Log.d(TAG, "getUser(): got document ${userToBe.toString()}")
+                if (userToBe != null) {
+                    userModel = userToBe
+                    setHeader()
+                    setMenuVisibility()
+                    removeSpinner()
+                    initialNavigation()
+                }
+                else {
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        getUser(uid)
+                    }, 1000)
+                }
+            }
+    }
+
+    override fun onItemClicked(badgeId: String, category: String) {
+        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(badgeId, this), "DetailsFragment").commit()
+        previousCategory = category
+        previousBadge = badgeId
+    }
+
+    override fun refreshUser(listener: UserRefreshedListener){
+        currentUser = FirebaseAuth.getInstance().currentUser!!
+        Firebase.firestore.collection("users").document(currentUser.uid)
             .get()
             .addOnSuccessListener { document ->
                 if (document != null) {
                     userModel = document.toObject(User::class.java)!!
                     setHeader()
                     setMenuVisibility()
-                    initialNavigation()
+                    listener.userRefreshed()
                 }
             }
-    }
-
-    override fun onItemClicked(badgeId: String, category: String) {
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(badgeId), "DetailsFragment").commit()
-        previousCategory = category
-        previousBadge = badgeId
     }
 }

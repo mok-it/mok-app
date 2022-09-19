@@ -6,25 +6,18 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_list.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.model.Project
-import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
 class CategoryFragment(val listener: ItemClickedListener, val category: String) : BaseFireFragment() {
-
-    private lateinit var recyclerView: RecyclerView
-    //lateinit var userModel: User
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -65,7 +58,7 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String) 
         }
     }
 
-    fun initRecyclerView(){
+    private fun initRecyclerView(){
         val query = firestore.collection(projectCollectionPath).whereEqualTo("category", category)
         val options = FirestoreRecyclerOptions.Builder<Project>().setQuery(query, Project::class.java)
             .setLifecycleOwner(this).build()
@@ -97,27 +90,13 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String) 
             }
         }
 
-        recyclerView = requireView().findViewById(R.id.recyclerView)
         recyclerView.adapter = adapter
-        recyclerView.layoutManager =
-            WrapContentLinearLayoutManager(this.context)
-
+        recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
         initAddButton()
     }
 
-    fun getUser(uid: String) {
-        Firebase.firestore.collection("users").document(uid)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    userModel = document.toObject(User::class.java)!!
-                    initRecyclerView()
-                }
-            }
-    }
-
     private fun initAddButton(){
-        if (!userModel.isCreator) {
+        if (!userModel.isCreator && !userModel.admin) {
             addBadgeButton.visibility = View.INVISIBLE
         }
         else{

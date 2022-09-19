@@ -21,7 +21,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="100dp"
                 android:layout_weight="1"
                 android:orientation="horizontal">
 
@@ -36,28 +36,29 @@
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
+                    android:layout_height="100dp"
                     android:orientation="vertical">
 
-                        <TextView
-                            android:id="@+id/badgeName"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="3"
-                            android:gravity="center"
-                            android:minHeight="10pt"
-                            android:text="@string/badge_name"
-                            android:textSize="24sp" />
-
-                    <ProgressBar
-                        android:id="@+id/badgeProgress"
-                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
-                        android:layout_width="wrap_content"
+                    <TextView
+                        android:id="@+id/badgeName"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_gravity="center"
                         android:layout_weight="3"
-                        android:minWidth="200dip"
-                        android:scaleY="5" />
+                        android:gravity="center"
+                        android:minHeight="10pt"
+                        android:text="@string/badge_name"
+                        android:textSize="24sp"
+                        android:textStyle="bold"/>
+
+                    <TextView
+                        android:id="@+id/categoryName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:minHeight="10pt"
+                        android:text="@string/category"
+                        android:textSize="14sp" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -135,7 +136,7 @@
                         android:layout_height="@dimen/profile_circle_icon_size"
                         android:src="@android:drawable/sym_def_app_icon"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"></de.hdodenhof.circleimageview.CircleImageView>
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/member2"
@@ -144,7 +145,7 @@
                         android:layout_marginStart="@dimen/profile_circle_icon_overlap"
                         android:src="@android:drawable/sym_def_app_icon"
                         app:layout_constraintStart_toEndOf="@id/member1"
-                        app:layout_constraintTop_toTopOf="parent"></de.hdodenhof.circleimageview.CircleImageView>
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/member3"
@@ -153,7 +154,7 @@
                         android:layout_marginStart="@dimen/profile_circle_icon_overlap"
                         android:src="@android:drawable/sym_def_app_icon"
                         app:layout_constraintStart_toEndOf="@id/member2"
-                        app:layout_constraintTop_toTopOf="parent"></de.hdodenhof.circleimageview.CircleImageView>
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <de.hdodenhof.circleimageview.CircleImageView
                         android:id="@+id/members_left"
@@ -162,7 +163,7 @@
                         android:layout_marginStart="@dimen/profile_circle_icon_overlap"
                         android:src="@color/darker_gray"
                         app:layout_constraintStart_toEndOf="@id/member3"
-                        app:layout_constraintTop_toTopOf="parent"></de.hdodenhof.circleimageview.CircleImageView>
+                        app:layout_constraintTop_toTopOf="parent" />
 
                     <TextView
                         android:id="@+id/members_left_number"

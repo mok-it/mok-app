@@ -73,6 +73,7 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
                 badgeModel = document.toObject(Project::class.java)!!
 
                 badgeName.text = document.get("name") as String
+                categoryName.text = getString(R.string.category) + ": " + document.get("category") as String
                 badgeDescription.text = document.get("description") as String
                 firestore.collection(userCollectionPath).document(document.get("creator") as String)
                     .get().addOnSuccessListener { creatorDoc ->
@@ -83,7 +84,7 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
                 val formatter = SimpleDateFormat("yyyy.MM.dd")
                 badgeDeadline.text =
                     formatter.format((document.get("deadline") as Timestamp).toDate())
-                badgeProgress.progress = (document.get("overall_progress") as Number).toInt()
+                //badgeProgress.progress = (document.get("overall_progress") as Number).toInt()
                 Picasso.get().load(document.get("icon") as String).into(avatar_imagebutton)
 
                 val editors = document.get("editors") as List<String>

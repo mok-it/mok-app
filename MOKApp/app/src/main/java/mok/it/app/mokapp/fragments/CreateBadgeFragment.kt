@@ -134,7 +134,6 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
         Log.d("Create creator", userModel.uid)
         Log.d("Create category", category)
         val deadline = Date(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
-        val deadl = Date()
         Log.d("Create date", deadline.toString())
         Log.d("Create editors", selectedMembers.toString())
 
@@ -250,7 +249,7 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
 
     private fun initEditorsDialog(){
         val builder = AlertDialog.Builder(context)
-        builder.setTitle("Válassz kezelőt")
+        builder.setTitle("Válassz kezelőt!")
         builder.setMultiChoiceItems(names, checkedNames){dialog, which, isChecked ->
             checkedNames[which] = isChecked
         }

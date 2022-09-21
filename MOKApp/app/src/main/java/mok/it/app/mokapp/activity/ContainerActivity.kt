@@ -38,7 +38,7 @@ import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 
 
-class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CategoryFragment.ItemClickedListener, UserRefresher{
+class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CategoryFragment.ItemClickedListener, UserRefresher, UserRefreshedListener{
 
     val firestore = Firebase.firestore;
     var hirlevelUrl = "https://drive.google.com/drive/folders/1KJX4tPXiFGN1OTNMZkBqHGswRTVfLPsQ?usp=sharing"
@@ -104,16 +104,11 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val kre = menu.findItem(R.id.kre)
         val gra = menu.findItem(R.id.gra)
 
-        if (!userModel.categories.contains("IT"))
-            it?.isVisible = false
-        if (!userModel.categories.contains("Pedagógia"))
-            ped?.isVisible = false
-        if (!userModel.categories.contains("Feladatsor"))
-            fel?.isVisible = false
-        if (!userModel.categories.contains("Kreatív"))
-            kre?.isVisible = false
-        if (!userModel.categories.contains("Grafika"))
-            gra?.isVisible = false
+        it?.isVisible = userModel.categories.contains("IT")
+        ped?.isVisible = userModel.categories.contains("Pedagógia")
+        fel?.isVisible = userModel.categories.contains("Feladatsor")
+        kre?.isVisible = userModel.categories.contains("Kreatív")
+        gra?.isVisible = userModel.categories.contains("Grafika")
 
         //Admin láthatósága
         val adm = menu.findItem(R.id.admin)
@@ -154,7 +149,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         when (item.itemId){
             R.id.nav_list -> changeCategoryFragment("Univerzális")
             R.id.nav_completed -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, MyBadgesFragment(this)).commit()
-            R.id.nav_profile -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
+            R.id.nav_profile -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment(this)).commit()
             R.id.admin -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, AdminFragment()).commit()
             R.id.nav_hirlevel -> openLink(hirlevelUrl)
             R.id.nav_feladat -> openLink(feladatUrl)
@@ -227,5 +222,10 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     listener.userRefreshed()
                 }
             }
+    }
+
+    override fun userRefreshed() {
+        ///külön getUser-t írni erre az esetre várakozás és initialNav nélkül
+        getUser(currentUser.uid)
     }
 }

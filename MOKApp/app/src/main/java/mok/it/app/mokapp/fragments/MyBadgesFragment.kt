@@ -19,7 +19,7 @@ import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.BadgeCategoriesAdapter
 import mok.it.app.mokapp.recyclerview.BadgesAdapter
 
-class MyBadgesFragment(val listener: CategoryFragment.ItemClickedListener) : BaseFireFragment(), BadgesAdapter.BadgeClickedListener {
+class MyBadgesFragment(private val listener: CategoryFragment.ItemClickedListener) : BaseFireFragment(), BadgesAdapter.BadgeClickedListener {
     private lateinit var recyclerView: RecyclerView
     lateinit var collectedBadges: ArrayList<Project>
 

@@ -6,14 +6,23 @@
     android:layout_height="match_parent">
 
     <TextView
+        android:id="@+id/categoryTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:text="@string/profile">
-
+        android:text="Munkacsoportjaim:"
+        android:textSize="30sp">
     </TextView>
+
+    <Button
+        android:id="@+id/modifyButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Módosítás"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/categoryTextView">
+
+    </Button>
     
 </androidx.constraintlayout.widget.ConstraintLayout>

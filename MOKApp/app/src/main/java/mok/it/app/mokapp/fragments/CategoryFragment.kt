@@ -6,10 +6,12 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_list.*
+import kotlinx.android.synthetic.main.project_card.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
@@ -76,8 +78,10 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String) 
                 val tvName: TextView = holder.itemView.findViewById(R.id.projectName)
                 val tvDesc: TextView = holder.itemView.findViewById(R.id.projectDescription)
                 val ivImg: ImageView = holder.itemView.findViewById(R.id.projectIcon)
+                val tvMandatory: TextView = holder.itemView.findViewById(R.id.mandatoryTextView)
                 tvName.text = model.name
                 tvDesc.text = model.description
+                tvMandatory.isVisible = model.mandatory
                 loadImage(ivImg, model.icon)
 
                 if (userModel.collectedBadges.contains(model.id)){

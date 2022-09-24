@@ -146,7 +146,9 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
             "editors" to selectedMembers,
             "icon" to "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/badge.webp?alt=media&token=149940c1-917c-4517-af1f-554a362f80b6",
             "name" to nameTIET.text.toString(),
-            "overall_progress" to 0
+            "overall_progress" to 0,
+            "mandatory" to false
+
         )
         firestore.collection("/projects")
             .add(newBadge)

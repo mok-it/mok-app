@@ -62,6 +62,7 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
             join()
             userRefresher.refreshUser(this)
         }
+        join_button.visibility = View.GONE
         badgeComments.setOnClickListener {
             parentFragmentManager.beginTransaction()
                 .replace(R.id.fragment_container, CommentsFragment(badgeId), "CommentsFragment")
@@ -273,6 +274,7 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
     }
 
     private fun changeVisibilities(){
+        join_button.visibility = View.VISIBLE
         if (userModel.collectedBadges.contains(badgeModel.id))
             join_button.visibility = View.GONE
         else if (userModel.joinedBadges.contains(badgeModel.id))

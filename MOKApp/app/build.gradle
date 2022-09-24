@@ -79,6 +79,8 @@ dependencies {
     //Circle imageView
     implementation 'de.hdodenhof:circleimageview:3.1.0'
 
+    //Material
+    implementation 'com.google.android.material:material:1.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

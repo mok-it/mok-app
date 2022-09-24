@@ -45,4 +45,5 @@
     <string name="example_email">minta.janos@pelda.hu</string>
     <string name="category">Kategória</string>
     <string name="no_collected_badge_text">A kategóriában még nincs megszerzett badge</string>
+    <string name="mandatory">Kötelező</string>
 </resources>

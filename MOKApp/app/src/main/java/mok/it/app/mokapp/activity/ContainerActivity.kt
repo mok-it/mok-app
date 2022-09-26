@@ -225,7 +225,14 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     override fun userRefreshed() {
-        ///külön getUser-t írni erre az esetre várakozás és initialNav nélkül
-        getUser(currentUser.uid)
+        Firebase.firestore.collection("users").document(currentUser.uid)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    userModel = document.toObject(User::class.java)!!
+                    setHeader()
+                    setMenuVisibility()
+                }
+            }
     }
 }

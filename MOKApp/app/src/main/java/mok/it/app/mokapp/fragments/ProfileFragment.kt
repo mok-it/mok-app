@@ -7,25 +7,16 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlinx.android.synthetic.main.fragment_profile.recyclerView
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.activity.ContainerActivity
-import mok.it.app.mokapp.activity.ContainerActivity.Companion.TAG
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
 import mok.it.app.mokapp.interfaces.UserRefreshedListener
 import mok.it.app.mokapp.model.Category
-import mok.it.app.mokapp.model.Project
-import mok.it.app.mokapp.model.User
-import mok.it.app.mokapp.recyclerview.BadgesAdapter
-import mok.it.app.mokapp.recyclerview.MembersAdapter
+import mok.it.app.mokapp.recyclerview.CategoryNameAdapter
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
 class ProfileFragment(private val listener: UserRefreshedListener) : Fragment() {
@@ -47,6 +38,7 @@ class ProfileFragment(private val listener: UserRefreshedListener) : Fragment() 
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        initRecyclerView()
         modifyButton.setOnClickListener {
             getCategories()
         }
@@ -103,5 +95,14 @@ class ProfileFragment(private val listener: UserRefreshedListener) : Fragment() 
         val userRef = Firebase.firestore.collection("users").document(ContainerActivity.currentUser.uid)
         userRef.update("categories", selectedCategories)
         listener.userRefreshed()
+
+        //TODO ez csúnya, összekötni a Firestore-ból visszaérkező adattal?
+        recyclerView.adapter = CategoryNameAdapter(selectedCategories)
+    }
+
+    private fun initRecyclerView(){
+        recyclerView.adapter = CategoryNameAdapter(userModel.categories as ArrayList<String>)
+        recyclerView.layoutManager =
+            WrapContentLinearLayoutManager(this.context)
     }
 }

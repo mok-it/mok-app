@@ -46,4 +46,6 @@
     <string name="category">Kategória</string>
     <string name="no_collected_badge_text">A kategóriában még nincs megszerzett badge</string>
     <string name="mandatory">Kötelező</string>
+    <string name="modify">Módosítás</string>
+    <string name="my_categories">Munkacsoportjaim:</string>
 </resources>

@@ -46,7 +46,7 @@ class MembersAdapter(private val dataSet: ArrayList<User>, private val listener:
 
         if (canAccept()){
             viewHolder.itemView.setOnLongClickListener {
-                listener.onMemberClicked(model.name)
+                listener.onMemberClicked(model)
                 true
             }
         }
@@ -66,6 +66,6 @@ class MembersAdapter(private val dataSet: ArrayList<User>, private val listener:
     }
 
     interface MemberClickedListener{
-        fun onMemberClicked(userId: String)
+        fun onMemberClicked(userId: User)
     }
 }

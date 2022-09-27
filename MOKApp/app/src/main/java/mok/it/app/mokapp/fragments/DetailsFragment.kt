@@ -38,7 +38,7 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
     lateinit var memberUsers: ArrayList<User>
     lateinit var memberComments: ArrayList<Comment>
     var userIsEditor: Boolean = false
-    private var selectedMember = ""
+    private var selectedMemberUID = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -179,9 +179,7 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
      */
     private fun initExtraMemberCounter(numOfExtraMembers: Int) {
 
-        val strlen = "$numOfExtraMembers".length
-
-        val textSizeResource = when (strlen) {
+        val textSizeResource = when ("$numOfExtraMembers".length) {
             1 -> R.dimen.profile_circle_leftover_text_size_1_digit
             2 -> R.dimen.profile_circle_leftover_text_size_2_digit
             3 -> R.dimen.profile_circle_leftover_text_size_3_digit
@@ -247,8 +245,9 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
 
     private fun completed(userId: String) {
         Log.d("DetailsFragment", "completed")
+        Log.d("DetailsFragment", "BadgeID: " + badgeId)
         val userRef = firestore.collection("users").document(userId)
-        userRef.update("joinedBadges", FieldValue.arrayRemove(badgeId))
+        userRef.update("joinedBadges", FieldValue.arrayRemove(badgeId)).addOnSuccessListener { Log.d("DetailsFragment", badgeId + " removed from " + userId) }.addOnFailureListener{e -> Log.d("DetailsFragment", "wtf " + e)}
         userRef.update("collectedBadges", FieldValue.arrayUnion(badgeId))
         val badgeRef = firestore.collection("projects").document(badgeId)
         badgeRef.update("members", FieldValue.arrayRemove(userId))
@@ -263,14 +262,14 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
         dialog.show(parentFragmentManager, "MembersDialog")
     }
 
-    override fun onMemberClicked(userId: String) {
-        selectedMember = userId
-        val dialog = BadgeAcceptMemberDialogFragment(this, selectedMember)
+    override fun onMemberClicked(user: User) {
+        selectedMemberUID = user.uid
+        val dialog = BadgeAcceptMemberDialogFragment(this, user.name)
         dialog.show(parentFragmentManager, "AcceptDialog")
     }
 
     override fun onSuccess() {
-        completed(selectedMember)
+        completed(selectedMemberUID)
     }
 
     private fun changeVisibilities(){

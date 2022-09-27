@@ -3,16 +3,11 @@ package mok.it.app.mokapp.activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.os.Debug
 import android.os.Handler
 import android.os.Looper
-import android.telecom.Call
 import android.util.Log
-import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.ActionBarDrawerToggle
@@ -24,7 +19,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_container.*
@@ -34,7 +28,6 @@ import mok.it.app.mokapp.auth.LoginActivity
 import mok.it.app.mokapp.fragments.*
 import mok.it.app.mokapp.interfaces.UserRefreshedListener
 import mok.it.app.mokapp.interfaces.UserRefresher
-import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 
 
@@ -93,6 +86,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun removeSpinner(){
         spinner.visibility = View.GONE
     }
+
     private fun setMenuVisibility(){
         val navView = findViewById<NavigationView>(R.id.nav_view)
         val menu = navView.menu
@@ -103,7 +97,6 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val fel = menu.findItem(R.id.fel)
         val kre = menu.findItem(R.id.kre)
         val gra = menu.findItem(R.id.gra)
-
         it?.isVisible = userModel.categories.contains("IT")
         ped?.isVisible = userModel.categories.contains("Pedagógia")
         fel?.isVisible = userModel.categories.contains("Feladatsor")
@@ -112,8 +105,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
         //Admin láthatósága
         val adm = menu.findItem(R.id.admin)
-        if (!userModel.admin)
-            adm?.isVisible = false
+        adm?.isVisible = userModel.admin
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

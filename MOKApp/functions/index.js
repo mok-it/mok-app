@@ -175,7 +175,7 @@ exports.uploadNewBadge = functions.https.onRequest((req, res) => {
   //ebből kötelező: name, description, deadline, creator
   //a többi opcionális
   const defaultIcon =
-    "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/no-image-icon.png?alt=media&token=6cdc86db-cd93-402c-af09-f98748b5a1b6";
+    "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef";
   db.collection("projects").add({
     name: req.body.name,
     description: req.body.description,

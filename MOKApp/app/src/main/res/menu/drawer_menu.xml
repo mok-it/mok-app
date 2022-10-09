@@ -52,7 +52,7 @@
                 android:title="Youtube"/>
         </menu>
     </item>
-    <item android:title="Alap dokumentumok">
+    <item android:title="Alapdokumentumok">
         <menu>
             <item android:id="@+id/nav_alapszab"
                 android:icon="@drawable/ic_link"

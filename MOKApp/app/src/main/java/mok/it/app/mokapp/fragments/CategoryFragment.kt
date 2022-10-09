@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_list.*
 import kotlinx.android.synthetic.main.project_card.*
@@ -61,7 +62,7 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String) 
     }
 
     private fun initRecyclerView(){
-        val query = firestore.collection(projectCollectionPath).whereEqualTo("category", category)
+        val query = firestore.collection(projectCollectionPath).whereEqualTo("category", category).orderBy("created", Query.Direction.DESCENDING)
         val options = FirestoreRecyclerOptions.Builder<Project>().setQuery(query, Project::class.java)
             .setLifecycleOwner(this).build()
         val adapter = object: FirestoreRecyclerAdapter<Project, ProjectViewHolder>(options){

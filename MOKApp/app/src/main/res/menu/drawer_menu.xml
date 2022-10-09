@@ -33,21 +33,68 @@
             android:title="Admin"/>
     </group>
 
-    <item android:title="További felületek">
+    <item android:title="Linkek">
         <menu>
-            <item android:id="@+id/nav_mail"
-                android:icon="@drawable/ic_mail"
-                android:title="Küldj üzenetet!"/>
             <item android:id="@+id/nav_hirlevel"
                 android:icon="@drawable/ic_link"
                 android:title="Hírlevelek"/>
+            <item android:id="@+id/nav_konyvtar"
+                android:icon="@drawable/ic_link"
+                android:title="Könyvtár"/>
+            <item android:id="@+id/nav_program"
+                android:icon="@drawable/ic_link"
+                android:title="Programadatbázis"/>
+            <item android:id="@+id/nav_otlet"
+                android:icon="@drawable/ic_link"
+                android:title="Ötletláda"/>
+            <item android:id="@+id/nav_youtube"
+                android:icon="@drawable/ic_link"
+                android:title="Youtube"/>
+        </menu>
+    </item>
+    <item android:title="Alap dokumentumok">
+        <menu>
+            <item android:id="@+id/nav_alapszab"
+                android:icon="@drawable/ic_link"
+                android:title="Alapszabály"/>
+            <item android:id="@+id/nav_szmsz"
+                android:icon="@drawable/ic_link"
+                android:title="SZMSZ"/>
+            <item android:id="@+id/nav_etikai"
+                android:icon="@drawable/ic_link"
+                android:title="Etikai kódex"/>
+            <item android:id="@+id/nav_afp"
+                android:icon="@drawable/ic_link"
+                android:title="AFP"/>
+        </menu>
+    </item>
+    <item android:title="Kisokosok">
+        <menu>
+            <item android:id="@+id/nav_mentor"
+                android:icon="@drawable/ic_link"
+                android:title="Mentor"/>
             <item android:id="@+id/nav_feladat"
                 android:icon="@drawable/ic_link"
                 android:title="Feladatbeküldés"/>
+            <item android:id="@+id/nav_nat"
+                android:icon="@drawable/ic_link"
+                android:title="NAT"/>
+        </menu>
+    </item>
+    <item android:title="Nagykönyvek">
+        <menu>
+            <item android:id="@+id/nav_tabor"
+                android:icon="@drawable/ic_link"
+                android:title="Tábori"/>
+            <item android:id="@+id/nav_verseny"
+                android:icon="@drawable/ic_link"
+                android:title="Verseny"/>
+            <item android:id="@+id/nav_logirintus"
+                android:icon="@drawable/ic_link"
+                android:title="Logirintus"/>
             <item android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_logout"
                 android:title="Kijelentkezés"/>
         </menu>
-
     </item>
 </menu>

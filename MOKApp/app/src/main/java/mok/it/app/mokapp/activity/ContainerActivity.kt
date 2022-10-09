@@ -34,8 +34,29 @@ import mok.it.app.mokapp.model.User
 class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CategoryFragment.ItemClickedListener, UserRefresher, UserRefreshedListener{
 
     val firestore = Firebase.firestore;
+    //linkek
     var hirlevelUrl = "https://drive.google.com/drive/folders/1KJX4tPXiFGN1OTNMZkBqHGswRTVfLPsQ?usp=sharing"
-    var feladatUrl = "https://docs.google.com/forms/d/e/1FAIpQLSf4-Pje-gPDa1mVTsVgI2qw37e5u9eJMK1bN3xolIQCJWPHmA/viewform"
+    var konyvtarUrl = "https://docs.google.com/spreadsheets/d/1T3FX6U1sT4TJwREr07iWKW9WnszEcQ-3r0oemRbengs/edit?usp=sharing"
+    var programUrl = "https://drive.google.com/drive/folders/1EpMYa0WS_Eb35zwb3gH8Fa3jWvMOG1sU?usp=sharing"
+    var otletUrl = "https://forms.gle/BPy6PfyU9Cu94h688"
+    var youtubeUrl = "https://www.youtube.com/channel/UCdbgdsdFDIwXVtAqC_i08Bw/playlistsPro"
+
+    //alap doksik
+    var alapszabUrl = "https://drive.google.com/file/d/1FDcbFJmJGQDOWCV0vmO-gNHzocbkOW3_/view"
+    var szmszUrl = "https://drive.google.com/file/d/1cRTZDFpM98oj_fibKKytvnAZcSc3qSc5/view"
+    var etikaiUrl = "https://drive.google.com/file/d/1YMVjOhzQzyBTLON-lvZ3v8633CMHmrHg/view"
+    var afpUrl = "https://drive.google.com/file/d/1EXcD1wvQ_CrcHdoNZA9GL2djlzje86x8/view"
+
+    //kisokosok
+    var mentorUrl = "https://drive.google.com/drive/folders/1osdINz0MRLNqlnWMBoY415QaSRh-NhGq?usp=sharing"
+    var feladatUrl = "https://docs.google.com/document/d/1l-Z1oVcufQWXo115jamMtOtT-g6LW_C5AfkU2CzLdTQ/edit?usp=sharing"
+    var natUrl = "https://docs.google.com/spreadsheets/d/11MGsOTMfXXHUeLv9nOKQCFpwoySfWgEK/edit?usp=sharing&ouid=106667379271700078582&rtpof=true&sd=true"
+
+    //nagykönyvek
+    var taborUrl = "https://drive.google.com/file/d/1To4r-J7wpc0-YK-eVGIdwAfXOl-N-nos/view"
+    var versenyUrl = "https://drive.google.com/file/d/1JqeqAnGtG-HWrdqdLiNMcKpfimlfmxXl/view"
+    var logirintusUrl = "https://drive.google.com/file/d/1GVySzao--5ozaYuSdR0s0yo-n2rGuqp3/view"
+
     var previousCategory = "Univerzális"
     var previousBadge = ""
 
@@ -143,8 +164,26 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             R.id.nav_completed -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, MyBadgesFragment(this)).commit()
             R.id.nav_profile -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment(this)).commit()
             R.id.admin -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, AdminFragment()).commit()
+
             R.id.nav_hirlevel -> openLink(hirlevelUrl)
+            R.id.nav_konyvtar -> openLink(konyvtarUrl)
+            R.id.nav_program -> openLink(programUrl)
+            R.id.nav_otlet -> openLink(otletUrl)
+            R.id.nav_youtube -> openLink(youtubeUrl)
+
+            R.id.nav_alapszab -> openLink(alapszabUrl)
+            R.id.nav_szmsz -> openLink(szmszUrl)
+            R.id.nav_etikai -> openLink(etikaiUrl)
+            R.id.nav_afp -> openLink(afpUrl)
+
+            R.id.nav_mentor -> openLink(mentorUrl)
             R.id.nav_feladat -> openLink(feladatUrl)
+            R.id.nav_nat -> openLink(natUrl)
+
+            R.id.nav_tabor -> openLink(taborUrl)
+            R.id.nav_verseny -> openLink(versenyUrl)
+            R.id.nav_logirintus -> openLink(logirintusUrl)
+
             R.id.nav_logout -> logOut()
             R.id.it -> changeCategoryFragment("IT")
             R.id.fel -> changeCategoryFragment("Feladatsor")

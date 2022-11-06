@@ -6,14 +6,19 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        debug {
+            storeFile file('C:\\Users\\gyarz\\.android\\debug.keystore')
+        }
+    }
     compileSdk 31
 
     defaultConfig {
         applicationId "mok.it.app.mokapp"
         minSdk 24
         targetSdk 31
-        versionCode 1
-        versionName "1.0"
+        versionCode 3
+        versionName "3.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }

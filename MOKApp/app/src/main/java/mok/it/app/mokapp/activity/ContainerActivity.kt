@@ -9,9 +9,9 @@ import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.appcompat.widget.Toolbar
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -31,13 +31,18 @@ import mok.it.app.mokapp.interfaces.UserRefresher
 import mok.it.app.mokapp.model.User
 
 
-class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, CategoryFragment.ItemClickedListener, UserRefresher, UserRefreshedListener{
+class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+    CategoryFragment.ItemClickedListener, UserRefresher, UserRefreshedListener {
 
     val firestore = Firebase.firestore;
+
     //linkek
-    var hirlevelUrl = "https://drive.google.com/drive/folders/1KJX4tPXiFGN1OTNMZkBqHGswRTVfLPsQ?usp=sharing"
-    var konyvtarUrl = "https://docs.google.com/spreadsheets/d/1T3FX6U1sT4TJwREr07iWKW9WnszEcQ-3r0oemRbengs/edit?usp=sharing"
-    var programUrl = "https://drive.google.com/drive/folders/1EpMYa0WS_Eb35zwb3gH8Fa3jWvMOG1sU?usp=sharing"
+    var hirlevelUrl =
+        "https://drive.google.com/drive/folders/1KJX4tPXiFGN1OTNMZkBqHGswRTVfLPsQ?usp=sharing"
+    var konyvtarUrl =
+        "https://docs.google.com/spreadsheets/d/1T3FX6U1sT4TJwREr07iWKW9WnszEcQ-3r0oemRbengs/edit?usp=sharing"
+    var programUrl =
+        "https://drive.google.com/drive/folders/1EpMYa0WS_Eb35zwb3gH8Fa3jWvMOG1sU?usp=sharing"
     var otletUrl = "https://forms.gle/BPy6PfyU9Cu94h688"
     var youtubeUrl = "https://www.youtube.com/channel/UCdbgdsdFDIwXVtAqC_i08Bw/playlistsPro"
 
@@ -48,9 +53,12 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     var afpUrl = "https://drive.google.com/file/d/1EXcD1wvQ_CrcHdoNZA9GL2djlzje86x8/view"
 
     //kisokosok
-    var mentorUrl = "https://drive.google.com/drive/folders/1osdINz0MRLNqlnWMBoY415QaSRh-NhGq?usp=sharing"
-    var feladatUrl = "https://docs.google.com/document/d/1l-Z1oVcufQWXo115jamMtOtT-g6LW_C5AfkU2CzLdTQ/edit?usp=sharing"
-    var natUrl = "https://docs.google.com/spreadsheets/d/11MGsOTMfXXHUeLv9nOKQCFpwoySfWgEK/edit?usp=sharing&ouid=106667379271700078582&rtpof=true&sd=true"
+    var mentorUrl =
+        "https://drive.google.com/drive/folders/1osdINz0MRLNqlnWMBoY415QaSRh-NhGq?usp=sharing"
+    var feladatUrl =
+        "https://docs.google.com/document/d/1l-Z1oVcufQWXo115jamMtOtT-g6LW_C5AfkU2CzLdTQ/edit?usp=sharing"
+    var natUrl =
+        "https://docs.google.com/spreadsheets/d/11MGsOTMfXXHUeLv9nOKQCFpwoySfWgEK/edit?usp=sharing&ouid=106667379271700078582&rtpof=true&sd=true"
 
     //nagykönyvek
     var taborUrl = "https://drive.google.com/file/d/1To4r-J7wpc0-YK-eVGIdwAfXOl-N-nos/view"
@@ -77,10 +85,10 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         getUser(currentUser.uid)
     }
 
-    private fun setHeader(){
+    private fun setHeader() {
         nameText.text = currentUser.displayName
         emailText.text = currentUser.email
-        refreshButton.setOnClickListener{
+        refreshButton.setOnClickListener {
             currentUser = FirebaseAuth.getInstance().currentUser!!
             getUser(currentUser.uid)
         }
@@ -88,27 +96,30 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         Glide
             .with(this)
             .load(currentUser?.photoUrl)
-            .apply( requestOptions.override(250, 250))
+            .apply(requestOptions.override(250, 250))
             .into(image)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        val toggle = ActionBarDrawerToggle(this, drawer_layout, toolbar,
-            R.string.navigation_drawer_open, R.string.navigation_drawer_close)
+        val toggle = ActionBarDrawerToggle(
+            this, drawer_layout, toolbar,
+            R.string.navigation_drawer_open, R.string.navigation_drawer_close
+        )
         drawer_layout.addDrawerListener(toggle)
         toggle.syncState()
     }
 
-    private fun initialNavigation(){
+    private fun initialNavigation() {
         nav_view.setNavigationItemSelectedListener(this)
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, "Univerzális")).commit()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, CategoryFragment(this, "Univerzális")).commit()
         nav_view.setCheckedItem(R.id.nav_list)
     }
 
-    private fun removeSpinner(){
+    private fun removeSpinner() {
         spinner.visibility = View.GONE
     }
 
-    private fun setMenuVisibility(){
+    private fun setMenuVisibility() {
         val navView = findViewById<NavigationView>(R.id.nav_view)
         val menu = navView.menu
 
@@ -138,32 +149,40 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)){
+        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
-        }
-        else {
+        } else {
             val detailsFragment: DetailsFragment? =
                 supportFragmentManager.findFragmentByTag("DetailsFragment") as DetailsFragment?
             val commentsFragment: CommentsFragment? =
                 supportFragmentManager.findFragmentByTag("CommentsFragment") as CommentsFragment?
             if (detailsFragment != null && detailsFragment.isVisible) {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, previousCategory)).commit()
-            }
-            else if (commentsFragment != null && commentsFragment.isVisible) {
-                supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(previousBadge, this), "DetailsFragment").commit()
-            }
-            else{
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, CategoryFragment(this, previousCategory))
+                    .commit()
+            } else if (commentsFragment != null && commentsFragment.isVisible) {
+                supportFragmentManager.beginTransaction().replace(
+                    R.id.fragment_container,
+                    DetailsFragment(previousBadge, this),
+                    "DetailsFragment"
+                ).commit()
+            } else {
                 super.onBackPressed()
             }
         }
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId){
+        when (item.itemId) {
             R.id.nav_list -> changeCategoryFragment("Univerzális")
-            R.id.nav_completed -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, MyBadgesFragment(this)).commit()
-            R.id.nav_profile -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment(this)).commit()
-            R.id.admin -> supportFragmentManager.beginTransaction().replace(R.id.fragment_container, AdminFragment()).commit()
+            R.id.nav_completed -> supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, MyBadgesFragment(this)).commit()
+            R.id.nav_profile -> supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, ProfileFragment(this)).commit()
+            R.id.admin -> supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, AdminFragment()).commit()
+            R.id.phone_book -> supportFragmentManager.beginTransaction()
+                .replace(R.id.fragment_container, PhoneBookFragment()).commit()
 
             R.id.nav_hirlevel -> openLink(hirlevelUrl)
             R.id.nav_konyvtar -> openLink(konyvtarUrl)
@@ -196,25 +215,26 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         return true;
     }
 
-    private fun changeCategoryFragment(category: String){
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, CategoryFragment(this, category)).commit()
+    private fun changeCategoryFragment(category: String) {
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, CategoryFragment(this, category)).commit()
         previousCategory = category
     }
 
-    private fun openLink(url: String){
+    private fun openLink(url: String) {
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
         startActivity(intent)
     }
 
-    private fun logOut(){
+    private fun logOut() {
         FirebaseAuth.getInstance().signOut()
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
     }
 
-    private fun getUser(uid: String){
+    private fun getUser(uid: String) {
         Firebase.firestore.collection("users").document(uid)
             .get()
             .addOnSuccessListener { document ->
@@ -226,8 +246,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     setMenuVisibility()
                     removeSpinner()
                     initialNavigation()
-                }
-                else {
+                } else {
                     Handler(Looper.getMainLooper()).postDelayed({
                         getUser(uid)
                     }, 1000)
@@ -236,12 +255,14 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     override fun onItemClicked(badgeId: String, category: String) {
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, DetailsFragment(badgeId, this), "DetailsFragment").commit()
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.fragment_container, DetailsFragment(badgeId, this), "DetailsFragment")
+            .commit()
         previousCategory = category
         previousBadge = badgeId
     }
 
-    override fun refreshUser(listener: UserRefreshedListener){
+    override fun refreshUser(listener: UserRefreshedListener) {
         currentUser = FirebaseAuth.getInstance().currentUser!!
         Firebase.firestore.collection("users").document(currentUser.uid)
             .get()

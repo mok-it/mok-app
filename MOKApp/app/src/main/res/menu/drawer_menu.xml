@@ -38,6 +38,9 @@
             <item android:id="@+id/nav_hirlevel"
                 android:icon="@drawable/ic_link"
                 android:title="Hírlevelek"/>
+            <item android:id="@+id/phone_book"
+                android:icon="@drawable/ic_baseline_phone_24"
+                android:title="Telefonkönyv"/>
             <item android:id="@+id/nav_konyvtar"
                 android:icon="@drawable/ic_link"
                 android:title="Könyvtár"/>

@@ -19,7 +19,7 @@
             android:layout_width="90dp"
             android:layout_height="90dp"
             android:layout_marginTop="6dp"
-            android:layout_marginLeft="6dp"
+            android:layout_marginStart="6dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"

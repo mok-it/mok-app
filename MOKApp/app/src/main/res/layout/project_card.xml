@@ -11,12 +11,12 @@
     card_view:cardCornerRadius="8dp"
     card_view:contentPadding="2dp"
     android:layout_margin="8dp"
-    card_view:cardElevation="4dp">
+    card_view:cardElevation="4dp"
+    android:focusable="true">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/white">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/projectIcon"
@@ -73,6 +73,7 @@
                 android:textColor="@color/light_gray"
                 android:textStyle="bold"
                 android:background="@color/red_dark"
+                android:padding="2dp"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintTop_toTopOf="parent" />
 

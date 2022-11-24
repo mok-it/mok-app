@@ -42,7 +42,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/send_comment_fab"
-        app:cardBackgroundColor="@color/white"
         app:cardCornerRadius="2dp"
         app:cardElevation="1dp"
         app:contentPadding="2dp">

@@ -9,14 +9,12 @@
     android:layout_marginTop="12dp"
     android:layout_marginRight="16dp"
     android:foreground="?selectableItemBackground"
-    card_view:cardBackgroundColor="@color/blue_dark"
     card_view:cardCornerRadius="4dp"
     card_view:contentPadding="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:background="@color/white">
+        android:layout_height="match_parent">
 
         <ImageView
             android:id="@+id/comment_icon"

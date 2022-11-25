@@ -3,6 +3,7 @@ const FieldValue = require("@google-cloud/firestore");
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const { _refWithOptions } = require("firebase-functions/v1/database");
+const { log } = require("firebase-functions/logger");
 admin.initializeApp();
 
 const db = admin.firestore();
@@ -135,37 +136,38 @@ exports.populate = functions.firestore
 
 // User létrehozásánál a userc collectionban létrehozzuk a neki megfelelő documentet a szükséges attribútumokkal
 exports.createUser = functions.auth.user().onCreate((user) => {
-  console.log("user created", user.email, user.uid);
-  db.collection("users").doc(user.uid).set({
-    uid: user.uid,
-    email: user.email,
-    name: user.displayName,
-    isCreator: false,
-    admin: false,
-    photoURL: user.photoURL,
-    joinedBadges: [],
-    collectedBadges: [],
-    categories: ["Univerzális"]
-    // ide minden más attribute jöhet majd
-  });
+  log("user created", user.email, user.uid);
+  db.collection("users")
+    .doc(user.uid)
+    .set({
+      email: user.email,
+      name: user.displayName,
+      isCreator: false,
+      admin: false,
+      photoURL: user.photoURL,
+      joinedBadges: [],
+      collectedBadges: [],
+      categories: ["Univerzális"],
+      // ide minden más attribute jöhet majd
+    });
   return null;
 });
 
 // Ha törlünk egy usert, a neki megfelelő dokumentum is törlődik a users collectionból
 // Kérdés, hogy élesben kell-e ez nekünk, mert így véletlen törlésnél elvesznek az adatok
 exports.deleteUser = functions.auth.user().onDelete((user) => {
-  var user_to_delete = db.collection("users").where("id", "==", user.uid);
+  const user_to_delete = db.collection("users").where("id", "==", user.uid);
   user_to_delete.get().then(function (querySnapshot) {
     querySnapshot.forEach(function (doc) {
       doc.ref.delete();
-      console.log("user deleted", user.email, user.uid);
+      log("user deleted", user.email, user.uid);
     });
   });
   return null;
 });
 
 exports.userOpenedApp = functions.https.onRequest((req, res) => {
-  var user = db.collection("users").where("id", "==", req.userId);
+  let user = db.collection("users").where("id", "==", req.uid);
 });
 
 exports.uploadNewBadge = functions.https.onRequest((req, res) => {

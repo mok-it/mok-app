@@ -12,15 +12,16 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_list.*
-import kotlinx.android.synthetic.main.project_card.*
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.activity.ContainerActivity
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
-class CategoryFragment(val listener: ItemClickedListener, val category: String) : BaseFireFragment() {
+class CategoryFragment(val listener: ItemClickedListener, val category: String) :
+    BaseFireFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -61,13 +62,16 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String) 
         }
     }
 
-    private fun initRecyclerView(){
-        val query = firestore.collection(projectCollectionPath).whereEqualTo("category", category).orderBy("created", Query.Direction.DESCENDING)
-        val options = FirestoreRecyclerOptions.Builder<Project>().setQuery(query, Project::class.java)
-            .setLifecycleOwner(this).build()
-        val adapter = object: FirestoreRecyclerAdapter<Project, ProjectViewHolder>(options){
+    private fun getAdapter(): FirestoreRecyclerAdapter<Project, ProjectViewHolder> {
+        val query = firestore.collection(projectCollectionPath).whereEqualTo("category", category)
+            .orderBy("created", Query.Direction.DESCENDING)
+        val options =
+            FirestoreRecyclerOptions.Builder<Project>().setQuery(query, Project::class.java)
+                .setLifecycleOwner(this).build()
+        return object : FirestoreRecyclerAdapter<Project, ProjectViewHolder>(options) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
-                val view = LayoutInflater.from(this@CategoryFragment.context).inflate(R.layout.project_card, parent, false)
+                val view = LayoutInflater.from(this@CategoryFragment.context)
+                    .inflate(R.layout.project_card, parent, false)
                 return ProjectViewHolder(view)
             }
 
@@ -85,34 +89,48 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String) 
                 tvMandatory.isVisible = model.mandatory
                 loadImage(ivImg, model.icon)
 
-                if (userModel.collectedBadges.contains(model.id)){
+                if (userModel.collectedBadges.contains(model.id)) {
                     holder.itemView.setBackgroundResource(R.drawable.gradient1)
                 }
 
-                holder.itemView.setOnClickListener{
+                holder.itemView.setOnClickListener {
                     listener.onItemClicked(model.id, category)
                 }
             }
         }
+    }
+
+    private fun initRecyclerView() {
+        //TODO ezt vagy firebaseRecyclerAdapterrel vagy NotifyDataChangedel kéne megoldani szépen
+        var adapter = getAdapter()
 
         recyclerView.adapter = adapter
         recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
-        initAddButton()
+        addBadgeButton.setOnClickListener {
+            val dialog = CreateBadgeFragment(category)
+            dialog.show(parentFragmentManager, "CreateBadgeDialog")
+        }
+        setAddBadgeButtonVisibility()
+        badgeSwipeRefresh.setOnRefreshListener {
+            adapter = getAdapter()
+            recyclerView.adapter = adapter
+            ContainerActivity.refreshCurrentUser(this.requireContext(),
+                { setAddBadgeButtonVisibility() })
+            //TODO nem csak az usert kéne frissíteni, hanem a badgeket is
+            // (vszeg a megoldás: firebaseRecyclerAdapter)
+            badgeSwipeRefresh.isRefreshing = false
+        }
     }
 
-    private fun initAddButton(){
+    private fun setAddBadgeButtonVisibility() {
         if (!userModel.isCreator && !userModel.admin) {
             addBadgeButton.visibility = View.INVISIBLE
-        }
-        else{
-            addBadgeButton.setOnClickListener {
-                val dialog = CreateBadgeFragment(category)
-                dialog.show(parentFragmentManager, "CreateBadgeDialog")
-            }
+        } else {
+            addBadgeButton.visibility = View.VISIBLE
         }
     }
 
-    interface ItemClickedListener{
+    interface ItemClickedListener {
         fun onItemClicked(badgeId: String, category: String)
     }
 }

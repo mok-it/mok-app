@@ -89,7 +89,7 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
                 Picasso.get().load(document.get("icon") as String).into(avatar_imagebutton)
 
                 val editors = document.get("editors") as List<String>
-                if (editors.contains(userModel.uid)) {
+                if (editors.contains(userModel.documentId)) {
                     userIsEditor = true
                 }
                 changeVisibilities()
@@ -263,7 +263,7 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
     }
 
     override fun onMemberClicked(user: User) {
-        selectedMemberUID = user.uid
+        selectedMemberUID = user.documentId
         val dialog = BadgeAcceptMemberDialogFragment(this, user.name)
         dialog.show(parentFragmentManager, "AcceptDialog")
     }
@@ -281,7 +281,7 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
         else if (!userModel.joinedBadges.contains(badgeModel.id))
             join_button.text = "Csatlakozás"
 
-        if (badgeModel.editors.contains(userModel.uid)){
+        if (badgeModel.editors.contains(userModel.documentId)){
             userIsEditor = true
         }
     }

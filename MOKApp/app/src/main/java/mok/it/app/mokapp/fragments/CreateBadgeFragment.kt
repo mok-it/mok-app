@@ -53,7 +53,7 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_create_badge, container, false);
+        return inflater.inflate(R.layout.fragment_create_badge, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -131,7 +131,7 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
     private fun commitNewBadgeToDatabase(): Boolean {
         Log.d("Create name", nameTIET.text.toString())
         Log.d("Create desc", descriptionTIET.text.toString())
-        Log.d("Create creator", userModel.uid)
+        Log.d("Create creator", userModel.documentId)
         Log.d("Create category", category)
         val deadline = Date(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
         Log.d("Create date", deadline.toString())
@@ -140,7 +140,7 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
         val newBadge = hashMapOf(
             "category" to category,
             "created" to Date(),
-            "creator" to userModel.uid,
+            "creator" to userModel.documentId,
             "deadline" to deadline,
             "description" to descriptionTIET.text.toString(),
             "editors" to selectedMembers,
@@ -239,7 +239,7 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
             .addOnSuccessListener { documents ->
                 if (documents != null) {
                     for (document in documents) {
-                        users.add(document.toObject(User::class.java)!!)
+                        users.add(document.toObject(User::class.java))
                         Log.d("Users", users.toString())
                     }
                     names = Array(users.size){i->users[i].name}
@@ -252,19 +252,19 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
     private fun initEditorsDialog(){
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Válassz kezelőt!")
-        builder.setMultiChoiceItems(names, checkedNames){dialog, which, isChecked ->
+        builder.setMultiChoiceItems(names, checkedNames){_, which, isChecked ->
             checkedNames[which] = isChecked
         }
-        builder.setPositiveButton("Ok"){dialog, which ->
+        builder.setPositiveButton("Ok"){_, _ ->
             selectedMembers = ArrayList()
             for (i in names.indices){
                 if (checkedNames[i]){
                     Log.d("Selected", names[i])
-                    selectedMembers.add(users[i].uid)
+                    selectedMembers.add(users[i].documentId)
                 }
             }
         }
-        builder.setNegativeButton("Mégsem"){dialog, which ->
+        builder.setNegativeButton("Mégsem"){dialog, _ ->
             dialog.cancel()
         }
         val dialog: AlertDialog = builder.create()

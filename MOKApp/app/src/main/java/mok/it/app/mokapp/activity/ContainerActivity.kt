@@ -1,5 +1,6 @@
 package mok.it.app.mokapp.activity
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -34,7 +35,7 @@ import mok.it.app.mokapp.model.User
 class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
     CategoryFragment.ItemClickedListener, UserRefresher, UserRefreshedListener {
 
-    val firestore = Firebase.firestore;
+    val firestore = Firebase.firestore
 
     //linkek
     var hirlevelUrl =
@@ -71,7 +72,38 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     companion object {
         var currentUser = FirebaseAuth.getInstance().currentUser!!
         lateinit var userModel: User
-        const val TAG = "ContainerActivity"
+        const val TAG = "ContainerActivity container object"
+
+        /**
+         * Refreshes the currentUser object and invokes the given method on success, if there's one
+         * @param context the context of the activity (required for the Toasts)
+         * @param onSuccessFunction the function to be invoked on success
+         * @param numberOfConsecutiveCalls only used by recursion, not recommended to use
+         */
+        fun refreshCurrentUser(context: Context, onSuccessFunction: (() -> Unit)? = null, numberOfConsecutiveCalls: Int = 1) {
+            val numberOfMaxTries = 5
+            Firebase.firestore.collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+                .get()
+                .addOnSuccessListener { document ->
+                    val userToBe = document.toObject(User::class.java)
+                    Log.d(TAG, "refreshCurrentUser(): got document ${userToBe.toString()}")
+                    if (userToBe != null) {
+                        userModel = userToBe
+                        Log.d(TAG, "refreshCurrentUser(): user refreshed")
+                        onSuccessFunction?.invoke()
+                    } else if (numberOfConsecutiveCalls <= numberOfMaxTries) {
+                        Handler(Looper.getMainLooper()).postDelayed({
+                            Toast.makeText(context,
+                                "Nem sikerült betölteni a felhasználó adatait, " +
+                                        "újrapróbálkozás...($numberOfConsecutiveCalls. próba)", Toast.LENGTH_SHORT).show()
+                            refreshCurrentUser(context, onSuccessFunction, numberOfConsecutiveCalls + 1)
+                        }, 1000)
+                    }
+                    else {
+                        Toast.makeText(context, context.getString(R.string.user_data_load_failed), Toast.LENGTH_SHORT).show()
+                    }
+                }
+        }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -79,18 +111,23 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         setContentView(R.layout.activity_container)
     }
 
+    private fun loadApp(){
+        setHeader()
+        setMenuVisibility()
+        removeSpinner()
+        initialNavigation()
+    }
+
     override fun onResume() {
         super.onResume()
-        currentUser = FirebaseAuth.getInstance().currentUser!!
-        getUser(currentUser.uid)
+        refreshCurrentUser(this, {loadApp()})
     }
 
     private fun setHeader() {
         nameText.text = currentUser.displayName
         emailText.text = currentUser.email
         refreshButton.setOnClickListener {
-            currentUser = FirebaseAuth.getInstance().currentUser!!
-            getUser(currentUser.uid)
+            refreshCurrentUser(this, {loadApp()})
         }
         val requestOptions = RequestOptions().transforms(CenterCrop(), RoundedCorners(26))
         Glide
@@ -232,26 +269,6 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
-    }
-
-    private fun getUser(uid: String) {
-        Firebase.firestore.collection("users").document(uid)
-            .get()
-            .addOnSuccessListener { document ->
-                val userToBe = document.toObject(User::class.java)
-                Log.d(TAG, "getUser(): got document ${userToBe.toString()}")
-                if (userToBe != null) {
-                    userModel = userToBe
-                    setHeader()
-                    setMenuVisibility()
-                    removeSpinner()
-                    initialNavigation()
-                } else {
-                    Handler(Looper.getMainLooper()).postDelayed({
-                        getUser(uid)
-                    }, 1000)
-                }
-            }
     }
 
     override fun onItemClicked(badgeId: String, category: String) {

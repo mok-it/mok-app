@@ -1,5 +1,6 @@
 package mok.it.app.mokapp.activity
 
+
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -7,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -137,6 +139,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             .into(image)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
         val toggle = ActionBarDrawerToggle(
             this, drawer_layout, toolbar,
             R.string.navigation_drawer_open, R.string.navigation_drawer_close
@@ -150,6 +153,11 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, CategoryFragment(this, "Univerzális")).commit()
         nav_view.setCheckedItem(R.id.nav_list)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(mok.it.app.mokapp.R.menu.menu_main, menu)
+        return true
     }
 
     private fun removeSpinner() {

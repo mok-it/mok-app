@@ -1,57 +1,56 @@
 <resources>
-    <string name="app_name">MOKApp</string>
-    <string name="action_settings">Settings</string>
-    <string name="project_list">Projects</string>
-    <string name="project_name">Project name</string>
-    <string name="project_description">Project description</string>
-    <string name="name">Name</string>
-    <string name="description">Description</string>
+    //untranslatable strings
     <string name="loremipsum_long" translatable="false">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</string>
-    <string name="navigation_drawer_open">Open navigation drawer</string>
-    <string name="navigation_drawer_close">Close navigation drawer</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="not_implemented" translatable="false">NOT_IMPLEMENTED</string>
     <string name="url_no_image" translatable="false">"https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/no-image-icon.png?alt=media&amp;token=6cdc86db-cd93-402c-af09-f98748b5a1b6"</string>
-    <string name="new_badge">New badge</string>
-    <string name="badge_name">Badge name</string>
-    <string name="choose_icon">Choose icon</string>
-    <string name="create">Create</string>
-    <string name="unsaved_changes">You have unsaved changes. Do you want to continue?</string>
-    <string name="edit">Edit</string>
-    <string name="discard">Discard</string>
-    <string name="badge_name_is_required">Set a name for the badge!</string>
-    <string name="badge_description_is_required">Set a description for the badge!</string>
-    <string name="error_occurred">An error occurred.</string>
-    <string name="not_implemented">NOT_IMPLEMENTED</string>
+    <string name="ok" translatable="false">OK</string>
+
+    <string name="app_name">MÖKApp</string>
+    <string name="action_settings">Beállítások</string>
+    <string name="project_list">Projektek</string>
+    <string name="project_name">Projektnév</string>
+    <string name="project_description">Projektleírás</string>
+    <string name="name">Név</string>
+    <string name="description">Leírás</string>
+    <string name="navigation_drawer_open">Navigációs menü nyitás</string>
+    <string name="navigation_drawer_close">Navigációs menü zárás</string>
+    <string name="new_badge">Új Mancs</string>
+    <string name="badge_name">Mancs neve</string>
+    <string name="choose_icon">Ikon kiválasztása</string>
+    <string name="create">Létrehozás</string>
+    <string name="unsaved_changes">Az adatok nincsenek elmentve. Folytatnád a szerkesztést?</string>
+    <string name="edit">Szerkesztés</string>
+    <string name="discard">Elvetés</string>
+    <string name="badge_name_is_required">Állíts be nevet a Mancsnak!</string>
+    <string name="badge_description_is_required">Állíts be leírást a Mancsnak!</string>
+    <string name="error_occurred">Hiba lépett fel.</string>
 
     <string name="newest_comment_text">%s %s: %s</string>
-    <string name="newest_comment">Latest comment:</string>
-    <string name="create_project">Create project!</string>
-    <string name="sender">Sender</string>
-    <string name="default_date" translatable="false">2022.02.18.</string>
-    <string name="send_comment">Post comment</string>
-    <string name="comment_edit_text_hint">Describe your progress.</string>
-    <string name="choose_category">Choose a category</string>
-    <string name="project_icon">Project icon</string>
-    <string name="choose_manager">Choose manager</string>
-    <string name="log_out">Log out</string>
-    <string name="did_they_complete">Completed?</string>
-    <string name="ok">OK</string>
-    <string name="cancel">Cancel</string>
-    <string name="badge_creator">Creator of badge</string>
-    <string name="deadline">Deadline</string>
-    <string name="members">Members</string>
-    <string name="join">Join</string>
-    <string name="my_badges">My badges</string>
-    <string name="profile">Profile</string>
-    <string name="example_name_full">John Doe</string>
-    <string name="example_name_first">John</string>
-    <string name="example_email">john.doe@example.com</string>
+    <string name="newest_comment">Legújabb fejlemény:</string>
+    <string name="create_project">A projekt megalkotása!</string>
+    <string name="send_comment">Komment küldése</string>
+    <string name="comment_edit_text_hint">Írd be, hogy mivel haladtál!</string>
+    <string name="choose_category">Válassz kategóriát</string>
+    <string name="sender">Feladó</string>
+    <string name="project_icon">Projektikon</string>
+    <string name="choose_manager">Válassz kezelőt</string>
+    <string name="log_out">Kijelentkezés</string>
+    <string name="did_they_complete">Teljesítette?</string>
+    <string name="cancel">Mégsem</string>
+    <string name="badge_creator">Mancs készítője</string>
+    <string name="deadline">Határidő</string>
+    <string name="members">Résztvevők</string>
+    <string name="join">Csatlakozás</string>
+    <string name="badge_list">Mancslista</string>
+    <string name="profile">Profil</string>
+    <string name="my_badges">Mancsaim</string>
     <string name="category">Kategória</string>
-    <string name="no_collected_badge_text">A kategóriában még nincs megszerzett badge</string>
+    <string name="no_collected_badge_text">A kategóriában még nincs megszerzett Mancs :(</string>
     <string name="mandatory">Kötelező</string>
     <string name="modify">Módosítás</string>
     <string name="my_categories">Munkacsoportjaim:</string>
     <string name="plus_sign">Plus sign</string>
     <string name="user_data_load_failed">Sajnos nem sikerült betölteni a felhasználó adatait:(</string>
+    <string name="example_email_address">example@mail.com</string>
+
 </resources>

@@ -53,4 +53,5 @@
     <string name="modify">Módosítás</string>
     <string name="my_categories">Munkacsoportjaim:</string>
     <string name="plus_sign">Plus sign</string>
+    <string name="user_data_load_failed">Sajnos nem sikerült betölteni a felhasználó adatait:(</string>
 </resources>

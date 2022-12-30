@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "972853328312",
+    "project_id": "mokapp-dev",
+    "storage_bucket": "mokapp-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:972853328312:android:5db13bbaefbcb8d5fef74d",
+        "android_client_info": {
+          "package_name": "mok.it.app.mokapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "972853328312-ov2jnolobkmmbpp09l9cel08gla5oe9a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDlDcOkt2Db6pT75Ugus0th_oMGSAxQzy0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "972853328312-ov2jnolobkmmbpp09l9cel08gla5oe9a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

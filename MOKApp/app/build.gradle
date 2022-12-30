@@ -36,6 +36,7 @@ android {
     buildFeatures {
         viewBinding true
     }
+    namespace 'mok.it.app.mokapp'
 }
 
 dependencies {

@@ -31,13 +31,13 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:id="@+id/nameText"
-                android:text="@string/example_name_full"
+                android:text="@tools:sample/full_names"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:id="@+id/emailText"
-                android:text="@string/example_email"/>
+                android:text="@string/example_email_address"/>
 
         </LinearLayout>
 

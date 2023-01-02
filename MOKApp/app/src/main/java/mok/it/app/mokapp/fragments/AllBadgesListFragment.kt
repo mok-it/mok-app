@@ -11,6 +11,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.fragment_all_badges_list.*
 import kotlinx.android.synthetic.main.fragment_list.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.activity.ContainerActivity
@@ -20,14 +21,14 @@ import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
-class CategoryFragment(val listener: ItemClickedListener, val category: String) :
+class AllBadgesListFragment(val listener: ItemClickedListener, val category: String) :
     BaseFireFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_list, container, false)
+        return inflater.inflate(R.layout.fragment_all_badges_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -70,7 +71,7 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String) 
                 .setLifecycleOwner(this).build()
         return object : FirestoreRecyclerAdapter<Project, ProjectViewHolder>(options) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
-                val view = LayoutInflater.from(this@CategoryFragment.context)
+                val view = LayoutInflater.from(this@AllBadgesListFragment.context)
                     .inflate(R.layout.project_card, parent, false)
                 return ProjectViewHolder(view)
             }

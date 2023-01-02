@@ -33,7 +33,7 @@ import mok.it.app.mokapp.model.User
 
 
 class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
-    CategoryFragment.ItemClickedListener, UserRefresher, UserRefreshedListener {
+    AllBadgesListFragment.ItemClickedListener, UserRefresher, UserRefreshedListener {
 
     val firestore = Firebase.firestore
 
@@ -80,9 +80,14 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
          * @param onSuccessFunction the function to be invoked on success
          * @param numberOfConsecutiveCalls only used by recursion, not recommended to use
          */
-        fun refreshCurrentUser(context: Context, onSuccessFunction: (() -> Unit)? = null, numberOfConsecutiveCalls: Int = 1) {
+        fun refreshCurrentUser(
+            context: Context,
+            onSuccessFunction: (() -> Unit)? = null,
+            numberOfConsecutiveCalls: Int = 1
+        ) {
             val numberOfMaxTries = 5
-            Firebase.firestore.collection("users").document(FirebaseAuth.getInstance().currentUser!!.uid)
+            Firebase.firestore.collection("users")
+                .document(FirebaseAuth.getInstance().currentUser!!.uid)
                 .get()
                 .addOnSuccessListener { document ->
                     val userToBe = document.toObject(User::class.java)
@@ -93,14 +98,24 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                         onSuccessFunction?.invoke()
                     } else if (numberOfConsecutiveCalls <= numberOfMaxTries) {
                         Handler(Looper.getMainLooper()).postDelayed({
-                            Toast.makeText(context,
+                            Toast.makeText(
+                                context,
                                 "Nem sikerült betölteni a felhasználó adatait, " +
-                                        "újrapróbálkozás...($numberOfConsecutiveCalls. próba)", Toast.LENGTH_SHORT).show()
-                            refreshCurrentUser(context, onSuccessFunction, numberOfConsecutiveCalls + 1)
+                                        "újrapróbálkozás...($numberOfConsecutiveCalls. próba)",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            refreshCurrentUser(
+                                context,
+                                onSuccessFunction,
+                                numberOfConsecutiveCalls + 1
+                            )
                         }, 1000)
-                    }
-                    else {
-                        Toast.makeText(context, context.getString(R.string.user_data_load_failed), Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.user_data_load_failed),
+                            Toast.LENGTH_SHORT
+                        ).show()
                     }
                 }
         }
@@ -111,7 +126,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         setContentView(R.layout.activity_container)
     }
 
-    private fun loadApp(){
+    private fun loadApp() {
         setHeader()
         setMenuVisibility()
         removeSpinner()
@@ -120,19 +135,19 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     override fun onResume() {
         super.onResume()
-        refreshCurrentUser(this, {loadApp()})
+        refreshCurrentUser(this, { loadApp() })
     }
 
     private fun setHeader() {
         nameText.text = currentUser.displayName
         emailText.text = currentUser.email
         refreshButton.setOnClickListener {
-            refreshCurrentUser(this, {loadApp()})
+            refreshCurrentUser(this, { loadApp() })
         }
         val requestOptions = RequestOptions().transforms(CenterCrop(), RoundedCorners(26))
         Glide
             .with(this)
-            .load(currentUser?.photoUrl)
+            .load(currentUser.photoUrl)
             .apply(requestOptions.override(250, 250))
             .into(image)
 
@@ -148,7 +163,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun initialNavigation() {
         nav_view.setNavigationItemSelectedListener(this)
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, CategoryFragment(this, "Univerzális")).commit()
+            .replace(R.id.fragment_container, AllBadgesListFragment(this, "Univerzális")).commit()
         nav_view.setCheckedItem(R.id.nav_list)
     }
 
@@ -185,17 +200,23 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         return super.onOptionsItemSelected(item)
     }
 
+    private var lastBackPressTime: Long = 0
+    private val maxTimeBetweenBackPresses = 1500
+    private var exitToast: Toast? = null
+
+    private val detailsFragment: DetailsFragment? =
+        supportFragmentManager.findFragmentByTag("DetailsFragment") as DetailsFragment?
+    private val commentsFragment: CommentsFragment? =
+        supportFragmentManager.findFragmentByTag("CommentsFragment") as CommentsFragment?
+    private val allBadgesListFragment: AllBadgesListFragment? =
+        supportFragmentManager.findFragmentByTag("CategoryFragment") as AllBadgesListFragment?
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
         } else {
-            val detailsFragment: DetailsFragment? =
-                supportFragmentManager.findFragmentByTag("DetailsFragment") as DetailsFragment?
-            val commentsFragment: CommentsFragment? =
-                supportFragmentManager.findFragmentByTag("CommentsFragment") as CommentsFragment?
             if (detailsFragment != null && detailsFragment.isVisible) {
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, CategoryFragment(this, previousCategory))
+                    .replace(R.id.fragment_container, AllBadgesListFragment(this, previousCategory))
                     .commit()
             } else if (commentsFragment != null && commentsFragment.isVisible) {
                 supportFragmentManager.beginTransaction().replace(
@@ -203,7 +224,17 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     DetailsFragment(previousBadge, this),
                     "DetailsFragment"
                 ).commit()
-            } else {
+            } else if (this.lastBackPressTime < System.currentTimeMillis() - maxTimeBetweenBackPresses) {
+                exitToast =
+                    Toast.makeText(
+                        this,
+                        "Nyomd meg még egyszer a Vissza gombot a kilépéshez!",
+                        Toast.LENGTH_SHORT
+                    )
+                exitToast?.show();
+                lastBackPressTime = System.currentTimeMillis()
+            } else if (allBadgesListFragment != null && allBadgesListFragment.isVisible) {
+                exitToast?.cancel()
                 super.onBackPressed()
             }
         }
@@ -254,7 +285,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private fun changeCategoryFragment(category: String) {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, CategoryFragment(this, category)).commit()
+            .replace(R.id.fragment_container, AllBadgesListFragment(this, category)).commit()
         previousCategory = category
     }
 

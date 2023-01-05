@@ -12,7 +12,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_list.*
+import kotlinx.android.synthetic.main.fragment_category.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.activity.ContainerActivity
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
@@ -29,7 +29,7 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String, 
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_list, container, false)
+        return inflater.inflate(R.layout.fragment_category, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

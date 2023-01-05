@@ -54,4 +54,7 @@
     <string name="my_categories">Munkacsoportjaim:</string>
     <string name="plus_sign">Plus sign</string>
     <string name="user_data_load_failed">Nem sikerült betölteni a felhasználó adatait!</string>
+    <string name="filter_achieved_badges">Megszerzett badgek</string>
+    <string name="filter_mandatory_badges">Kötelező badgek</string>
+    <string name="filter_joined_badges">Csatlakozott badgek</string>
 </resources>

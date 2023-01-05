@@ -31,11 +31,13 @@ import mok.it.app.mokapp.auth.LoginActivity
 import mok.it.app.mokapp.fragments.*
 import mok.it.app.mokapp.interfaces.UserRefreshedListener
 import mok.it.app.mokapp.interfaces.UserRefresher
+import mok.it.app.mokapp.model.Filter
 import mok.it.app.mokapp.model.User
 
 
 class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
-    CategoryFragment.ItemClickedListener, UserRefresher, UserRefreshedListener {
+    CategoryFragment.ItemClickedListener, UserRefresher, UserRefreshedListener,
+    FilterDialogFragment.FilterChangedListener {
 
     val firestore = Firebase.firestore
 
@@ -70,6 +72,8 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     var previousCategory = "Univerzális"
     var previousBadge = ""
+
+    var filter = Filter()
 
     companion object {
         var currentUser = FirebaseAuth.getInstance().currentUser!!
@@ -189,6 +193,10 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         if (item.itemId == R.id.nav_logout) {
             Toast.makeText(this, "OK", Toast.LENGTH_SHORT).show()
         }
+        if (item.itemId == R.id.filter) {
+            Toast.makeText(this, "Filter", Toast.LENGTH_SHORT).show()
+            openFilterDialog()
+        }
 
         return super.onOptionsItemSelected(item)
     }
@@ -279,6 +287,11 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         finish()
     }
 
+    private fun openFilterDialog(){
+        val dialog = FilterDialogFragment(filter, this)
+        dialog.show(supportFragmentManager, "FilterFragment")
+    }
+
     override fun onItemClicked(badgeId: String, category: String) {
         supportFragmentManager.beginTransaction()
             .replace(R.id.fragment_container, DetailsFragment(badgeId, this), "DetailsFragment")
@@ -311,5 +324,10 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     setMenuVisibility()
                 }
             }
+    }
+
+    override fun getFilter(filter: Filter) {
+        this.filter = filter
+        Log.d("LISTENER", this.filter.joined.toString())
     }
 }

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="mok.it.app.mokapp.auth.SplashActivity">
     <item
-        android:id="@+id/action_filter"
+        android:id="@+id/filter"
         android:icon="@drawable/ic_filter"
         app:showAsAction="ifRoom"
         android:title="Add">

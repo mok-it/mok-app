@@ -13,7 +13,7 @@ import kotlinx.android.synthetic.main.fragment_filter_dialog.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Filter
 
-class FilterDialogFragment(val filter: Filter, val listener: FilterChangedListener) : DialogFragment() {
+class FilterDialogFragment(private val filter: Filter, val listener: FilterChangedListener) : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

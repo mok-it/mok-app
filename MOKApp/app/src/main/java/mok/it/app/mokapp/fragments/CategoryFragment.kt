@@ -9,6 +9,7 @@ import android.widget.TextView
 import androidx.core.view.isVisible
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_list.*
@@ -16,11 +17,12 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.activity.ContainerActivity
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
+import mok.it.app.mokapp.model.Filter
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
-class CategoryFragment(val listener: ItemClickedListener, val category: String) :
+class CategoryFragment(val listener: ItemClickedListener, val category: String, val filter: Filter) :
     BaseFireFragment() {
 
     override fun onCreateView(
@@ -63,8 +65,7 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String) 
     }
 
     private fun getAdapter(): FirestoreRecyclerAdapter<Project, ProjectViewHolder> {
-        val query = firestore.collection(projectCollectionPath).whereEqualTo("category", category)
-            .orderBy("created", Query.Direction.DESCENDING)
+        val query = getFilteredQuery()
         val options =
             FirestoreRecyclerOptions.Builder<Project>().setQuery(query, Project::class.java)
                 .setLifecycleOwner(this).build()
@@ -122,6 +123,20 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String) 
         }
     }
 
+    private fun getFilteredQuery(): Query{
+        var query = firestore.collection(projectCollectionPath).whereEqualTo("category", category)
+            .orderBy("created", Query.Direction.DESCENDING)
+        if (filter.mandatory){
+            query = query.whereEqualTo("mandatory", true)
+        }
+        if (filter.joined){
+            query = query.whereArrayContains("members", userModel.uid)
+        }
+        if (filter.achieved){
+            query = query.whereIn(FieldPath.documentId(), userModel.collectedBadges)
+        }
+        return query
+    }
     private fun setAddBadgeButtonVisibility() {
         if (!userModel.isCreator && !userModel.admin) {
             addBadgeButton.visibility = View.INVISIBLE

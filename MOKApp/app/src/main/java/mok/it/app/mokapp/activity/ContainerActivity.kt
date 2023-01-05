@@ -155,7 +155,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun initialNavigation() {
         nav_view.setNavigationItemSelectedListener(this)
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, CategoryFragment(this, "Univerzális")).commit()
+            .replace(R.id.fragment_container, CategoryFragment(this, "Univerzális", filter)).commit()
         nav_view.setCheckedItem(R.id.nav_list)
     }
 
@@ -190,14 +190,9 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.nav_logout) {
-            Toast.makeText(this, "OK", Toast.LENGTH_SHORT).show()
-        }
         if (item.itemId == R.id.filter) {
-            Toast.makeText(this, "Filter", Toast.LENGTH_SHORT).show()
             openFilterDialog()
         }
-
         return super.onOptionsItemSelected(item)
     }
 
@@ -211,7 +206,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 supportFragmentManager.findFragmentByTag("CommentsFragment") as CommentsFragment?
             if (detailsFragment != null && detailsFragment.isVisible) {
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, CategoryFragment(this, previousCategory))
+                    .replace(R.id.fragment_container, CategoryFragment(this, previousCategory, filter))
                     .commit()
             } else if (commentsFragment != null && commentsFragment.isVisible) {
                 supportFragmentManager.beginTransaction().replace(
@@ -270,7 +265,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private fun changeCategoryFragment(category: String) {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, CategoryFragment(this, category)).commit()
+            .replace(R.id.fragment_container, CategoryFragment(this, category, filter)).commit()
         previousCategory = category
     }
 
@@ -329,5 +324,6 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     override fun getFilter(filter: Filter) {
         this.filter = filter
         Log.d("LISTENER", this.filter.joined.toString())
+        changeCategoryFragment(previousCategory)
     }
 }

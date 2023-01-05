@@ -4,7 +4,7 @@
     tools:context="mok.it.app.mokapp.auth.SplashActivity">
     <item
         android:id="@+id/filter"
-        android:icon="@drawable/ic_filter"
+        android:icon="@drawable/ic_filter_white"
         app:showAsAction="ifRoom"
         android:title="Add">
     </item>

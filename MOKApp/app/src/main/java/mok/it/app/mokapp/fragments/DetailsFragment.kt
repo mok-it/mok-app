@@ -1,7 +1,6 @@
 package mok.it.app.mokapp.fragments
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -9,16 +8,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_details.*
+import mok.it.app.mokapp.FirebaseUserObject.currentUser
+import mok.it.app.mokapp.FirebaseUserObject.userModel
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.activity.ContainerActivity.Companion.currentUser
-import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.interfaces.UserRefreshedListener
@@ -29,8 +26,16 @@ import mok.it.app.mokapp.recyclerview.MembersAdapter
 import java.text.SimpleDateFormat
 import kotlin.collections.ArrayList
 
-class DetailsFragment(private val badgeId: String, private val userRefresher: UserRefresher) : BaseFireFragment(), MembersAdapter.MemberClickedListener,
+class DetailsFragment() : BaseFireFragment(), MembersAdapter.MemberClickedListener,
     BadgeAcceptMemberDialogFragment.SuccessListener, UserRefreshedListener{
+
+    // TODO : private val badgeId: String, private val userRefresher: UserRefresher adatok betöltése
+    private val badgeId: String = ""
+    private val userRefresher: UserRefresher = object : UserRefresher {
+        override fun refreshUser(listener: UserRefreshedListener) {
+
+        }
+    }
 
     lateinit var badgeModel: Project
     private val commentsId = "comments"
@@ -64,36 +69,35 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
         }
         join_button.visibility = View.GONE
         badgeComments.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, CommentsFragment(badgeId), "CommentsFragment")
-                .commit()
+            // TODO open commentsfragment
+//            parentFragmentManager.beginTransaction()
+//                .replace(R.id.fragment_container, CommentsFragment(badgeId), "CommentsFragment")
+//                .commit()
         }
         documentOnSuccess(projectCollectionPath, badgeId) { document ->
-            if (document != null) {
 
-                badgeModel = document.toObject(Project::class.java)!!
+            badgeModel = document.toObject(Project::class.java)!!
 
-                badgeName.text = document.get("name") as String
-                categoryName.text = getString(R.string.category) + ": " + document.get("category") as String
-                badgeDescription.text = document.get("description") as String
-                firestore.collection(userCollectionPath).document(document.get("creator") as String)
-                    .get().addOnSuccessListener { creatorDoc ->
-                        if (creatorDoc?.get("name") != null) {
-                            badgeCreator.text = creatorDoc.get("name") as String
-                        }
+            badgeName.text = document.get("name") as String
+            categoryName.text = getString(R.string.category) + ": " + document.get("category") as String
+            badgeDescription.text = document.get("description") as String
+            firestore.collection(userCollectionPath).document(document.get("creator") as String)
+                .get().addOnSuccessListener { creatorDoc ->
+                    if (creatorDoc?.get("name") != null) {
+                        badgeCreator.text = creatorDoc.get("name") as String
                     }
-                val formatter = SimpleDateFormat("yyyy.MM.dd")
-                badgeDeadline.text =
-                    formatter.format((document.get("deadline") as Timestamp).toDate())
-                //badgeProgress.progress = (document.get("overall_progress") as Number).toInt()
-                Picasso.get().load(document.get("icon") as String).into(avatar_imagebutton)
-
-                val editors = document.get("editors") as List<String>
-                if (editors.contains(userModel.documentId)) {
-                    userIsEditor = true
                 }
-                changeVisibilities()
+            val formatter = SimpleDateFormat("yyyy.MM.dd")
+            badgeDeadline.text =
+                formatter.format((document.get("deadline") as Timestamp).toDate())
+            //badgeProgress.progress = (document.get("overall_progress") as Number).toInt()
+            Picasso.get().load(document.get("icon") as String).into(avatar_imagebutton)
+
+            val editors = document.get("editors") as List<*>
+            if (editors.contains(userModel.documentId)) {
+                userIsEditor = true
             }
+            changeVisibilities()
         }
         // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
     }

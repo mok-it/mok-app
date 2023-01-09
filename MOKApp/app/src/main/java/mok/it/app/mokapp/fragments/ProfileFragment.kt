@@ -11,9 +11,10 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.recyclerView
+import mok.it.app.mokapp.FirebaseUserObject.currentUser
+import mok.it.app.mokapp.FirebaseUserObject.userModel
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.activity.ContainerActivity
-import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
+import mok.it.app.mokapp.activity.MainActivity
 import mok.it.app.mokapp.interfaces.UserRefreshedListener
 import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.recyclerview.CategoryNameAdapter
@@ -92,7 +93,7 @@ class ProfileFragment(private val listener: UserRefreshedListener) : Fragment() 
     }
 
     private fun updateCategories(){
-        val userRef = Firebase.firestore.collection("users").document(ContainerActivity.currentUser.uid)
+        val userRef = Firebase.firestore.collection("users").document(currentUser.uid)
         userRef.update("categories", selectedCategories)
         listener.userRefreshed()
 

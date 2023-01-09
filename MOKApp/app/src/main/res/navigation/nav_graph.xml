@@ -3,18 +3,36 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/allBadgesListFragment">
+    android:label="Összes Mancs"
+    app:startDestination="@id/loginFragment">
+    <fragment
+        android:id="@+id/detailsFragment"
+        android:name="mok.it.app.mokapp.fragments.DetailsFragment"
+        android:label="Mancs adatai"
+        tools:layout="@layout/fragment_details">
+        <action
+            android:id="@+id/action_detailsFragment_to_commentsFragment"
+            app:destination="@id/commentsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/commentsFragment"
+        android:name="mok.it.app.mokapp.fragments.CommentsFragment"
+        android:label="Kommentek" />
     <fragment
         android:id="@+id/allBadgesListFragment"
         android:name="mok.it.app.mokapp.fragments.AllBadgesListFragment"
         android:label="AllBadgesListFragment" >
         <action
-            android:id="@+id/action_allBadgesListFragment_to_detailsFragment2"
+            android:id="@+id/action_allBadgesListFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/detailsFragment"
-        android:name="mok.it.app.mokapp.fragments.DetailsFragment"
-        android:label="fragment_details"
-        tools:layout="@layout/fragment_details" />
+        android:id="@+id/loginFragment"
+        android:name="mok.it.app.mokapp.fragments.LoginFragment"
+        android:label="fragment_login"
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_allBadgesListFragment"
+            app:destination="@id/allBadgesListFragment" />
+    </fragment>
 </navigation>

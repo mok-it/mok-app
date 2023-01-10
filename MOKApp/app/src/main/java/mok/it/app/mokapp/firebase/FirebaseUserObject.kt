@@ -1,4 +1,4 @@
-package mok.it.app.mokapp
+package mok.it.app.mokapp.firebase
 
 import android.content.Context
 import android.os.Handler
@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.User
 
 

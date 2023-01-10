@@ -11,10 +11,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.recyclerView
-import mok.it.app.mokapp.FirebaseUserObject.currentUser
-import mok.it.app.mokapp.FirebaseUserObject.userModel
+import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.activity.MainActivity
 import mok.it.app.mokapp.interfaces.UserRefreshedListener
 import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.recyclerview.CategoryNameAdapter

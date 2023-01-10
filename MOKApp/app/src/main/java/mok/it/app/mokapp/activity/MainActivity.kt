@@ -2,7 +2,6 @@ package mok.it.app.mokapp.activity
 
 import android.os.Bundle
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.navigation.findNavController
@@ -20,9 +19,9 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header.*
-import mok.it.app.mokapp.FirebaseUserObject.currentUser
-import mok.it.app.mokapp.FirebaseUserObject.refreshCurrentUserAndUserModel
-import mok.it.app.mokapp.FirebaseUserObject.userModel
+import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
+import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.fragments.AllBadgesListFragment
 import mok.it.app.mokapp.interfaces.UserRefreshedListener

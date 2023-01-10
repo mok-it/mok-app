@@ -19,7 +19,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import mok.it.app.mokapp.FirebaseUserObject
+import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.FragmentLoginBinding
 

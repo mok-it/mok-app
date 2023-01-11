@@ -1,12 +1,8 @@
 package mok.it.app.mokapp.activity
 
 import android.os.Bundle
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.GravityCompat
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
@@ -16,20 +12,19 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.activity_container.*
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header.*
+import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
-import mok.it.app.mokapp.R
 import mok.it.app.mokapp.fragments.AllBadgesListFragment
 import mok.it.app.mokapp.interfaces.UserRefreshedListener
 import mok.it.app.mokapp.interfaces.UserRefresher
 import mok.it.app.mokapp.model.User
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
+class MainActivity : AppCompatActivity(),
     AllBadgesListFragment.ItemClickedListener, UserRefresher, UserRefreshedListener {
 
     val firestore = Firebase.firestore
@@ -103,31 +98,34 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         adm?.isVisible = userModel.admin
     }
 
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val navController = findNavController(R.id.nav_host_fragment)
-        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
-
-//        if (item.itemId == R.id.nav_logout) {
-//            Toast.makeText(this, "OK", Toast.LENGTH_SHORT).show()
-//        }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        Log.d("asd", "onOptionsItemSelected: entered")
+//        val navController = findNavController(R.id.nav_host_fragment)
+//        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
 //
-//        return super.onOptionsItemSelected(item)
-    }
+////        if (item.itemId == R.id.nav_logout) {
+////            Toast.makeText(this, "OK", Toast.LENGTH_SHORT).show()
+////        }
+////
+////        return super.onOptionsItemSelected(item)
+//    }
 
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId) {
-            R.id.nav_logout -> logOut()
-            //TODO ezt még meg kell csinálni - paramétert átadni a transitionnak, hogy melyik mcs-t kell betölteni
-//            R.id.it -> changeCategoryFragment("IT")
-//            R.id.fel -> changeCategoryFragment("Feladatsor")
-//            R.id.gra -> changeCategoryFragment("Grafika")
-//            R.id.kre -> changeCategoryFragment("Kreatív")
-//            R.id.ped -> changeCategoryFragment("Pedagógia")
-//            //további jövőbeli munkacsoportok hasonlóan
-        }
-        drawer_layout.closeDrawer(GravityCompat.START)
-        return true
-    }
+//    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+//        // TODO mintha nem lépne be
+//        Log.d("asd", "onNavigationItemSelected: entered")
+//        when (item.itemId) {
+//            R.id.nav_logout -> logOut()
+//            //TODO ezt még meg kell csinálni - paramétert átadni a transitionnak, hogy melyik mcs-t kell betölteni
+////            R.id.it -> changeCategoryFragment("IT")
+////            R.id.fel -> changeCategoryFragment("Feladatsor")
+////            R.id.gra -> changeCategoryFragment("Grafika")
+////            R.id.kre -> changeCategoryFragment("Kreatív")
+////            R.id.ped -> changeCategoryFragment("Pedagógia")
+////            //további jövőbeli munkacsoportok hasonlóan
+//        }
+//        drawer_layout.closeDrawer(GravityCompat.START)
+//        return true
+//    }
 
     private fun logOut() {
         FirebaseAuth.getInstance().signOut()
@@ -146,6 +144,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 //        previousBadge = badgeId
     }
 
+    // TODO ehelyett a FirebaseUserObjecteset kéne használni
     override fun refreshUser(listener: UserRefreshedListener) {
         currentUser = FirebaseAuth.getInstance().currentUser!!
         Firebase.firestore.collection("users").document(currentUser.uid)

@@ -52,5 +52,14 @@
     <string name="plus_sign">Plus sign</string>
     <string name="user_data_load_failed">Sajnos nem sikerült betölteni a felhasználó adatait:(</string>
     <string name="example_email_address">example@mail.com</string>
+    <string name="it_mcs">IT</string>
+    <string name="ped_mcs">Pedagógia</string>
+    <string name="feladatsor_mcs">Feladatsor</string>
+    <string name="kreativ_mcs">Kreatív</string>
+    <string name="grafika_mcs">Grafika</string>
+    <string name="admin">Admin</string>
+    <string name="misc">Egyéb</string>
+    <string name="phonebook">Telefonkönyv</string>
+    <string name="logout">Kijelentkezés</string>
 
 </resources>

@@ -19,15 +19,11 @@ import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.recyclerview.CategoryNameAdapter
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
-class ProfileFragment(private val listener: UserRefreshedListener) : Fragment() {
+class ProfileFragment() : Fragment() {
     lateinit var categories: ArrayList<Category>
     lateinit var names: Array<String>
     lateinit var checkedNames: BooleanArray
     var selectedCategories: ArrayList<String> = ArrayList()
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -94,7 +90,8 @@ class ProfileFragment(private val listener: UserRefreshedListener) : Fragment() 
     private fun updateCategories(){
         val userRef = Firebase.firestore.collection("users").document(currentUser.uid)
         userRef.update("categories", selectedCategories)
-        listener.userRefreshed()
+        // TODO refesh user(?)
+        //listener.userRefreshed()
 
         //TODO ez csúnya, összekötni a Firestore-ból visszaérkező adattal?
         recyclerView.adapter = CategoryNameAdapter(selectedCategories)

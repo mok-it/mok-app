@@ -4,43 +4,54 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
-        <item android:id="@+id/fragment_all_badges_list"
-            android:icon="@drawable/ic_list"
-            android:title="@string/badge_list"/>
-        <item android:id="@+id/fragment_profile"
+<!--        <item-->
+<!--            android:id="@+id/fragment_all_badges_list"-->
+<!--            android:icon="@drawable/ic_list"-->
+<!--            android:title="@string/badge_list" />-->
+        <item
+            android:id="@+id/profileFragment"
             android:icon="@drawable/ic_profile"
-            android:title="@string/profile"/>
-        <item android:id="@+id/nav_completed"
-            android:icon="@drawable/ic_check"
-            android:title="@string/my_badges"/>
-        <item android:id="@+id/it"
+            android:title="@string/profile" />
+        <item
+            android:id="@+id/nav_completed"
+            android:icon="@drawable/paw_solid"
+            android:title="@string/my_badges" />
+        <item
+            android:id="@+id/it"
             android:icon="@drawable/ic_smiley"
-            android:title="IT"/>
-        <item android:id="@+id/ped"
+            android:title="@string/it_mcs" />
+        <item
+            android:id="@+id/ped"
             android:icon="@drawable/ic_smiley"
-            android:title="Pedagógia"/>
-        <item android:id="@+id/fel"
+            android:title="@string/ped_mcs" />
+        <item
+            android:id="@+id/fel"
             android:icon="@drawable/ic_smiley"
-            android:title="Feladatsor"/>
-        <item android:id="@+id/kre"
+            android:title="@string/feladatsor_mcs" />
+        <item
+            android:id="@+id/kre"
             android:icon="@drawable/ic_smiley"
-            android:title="Kreatív"/>
-        <item android:id="@+id/gra"
+            android:title="@string/kreativ_mcs" />
+        <item
+            android:id="@+id/gra"
             android:icon="@drawable/ic_smiley"
-            android:title="Grafika"/>
-        <item android:id="@+id/admin"
+            android:title="@string/grafika_mcs" />
+        <item
+            android:id="@+id/admin"
             android:icon="@drawable/ic_admin"
-            android:title="Admin"/>
+            android:title="@string/admin" />
     </group>
 
-   <item android:title="Egyéb">
+    <item android:title="@string/misc">
         <menu>
-            <item android:id="@+id/phone_book"
+            <item
+                android:id="@+id/phone_book"
                 android:icon="@drawable/ic_baseline_phone_24"
-                android:title="Telefonkönyv"/>
-            <item android:id="@+id/nav_logout"
+                android:title="@string/phonebook" />
+            <item
+                android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_logout"
-                android:title="Kijelentkezés"/>
+                android:title="@string/logout" />
         </menu>
     </item>
 </menu>

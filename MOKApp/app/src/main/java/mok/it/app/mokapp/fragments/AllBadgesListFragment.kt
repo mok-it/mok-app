@@ -4,9 +4,12 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
+import androidx.navigation.fragment.findNavController
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
@@ -23,7 +26,7 @@ import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 class AllBadgesListFragment :
     BaseFireFragment() {
 
-    private val category = "IT" // TODO a megnyitásnál átadni a kategóriát
+    private val category = "Univerzális" // TODO a megnyitásnál átadni a kategóriát
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -96,8 +99,11 @@ class AllBadgesListFragment :
                 }
 
                 holder.itemView.setOnClickListener {
-                    // TODO open badge details (I guess)
-                    //listener?.onItemClicked(model.id, category)
+                    val action =
+                        AllBadgesListFragmentDirections.actionAllBadgesListFragmentToDetailsFragment(
+                            model.id
+                        )
+                    findNavController().navigate(action)
                 }
             }
         }
@@ -113,12 +119,12 @@ class AllBadgesListFragment :
             val dialog = CreateBadgeFragment(category)
             dialog.show(parentFragmentManager, "CreateBadgeDialog")
         }
-        // TODO reenable - userModel lateinit not loaded
-        //        setAddBadgeButtonVisibility()
+        setAddBadgeButtonVisibility()
         badgeSwipeRefresh.setOnRefreshListener {
             adapter = getAdapter()
             recyclerView.adapter = adapter
-            FirebaseUserObject.refreshCurrentUserAndUserModel(this.requireContext()
+            FirebaseUserObject.refreshCurrentUserAndUserModel(
+                this.requireContext()
             ) { setAddBadgeButtonVisibility() }
             //TODO nem csak az usert kéne frissíteni, hanem a badgeket is
             // (vszeg a megoldás: firebaseRecyclerAdapter)

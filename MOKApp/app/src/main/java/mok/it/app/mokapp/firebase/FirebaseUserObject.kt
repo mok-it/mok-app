@@ -36,41 +36,42 @@ object FirebaseUserObject {
         numberOfConsecutiveCalls: Int
     ) {
         val numberOfMaxTries = 5
-            Firebase.firestore.collection("users")
-                .document(
-                    FirebaseAuth.getInstance().currentUser?.uid ?: throw Exception("FirebaseAuth user is null")
-                )
-                .get()
-                .addOnSuccessListener { document ->
-                    val userToBe = document.toObject(User::class.java)
-                    Log.d(TAG, "refreshCurrentUser(): got document ${userToBe.toString()}")
-                    if (userToBe != null) {
-                        userModel = userToBe
-                        currentUser = FirebaseAuth.getInstance().currentUser
-                            ?: throw Exception("FirebaseAuth user is null")
-                        Log.d(TAG, "refreshCurrentUser(): user refreshed")
-                        onSuccessFunction?.invoke()
-                    } else if (numberOfConsecutiveCalls <= numberOfMaxTries) {
-                        Handler(Looper.getMainLooper()).postDelayed({
-                            Toast.makeText(
-                                context,
-                                "Nem sikerült betölteni a felhasználó adatait, " +
-                                        "újrapróbálkozás...($numberOfConsecutiveCalls. próba)",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                            refreshCurrentUserAndUserModelRecursive(
-                                context,
-                                onSuccessFunction,
-                                numberOfConsecutiveCalls + 1
-                            )
-                        }, 1000)
-                    } else {
+        Firebase.firestore.collection("users")
+            .document(
+                FirebaseAuth.getInstance().currentUser?.uid
+                    ?: throw Exception("FirebaseAuth user is null")
+            )
+            .get()
+            .addOnSuccessListener { document ->
+                val userToBe = document.toObject(User::class.java)
+                Log.d(TAG, "refreshCurrentUser(): got document ${userToBe.toString()}")
+                if (userToBe != null) {
+                    userModel = userToBe
+                    currentUser = FirebaseAuth.getInstance().currentUser
+                        ?: throw Exception("FirebaseAuth user is null")
+                    Log.d(TAG, "refreshCurrentUser(): user refreshed")
+                    onSuccessFunction?.invoke()
+                } else if (numberOfConsecutiveCalls <= numberOfMaxTries) {
+                    Handler(Looper.getMainLooper()).postDelayed({
                         Toast.makeText(
                             context,
-                            context.getString(R.string.user_data_load_failed),
+                            "Nem sikerült betölteni a felhasználó adatait, " +
+                                    "újrapróbálkozás...($numberOfConsecutiveCalls. próba)",
                             Toast.LENGTH_SHORT
                         ).show()
-                    }
+                        refreshCurrentUserAndUserModelRecursive(
+                            context,
+                            onSuccessFunction,
+                            numberOfConsecutiveCalls + 1
+                        )
+                    }, 1000)
+                } else {
+                    Toast.makeText(
+                        context,
+                        context.getString(R.string.user_data_load_failed),
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
+            }
     }
 }

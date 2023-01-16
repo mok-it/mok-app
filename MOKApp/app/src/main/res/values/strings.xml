@@ -41,6 +41,7 @@
     <string name="deadline">Határidő</string>
     <string name="members">Résztvevők</string>
     <string name="join">Csatlakozás</string>
+    <string name="leave">Lecsatlakozás</string>
     <string name="badge_list">Mancslista</string>
     <string name="profile">Profil</string>
     <string name="my_badges">Mancsaim</string>

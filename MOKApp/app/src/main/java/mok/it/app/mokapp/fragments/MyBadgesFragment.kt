@@ -16,7 +16,7 @@ import mok.it.app.mokapp.recyclerview.BadgeCategoriesAdapter
 import mok.it.app.mokapp.recyclerview.BadgesAdapter
 
 
-class MyBadgesFragment(private val listener: AllBadgesListFragment.ItemClickedListener) :
+class MyBadgesFragment :
     BaseFireFragment(), BadgesAdapter.BadgeClickedListener {
     private lateinit var recyclerView: RecyclerView
     private lateinit var collectedBadges: ArrayList<Project>
@@ -74,10 +74,9 @@ class MyBadgesFragment(private val listener: AllBadgesListFragment.ItemClickedLi
     }
 
     override fun onBadgeClicked(badgeId: String) {
-        listener.onItemClicked(badgeId, "Univerzális")
+        //listener.onItemClicked(badgeId, "Univerzális")
         ///ez még szar
         //parentFragmentManager.beginTransaction()
         //    .replace(R.id.fragment_container, DetailsFragment(badgeId, userRefresher = ContainerActivity as UserRefresher), "DetailsFragment").commit()
     }
-
 }

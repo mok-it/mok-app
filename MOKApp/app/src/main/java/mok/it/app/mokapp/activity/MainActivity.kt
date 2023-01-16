@@ -1,7 +1,9 @@
 package mok.it.app.mokapp.activity
 
 import android.os.Bundle
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.navigation.Navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
@@ -19,13 +21,11 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.fragments.AllBadgesListFragment
-import mok.it.app.mokapp.interfaces.UserRefreshedListener
-import mok.it.app.mokapp.interfaces.UserRefresher
-import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.fragments.AllBadgesListFragmentDirections
 
 
 class MainActivity : AppCompatActivity(),
-    AllBadgesListFragment.ItemClickedListener, UserRefresher, UserRefreshedListener {
+    AllBadgesListFragment.ItemClickedListener, NavigationView.OnNavigationItemSelectedListener{
 
     val firestore = Firebase.firestore
 
@@ -67,15 +67,6 @@ class MainActivity : AppCompatActivity(),
             .load(currentUser.photoUrl)
             .apply(requestOptions.override(250, 250))
             .into(image)
-
-        // TODO ?
-//        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-//        val toggle = ActionBarDrawerToggle(
-//            this, drawer_layout, toolbar,
-//            R.string.navigation_drawer_open, R.string.navigation_drawer_close
-//        )
-//        drawer_layout.addDrawerListener(toggle)
-//        toggle.syncState()
     }
 
     private fun setMenuVisibility() {
@@ -94,8 +85,16 @@ class MainActivity : AppCompatActivity(),
         gra?.isVisible = userModel.categories.contains("Grafika")
 
         //Admin láthatósága
-        val adm = menu.findItem(R.id.admin)
+        val adm = menu.findItem(R.id.adminFragment)
         adm?.isVisible = userModel.admin
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return super.onOptionsItemSelected(item)
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        return true
     }
 
 //    override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -111,7 +110,7 @@ class MainActivity : AppCompatActivity(),
 //    }
 
 //    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-//        // TODO mintha nem lépne be
+//        //mintha nem lépne be
 //        Log.d("asd", "onNavigationItemSelected: entered")
 //        when (item.itemId) {
 //            R.id.nav_logout -> logOut()
@@ -136,39 +135,11 @@ class MainActivity : AppCompatActivity(),
     }
 
     override fun onItemClicked(badgeId: String, category: String) {
-        // TODO open the details fragment with the badgeId
-//        supportFragmentManager.beginTransaction()
-//            .replace(R.id.fragment_container, DetailsFragment(badgeId, this), "DetailsFragment")
-//            .commit()
-//        previousCategory = category
-//        previousBadge = badgeId
-    }
-
-    // TODO ehelyett a FirebaseUserObjecteset kéne használni
-    override fun refreshUser(listener: UserRefreshedListener) {
-        currentUser = FirebaseAuth.getInstance().currentUser!!
-        Firebase.firestore.collection("users").document(currentUser.uid)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    userModel = document.toObject(User::class.java)!!
-                    setHeader()
-                    setMenuVisibility()
-                    listener.userRefreshed()
-                }
-            }
-    }
-
-    override fun userRefreshed() {
-        Firebase.firestore.collection("users").document(currentUser.uid)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    userModel = document.toObject(User::class.java)!!
-                    setHeader()
-                    setMenuVisibility()
-                }
-            }
+        val action =
+            AllBadgesListFragmentDirections.actionAllBadgesListFragmentToDetailsFragment(
+                badgeId
+            )
+        //findNavController().navigate(action)
     }
 
     //TODO ha változik a profile pic, az új képet elmenteni

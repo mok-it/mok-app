@@ -12,12 +12,19 @@
         <action
             android:id="@+id/action_detailsFragment_to_commentsFragment"
             app:destination="@id/commentsFragment" />
+        <argument
+            android:name="badgeId"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/commentsFragment"
         android:name="mok.it.app.mokapp.fragments.CommentsFragment"
         android:label="Kommentek"
-        tools:layout="@layout/fragment_comments"/>
+        tools:layout="@layout/fragment_comments">
+        <argument
+            android:name="badgeId"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/allBadgesListFragment"
         android:name="mok.it.app.mokapp.fragments.AllBadgesListFragment"

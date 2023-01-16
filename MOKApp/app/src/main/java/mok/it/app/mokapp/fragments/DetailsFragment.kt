@@ -9,6 +9,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.squareup.picasso.Picasso
@@ -18,31 +20,24 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
-import mok.it.app.mokapp.interfaces.UserRefreshedListener
-import mok.it.app.mokapp.interfaces.UserRefresher
+import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.MembersAdapter
 import java.text.SimpleDateFormat
 import kotlin.collections.ArrayList
 
-class DetailsFragment() : BaseFireFragment(), MembersAdapter.MemberClickedListener,
-    BadgeAcceptMemberDialogFragment.SuccessListener, UserRefreshedListener{
+class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener,
+    BadgeAcceptMemberDialogFragment.SuccessListener {
 
-    // TODO : private val badgeId: String, private val userRefresher: UserRefresher adatok betöltése
-    private val badgeId: String = ""
-    private val userRefresher: UserRefresher = object : UserRefresher {
-        override fun refreshUser(listener: UserRefreshedListener) {
+    private val args: DetailsFragmentArgs by navArgs()
 
-        }
-    }
-
-    lateinit var badgeModel: Project
+    private lateinit var badgeModel: Project
     private val commentsId = "comments"
     private val TAG = "DetailsFragment"
-    lateinit var memberUsers: ArrayList<User>
-    lateinit var memberComments: ArrayList<Comment>
-    var userIsEditor: Boolean = false
+    private lateinit var memberUsers: ArrayList<User>
+    private lateinit var memberComments: ArrayList<Comment>
+    private var userIsEditor: Boolean = false
     private var selectedMemberUID = ""
 
     override fun onCreateView(
@@ -65,21 +60,21 @@ class DetailsFragment() : BaseFireFragment(), MembersAdapter.MemberClickedListen
         }
         join_button.setOnClickListener {
             join()
-            userRefresher.refreshUser(this)
+            FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext())
         }
         join_button.visibility = View.GONE
         badgeComments.setOnClickListener {
-            // TODO open commentsfragment
-//            parentFragmentManager.beginTransaction()
-//                .replace(R.id.fragment_container, CommentsFragment(badgeId), "CommentsFragment")
-//                .commit()
+            val action =
+                DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.badgeId)
+            findNavController().navigate(action)
         }
-        documentOnSuccess(projectCollectionPath, badgeId) { document ->
+        documentOnSuccess(projectCollectionPath, args.badgeId) { document ->
 
             badgeModel = document.toObject(Project::class.java)!!
 
             badgeName.text = document.get("name") as String
-            categoryName.text = getString(R.string.category) + ": " + document.get("category") as String
+            categoryName.text =
+                getString(R.string.category) + ": " + document.get("category") as String
             badgeDescription.text = document.get("description") as String
             firestore.collection(userCollectionPath).document(document.get("creator") as String)
                 .get().addOnSuccessListener { creatorDoc ->
@@ -103,14 +98,14 @@ class DetailsFragment() : BaseFireFragment(), MembersAdapter.MemberClickedListen
     }
 
     private fun getMemberIds() {
-        val docRef = firestore.collection(projectCollectionPath).document(badgeId)
+        val docRef = firestore.collection(projectCollectionPath).document(args.badgeId)
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null) {
                     Log.d(TAG, "DocumentSnapshot data: ${document.data}")
                     model = document.toObject(Project::class.java)!!
                     getMembers(model.members)
-                    Log.d(TAG, "Model data: ${model}")
+                    Log.d(TAG, "Model data: $model")
                 } else {
                     Log.d(TAG, "No such document")
                 }
@@ -119,7 +114,7 @@ class DetailsFragment() : BaseFireFragment(), MembersAdapter.MemberClickedListen
 
     private fun getMembers(members: List<String>?) {
         memberUsers = ArrayList()
-        Log.d(TAG, "LIST: ${members}")
+        Log.d(TAG, "LIST: $members")
         members?.forEach {
             val docRef = firestore.collection(userCollectionPath).document(it)
             docRef.get()
@@ -127,7 +122,7 @@ class DetailsFragment() : BaseFireFragment(), MembersAdapter.MemberClickedListen
                     if (document != null) {
                         val user = document.toObject(User::class.java)!!
                         memberUsers.add(user)
-                        Log.d(TAG, "MEMBERS: ${memberUsers}")
+                        Log.d(TAG, "MEMBERS: $memberUsers")
 
                         if (members.size == memberUsers.size) {
                             initMembers()
@@ -140,9 +135,10 @@ class DetailsFragment() : BaseFireFragment(), MembersAdapter.MemberClickedListen
 
     @SuppressLint("SimpleDateFormat")
     fun getCommentIds() {
-        memberComments = ArrayList<Comment>()
+        memberComments = ArrayList()
         val collectionRef =
-            firestore.collection(projectCollectionPath).document(badgeId).collection(commentsId)
+            firestore.collection(projectCollectionPath).document(args.badgeId)
+                .collection(commentsId)
         collectionRef.get()
             .addOnSuccessListener { collection ->
                 if (collection != null && collection.documents.size > 0) {
@@ -221,23 +217,22 @@ class DetailsFragment() : BaseFireFragment(), MembersAdapter.MemberClickedListen
         }
     }
 
-    private fun join(){
-        if (userModel.joinedBadges.contains(badgeId)){
+    private fun join() {
+        if (userModel.joinedBadges.contains(args.badgeId)) {
             val userRef = firestore.collection("users").document(currentUser.uid)
-            userRef.update("joinedBadges", FieldValue.arrayRemove(badgeId))
+            userRef.update("joinedBadges", FieldValue.arrayRemove(args.badgeId))
 
-            val badgeRef = firestore.collection("projects").document(badgeId)
+            val badgeRef = firestore.collection("projects").document(args.badgeId)
             badgeRef.update("members", FieldValue.arrayRemove(currentUser.uid))
                 .addOnCompleteListener {
                     Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT).show()
                     getMemberIds()
                 }
-        }
-        else {
+        } else {
             val userRef = firestore.collection("users").document(currentUser.uid)
-            userRef.update("joinedBadges", FieldValue.arrayUnion(badgeId))
+            userRef.update("joinedBadges", FieldValue.arrayUnion(args.badgeId))
 
-            val badgeRef = firestore.collection("projects").document(badgeId)
+            val badgeRef = firestore.collection("projects").document(args.badgeId)
             badgeRef.update("members", FieldValue.arrayUnion(currentUser.uid))
                 .addOnCompleteListener {
                     Toast.makeText(context, "Sikeresen csatlakoztál!", Toast.LENGTH_SHORT).show()
@@ -249,11 +244,16 @@ class DetailsFragment() : BaseFireFragment(), MembersAdapter.MemberClickedListen
 
     private fun completed(userId: String) {
         Log.d("DetailsFragment", "completed")
-        Log.d("DetailsFragment", "BadgeID: " + badgeId)
+        Log.d("DetailsFragment", "args.badgeId: " + args.badgeId)
         val userRef = firestore.collection("users").document(userId)
-        userRef.update("joinedBadges", FieldValue.arrayRemove(badgeId)).addOnSuccessListener { Log.d("DetailsFragment", badgeId + " removed from " + userId) }.addOnFailureListener{e -> Log.d("DetailsFragment", "wtf " + e)}
-        userRef.update("collectedBadges", FieldValue.arrayUnion(badgeId))
-        val badgeRef = firestore.collection("projects").document(badgeId)
+        userRef.update("joinedBadges", FieldValue.arrayRemove(args.badgeId)).addOnSuccessListener {
+            Log.d(
+                "DetailsFragment",
+                args.badgeId + " removed from " + userId
+            )
+        }.addOnFailureListener { e -> Log.d("DetailsFragment", "wtf " + e) }
+        userRef.update("collectedBadges", FieldValue.arrayUnion(args.badgeId))
+        val badgeRef = firestore.collection("projects").document(args.badgeId)
         badgeRef.update("members", FieldValue.arrayRemove(userId))
             .addOnCompleteListener {
                 getMemberIds()
@@ -266,9 +266,9 @@ class DetailsFragment() : BaseFireFragment(), MembersAdapter.MemberClickedListen
         dialog.show(parentFragmentManager, "MembersDialog")
     }
 
-    override fun onMemberClicked(user: User) {
-        selectedMemberUID = user.documentId
-        val dialog = BadgeAcceptMemberDialogFragment(this, user.name)
+    override fun onMemberClicked(userId: User) {
+        selectedMemberUID = userId.documentId
+        val dialog = BadgeAcceptMemberDialogFragment(this, userId.name)
         dialog.show(parentFragmentManager, "AcceptDialog")
     }
 
@@ -276,21 +276,17 @@ class DetailsFragment() : BaseFireFragment(), MembersAdapter.MemberClickedListen
         completed(selectedMemberUID)
     }
 
-    private fun changeVisibilities(){
+    private fun changeVisibilities() {
         join_button.visibility = View.VISIBLE
         if (userModel.collectedBadges.contains(badgeModel.id))
             join_button.visibility = View.GONE
         else if (userModel.joinedBadges.contains(badgeModel.id))
-            join_button.text = "Lecsatlakozás"
+            join_button.text = getString(R.string.join)
         else if (!userModel.joinedBadges.contains(badgeModel.id))
-            join_button.text = "Csatlakozás"
+            join_button.text = getString(R.string.leave)
 
-        if (badgeModel.editors.contains(userModel.documentId)){
+        if (badgeModel.editors.contains(userModel.documentId)) {
             userIsEditor = true
         }
-    }
-
-    override fun userRefreshed() {
-        changeVisibilities()
     }
 }

@@ -135,8 +135,12 @@ class CategoryFragment(val listener: ItemClickedListener, val category: String, 
         if (filter.achieved){
             query = query.whereIn(FieldPath.documentId(), userModel.collectedBadges)
         }
+        if (filter.edited){
+            query = query.whereArrayContains("editors", userModel.uid)
+        }
         return query
     }
+
     private fun setAddBadgeButtonVisibility() {
         if (!userModel.isCreator && !userModel.admin) {
             addBadgeButton.visibility = View.INVISIBLE

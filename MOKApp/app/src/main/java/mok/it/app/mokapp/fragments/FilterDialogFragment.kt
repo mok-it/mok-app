@@ -37,12 +37,14 @@ class FilterDialogFragment(private val filter: Filter, val listener: FilterChang
         switchAchieved.isChecked = filter.achieved
         switchMandatory.isChecked = filter.mandatory
         switchJoined.isChecked = filter.joined
+        switchEdited.isChecked = filter.edited
     }
 
     private fun setFilter(){
         filter.achieved = switchAchieved.isChecked
         filter.mandatory = switchMandatory.isChecked
         filter.joined = switchJoined.isChecked
+        filter.edited = switchEdited.isChecked
     }
 
     interface FilterChangedListener{

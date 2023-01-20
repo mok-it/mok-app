@@ -29,7 +29,7 @@ import kotlin.collections.ArrayList
  * badge to the server.
  */
 
-class CreateBadgeFragment(val category: String) : DialogFragment() {
+open class CreateBadgeFragment(val category: String) : DialogFragment() {
 
     lateinit var nameTIET: TextInputEditText
     lateinit var descriptionTIET: TextInputEditText
@@ -94,7 +94,7 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
     /**
      * Called if the dialog needs to be closed.
      */
-    private fun closeDialog() {
+    protected fun closeDialog() {
         dialog?.dismiss() ?: run {
             Log.w(TAG, "Can not close dialog, it is null.")
         }
@@ -179,13 +179,12 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
             toast(R.string.error_occurred)
             false
         }
-
     }
 
     /**
      * Called if the user wants to create the badge.
      */
-    private fun onCreateBadgePressed() {
+    protected open fun onCreateBadgePressed() {
         val shouldCloseDialog = onCreateBadge()
 
         if (shouldCloseDialog) {
@@ -230,7 +229,7 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
         Toast.LENGTH_SHORT
     ).show()
 
-    private fun getUsers(){
+    protected open fun getUsers(){
         users = ArrayList()
 
         firestore.collection(userCollectionPath)
@@ -249,14 +248,13 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
             }
     }
 
-    private fun initEditorsDialog(){
+    protected fun initEditorsDialog(){
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Válassz kezelőt!")
         builder.setMultiChoiceItems(names, checkedNames){_, which, isChecked ->
             checkedNames[which] = isChecked
         }
         builder.setPositiveButton("Ok"){_, _ ->
-            selectedMembers = ArrayList()
             for (i in names.indices){
                 if (checkedNames[i]){
                     Log.d("Selected", names[i])
@@ -271,7 +269,7 @@ class CreateBadgeFragment(val category: String) : DialogFragment() {
         dialog.show()
     }
     companion object {
-        val TAG = "CreateBadgeFragment"
+        const val TAG = "CreateBadgeFragment"
         fun newInstance() = CreateBadgeFragment("")
     }
 }

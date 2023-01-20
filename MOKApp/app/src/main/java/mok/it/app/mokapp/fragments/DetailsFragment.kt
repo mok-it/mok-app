@@ -1,6 +1,8 @@
 package mok.it.app.mokapp.fragments
 
 import android.annotation.SuppressLint
+import android.content.DialogInterface
+import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +18,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_details.*
+import kotlinx.android.synthetic.main.fragment_list.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.currentUser
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
@@ -30,7 +33,7 @@ import java.text.SimpleDateFormat
 import kotlin.collections.ArrayList
 
 class DetailsFragment(private val badgeId: String, private val userRefresher: UserRefresher) : BaseFireFragment(), MembersAdapter.MemberClickedListener,
-    BadgeAcceptMemberDialogFragment.SuccessListener, UserRefreshedListener{
+    BadgeAcceptMemberDialogFragment.SuccessListener, UserRefreshedListener, EditBadgeFragment.EditBadgeListener{
 
     lateinit var badgeModel: Project
     private val commentsId = "comments"
@@ -93,9 +96,20 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
                     userIsEditor = true
                 }
                 changeVisibilities()
+                initEditButton()
             }
         }
         // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
+    }
+
+    private fun initEditButton(){
+        if(badgeModel.creator == userModel.uid) {
+            editButton.visibility = View.VISIBLE
+            editButton.setOnClickListener{
+                val dialog = EditBadgeFragment(badgeModel, this)
+                dialog.show(parentFragmentManager, "EditBadgeDialog")
+            }
+        }
     }
 
     private fun getMemberIds() {
@@ -115,7 +129,6 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
 
     private fun getMembers(members: List<String>?) {
         memberUsers = ArrayList()
-        Log.d(TAG, "LIST: ${members}")
         members?.forEach {
             val docRef = firestore.collection(userCollectionPath).document(it)
             docRef.get()
@@ -123,7 +136,6 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
                     if (document != null) {
                         val user = document.toObject(User::class.java)!!
                         memberUsers.add(user)
-                        Log.d(TAG, "MEMBERS: ${memberUsers}")
 
                         if (members.size == memberUsers.size) {
                             initMembers()
@@ -288,5 +300,9 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
 
     override fun userRefreshed() {
         changeVisibilities()
+    }
+
+    override fun onEdited() {
+        initLayout()
     }
 }

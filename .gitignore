@@ -86,3 +86,5 @@ lint/tmp/
 MOKApp/.idea/deploymentTargetDropDown.xml
 
 MOKApp/.idea/misc.xml
+
+MOKApp/phone numbers/phonenumbers.json

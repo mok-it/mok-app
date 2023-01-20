@@ -87,9 +87,20 @@
                     android:gravity="center"
                     android:text="@string/deadline"
                     android:textAlignment="center"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/editButton"
                     app:layout_constraintStart_toEndOf="@+id/badgeCreator"
                     app:layout_constraintTop_toTopOf="@+id/badgeCreator" />
+
+                <ImageView
+                    android:id="@+id/editButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/ic_settings"
+                    android:visibility="gone"
+                    app:tint="@color/blue"
+                    app:layout_constraintTop_toTopOf="@+id/badgeCreator"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/badgeDeadline"/>
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
         <View

@@ -50,11 +50,14 @@
     <string name="modify">Módosítás</string>
     <string name="my_categories">Munkacsoportjaim:</string>
     <string name="plus_sign">Plus sign</string>
-    <string name="user_data_load_failed">Sajnos nem sikerült betölteni a felhasználó adatait:(</string>
-    <string name="example_email_address">example@mail.com</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="user_data_load_failed">Nem sikerült betölteni a felhasználó adatait!</string>
+    <string name="filter_achieved_badges">Megszerzett badgek</string>
+    <string name="filter_mandatory_badges">Kötelező badgek</string>
+    <string name="filter_joined_badges">Csatlakozott badgek</string>
+    <string name="filter_string">Szöveg</string>
+    <string name="filter_edited_badges">Kezelt badgek</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="edit_badge_text">Mancs Szerkesztése</string>
     <string name="edit_text">Szerkesztés</string>
-
+    <string name="example_email_address">example@mail.com</string>
 </resources>

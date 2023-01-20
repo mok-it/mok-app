@@ -43,7 +43,7 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
 
     lateinit var names: Array<String>
     lateinit var checkedNames: BooleanArray
-    var selectedMembers: ArrayList<String> = ArrayList()
+    var selectedEditors: ArrayList<String> = ArrayList()
 
     private val isNameRequired = true
     private val isDescriptionRequired = true
@@ -89,6 +89,9 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
             it.window?.setLayout(width, height)
             isCancelable = false
         }
+
+        selectedEditors = ArrayList()
+        selectedEditors.add(userModel.documentId)
     }
 
     /**
@@ -135,7 +138,7 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
         Log.d("Create category", category)
         val deadline = Date(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
         Log.d("Create date", deadline.toString())
-        Log.d("Create editors", selectedMembers.toString())
+        Log.d("Create editors", selectedEditors.toString())
 
         val newBadge = hashMapOf(
             "category" to category,
@@ -143,7 +146,7 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
             "creator" to userModel.documentId,
             "deadline" to deadline,
             "description" to descriptionTIET.text.toString(),
-            "editors" to selectedMembers,
+            "editors" to selectedEditors,
             "icon" to "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef",
             "name" to nameTIET.text.toString(),
             "overall_progress" to 0,
@@ -258,7 +261,7 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
             for (i in names.indices){
                 if (checkedNames[i]){
                     Log.d("Selected", names[i])
-                    selectedMembers.add(users[i].documentId)
+                    selectedEditors.add(users[i].documentId)
                 }
             }
         }
@@ -268,6 +271,7 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
         val dialog: AlertDialog = builder.create()
         dialog.show()
     }
+
     companion object {
         const val TAG = "CreateBadgeFragment"
         fun newInstance() = CreateBadgeFragment("")

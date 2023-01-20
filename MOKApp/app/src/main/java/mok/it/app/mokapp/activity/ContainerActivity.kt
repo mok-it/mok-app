@@ -1,5 +1,6 @@
 package mok.it.app.mokapp.activity
 
+
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -7,6 +8,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
@@ -29,11 +31,13 @@ import mok.it.app.mokapp.auth.LoginActivity
 import mok.it.app.mokapp.fragments.*
 import mok.it.app.mokapp.interfaces.UserRefreshedListener
 import mok.it.app.mokapp.interfaces.UserRefresher
+import mok.it.app.mokapp.model.Filter
 import mok.it.app.mokapp.model.User
 
 
 class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
-    CategoryFragment.ItemClickedListener, UserRefresher, UserRefreshedListener {
+    CategoryFragment.ItemClickedListener, UserRefresher, UserRefreshedListener,
+    FilterDialogFragment.FilterChangedListener {
 
     val firestore = Firebase.firestore
 
@@ -68,6 +72,8 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     var previousCategory = "Univerzális"
     var previousBadge = ""
+
+    var filter = Filter()
 
     companion object {
         var currentUser = FirebaseAuth.getInstance().currentUser!!
@@ -137,6 +143,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
             .into(image)
 
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
         val toggle = ActionBarDrawerToggle(
             this, drawer_layout, toolbar,
             R.string.navigation_drawer_open, R.string.navigation_drawer_close
@@ -148,8 +155,13 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     private fun initialNavigation() {
         nav_view.setNavigationItemSelectedListener(this)
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, CategoryFragment(this, "Univerzális")).commit()
+            .replace(R.id.fragment_container, CategoryFragment(this, "Univerzális", filter)).commit()
         nav_view.setCheckedItem(R.id.nav_list)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(mok.it.app.mokapp.R.menu.menu_main, menu)
+        return true
     }
 
     private fun removeSpinner() {
@@ -178,10 +190,9 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        if (item.itemId == R.id.nav_logout) {
-            Toast.makeText(this, "OK", Toast.LENGTH_SHORT).show()
+        if (item.itemId == R.id.filter) {
+            openFilterDialog()
         }
-
         return super.onOptionsItemSelected(item)
     }
 
@@ -195,7 +206,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                 supportFragmentManager.findFragmentByTag("CommentsFragment") as CommentsFragment?
             if (detailsFragment != null && detailsFragment.isVisible) {
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.fragment_container, CategoryFragment(this, previousCategory))
+                    .replace(R.id.fragment_container, CategoryFragment(this, previousCategory, filter))
                     .commit()
             } else if (commentsFragment != null && commentsFragment.isVisible) {
                 supportFragmentManager.beginTransaction().replace(
@@ -254,7 +265,7 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
 
     private fun changeCategoryFragment(category: String) {
         supportFragmentManager.beginTransaction()
-            .replace(R.id.fragment_container, CategoryFragment(this, category)).commit()
+            .replace(R.id.fragment_container, CategoryFragment(this, category, filter)).commit()
         previousCategory = category
     }
 
@@ -269,6 +280,11 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
         val intent = Intent(this, LoginActivity::class.java)
         startActivity(intent)
         finish()
+    }
+
+    private fun openFilterDialog(){
+        val dialog = FilterDialogFragment(filter, this)
+        dialog.show(supportFragmentManager, "FilterFragment")
     }
 
     override fun onItemClicked(badgeId: String, category: String) {
@@ -303,5 +319,11 @@ class ContainerActivity : AppCompatActivity(), NavigationView.OnNavigationItemSe
                     setMenuVisibility()
                 }
             }
+    }
+
+    override fun getFilter(filter: Filter) {
+        this.filter = filter
+        Log.d("LISTENER", this.filter.joined.toString())
+        changeCategoryFragment(previousCategory)
     }
 }

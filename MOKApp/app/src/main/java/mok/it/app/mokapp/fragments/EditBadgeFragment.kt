@@ -24,7 +24,7 @@ class EditBadgeFragment(private val badge: Project, private val detailsFragment:
             textViewTitle.text = getString(R.string.edit_badge_text)
             create_button.text = getString(R.string.edit_text)
         }
-        selectedMembers = badge.editors as ArrayList<String>
+        selectedEditors = badge.editors as ArrayList<String>
         super.onViewCreated(view, savedInstanceState)
     }
 
@@ -73,7 +73,7 @@ class EditBadgeFragment(private val badge: Project, private val detailsFragment:
             "creator" to ContainerActivity.userModel.documentId,
             "deadline" to deadline,
             "description" to descriptionTIET.text.toString(),
-            "editors" to selectedMembers,
+            "editors" to selectedEditors,
             "icon" to "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef",
             "name" to nameTIET.text.toString(),
             "overall_progress" to 0,

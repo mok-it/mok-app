@@ -1,9 +1,6 @@
 package mok.it.app.mokapp.fragments
 
 import android.annotation.SuppressLint
-import android.content.DialogInterface
-import android.content.Intent
-import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -11,29 +8,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
 import androidx.core.view.isVisible
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_details.*
-import kotlinx.android.synthetic.main.fragment_list.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.currentUser
 import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
-import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.interfaces.UserRefreshedListener
 import mok.it.app.mokapp.interfaces.UserRefresher
+import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.MembersAdapter
 import java.text.SimpleDateFormat
-import kotlin.collections.ArrayList
 
-class DetailsFragment(private val badgeId: String, private val userRefresher: UserRefresher) : BaseFireFragment(), MembersAdapter.MemberClickedListener,
-    BadgeAcceptMemberDialogFragment.SuccessListener, UserRefreshedListener, EditBadgeFragment.EditBadgeListener{
+class DetailsFragment(private val badgeId: String, private val userRefresher: UserRefresher) :
+    BaseFireFragment(), MembersAdapter.MemberClickedListener,
+    BadgeAcceptMemberDialogFragment.SuccessListener, UserRefreshedListener,
+    EditBadgeFragment.EditBadgeListener {
 
     lateinit var badgeModel: Project
     private val commentsId = "comments"
@@ -77,7 +72,8 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
                 badgeModel = document.toObject(Project::class.java)!!
 
                 badgeName.text = document.get("name") as String
-                categoryName.text = getString(R.string.category) + ": " + document.get("category") as String
+                categoryName.text =
+                    getString(R.string.category) + ": " + document.get("category") as String
                 badgeDescription.text = document.get("description") as String
                 firestore.collection(userCollectionPath).document(document.get("creator") as String)
                     .get().addOnSuccessListener { creatorDoc ->
@@ -102,10 +98,10 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
         // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
     }
 
-    private fun initEditButton(){
-        if(badgeModel.creator == userModel.uid) {
+    private fun initEditButton() {
+        if (badgeModel.creator == userModel.uid) {
             editButton.visibility = View.VISIBLE
-            editButton.setOnClickListener{
+            editButton.setOnClickListener {
                 val dialog = EditBadgeFragment(badgeModel, this)
                 dialog.show(parentFragmentManager, "EditBadgeDialog")
             }
@@ -229,8 +225,8 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
         }
     }
 
-    private fun join(){
-        if (userModel.joinedBadges.contains(badgeId)){
+    private fun join() {
+        if (userModel.joinedBadges.contains(badgeId)) {
             val userRef = firestore.collection("users").document(currentUser.uid)
             userRef.update("joinedBadges", FieldValue.arrayRemove(badgeId))
 
@@ -240,8 +236,7 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
                     Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT).show()
                     getMemberIds()
                 }
-        }
-        else {
+        } else {
             val userRef = firestore.collection("users").document(currentUser.uid)
             userRef.update("joinedBadges", FieldValue.arrayUnion(badgeId))
 
@@ -259,7 +254,9 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
         Log.d("DetailsFragment", "completed")
         Log.d("DetailsFragment", "BadgeID: " + badgeId)
         val userRef = firestore.collection("users").document(userId)
-        userRef.update("joinedBadges", FieldValue.arrayRemove(badgeId)).addOnSuccessListener { Log.d("DetailsFragment", badgeId + " removed from " + userId) }.addOnFailureListener{e -> Log.d("DetailsFragment", "wtf " + e)}
+        userRef.update("joinedBadges", FieldValue.arrayRemove(badgeId))
+            .addOnSuccessListener { Log.d("DetailsFragment", badgeId + " removed from " + userId) }
+            .addOnFailureListener { e -> Log.d("DetailsFragment", "wtf " + e) }
         userRef.update("collectedBadges", FieldValue.arrayUnion(badgeId))
         val badgeRef = firestore.collection("projects").document(badgeId)
         badgeRef.update("members", FieldValue.arrayRemove(userId))
@@ -284,7 +281,7 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
         completed(selectedMemberUID)
     }
 
-    private fun changeVisibilities(){
+    private fun changeVisibilities() {
         join_button.visibility = View.VISIBLE
         if (userModel.collectedBadges.contains(badgeModel.id))
             join_button.visibility = View.GONE
@@ -293,7 +290,7 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
         else if (!userModel.joinedBadges.contains(badgeModel.id))
             join_button.text = "Csatlakozás"
 
-        if (badgeModel.editors.contains(userModel.documentId)){
+        if (badgeModel.editors.contains(userModel.documentId)) {
             userIsEditor = true
         }
     }

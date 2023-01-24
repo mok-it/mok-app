@@ -11,7 +11,7 @@
         android:id="@+id/fragment_phone_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        tools:listitem="@layout/phone_contact_item"
+        tools:listitem="@layout/card_phonebook_item"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent">
     </androidx.recyclerview.widget.RecyclerView>

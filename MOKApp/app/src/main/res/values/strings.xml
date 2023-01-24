@@ -62,5 +62,7 @@
     <string name="misc">Egyéb</string>
     <string name="phonebook">Telefonkönyv</string>
     <string name="logout">Kijelentkezés</string>
+    <string name="no_phone_number">Nincs elérhető telefonszám</string>
+    <string name="profile_pic">Profilkép</string>
 
 </resources>

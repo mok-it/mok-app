@@ -4,11 +4,9 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
-import androidx.navigation.fragment.NavHostFragment.Companion.findNavController
 import androidx.navigation.fragment.findNavController
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -76,7 +74,7 @@ class AllBadgesListFragment :
         return object : FirestoreRecyclerAdapter<Project, ProjectViewHolder>(options) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
                 val view = LayoutInflater.from(this@AllBadgesListFragment.context)
-                    .inflate(R.layout.project_card, parent, false)
+                    .inflate(R.layout.card_badge, parent, false)
                 return ProjectViewHolder(view)
             }
 

@@ -3,9 +3,11 @@ package mok.it.app.mokapp.activity
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.navigation.Navigation.findNavController
+import androidx.appcompat.widget.Toolbar
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
-import androidx.navigation.ui.setupWithNavController
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.setupActionBarWithNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
@@ -25,7 +27,7 @@ import mok.it.app.mokapp.fragments.AllBadgesListFragmentDirections
 
 
 class MainActivity : AppCompatActivity(),
-    AllBadgesListFragment.ItemClickedListener, NavigationView.OnNavigationItemSelectedListener{
+    AllBadgesListFragment.ItemClickedListener, NavigationView.OnNavigationItemSelectedListener {
 
     val firestore = Firebase.firestore
 
@@ -33,12 +35,18 @@ class MainActivity : AppCompatActivity(),
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // a fallback navigation listener is might needed here
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         val navController = navHostFragment.navController
-        findViewById<NavigationView>(R.id.nav_view)
-            .setupWithNavController(navController)
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+    }
+
+    //TODO this is not necessary in theory
+    override fun onSupportNavigateUp(): Boolean {
+        return findNavController(R.id.nav_host_fragment).navigateUp()
     }
 
     private fun loadApp() {

@@ -15,7 +15,7 @@ import mok.it.app.mokapp.model.User
 
 object FirebaseUserObject {
     lateinit var userModel: User
-    lateinit var currentUser: FirebaseUser
+    var currentUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private const val TAG = "FirebaseUserObject"
 
     /**

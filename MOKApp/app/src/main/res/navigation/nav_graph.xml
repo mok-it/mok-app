@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/loginFragment">
+    app:startDestination="@id/allBadgesListFragment">
     <fragment
         android:id="@+id/detailsFragment"
         android:name="mok.it.app.mokapp.fragments.DetailsFragment"
@@ -28,8 +28,8 @@
     <fragment
         android:id="@+id/allBadgesListFragment"
         android:name="mok.it.app.mokapp.fragments.AllBadgesListFragment"
-        tools:layout="@layout/fragment_all_badges_list"
-        android:label="Az összes Mancs">
+        android:label="Az összes Mancs"
+        tools:layout="@layout/fragment_all_badges_list">
         <action
             android:id="@+id/action_allBadgesListFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />
@@ -62,12 +62,12 @@
         android:id="@+id/profileFragment"
         android:name="mok.it.app.mokapp.fragments.ProfileFragment"
         android:label="Profil"
-        tools:layout="@layout/fragment_profile"/>
+        tools:layout="@layout/fragment_profile" />
     <fragment
         android:id="@+id/myBadgesFragment"
         android:name="mok.it.app.mokapp.fragments.MyBadgesFragment"
         android:label="Saját Mancsaim"
-        tools:layout="@layout/fragment_my_badges"/>
+        tools:layout="@layout/fragment_my_badges" />
     <fragment
         android:id="@+id/adminFragment"
         android:name="mok.it.app.mokapp.fragments.AdminFragment"
@@ -77,5 +77,5 @@
         android:id="@+id/phoneBookFragment"
         android:name="mok.it.app.mokapp.fragments.PhoneBookFragment"
         android:label="Telefonkönyv"
-        tools:layout="@layout/fragment_phone_list"/>
+        tools:layout="@layout/fragment_phone_list" />
 </navigation>

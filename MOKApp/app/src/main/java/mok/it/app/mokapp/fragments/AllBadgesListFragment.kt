@@ -1,24 +1,17 @@
 package mok.it.app.mokapp.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
-import androidx.core.view.GravityCompat
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.onNavDestinationSelected
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.android.material.navigation.NavigationView
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.fragment_all_badges_list.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
@@ -29,7 +22,7 @@ import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
 class AllBadgesListFragment :
-    BaseFireFragment(), NavigationView.OnNavigationItemSelectedListener{
+    BaseFireFragment() {
 
     private val category = "Univerzális" // TODO a megnyitásnál átadni a kategóriát
 
@@ -42,7 +35,13 @@ class AllBadgesListFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initRecyclerView()
+        if (FirebaseUserObject.currentUser == null) {
+            findNavController().navigate(AllBadgesListFragmentDirections.actionAllBadgesListFragmentToLoginFragment())
+        } else {
+            FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext()) {
+                initRecyclerView()
+            }
+        }
     }
 
     /**
@@ -113,11 +112,6 @@ class AllBadgesListFragment :
             }
         }
     }
-    private fun logout() {
-        FirebaseAuth.getInstance().signOut()
-        val action = AllBadgesListFragmentDirections.actionAllBadgesListFragmentToLoginFragment()
-        findNavController().navigate(action)
-    }
 
     private fun initRecyclerView() {
         //TODO ezt vagy firebaseRecyclerAdapterrel vagy NotifyDataChangedel kéne megoldani szépen
@@ -148,25 +142,5 @@ class AllBadgesListFragment :
         } else {
             addBadgeButton.visibility = View.VISIBLE
         }
-    }
-    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val navController = findNavController()
-        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        Log.d("asd", "onNavigationItemSelected in allbadgeslistfragment: entered")
-        when (item.itemId) {
-            //R.id.nav_logout -> logOut()
-            //TODO ezt még meg kell csinálni - paramétert átadni a transitionnak, hogy melyik mcs-t kell betölteni
-//            R.id.it -> changeCategoryFragment("IT")
-//            R.id.fel -> changeCategoryFragment("Feladatsor")
-//            R.id.gra -> changeCategoryFragment("Grafika")
-//            R.id.kre -> changeCategoryFragment("Kreatív")
-//            R.id.ped -> changeCategoryFragment("Pedagógia")
-//            //további jövőbeli munkacsoportok hasonlóan
-        }
-        drawer_layout.closeDrawer(GravityCompat.START)
-        return true
     }
 }

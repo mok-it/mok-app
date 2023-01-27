@@ -1,6 +1,8 @@
 package mok.it.app.mokapp.activity
 
 import android.os.Bundle
+import android.util.Log
+import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -24,9 +26,10 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
+import mok.it.app.mokapp.fragments.AllBadgesListFragmentDirections
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     val firestore = Firebase.firestore
     private lateinit var navController: NavController
@@ -66,13 +69,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setHeader() {
-        nameText.text = currentUser.displayName
-        emailText.text = currentUser.email
+        nameText.text = currentUser?.displayName
+        emailText.text = currentUser?.email
         refreshButton.setOnClickListener {
             refreshCurrentUserAndUserModel(this) { loadApp() }
         }
         val requestOptions = RequestOptions().transforms(CenterCrop(), RoundedCorners(26))
-        Glide.with(this).load(currentUser.photoUrl).apply(requestOptions.override(250, 250))
+        Glide.with(this).load(currentUser?.photoUrl).apply(requestOptions.override(250, 250))
             .into(image)
     }
 
@@ -100,28 +103,32 @@ class MainActivity : AppCompatActivity() {
         return NavigationUI.navigateUp(navController, drawer_layout)
     }
 
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+    //    override fun onOptionsItemSelected(item: MenuItem): Boolean {
 //        //val navController = findNavController(R.id.nav_host_fragment)d
 //        Log.d("mainactivity", "onOptionsItemSelected: entered")
 //        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
 //    }
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        Log.d("asd", "onNavigationItemSelected in allbadgeslistfragment: entered")
+        when (item.itemId) {
+            //R.id.nav_logout -> logOut()
+            //TODO ezt még meg kell csinálni - paramétert átadni a transitionnak, hogy melyik mcs-t kell betölteni
+//            R.id.it -> changeCategoryFragment("IT")
+//            R.id.fel -> changeCategoryFragment("Feladatsor")
+//            R.id.gra -> changeCategoryFragment("Grafika")
+//            R.id.kre -> changeCategoryFragment("Kreatív")
+//            R.id.ped -> changeCategoryFragment("Pedagógia")
+//            //további jövőbeli munkacsoportok hasonlóan
+        }
+        drawer_layout.closeDrawer(GravityCompat.START)
+        return true
+    }
 
-
-//    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-//        Log.d("asd", "onNavigationItemSelected in allbadgeslistfragment: entered")
-//        when (item.itemId) {
-//            //R.id.nav_logout -> logOut()
-//            //TODO ezt még meg kell csinálni - paramétert átadni a transitionnak, hogy melyik mcs-t kell betölteni
-////            R.id.it -> changeCategoryFragment("IT")
-////            R.id.fel -> changeCategoryFragment("Feladatsor")
-////            R.id.gra -> changeCategoryFragment("Grafika")
-////            R.id.kre -> changeCategoryFragment("Kreatív")
-////            R.id.ped -> changeCategoryFragment("Pedagógia")
-////            //további jövőbeli munkacsoportok hasonlóan
-//        }
-//        drawer_layout.closeDrawer(GravityCompat.START)
-//        return true
-//    }
+    private fun logout() {
+        FirebaseAuth.getInstance().signOut()
+        val action = AllBadgesListFragmentDirections.actionAllBadgesListFragmentToLoginFragment()
+        //findNavController().navigate(action)
+    }
 
     //TODO ha változik a profile pic, az új képet elmenteni
     private fun updateProfilePic() {

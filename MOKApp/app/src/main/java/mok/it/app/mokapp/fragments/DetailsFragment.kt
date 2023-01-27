@@ -15,17 +15,16 @@ import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_details.*
-import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
-import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.firebase.FirebaseUserObject
+import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
+import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.MembersAdapter
 import java.text.SimpleDateFormat
-import kotlin.collections.ArrayList
 
 class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener,
     BadgeAcceptMemberDialogFragment.SuccessListener {
@@ -219,21 +218,21 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
 
     private fun join() {
         if (userModel.joinedBadges.contains(args.badgeId)) {
-            val userRef = firestore.collection("users").document(currentUser.uid)
+            val userRef = firestore.collection("users").document(currentUser!!.uid)
             userRef.update("joinedBadges", FieldValue.arrayRemove(args.badgeId))
 
             val badgeRef = firestore.collection("projects").document(args.badgeId)
-            badgeRef.update("members", FieldValue.arrayRemove(currentUser.uid))
+            badgeRef.update("members", FieldValue.arrayRemove(currentUser?.uid))
                 .addOnCompleteListener {
                     Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT).show()
                     getMemberIds()
                 }
         } else {
-            val userRef = firestore.collection("users").document(currentUser.uid)
+            val userRef = firestore.collection("users").document(currentUser!!.uid)
             userRef.update("joinedBadges", FieldValue.arrayUnion(args.badgeId))
 
             val badgeRef = firestore.collection("projects").document(args.badgeId)
-            badgeRef.update("members", FieldValue.arrayUnion(currentUser.uid))
+            badgeRef.update("members", FieldValue.arrayUnion(currentUser?.uid))
                 .addOnCompleteListener {
                     Toast.makeText(context, "Sikeresen csatlakoztál!", Toast.LENGTH_SHORT).show()
                     getMemberIds()

@@ -13,10 +13,10 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_all_badges_list.*
-import mok.it.app.mokapp.firebase.FirebaseUserObject
-import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
+import mok.it.app.mokapp.firebase.FirebaseUserObject
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
@@ -35,7 +35,13 @@ class AllBadgesListFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initRecyclerView()
+        if (FirebaseUserObject.currentUser == null) {
+            findNavController().navigate(AllBadgesListFragmentDirections.actionAllBadgesListFragmentToLoginFragment())
+        } else {
+            FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext()) {
+                initRecyclerView()
+            }
+        }
     }
 
     /**
@@ -136,9 +142,5 @@ class AllBadgesListFragment :
         } else {
             addBadgeButton.visibility = View.VISIBLE
         }
-    }
-
-    interface ItemClickedListener {
-        fun onItemClicked(badgeId: String, category: String)
     }
 }

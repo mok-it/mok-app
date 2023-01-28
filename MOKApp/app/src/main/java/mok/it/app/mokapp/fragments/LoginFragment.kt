@@ -19,15 +19,14 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult
 import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
-import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.FragmentLoginBinding
+import mok.it.app.mokapp.firebase.FirebaseUserObject
 
 class LoginFragment : Fragment() {
 
     private lateinit var binding: FragmentLoginBinding
 
-    private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var googleAuth: ActivityResultLauncher<Intent>
     //private lateinit var loadingDialog: LottieDialogFragment
@@ -40,25 +39,24 @@ class LoginFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val googleSignInOptions = GoogleSignInOptions.Builder(
-            GoogleSignInOptions.DEFAULT_SIGN_IN
-        ).requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build()
-
+    private fun initializeAuth() {
         FirebaseApp.initializeApp(requireContext())
 
         //loadingDialog = LoadingDialogManager.getLoadingDialog(requireContext())
+        googleSignInClient = GoogleSignIn.getClient(
+            requireContext(), GoogleSignInOptions.Builder(
+                GoogleSignInOptions.DEFAULT_SIGN_IN
+            ).requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build()
+        )
+    }
 
-        auth = FirebaseAuth.getInstance()
-        googleSignInClient = GoogleSignIn.getClient(requireContext(), googleSignInOptions)
-
-        val currentUser = auth.currentUser
-        if (currentUser != null) {
-            actionForAuthUser()
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        initializeAuth()
+        if (FirebaseUserObject.currentUser != null) {
+            navigateAuthUser()
             return
         }
 
@@ -72,9 +70,10 @@ class LoginFragment : Fragment() {
                     }
                     if (googleSignInResult!!.isSuccess) {
                         val idToken = googleSignInResult.signInAccount?.idToken
-                        auth.signInWithCredential(GoogleAuthProvider.getCredential(idToken, null))
+                        FirebaseAuth.getInstance()
+                            .signInWithCredential(GoogleAuthProvider.getCredential(idToken, null))
                             .addOnCompleteListener {
-                                actionForAuthUser()
+                                navigateAuthUser()
                             }
                     } else {
                         Toast.makeText(
@@ -92,7 +91,7 @@ class LoginFragment : Fragment() {
         }
     }
 
-    private fun actionForAuthUser() {
+    private fun navigateAuthUser() {
         FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext())
         {
             findNavController().navigate(R.id.action_loginFragment_to_allBadgesListFragment)

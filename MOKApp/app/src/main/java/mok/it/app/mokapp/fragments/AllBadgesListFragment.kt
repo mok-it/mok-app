@@ -1,31 +1,47 @@
 package mok.it.app.mokapp.fragments
 
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_all_badges_list.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
+import mok.it.app.mokapp.model.Filter
 import mok.it.app.mokapp.model.Project
+import mok.it.app.mokapp.model.getIconFileName
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
+
+private const val TAG = "AllBadgesListFragment"
 
 class AllBadgesListFragment :
     BaseFireFragment() {
 
     private val args: AllBadgesListFragmentArgs by navArgs()
+
+    private lateinit var filter: Filter
+    //TODO: betenni az argsba
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,9 +66,9 @@ class AllBadgesListFragment :
      * succeed, it tries to load the default 'broken' image. If that also
      * fails, leaves the image empty and logs an error message.
      */
-    private fun loadImage(imageView: ImageView, imageURL: String) {
-        if (tryLoadingImage(imageView, imageURL)) return
-        if (tryLoadingImage(imageView, getString(R.string.url_no_image))) return
+    private fun loadImage(imageView: ImageView, imageURL: String, callback: Callback) {
+        if (tryLoadingImage(imageView, imageURL, callback)) return
+        if (tryLoadingImage(imageView, getString(R.string.url_no_image), callback)) return
     }
 
     /**
@@ -61,10 +77,14 @@ class AllBadgesListFragment :
      *
      * @return true if the function succeeded, false if failed
      */
-    private fun tryLoadingImage(imageView: ImageView, imageURL: String): Boolean {
+    private fun tryLoadingImage(
+        imageView: ImageView,
+        imageURL: String,
+        callback: Callback
+    ): Boolean {
         return try {
             Picasso.get().apply {
-                load(imageURL).into(imageView)
+                load(imageURL).into(imageView, callback)
             }
             true
         } catch (e: Exception) {
@@ -73,9 +93,7 @@ class AllBadgesListFragment :
     }
 
     private fun getAdapter(): FirestoreRecyclerAdapter<Project, ProjectViewHolder> {
-        val query =
-            firestore.collection(projectCollectionPath).whereEqualTo("category", args.category)
-                .orderBy("created", Query.Direction.DESCENDING)
+        val query = getFilteredQuery()
         val options =
             FirestoreRecyclerOptions.Builder<Project>().setQuery(query, Project::class.java)
                 .setLifecycleOwner(this).build()
@@ -98,7 +116,37 @@ class AllBadgesListFragment :
                 tvName.text = model.name
                 tvDesc.text = model.description
                 tvMandatory.isVisible = model.mandatory
-                loadImage(ivImg, model.icon)
+
+                val iconFileName = getIconFileName(model.icon)
+                val iconFile = File(context?.filesDir, iconFileName)
+                if (iconFile.exists()) {
+                    Log.i(TAG, "loading badge icon " + iconFile.path)
+                    val bitmap: Bitmap = BitmapFactory.decodeFile(iconFile.path)
+                    ivImg.setImageBitmap(bitmap)
+                } else {
+                    Log.i(TAG, "downloading badge icon " + model.icon)
+                    val callback = object : Callback {
+                        override fun onSuccess() {
+                            // save image
+                            Log.i(TAG, "saving badge icon " + iconFile.path)
+                            val bitmap: Bitmap = ivImg.drawable.toBitmap()
+                            val fos: FileOutputStream?
+                            try {
+                                fos = FileOutputStream(iconFile)
+                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                                fos.flush()
+                                fos.close()
+                            } catch (e: IOException) {
+                                e.printStackTrace()
+                            }
+                        }
+
+                        override fun onError(e: java.lang.Exception?) {
+                            Log.e(TAG, e.toString())
+                        }
+                    }
+                    loadImage(ivImg, model.icon, callback)
+                }
 
                 if (userModel.collectedBadges.contains(model.id)) {
                     holder.itemView.setBackgroundResource(R.drawable.gradient1)
@@ -136,6 +184,25 @@ class AllBadgesListFragment :
             // (vszeg a megoldás: firebaseRecyclerAdapter)
             badgeSwipeRefresh.isRefreshing = false
         }
+    }
+
+    private fun getFilteredQuery(): Query {
+        var query =
+            firestore.collection(projectCollectionPath).whereEqualTo("category", args.category)
+                .orderBy("created", Query.Direction.DESCENDING)
+        if (filter.mandatory) {
+            query = query.whereEqualTo("mandatory", true)
+        }
+        if (filter.joined) {
+            query = query.whereArrayContains("members", userModel.uid)
+        }
+        if (filter.achieved) {
+            query = query.whereIn(FieldPath.documentId(), userModel.collectedBadges)
+        }
+        if (filter.edited) {
+            query = query.whereArrayContains("editors", userModel.uid)
+        }
+        return query
     }
 
     private fun setAddBadgeButtonVisibility() {

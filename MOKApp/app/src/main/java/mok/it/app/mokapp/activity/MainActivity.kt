@@ -1,6 +1,7 @@
 package mok.it.app.mokapp.activity
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -25,14 +26,17 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.fragments.AllBadgesListFragmentDirections
+import mok.it.app.mokapp.fragments.FilterDialogFragment
+import mok.it.app.mokapp.model.Filter
 
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), FilterDialogFragment.FilterChangedListener {
 
     val firestore = Firebase.firestore
     private lateinit var navController: NavController
     private val MCSs = arrayOf("IT", "Pedagógia", "Feladatsor", "Kreatív", "Grafika")
 
+    var filter = Filter()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -119,6 +123,19 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSupportNavigateUp(): Boolean {
         return NavigationUI.navigateUp(navController, drawer_layout)
+    }
+
+
+    override fun getFilter(filter: Filter) {
+        this.filter = filter
+        Log.d("LISTENER", this.filter.joined.toString())
+        //TODO miért navigálunk az előző kategóriába?
+        //changeCategoryFragment(previousCategory)
+    }
+
+    private fun openFilterDialog() {
+        val dialog = FilterDialogFragment(filter, this)
+        dialog.show(supportFragmentManager, "FilterFragment")
     }
 
     private fun navigateToBadgesByMCS(category: String) {

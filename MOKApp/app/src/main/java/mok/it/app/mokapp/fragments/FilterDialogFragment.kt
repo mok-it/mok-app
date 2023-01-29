@@ -1,19 +1,19 @@
 package mok.it.app.mokapp.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import kotlinx.android.synthetic.main.fragment_badge_accept_member_dialog.*
 import kotlinx.android.synthetic.main.fragment_badge_accept_member_dialog.view.*
-import kotlinx.android.synthetic.main.fragment_create_badge.view.*
 import kotlinx.android.synthetic.main.fragment_filter_dialog.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Filter
 
-class FilterDialogFragment(private val filter: Filter, val listener: FilterChangedListener) : DialogFragment() {
+class FilterDialogFragment(
+    private val filter: Filter,
+    private val listener: FilterChangedListener
+) : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -40,14 +40,14 @@ class FilterDialogFragment(private val filter: Filter, val listener: FilterChang
         switchEdited.isChecked = filter.edited
     }
 
-    private fun setFilter(){
+    private fun setFilter() {
         filter.achieved = switchAchieved.isChecked
         filter.mandatory = switchMandatory.isChecked
         filter.joined = switchJoined.isChecked
         filter.edited = switchEdited.isChecked
     }
 
-    interface FilterChangedListener{
+    interface FilterChangedListener {
         fun getFilter(filter: Filter)
     }
 }

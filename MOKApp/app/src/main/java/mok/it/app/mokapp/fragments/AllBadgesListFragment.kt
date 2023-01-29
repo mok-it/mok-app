@@ -39,9 +39,7 @@ class AllBadgesListFragment :
     BaseFireFragment() {
 
     private val args: AllBadgesListFragmentArgs by navArgs()
-
     private lateinit var filter: Filter
-    //TODO: betenni az argsba
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -52,6 +50,11 @@ class AllBadgesListFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        filter = args.filter ?: Filter()
+        loginOrLoad()
+    }
+
+    private fun loginOrLoad() {
         if (FirebaseUserObject.currentUser == null) {
             findNavController().navigate(AllBadgesListFragmentDirections.actionAllBadgesListFragmentToLoginFragment())
         } else {

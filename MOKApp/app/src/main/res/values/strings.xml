@@ -74,5 +74,6 @@
     <string name="profile_pic">Profilkép</string>
     <string name="links">Linkek</string>
     <string name="under_construction_badge_icon"><![CDATA[https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef]]></string>
+    <string name="close">Bezárás</string>
 
 </resources>

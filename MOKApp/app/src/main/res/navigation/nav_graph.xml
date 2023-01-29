@@ -55,6 +55,11 @@
         <action
             android:id="@+id/action_allBadgesListFragment_to_linksFragment"
             app:destination="@id/linksFragment" />
+        <argument
+            android:name="filter"
+            android:defaultValue="@null"
+            app:argType="mok.it.app.mokapp.model.Filter"
+            app:nullable="true" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"

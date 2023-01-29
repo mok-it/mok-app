@@ -64,5 +64,6 @@
     <string name="logout">Kijelentkezés</string>
     <string name="no_phone_number">Nincs elérhető telefonszám</string>
     <string name="profile_pic">Profilkép</string>
+    <string name="links">Linkek</string>
 
 </resources>

@@ -4,10 +4,6 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
-<!--        <item-->
-<!--            android:id="@+id/allBadgesFragment"-->
-<!--            android:icon="@drawable/ic_list"-->
-<!--            android:title="@string/badge_list" />-->
         <item
             android:id="@+id/profileFragment"
             android:icon="@drawable/ic_profile"
@@ -48,6 +44,10 @@
                 android:id="@+id/phoneBookFragment"
                 android:icon="@drawable/ic_baseline_phone_24"
                 android:title="@string/phonebook" />
+            <item
+                android:id="@+id/linksFragment"
+                android:icon="@drawable/ic_link"
+                android:title="@string/links" />
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_logout"

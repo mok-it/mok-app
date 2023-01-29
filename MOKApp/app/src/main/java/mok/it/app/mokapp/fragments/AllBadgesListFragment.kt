@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
@@ -24,7 +25,7 @@ import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 class AllBadgesListFragment :
     BaseFireFragment() {
 
-    private val category = "Univerzális" // TODO a megnyitásnál átadni a kategóriát
+    private val args: AllBadgesListFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -72,8 +73,9 @@ class AllBadgesListFragment :
     }
 
     private fun getAdapter(): FirestoreRecyclerAdapter<Project, ProjectViewHolder> {
-        val query = firestore.collection(projectCollectionPath).whereEqualTo("category", category)
-            .orderBy("created", Query.Direction.DESCENDING)
+        val query =
+            firestore.collection(projectCollectionPath).whereEqualTo("category", args.category)
+                .orderBy("created", Query.Direction.DESCENDING)
         val options =
             FirestoreRecyclerOptions.Builder<Project>().setQuery(query, Project::class.java)
                 .setLifecycleOwner(this).build()
@@ -120,7 +122,7 @@ class AllBadgesListFragment :
         recyclerView.adapter = adapter
         recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
         addBadgeButton.setOnClickListener {
-            val dialog = CreateBadgeFragment(category)
+            val dialog = CreateBadgeFragment(args.category)
             dialog.show(parentFragmentManager, "CreateBadgeDialog")
         }
         setAddBadgeButtonVisibility()

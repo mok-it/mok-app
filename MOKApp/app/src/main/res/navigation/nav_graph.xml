@@ -48,6 +48,13 @@
         <action
             android:id="@+id/action_allBadgesListFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <argument
+            android:name="category"
+            android:defaultValue="Univerzális"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_allBadgesListFragment_to_linksFragment"
+            app:destination="@id/linksFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -78,4 +85,9 @@
         android:name="mok.it.app.mokapp.fragments.PhoneBookFragment"
         android:label="Telefonkönyv"
         tools:layout="@layout/fragment_phone_list" />
+    <fragment
+        android:id="@+id/linksFragment"
+        android:name="mok.it.app.mokapp.fragments.LinksFragment"
+        android:label="Linkek"
+        tools:layout="@layout/fragment_links" />
 </navigation>

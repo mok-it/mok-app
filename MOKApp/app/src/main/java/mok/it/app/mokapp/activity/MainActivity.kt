@@ -1,8 +1,6 @@
 package mok.it.app.mokapp.activity
 
 import android.os.Bundle
-import android.util.Log
-import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -29,15 +27,20 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.fragments.AllBadgesListFragmentDirections
 
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity() {
 
     val firestore = Firebase.firestore
     private lateinit var navController: NavController
+    private val MCSs = arrayOf("IT", "Pedagógia", "Feladatsor", "Kreatív", "Grafika")
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        setupNavigation()
+    }
+
+    private fun setupNavigation() {
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
         setSupportActionBar(toolbar)
         val navHostFragment =
@@ -46,6 +49,21 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         setupActionBarWithNavController(navController, appBarConfiguration)
         findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
+
+        nav_view.setNavigationItemSelectedListener {
+            NavigationUI.onNavDestinationSelected(it, navController)
+            if (it.title in MCSs) {
+                navigateToBadgesByMCS(it.title.toString())
+            } else {
+                when (it.itemId) {
+                    R.id.nav_logout -> {
+                        logout()
+                    }
+                }
+            }
+            drawer_layout.closeDrawer(GravityCompat.START)
+            true
+        }
     }
 
     override fun onBackPressed() {
@@ -103,30 +121,17 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         return NavigationUI.navigateUp(navController, drawer_layout)
     }
 
-    //    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        //val navController = findNavController(R.id.nav_host_fragment)d
-//        Log.d("mainactivity", "onOptionsItemSelected: entered")
-//        return item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
-//    }
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        Log.d("asd", "onNavigationItemSelected in allbadgeslistfragment: entered")
-        when (item.itemId) {
-            //R.id.nav_logout -> logOut()
-            //TODO ezt még meg kell csinálni - paramétert átadni a transitionnak, hogy melyik mcs-t kell betölteni
-//            R.id.it -> changeCategoryFragment("IT")
-//            R.id.fel -> changeCategoryFragment("Feladatsor")
-//            R.id.gra -> changeCategoryFragment("Grafika")
-//            R.id.kre -> changeCategoryFragment("Kreatív")
-//            R.id.ped -> changeCategoryFragment("Pedagógia")
-//            //további jövőbeli munkacsoportok hasonlóan
-        }
-        drawer_layout.closeDrawer(GravityCompat.START)
-        return true
+    private fun navigateToBadgesByMCS(category: String) {
+//        val action = AllBadgesListFragmentDirections.actionAllBadgesListFragmentToBadgesByMCSFragment(
+//            category
+//        )
+//        findNavController().navigate(action)
     }
 
     private fun logout() {
         FirebaseAuth.getInstance().signOut()
         val action = AllBadgesListFragmentDirections.actionAllBadgesListFragmentToLoginFragment()
+        //TODO a login fragmentre navigálni
         //findNavController().navigate(action)
     }
 

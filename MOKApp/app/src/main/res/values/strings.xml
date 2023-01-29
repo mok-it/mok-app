@@ -41,6 +41,7 @@
     <string name="deadline">Határidő</string>
     <string name="members">Résztvevők</string>
     <string name="join">Csatlakozás</string>
+    <string name="leave">Lecsatlakozás</string>
     <string name="badge_list">Mancslista</string>
     <string name="profile">Profil</string>
     <string name="my_badges">Mancsaim</string>
@@ -60,4 +61,17 @@
     <string name="edit_badge_text">Mancs Szerkesztése</string>
     <string name="edit_text">Szerkesztés</string>
     <string name="example_email_address">example@mail.com</string>
+    <string name="it_mcs">IT</string>
+    <string name="ped_mcs">Pedagógia</string>
+    <string name="feladatsor_mcs">Feladatsor</string>
+    <string name="kreativ_mcs">Kreatív</string>
+    <string name="grafika_mcs">Grafika</string>
+    <string name="admin">Admin</string>
+    <string name="misc">Egyéb</string>
+    <string name="phonebook">Telefonkönyv</string>
+    <string name="logout">Kijelentkezés</string>
+    <string name="no_phone_number">Nincs elérhető telefonszám</string>
+    <string name="profile_pic">Profilkép</string>
+    <string name="links">Linkek</string>
+
 </resources>

@@ -4,104 +4,54 @@
     tools:showIn="navigation_view">
 
     <group android:checkableBehavior="single">
-        <item android:id="@+id/nav_list"
-            android:icon="@drawable/ic_list"
-            android:title="@string/badge_list"/>
-        <item android:id="@+id/nav_profile"
+        <item
+            android:id="@+id/profileFragment"
             android:icon="@drawable/ic_profile"
-            android:title="@string/profile"/>
-        <item android:id="@+id/nav_completed"
-            android:icon="@drawable/ic_check"
-            android:title="@string/my_badges"/>
-        <item android:id="@+id/it"
+            android:title="@string/profile" />
+        <item
+            android:id="@+id/myBadgesFragment"
+            android:icon="@drawable/paw_solid"
+            android:title="@string/my_badges" />
+        <item
+            android:id="@+id/it"
             android:icon="@drawable/ic_smiley"
-            android:title="IT"/>
-        <item android:id="@+id/ped"
+            android:title="@string/it_mcs" />
+        <item
+            android:id="@+id/ped"
             android:icon="@drawable/ic_smiley"
-            android:title="Pedagógia"/>
-        <item android:id="@+id/fel"
+            android:title="@string/ped_mcs" />
+        <item
+            android:id="@+id/fel"
             android:icon="@drawable/ic_smiley"
-            android:title="Feladatsor"/>
-        <item android:id="@+id/kre"
+            android:title="@string/feladatsor_mcs" />
+        <item
+            android:id="@+id/kre"
             android:icon="@drawable/ic_smiley"
-            android:title="Kreatív"/>
-        <item android:id="@+id/gra"
+            android:title="@string/kreativ_mcs" />
+        <item
+            android:id="@+id/gra"
             android:icon="@drawable/ic_smiley"
-            android:title="Grafika"/>
-        <item android:id="@+id/admin"
+            android:title="@string/grafika_mcs" />
+        <item
+            android:id="@+id/adminFragment"
             android:icon="@drawable/ic_admin"
-            android:title="Admin"/>
+            android:title="@string/admin" />
     </group>
 
-    <item android:title="Linkek">
+    <item android:title="@string/misc">
         <menu>
-            <item android:id="@+id/nav_hirlevel"
-                android:icon="@drawable/ic_link"
-                android:title="Hírlevelek"/>
-            <item android:id="@+id/nav_konyvtar"
-                android:icon="@drawable/ic_link"
-                android:title="Könyvtár"/>
-            <item android:id="@+id/nav_program"
-                android:icon="@drawable/ic_link"
-                android:title="Programadatbázis"/>
-            <item android:id="@+id/nav_otlet"
-                android:icon="@drawable/ic_link"
-                android:title="Ötletláda"/>
-            <item android:id="@+id/nav_youtube"
-                android:icon="@drawable/ic_link"
-                android:title="Youtube"/>
-        </menu>
-    </item>
-    <item android:title="Alapdokumentumok">
-        <menu>
-            <item android:id="@+id/nav_alapszab"
-                android:icon="@drawable/ic_link"
-                android:title="Alapszabály"/>
-            <item android:id="@+id/nav_szmsz"
-                android:icon="@drawable/ic_link"
-                android:title="SZMSZ"/>
-            <item android:id="@+id/nav_etikai"
-                android:icon="@drawable/ic_link"
-                android:title="Etikai kódex"/>
-            <item android:id="@+id/nav_afp"
-                android:icon="@drawable/ic_link"
-                android:title="AFP"/>
-        </menu>
-    </item>
-    <item android:title="Kisokosok">
-        <menu>
-            <item android:id="@+id/nav_mentor"
-                android:icon="@drawable/ic_link"
-                android:title="Mentor"/>
-            <item android:id="@+id/nav_feladat"
-                android:icon="@drawable/ic_link"
-                android:title="Feladatbeküldés"/>
-            <item android:id="@+id/nav_nat"
-                android:icon="@drawable/ic_link"
-                android:title="NAT"/>
-        </menu>
-    </item>
-    <item android:title="Nagykönyvek">
-        <menu>
-            <item android:id="@+id/nav_tabor"
-                android:icon="@drawable/ic_link"
-                android:title="Tábori"/>
-            <item android:id="@+id/nav_verseny"
-                android:icon="@drawable/ic_link"
-                android:title="Verseny"/>
-            <item android:id="@+id/nav_logirintus"
-                android:icon="@drawable/ic_link"
-                android:title="Logirintus"/>
-        </menu>
-    </item>
-    <item android:title="Egyéb">
-        <menu>
-            <item android:id="@+id/phone_book"
+            <item
+                android:id="@+id/phoneBookFragment"
                 android:icon="@drawable/ic_baseline_phone_24"
-                android:title="Telefonkönyv"/>
-            <item android:id="@+id/nav_logout"
+                android:title="@string/phonebook" />
+            <item
+                android:id="@+id/linksFragment"
+                android:icon="@drawable/ic_link"
+                android:title="@string/links" />
+            <item
+                android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_logout"
-                android:title="Kijelentkezés"/>
+                android:title="@string/logout" />
         </menu>
     </item>
 </menu>

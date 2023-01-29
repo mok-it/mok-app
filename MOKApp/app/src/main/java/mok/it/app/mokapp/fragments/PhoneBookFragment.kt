@@ -9,13 +9,14 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.phone_contact_item.view.*
+import kotlinx.android.synthetic.main.card_phonebook_item.view.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.model.User
@@ -80,15 +81,13 @@ class PhoneBookFragment : BaseFireFragment() {
                     val ivImg: ImageView = holder.itemView.findViewById(R.id.contact_image)
                     loadImage(ivImg, model.photoURL)
                     holder.itemView.contact_name.text = model.name
-                    holder.itemView.phone_number.text = model.email
-                    //TODO change to phone number
+                    holder.itemView.phone_number.text = model.phoneNumber.ifEmpty { getString(R.string.no_phone_number) }
 
                     holder.itemView.call_button.setOnClickListener {
                         // if the device is capable of making phone calls, the button opens the dialer
-                        if (isTelephonyEnabled()) {
+                        if (isTelephonyEnabled() && model.phoneNumber.isNotEmpty()) {
                             val intent = Intent(Intent.ACTION_DIAL)
-                            //TODO change to their real number
-                            intent.data = Uri.parse("tel:0123456789")
+                            intent.data = Uri.parse("tel:${model.phoneNumber}}")
                             this.context?.let { it2 ->
                                 ContextCompat.startActivity(
                                     it2,
@@ -96,14 +95,16 @@ class PhoneBookFragment : BaseFireFragment() {
                                     null
                                 )
                             }
-                        } else // ...if not, it copies the number to the clipboard
+                        }
+                        else if (model.phoneNumber.isEmpty()) // if the user doesn't have a phone number, it shows a toast
+                            Toast.makeText(context, getString(R.string.no_phone_number) , Toast.LENGTH_SHORT).show()
+                        else // ...if not, it copies the number to the clipboard
                         {
-                            //TODO change to their real number
                             val clipboard =
                                 this.context?.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
                             val clip = android.content.ClipData.newPlainText(
                                 "label",
-                                "0123456789"
+                                model.phoneNumber
                             )
                             clipboard.setPrimaryClip(clip)
                         }
@@ -118,7 +119,7 @@ class PhoneBookFragment : BaseFireFragment() {
 
                 override fun onCreateViewHolder(group: ViewGroup, i: Int): PhoneBookViewHolder {
                     val view: View = LayoutInflater.from(group.context)
-                        .inflate(R.layout.phone_contact_item, group, false)
+                        .inflate(R.layout.card_phonebook_item, group, false)
                     return PhoneBookViewHolder(view)
                 }
 

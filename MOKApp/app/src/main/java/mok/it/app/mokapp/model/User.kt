@@ -1,10 +1,7 @@
 package mok.it.app.mokapp.model
 
-import android.util.Log
 import com.google.firebase.firestore.DocumentId
-import com.google.firebase.firestore.DocumentSnapshot
 import com.google.firebase.firestore.PropertyName
-import io.grpc.internal.JsonUtil.getList
 
 //the fields of the class should exactly match the fields in Firestore DB
 data class User(
@@ -20,6 +17,7 @@ data class User(
     @get:PropertyName("isCreator")
     val isCreator: Boolean = false,
     val photoURL: String = "",
+    val phoneNumber: String = "",
 
     //redundant to use (user documentId instead),
     // but since some (at the time of this writing, all) documents have it, it is required here:

@@ -1,7 +1,8 @@
 package mok.it.app.mokapp.fragments
 
 import android.annotation.SuppressLint
-import android.graphics.Color
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -9,8 +10,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -20,12 +20,11 @@ import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_details.*
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.activity.ContainerActivity.Companion.currentUser
-import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
-import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
-import mok.it.app.mokapp.interfaces.UserRefreshedListener
-import mok.it.app.mokapp.interfaces.UserRefresher
+import mok.it.app.mokapp.firebase.FirebaseUserObject
+import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
+import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.model.getIconFileName
@@ -35,14 +34,15 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 
+private const val TAG = "DetailsFragment"
+
 class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener,
-    BadgeAcceptMemberDialogFragment.SuccessListener, UserRefreshedListener, EditBadgeFragment.EditBadgeListener{
+    BadgeAcceptMemberDialogFragment.SuccessListener, EditBadgeFragment.EditBadgeListener {
 
     private val args: DetailsFragmentArgs by navArgs()
 
     private lateinit var badgeModel: Project
     private val commentsId = "comments"
-    private val TAG = "DetailsFragment"
     private lateinit var memberUsers: ArrayList<User>
     private lateinit var memberComments: ArrayList<Comment>
     private var userIsEditor: Boolean = false
@@ -89,51 +89,50 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
                     if (creatorDoc?.get("name") != null) {
                         badgeCreator.text = creatorDoc.get("name") as String
                     }
-                val formatter = SimpleDateFormat("yyyy.MM.dd")
-                badgeDeadline.text =
-                    formatter.format((document.get("deadline") as Timestamp).toDate())
-                //badgeProgress.progress = (document.get("overall_progress") as Number).toInt()
+                    val formatter = SimpleDateFormat("yyyy.MM.dd")
+                    badgeDeadline.text =
+                        formatter.format((document.get("deadline") as Timestamp).toDate())
+                    //badgeProgress.progress = (document.get("overall_progress") as Number).toInt()
 
-                val iconURL = document.get("icon") as String
-                val iconFileName = getIconFileName(iconURL)
-                val iconFile = File(context?.filesDir, iconFileName)
-                if (iconFile.exists()){
-                    Log.i(TAG, "loading badge icon " + iconFile.path)
-                    val bitmap: Bitmap = BitmapFactory.decodeFile(iconFile.path)
-                    avatar_imagebutton.setImageBitmap(bitmap)
-                }
-                else {
-                    Log.i(TAG, "downloading badge icon " + model.icon)
-                    val callback = object: Callback {
-                        override fun onSuccess() {
-                            // save image
-                            Log.i(TAG, "saving badge icon " + iconFile.path)
-                            val bitmap : Bitmap = avatar_imagebutton.drawable.toBitmap()
-                            var fos: FileOutputStream?
-                            try {
-                                fos = FileOutputStream(iconFile)
-                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
-                                fos.flush()
-                                fos.close()
-                            } catch (e: IOException) {
-                                e.printStackTrace()
+                    val iconURL = document.get("icon") as String
+                    val iconFileName = getIconFileName(iconURL)
+                    val iconFile = File(context?.filesDir, iconFileName)
+                    if (iconFile.exists()) {
+                        Log.i(TAG, "loading badge icon " + iconFile.path)
+                        val bitmap: Bitmap = BitmapFactory.decodeFile(iconFile.path)
+                        avatar_imagebutton.setImageBitmap(bitmap)
+                    } else {
+                        Log.i(TAG, "downloading badge icon " + model.icon)
+                        val callback = object : Callback {
+                            override fun onSuccess() {
+                                // save image
+                                Log.i(TAG, "saving badge icon " + iconFile.path)
+                                val bitmap: Bitmap = avatar_imagebutton.drawable.toBitmap()
+                                var fos: FileOutputStream?
+                                try {
+                                    fos = FileOutputStream(iconFile)
+                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                                    fos.flush()
+                                    fos.close()
+                                } catch (e: IOException) {
+                                    e.printStackTrace()
+                                }
+                            }
+
+                            override fun onError(e: java.lang.Exception?) {
+                                Log.e(TAG, e.toString())
                             }
                         }
-
-                        override fun onError(e: java.lang.Exception?) {
-                            Log.e(TAG, e.toString())
-                        }
+                        Picasso.get().load(iconURL).into(avatar_imagebutton, callback)
                     }
-                    Picasso.get().load(iconURL).into(avatar_imagebutton, callback)
-                }
 
-                val editors = document.get("editors") as List<String>
-                if (editors.contains(userModel.documentId)) {
-                    userIsEditor = true
+                    val editors = document.get("editors") as List<*>
+                    if (editors.contains(userModel.documentId)) {
+                        userIsEditor = true
+                    }
+                    changeVisibilities()
+                    initEditButton()
                 }
-                changeVisibilities()
-                initEditButton()
-            }
             changeVisibilities()
         }
         // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
@@ -338,10 +337,6 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
         if (badgeModel.editors.contains(userModel.documentId)) {
             userIsEditor = true
         }
-    }
-
-    override fun userRefreshed() {
-        changeVisibilities()
     }
 
     override fun onEdited() {

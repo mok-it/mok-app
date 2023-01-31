@@ -47,7 +47,8 @@
             app:destination="@id/phoneBookFragment" />
         <action
             android:id="@+id/action_allBadgesListFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:launchSingleTop="true" />
         <argument
             android:name="category"
             android:defaultValue="Univerzális"
@@ -55,6 +56,14 @@
         <action
             android:id="@+id/action_allBadgesListFragment_to_linksFragment"
             app:destination="@id/linksFragment" />
+        <argument
+            android:name="filter"
+            android:defaultValue="@null"
+            app:argType="mok.it.app.mokapp.model.Filter"
+            app:nullable="true" />
+        <action
+            android:id="@+id/action_allBadgesListFragment_to_filterDialogFragment"
+            app:destination="@id/filterDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -74,6 +83,7 @@
         android:id="@+id/myBadgesFragment"
         android:name="mok.it.app.mokapp.fragments.MyBadgesFragment"
         android:label="Saját Mancsaim"
+
         tools:layout="@layout/fragment_my_badges" />
     <fragment
         android:id="@+id/adminFragment"
@@ -90,4 +100,18 @@
         android:name="mok.it.app.mokapp.fragments.LinksFragment"
         android:label="Linkek"
         tools:layout="@layout/fragment_links" />
+    <dialog
+        android:id="@+id/filterDialogFragment"
+        android:name="mok.it.app.mokapp.fragments.FilterDialogFragment"
+        android:label="Filterek"
+        tools:layout="@layout/fragment_filter_dialog">
+        <argument
+            android:name="filter"
+            android:defaultValue="@null"
+            app:argType="mok.it.app.mokapp.model.Filter"
+            app:nullable="true" />
+    </dialog>
+    <action
+        android:id="@+id/action_global_loginFragment"
+        app:destination="@id/loginFragment" />
 </navigation>

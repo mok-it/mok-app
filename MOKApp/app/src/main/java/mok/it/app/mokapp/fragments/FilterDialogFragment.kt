@@ -1,19 +1,25 @@
 package mok.it.app.mokapp.fragments
 
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import kotlinx.android.synthetic.main.fragment_badge_accept_member_dialog.*
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_badge_accept_member_dialog.view.*
-import kotlinx.android.synthetic.main.fragment_create_badge.view.*
 import kotlinx.android.synthetic.main.fragment_filter_dialog.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Filter
 
-class FilterDialogFragment(private val filter: Filter, val listener: FilterChangedListener) : DialogFragment() {
+class FilterDialogFragment : DialogFragment() {
+    private val args: FilterDialogFragmentArgs by navArgs()
+    private var filter: Filter = Filter()
+
+    companion object {
+        const val filterResultKey = "filter"
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -22,7 +28,10 @@ class FilterDialogFragment(private val filter: Filter, val listener: FilterChang
         val rootView = inflater.inflate(R.layout.fragment_filter_dialog, container, false)
         rootView.OkButton.setOnClickListener {
             setFilter()
-            listener.getFilter(filter)
+            findNavController().previousBackStackEntry?.savedStateHandle?.set(
+                filterResultKey,
+                filter
+            )
             dismiss()
         }
         rootView.CancelButton.setOnClickListener {
@@ -33,21 +42,17 @@ class FilterDialogFragment(private val filter: Filter, val listener: FilterChang
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        filter = args.filter ?: Filter()
         switchAchieved.isChecked = filter.achieved
         switchMandatory.isChecked = filter.mandatory
         switchJoined.isChecked = filter.joined
         switchEdited.isChecked = filter.edited
     }
 
-    private fun setFilter(){
+    private fun setFilter() {
         filter.achieved = switchAchieved.isChecked
         filter.mandatory = switchMandatory.isChecked
         filter.joined = switchJoined.isChecked
         filter.edited = switchEdited.isChecked
-    }
-
-    interface FilterChangedListener{
-        fun getFilter(filter: Filter)
     }
 }

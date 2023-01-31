@@ -8,19 +8,18 @@ import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
-import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header.*
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
@@ -31,28 +30,31 @@ class MainActivity : AppCompatActivity() {
 
     val firestore = Firebase.firestore
     private lateinit var navController: NavController
-    private val MCSs = arrayOf("IT", "Pedagógia", "Feladatsor", "Kreatív", "Grafika")
-
+    private val mcsArray = arrayOf("IT", "Pedagógia", "Feladatsor", "Kreatív", "Grafika")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         setupNavigation()
     }
 
     private fun setupNavigation() {
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
-        setSupportActionBar(toolbar)
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
-        val appBarConfiguration = AppBarConfiguration(navController.graph)
-        setupActionBarWithNavController(navController, appBarConfiguration)
-        findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
+        val appBarConfiguration = AppBarConfiguration(
+            navController.graph, drawer_layout
+        )
+        findViewById<Toolbar>(R.id.toolbar)
+            .setupWithNavController(navController, appBarConfiguration)
 
+        removeBackArrowFromLoginFragment(navController)
+        setNavigationItemSelected(navController)
+    }
+
+    private fun setNavigationItemSelected(navController: NavController) {
         nav_view.setNavigationItemSelectedListener {
             NavigationUI.onNavDestinationSelected(it, navController)
-            if (it.title in MCSs) {
+            if (it.title in mcsArray) {
                 navigateToBadgesByMCS(it.title.toString())
             } else {
                 when (it.itemId) {
@@ -63,6 +65,14 @@ class MainActivity : AppCompatActivity() {
             }
             drawer_layout.closeDrawer(GravityCompat.START)
             true
+        }
+    }
+
+    private fun removeBackArrowFromLoginFragment(navController: NavController) {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.loginFragment) {
+                toolbar.navigationIcon = null
+            }
         }
     }
 
@@ -129,10 +139,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun logout() {
-        FirebaseAuth.getInstance().signOut()
-        val action = AllBadgesListFragmentDirections.actionAllBadgesListFragmentToLoginFragment()
-        //TODO a login fragmentre navigálni
-        //findNavController().navigate(action)
+        FirebaseUserObject.logout()
+        navController.navigate(AllBadgesListFragmentDirections.actionAllBadgesListFragmentToLoginFragment())
     }
 
     //TODO ha változik a profile pic, az új képet elmenteni

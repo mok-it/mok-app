@@ -18,6 +18,11 @@ object FirebaseUserObject {
     var currentUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private const val TAG = "FirebaseUserObject"
 
+    fun logout() {
+        FirebaseAuth.getInstance().signOut()
+        currentUser = null
+    }
+
     /**
      * Refreshes the currentUser and userModel objects and invokes the given method on success, if there's one
      * @param context the context of the activity (required for the Toasts)

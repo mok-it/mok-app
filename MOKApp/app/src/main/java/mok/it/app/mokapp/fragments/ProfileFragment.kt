@@ -64,10 +64,10 @@ class ProfileFragment : Fragment() {
     private fun initCategoryDialog() {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Válaszd ki a munkacsoportjaid!")
-        builder.setMultiChoiceItems(names, checkedNames) { dialog, which, isChecked ->
+        builder.setMultiChoiceItems(names, checkedNames) { _, which, isChecked ->
             checkedNames[which] = isChecked
         }
-        builder.setPositiveButton("Ok") { dialog, which ->
+        builder.setPositiveButton("Ok") { _, _ ->
             selectedCategories = ArrayList()
             selectedCategories.add("Univerzális")
             for (i in names.indices) {
@@ -78,7 +78,7 @@ class ProfileFragment : Fragment() {
             }
             updateCategories()
         }
-        builder.setNegativeButton("Mégsem") { dialog, which ->
+        builder.setNegativeButton("Mégsem") { dialog, _ ->
             dialog.cancel()
         }
         val dialog: AlertDialog = builder.create()

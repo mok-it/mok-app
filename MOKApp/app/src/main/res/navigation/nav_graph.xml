@@ -111,4 +111,7 @@
             app:argType="mok.it.app.mokapp.model.Filter"
             app:nullable="true" />
     </dialog>
+    <action
+        android:id="@+id/action_global_loginFragment"
+        app:destination="@id/loginFragment" />
 </navigation>

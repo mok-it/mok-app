@@ -19,9 +19,11 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header.*
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
+import mok.it.app.mokapp.fragments.AllBadgesListFragmentDirections
 
 
 class MainActivity : AppCompatActivity() {
@@ -38,7 +40,7 @@ class MainActivity : AppCompatActivity() {
     private fun setupNavigation() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        val navController = navHostFragment.navController
+        navController = navHostFragment.navController
         val appBarConfiguration = AppBarConfiguration(
             navController.graph, drawer_layout
         )
@@ -137,10 +139,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun logout() {
-        FirebaseAuth.getInstance().signOut()
-        //val action = AllBadgesListFragmentDirections.actionAllBadgesListFragmentToLoginFragment()
-        //TODO a login fragmentre navigálni
-        //findNavController().navigate(action)
+        FirebaseUserObject.logout()
+        navController.navigate(AllBadgesListFragmentDirections.actionAllBadgesListFragmentToLoginFragment())
     }
 
     //TODO ha változik a profile pic, az új képet elmenteni

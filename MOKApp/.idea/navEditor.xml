@@ -13,7 +13,7 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="744" />
+                            <option name="x" value="500" />
                             <option name="y" value="368" />
                           </Point>
                         </option>
@@ -25,7 +25,7 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="500" />
+                            <option name="x" value="256" />
                             <option name="y" value="108" />
                           </Point>
                         </option>
@@ -36,12 +36,12 @@
                                 <LayoutPositions />
                               </value>
                             </entry>
-                            <entry key="action_allBadgesListFragment_to_createBadgeFragment">
+                            <entry key="action_allBadgesListFragment_to_detailsFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
                             </entry>
-                            <entry key="action_allBadgesListFragment_to_detailsFragment">
+                            <entry key="action_allBadgesListFragment_to_filterDialogFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -81,20 +81,8 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="988" />
-                            <option name="y" value="1436" />
-                          </Point>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
-                  <entry key="createBadgeFragment">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
                             <option name="x" value="744" />
-                            <option name="y" value="12" />
+                            <option name="y" value="1436" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -105,7 +93,7 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="744" />
+                            <option name="x" value="500" />
                             <option name="y" value="1436" />
                           </Point>
                         </option>
@@ -121,13 +109,13 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="editBadgeFragment">
+                  <entry key="filterDialogFragment">
                     <value>
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="749" />
-                            <option name="y" value="-310" />
+                            <option name="x" value="500" />
+                            <option name="y" value="12" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -138,7 +126,7 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="744" />
+                            <option name="x" value="500" />
                             <option name="y" value="724" />
                           </Point>
                         </option>
@@ -150,7 +138,7 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="256" />
+                            <option name="x" value="12" />
                             <option name="y" value="108" />
                           </Point>
                         </option>
@@ -171,7 +159,7 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="744" />
+                            <option name="x" value="500" />
                             <option name="y" value="2148" />
                           </Point>
                         </option>
@@ -183,7 +171,7 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="744" />
+                            <option name="x" value="500" />
                             <option name="y" value="1792" />
                           </Point>
                         </option>
@@ -195,7 +183,7 @@
                       <LayoutPositions>
                         <option name="myPosition">
                           <Point>
-                            <option name="x" value="744" />
+                            <option name="x" value="500" />
                             <option name="y" value="1080" />
                           </Point>
                         </option>

@@ -1,7 +1,6 @@
 package mok.it.app.mokapp.activity
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
@@ -26,21 +25,16 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.fragments.AllBadgesListFragmentDirections
-import mok.it.app.mokapp.fragments.FilterDialogFragment
-import mok.it.app.mokapp.model.Filter
 
 
-class MainActivity : AppCompatActivity(), FilterDialogFragment.FilterChangedListener {
+class MainActivity : AppCompatActivity() {
 
     val firestore = Firebase.firestore
     private lateinit var navController: NavController
-    private val MCSs = arrayOf("IT", "Pedagógia", "Feladatsor", "Kreatív", "Grafika")
-
-    var filter = Filter()
+    private val mcsArray = arrayOf("IT", "Pedagógia", "Feladatsor", "Kreatív", "Grafika")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         setupNavigation()
     }
 
@@ -56,7 +50,7 @@ class MainActivity : AppCompatActivity(), FilterDialogFragment.FilterChangedList
 
         nav_view.setNavigationItemSelectedListener {
             NavigationUI.onNavDestinationSelected(it, navController)
-            if (it.title in MCSs) {
+            if (it.title in mcsArray) {
                 navigateToBadgesByMCS(it.title.toString())
             } else {
                 when (it.itemId) {
@@ -123,19 +117,6 @@ class MainActivity : AppCompatActivity(), FilterDialogFragment.FilterChangedList
 
     override fun onSupportNavigateUp(): Boolean {
         return NavigationUI.navigateUp(navController, drawer_layout)
-    }
-
-
-    override fun getFilter(filter: Filter) {
-        this.filter = filter
-        Log.d("LISTENER", this.filter.joined.toString())
-        //TODO miért navigálunk az előző kategóriába?
-        //changeCategoryFragment(previousCategory)
-    }
-
-    private fun openFilterDialog() {
-        val dialog = FilterDialogFragment(filter, this)
-        dialog.show(supportFragmentManager, "FilterFragment")
     }
 
     private fun navigateToBadgesByMCS(category: String) {

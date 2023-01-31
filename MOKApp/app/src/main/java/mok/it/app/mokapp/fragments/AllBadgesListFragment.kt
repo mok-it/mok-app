@@ -4,13 +4,14 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
@@ -24,6 +25,7 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
+import mok.it.app.mokapp.fragments.FilterDialogFragment.Companion.filterResultKey
 import mok.it.app.mokapp.model.Filter
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.getIconFileName
@@ -51,7 +53,40 @@ class AllBadgesListFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         filter = args.filter ?: Filter()
+        setupTopMenu()
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Filter>(
+            filterResultKey
+        )
+            ?.observe(
+                viewLifecycleOwner
+            ) { resultFilter ->
+                filter = resultFilter
+                initRecyclerView()
+            }
         loginOrLoad()
+    }
+
+    private fun setupTopMenu() {
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_main, menu)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.filter -> {
+                        findNavController().navigate(
+                            AllBadgesListFragmentDirections.actionAllBadgesListFragmentToFilterDialogFragment(
+                                filter
+                            )
+                        )
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun loginOrLoad() {
@@ -167,7 +202,6 @@ class AllBadgesListFragment :
     }
 
     private fun initRecyclerView() {
-        //TODO ezt vagy firebaseRecyclerAdapterrel vagy NotifyDataChangedel kéne megoldani szépen
         var adapter = getAdapter()
 
         recyclerView.adapter = adapter
@@ -178,13 +212,12 @@ class AllBadgesListFragment :
         }
         setAddBadgeButtonVisibility()
         badgeSwipeRefresh.setOnRefreshListener {
+            // a lehúzás csak az usert tölti újra, a mancsok maguktól frissülnek
             adapter = getAdapter()
             recyclerView.adapter = adapter
             FirebaseUserObject.refreshCurrentUserAndUserModel(
                 this.requireContext()
             ) { setAddBadgeButtonVisibility() }
-            //TODO nem csak az usert kéne frissíteni, hanem a badgeket is
-            // (vszeg a megoldás: firebaseRecyclerAdapter)
             badgeSwipeRefresh.isRefreshing = false
         }
     }
@@ -200,9 +233,12 @@ class AllBadgesListFragment :
             query = query.whereArrayContains("members", userModel.uid)
         }
         if (filter.achieved) {
-            query = query.whereIn(FieldPath.documentId(), userModel.collectedBadges)
+            query = if (userModel.collectedBadges.isNotEmpty())
+                query.whereIn(FieldPath.documentId(), userModel.collectedBadges)
+            else
+                query.whereEqualTo(FieldPath.documentId(), "An invalid Id")
         }
-        if (filter.edited) {
+        if (filter.edited && !filter.joined) { //TODO ideiglenes megoldás, egy query nem tartalmazhat 2 whereArrayContaint-t
             query = query.whereArrayContains("editors", userModel.uid)
         }
         return query

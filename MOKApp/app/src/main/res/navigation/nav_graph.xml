@@ -60,6 +60,9 @@
             android:defaultValue="@null"
             app:argType="mok.it.app.mokapp.model.Filter"
             app:nullable="true" />
+        <action
+            android:id="@+id/action_allBadgesListFragment_to_filterDialogFragment"
+            app:destination="@id/filterDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -95,4 +98,15 @@
         android:name="mok.it.app.mokapp.fragments.LinksFragment"
         android:label="Linkek"
         tools:layout="@layout/fragment_links" />
+    <dialog
+        android:id="@+id/filterDialogFragment"
+        android:name="mok.it.app.mokapp.fragments.FilterDialogFragment"
+        android:label="Filterek"
+        tools:layout="@layout/fragment_filter_dialog">
+        <argument
+            android:name="filter"
+            android:defaultValue="@null"
+            app:argType="mok.it.app.mokapp.model.Filter"
+            app:nullable="true" />
+    </dialog>
 </navigation>

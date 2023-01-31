@@ -47,7 +47,8 @@
             app:destination="@id/phoneBookFragment" />
         <action
             android:id="@+id/action_allBadgesListFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:launchSingleTop="true" />
         <argument
             android:name="category"
             android:defaultValue="Univerzális"
@@ -82,6 +83,7 @@
         android:id="@+id/myBadgesFragment"
         android:name="mok.it.app.mokapp.fragments.MyBadgesFragment"
         android:label="Saját Mancsaim"
+
         tools:layout="@layout/fragment_my_badges" />
     <fragment
         android:id="@+id/adminFragment"

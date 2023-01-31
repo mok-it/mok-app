@@ -22,7 +22,6 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
-import mok.it.app.mokapp.fragments.AllBadgesListFragmentDirections
 
 
 class MainActivity : AppCompatActivity() {
@@ -46,6 +45,11 @@ class MainActivity : AppCompatActivity() {
         findViewById<Toolbar>(R.id.toolbar)
             .setupWithNavController(navController, appBarConfiguration)
 
+        removeBackArrowFromLoginFragment(navController)
+        setNavigationItemSelected(navController)
+    }
+
+    private fun setNavigationItemSelected(navController: NavController) {
         nav_view.setNavigationItemSelectedListener {
             NavigationUI.onNavDestinationSelected(it, navController)
             if (it.title in mcsArray) {
@@ -59,6 +63,14 @@ class MainActivity : AppCompatActivity() {
             }
             drawer_layout.closeDrawer(GravityCompat.START)
             true
+        }
+    }
+
+    private fun removeBackArrowFromLoginFragment(navController: NavController) {
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.loginFragment) {
+                toolbar.navigationIcon = null
+            }
         }
     }
 
@@ -126,7 +138,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun logout() {
         FirebaseAuth.getInstance().signOut()
-        val action = AllBadgesListFragmentDirections.actionAllBadgesListFragmentToLoginFragment()
+        //val action = AllBadgesListFragmentDirections.actionAllBadgesListFragmentToLoginFragment()
         //TODO a login fragmentre navigálni
         //findNavController().navigate(action)
     }

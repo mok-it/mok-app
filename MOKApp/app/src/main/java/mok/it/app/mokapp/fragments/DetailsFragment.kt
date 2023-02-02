@@ -38,7 +38,8 @@ private const val TAG = "DetailsFragment"
 
 class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener,
     BadgeAcceptMemberDialogFragment.SuccessListener, EditBadgeFragment.EditBadgeListener {
-
+    //TODO test whether it updates itself when the "members" tab is open
+    // if not, use FirestoreRecyclerAdapter instead
     private val args: DetailsFragmentArgs by navArgs()
 
     private lateinit var badgeModel: Project

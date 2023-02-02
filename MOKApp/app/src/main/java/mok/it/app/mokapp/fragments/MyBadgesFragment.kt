@@ -8,9 +8,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.BadgeCategoriesAdapter
 import mok.it.app.mokapp.recyclerview.BadgesAdapter
@@ -62,8 +62,8 @@ class MyBadgesFragment :
                 }
             }
         }
-
         recyclerView = this.requireView().findViewById(R.id.recyclerView)
+        //TODO use FirestoreRecyclerAdapter instead
         recyclerView.adapter = BadgeCategoriesAdapter(
             userModel.categories,
             categoryBadges,

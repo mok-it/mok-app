@@ -96,6 +96,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
+        // TODO use FirestoreRecyclerAdapter instead
         recyclerView.adapter = CategoryNameAdapter(userModel.categories as ArrayList<String>)
         recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)

@@ -233,7 +233,7 @@ class AllBadgesListFragment :
             query = query.whereEqualTo("mandatory", true)
         }
         if (filter.joined) {
-            query = query.whereArrayContains("members", userModel.uid)
+            query = query.whereArrayContains("members", userModel.documentId)
         }
         if (filter.achieved) {
             query = if (userModel.collectedBadges.isNotEmpty())
@@ -242,7 +242,7 @@ class AllBadgesListFragment :
                 query.whereEqualTo(FieldPath.documentId(), "An invalid Id")
         }
         if (filter.edited && !filter.joined) { //TODO ideiglenes megoldás, egy query nem tartalmazhat 2 whereArrayContaint-t
-            query = query.whereArrayContains("editors", userModel.uid)
+            query = query.whereArrayContains("editors", userModel.documentId)
         }
         return query
     }

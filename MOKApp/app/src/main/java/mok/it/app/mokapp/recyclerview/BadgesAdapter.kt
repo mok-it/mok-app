@@ -19,7 +19,7 @@ class BadgesAdapter(private val dataSet: List<Project>, private val listener: Ba
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.card_badge, viewGroup, false)
+            .inflate(R.layout.card_my_badge, viewGroup, false)
         return ViewHolder(view)
     }
 

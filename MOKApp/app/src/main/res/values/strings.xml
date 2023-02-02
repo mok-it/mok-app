@@ -41,6 +41,7 @@
     <string name="deadline">Határidő</string>
     <string name="members">Résztvevők</string>
     <string name="join">Csatlakozás</string>
+    <string name="leave">Lecsatlakozás</string>
     <string name="badge_list">Mancslista</string>
     <string name="profile">Profil</string>
     <string name="my_badges">Mancsaim</string>
@@ -50,7 +51,33 @@
     <string name="modify">Módosítás</string>
     <string name="my_categories">Munkacsoportjaim:</string>
     <string name="plus_sign">Plus sign</string>
-    <string name="user_data_load_failed">Sajnos nem sikerült betölteni a felhasználó adatait:(</string>
+    <string name="user_data_load_failed">Nem sikerült betölteni a felhasználó adatait!</string>
+    <string name="filter_achieved_badges">Megszerzett badgek</string>
+    <string name="filter_mandatory_badges">Kötelező badgek</string>
+    <string name="filter_joined_badges">Csatlakozott badgek</string>
+    <string name="filter_string">Szöveg</string>
+    <string name="filter_edited_badges">Kezelt badgek</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="edit_badge_text">Mancs Szerkesztése</string>
+    <string name="edit_text">Szerkesztés</string>
     <string name="example_email_address">example@mail.com</string>
+    <string name="it_mcs">IT</string>
+    <string name="ped_mcs">Pedagógia</string>
+    <string name="feladatsor_mcs">Feladatsor</string>
+    <string name="kreativ_mcs">Kreatív</string>
+    <string name="grafika_mcs">Grafika</string>
+    <string name="admin">Admin</string>
+    <string name="misc">Egyéb</string>
+    <string name="phonebook">Telefonkönyv</string>
+    <string name="logout">Kijelentkezés</string>
+    <string name="no_phone_number">Nincs elérhető telefonszám</string>
+    <string name="profile_pic">Profilkép</string>
+    <string name="links">Linkek</string>
+    <string name="under_construction_badge_icon"><![CDATA[https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef]]></string>
+    <string name="close">Bezárás</string>
+    <string name="filters">Filterek</string>
+    <string name="badge_icon">Mancs ikonja</string>
+    <string name="try_another_filter">Próbáld meg más szűrőfeltételekkel</string>
+    <string name="no_match">Nincs találat...</string>
 
 </resources>

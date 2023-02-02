@@ -8,17 +8,18 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.BadgeCategoriesAdapter
 import mok.it.app.mokapp.recyclerview.BadgesAdapter
 
-class MyBadgesFragment(private val listener: CategoryFragment.ItemClickedListener) :
+
+class MyBadgesFragment :
     BaseFireFragment(), BadgesAdapter.BadgeClickedListener {
     private lateinit var recyclerView: RecyclerView
-    lateinit var collectedBadges: ArrayList<Project>
+    private lateinit var collectedBadges: ArrayList<Project>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -32,8 +33,8 @@ class MyBadgesFragment(private val listener: CategoryFragment.ItemClickedListene
         getBadges(userModel.collectedBadges)
     }
 
-    fun getBadges(badges: List<String>?) {
-        collectedBadges = ArrayList<Project>()
+    private fun getBadges(badges: List<String>?) {
+        collectedBadges = ArrayList()
         initRecyclerView()
         badges?.forEach {
             val docRef = Firebase.firestore.collection("projects").document(it)
@@ -50,11 +51,11 @@ class MyBadgesFragment(private val listener: CategoryFragment.ItemClickedListene
         }
     }
 
-    fun initRecyclerView() {
+    private fun initRecyclerView() {
         val categoryBadges: ArrayList<ArrayList<Project>> = ArrayList()
 
-        for (c in 0..(userModel.categories.size - 1)) {
-            categoryBadges.add(ArrayList<Project>())
+        for (c in 0 until userModel.categories.size) {
+            categoryBadges.add(ArrayList())
             for (badge in collectedBadges) {
                 if (badge.category == userModel.categories[c]) {
                     categoryBadges[c].add(badge)
@@ -73,7 +74,7 @@ class MyBadgesFragment(private val listener: CategoryFragment.ItemClickedListene
     }
 
     override fun onBadgeClicked(badgeId: String) {
-        listener.onItemClicked(badgeId, "Univerzális")
+        //listener.onItemClicked(badgeId, "Univerzális")
         ///ez még szar
         //parentFragmentManager.beginTransaction()
         //    .replace(R.id.fragment_container, DetailsFragment(badgeId, userRefresher = ContainerActivity as UserRefresher), "DetailsFragment").commit()

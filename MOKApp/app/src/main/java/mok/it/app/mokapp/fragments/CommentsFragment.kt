@@ -2,6 +2,8 @@ package mok.it.app.mokapp.fragments
 
 import android.app.Activity
 import android.content.Context
+import android.icu.text.DateFormat
+import android.icu.text.DateFormat.getDateTimeInstance
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -11,7 +13,7 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
+import androidx.navigation.fragment.navArgs
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.Timestamp
@@ -24,17 +26,15 @@ import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.recyclerview.CommentViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
-import java.text.SimpleDateFormat
 
-class CommentsFragment(private val badgeId: String) : BaseFireFragment() {
+class CommentsFragment : BaseFireFragment() {
 
-    private val commentsId = "comments"
+    private val commentsId = "comments" //TODO ez mi? ezt is át kell adni?
     private val TAG = "CommentsFragment"
-    val formatter = SimpleDateFormat("yyyy.MM.dd. hh:mm")
-
+    val formatter: DateFormat = getDateTimeInstance()
+    private val args: DetailsFragmentArgs by navArgs()
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         return inflater.inflate(R.layout.fragment_comments, container, false)
     }
@@ -42,20 +42,21 @@ class CommentsFragment(private val badgeId: String) : BaseFireFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val query = firestore.collection(projectCollectionPath).document(badgeId).collection(commentsId)
-            .orderBy("time", Query.Direction.DESCENDING)
-        val options = FirestoreRecyclerOptions.Builder<Comment>().setQuery(query, Comment::class.java)
-            .setLifecycleOwner(this).build()
-        val adapter = object: FirestoreRecyclerAdapter<Comment, CommentViewHolder>(options){
+        val query =
+            firestore.collection(projectCollectionPath).document(args.badgeId).collection(commentsId)
+                .orderBy("time", Query.Direction.DESCENDING)
+        val options =
+            FirestoreRecyclerOptions.Builder<Comment>().setQuery(query, Comment::class.java)
+                .setLifecycleOwner(this).build()
+        val adapter = object : FirestoreRecyclerAdapter<Comment, CommentViewHolder>(options) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
-                val view = LayoutInflater.from(this@CommentsFragment.context).inflate(R.layout.card_comment, parent, false)
+                val view = LayoutInflater.from(this@CommentsFragment.context)
+                    .inflate(R.layout.card_comment, parent, false)
                 return CommentViewHolder(view)
             }
 
             override fun onBindViewHolder(
-                holder: CommentViewHolder,
-                position: Int,
-                model: Comment
+                holder: CommentViewHolder, position: Int, model: Comment
             ) {
                 val tvSender: TextView = holder.itemView.findViewById(R.id.comment_sender)
                 val tvTimestamp: TextView = holder.itemView.findViewById(R.id.comment_timestamp)
@@ -65,21 +66,22 @@ class CommentsFragment(private val badgeId: String) : BaseFireFragment() {
                 tvTimestamp.text = formatter.format(model.time.toDate())
                 tvText.text = model.text
 
-                firestore.collection(userCollectionPath).document(model.uid).get().addOnSuccessListener { senderDoc ->
-                    if (senderDoc != null) {
-                        if (senderDoc.get("name") != null)
-                            tvSender.text = senderDoc.get("name") as String
+                firestore.collection(userCollectionPath).document(model.uid).get()
+                    .addOnSuccessListener { senderDoc ->
+                        if (senderDoc != null) {
+                            if (senderDoc.get("name") != null) tvSender.text =
+                                senderDoc.get("name") as String
 
-                        if (senderDoc.get("photoURL") != null)
-                            tryLoadingImage(ivImg, senderDoc.get("photoURL") as String)
-                        else
-                            tryLoadingImage(ivImg, getString(R.string.url_no_image))
+                            if (senderDoc.get("photoURL") != null) tryLoadingImage(
+                                ivImg, senderDoc.get("photoURL") as String
+                            )
+                            else tryLoadingImage(ivImg, getString(R.string.url_no_image))
+                        }
                     }
-                }
             }
         }
 
-        send_comment_fab.setOnClickListener { view ->
+        send_comment_fab.setOnClickListener {
             if (commentEditText.text.toString() != "") {
                 val comment = Comment(
                     commentsId,
@@ -88,24 +90,22 @@ class CommentsFragment(private val badgeId: String) : BaseFireFragment() {
                     FirebaseAuth.getInstance().currentUser!!.uid
                 )
 
-                firestore.collection(projectCollectionPath).document(badgeId).collection(commentsId)
-                    .add(comment)
-                    .addOnSuccessListener { documentReference ->
+                firestore.collection(projectCollectionPath).document(args.badgeId).collection(commentsId)
+                    .add(comment).addOnSuccessListener { documentReference ->
                         Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
-                    }
-                    .addOnFailureListener { e ->
+                    }.addOnFailureListener { e ->
                         Log.w(TAG, "Error adding document", e)
                     }
 
                 commentEditText.text.clear()
                 commentEditText.clearFocus()
-                hideKeyboard();
+                hideKeyboard()
             }
         }
 
         comments_recyclerView.adapter = adapter
         comments_recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
-        comments_recyclerView.smoothScrollToPosition(adapter.itemCount);
+        comments_recyclerView.smoothScrollToPosition(adapter.itemCount)
     }
 
     private fun Fragment.hideKeyboard() {
@@ -113,7 +113,8 @@ class CommentsFragment(private val badgeId: String) : BaseFireFragment() {
     }
 
     private fun Context.hideKeyboard(view: View) {
-        val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        val inputMethodManager =
+            getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 

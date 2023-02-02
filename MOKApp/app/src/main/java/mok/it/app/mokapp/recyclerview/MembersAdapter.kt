@@ -11,8 +11,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
 import mok.it.app.mokapp.model.User
 
 class MembersAdapter(private val dataSet: ArrayList<User>, private val listener: MemberClickedListener, private val userIsEditor: Boolean) :

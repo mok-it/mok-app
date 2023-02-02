@@ -3,7 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/myBadgesFragment">
 
 
     <TextView
@@ -26,5 +27,5 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintTop_toBottomOf="@id/textView"
         app:layout_constraintVertical_bias="0.0"
-        tools:listitem="@layout/card_badge"/> />
+        tools:listitem="@layout/card_my_badge"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

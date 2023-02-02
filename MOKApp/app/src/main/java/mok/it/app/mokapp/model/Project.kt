@@ -23,3 +23,11 @@ data class Project(
     val tasks: List<String> = ArrayList(),
     val comments: List<String> = ArrayList(),
 )
+
+fun getIconFileName(iconURL: String): String {
+    // remove special characters
+    val re = Regex("[^A-Za-z0-9 ]")
+    val alphanum = re.replace(iconURL, "")
+    // append file type
+    return alphanum + ".png"
+}

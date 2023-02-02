@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:animateLayoutChanges="true"
@@ -30,6 +30,7 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_gravity="center"
+                    android:contentDescription="@string/badge_icon"
                     android:src="@android:drawable/ic_menu_myplaces"
                     tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck"
                     tools:src="@android:drawable/ic_menu_myplaces" />
@@ -48,7 +49,7 @@
                         android:minHeight="10pt"
                         android:text="@string/badge_name"
                         android:textSize="24sp"
-                        android:textStyle="bold"/>
+                        android:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/categoryName"
@@ -87,15 +88,29 @@
                     android:gravity="center"
                     android:text="@string/deadline"
                     android:textAlignment="center"
-                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/editButton"
                     app:layout_constraintStart_toEndOf="@+id/badgeCreator"
                     app:layout_constraintTop_toTopOf="@+id/badgeCreator" />
+
+                <ImageView
+                    android:id="@+id/editButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/edit"
+                    android:src="@drawable/ic_settings"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/badgeDeadline"
+                    app:layout_constraintTop_toTopOf="@+id/badgeCreator"
+                    app:tint="@color/blue" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@color/blue"/>
+            android:background="@color/blue" />
+
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -103,7 +118,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:padding="5pt">
 
@@ -113,8 +128,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
                     android:layout_weight="1"
-                    android:textStyle="bold"
-                    android:text="@string/description" />
+                    android:text="@string/description"
+                    android:textStyle="bold" />
 
                 <TextView
                     android:id="@+id/badgeDescription"
@@ -169,13 +184,13 @@
                         android:id="@+id/members_left_number"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="+8"
                         android:textColor="@color/white"
                         android:textSize="@dimen/profile_circle_leftover_text_size_1_digit"
                         app:layout_constraintBottom_toBottomOf="@+id/members_left"
                         app:layout_constraintEnd_toEndOf="@+id/members_left"
                         app:layout_constraintStart_toStartOf="@+id/members_left"
-                        app:layout_constraintTop_toTopOf="@+id/members_left" />
+                        app:layout_constraintTop_toTopOf="@+id/members_left"
+                        tools:text="+8" />
 
                     <Button
                         android:id="@+id/members_overlay_button"
@@ -192,10 +207,12 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
             </LinearLayout>
         </ScrollView>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="2dp"
-            android:background="@color/blue"/>
+            android:background="@color/blue" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -206,10 +223,10 @@
                 android:id="@+id/progress_textview"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textStyle="bold"
                 android:paddingStart="5pt"
                 android:paddingEnd="5pt"
-                android:text="@string/newest_comment" />
+                android:text="@string/newest_comment"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/badgeComments"

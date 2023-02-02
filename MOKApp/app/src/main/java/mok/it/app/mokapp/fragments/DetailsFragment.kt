@@ -1,7 +1,8 @@
 package mok.it.app.mokapp.fragments
 
 import android.annotation.SuppressLint
-import android.graphics.Color
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -9,35 +10,42 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import androidx.core.content.ContextCompat
-import androidx.core.content.res.ResourcesCompat
+import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.isVisible
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
+import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_details.*
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.activity.ContainerActivity.Companion.currentUser
-import mok.it.app.mokapp.activity.ContainerActivity.Companion.userModel
-import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
-import mok.it.app.mokapp.interfaces.UserRefreshedListener
-import mok.it.app.mokapp.interfaces.UserRefresher
+import mok.it.app.mokapp.firebase.FirebaseUserObject
+import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
+import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.model.getIconFileName
 import mok.it.app.mokapp.recyclerview.MembersAdapter
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import java.text.SimpleDateFormat
-import kotlin.collections.ArrayList
 
-class DetailsFragment(private val badgeId: String, private val userRefresher: UserRefresher) : BaseFireFragment(), MembersAdapter.MemberClickedListener,
-    BadgeAcceptMemberDialogFragment.SuccessListener, UserRefreshedListener{
+private const val TAG = "DetailsFragment"
 
-    lateinit var badgeModel: Project
+class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener,
+    BadgeAcceptMemberDialogFragment.SuccessListener, EditBadgeFragment.EditBadgeListener {
+
+    private val args: DetailsFragmentArgs by navArgs()
+
+    private lateinit var badgeModel: Project
     private val commentsId = "comments"
-    private val TAG = "DetailsFragment"
-    lateinit var memberUsers: ArrayList<User>
-    lateinit var memberComments: ArrayList<Comment>
-    var userIsEditor: Boolean = false
+    private lateinit var memberUsers: ArrayList<User>
+    private lateinit var memberComments: ArrayList<Comment>
+    private var userIsEditor: Boolean = false
     private var selectedMemberUID = ""
 
     override fun onCreateView(
@@ -60,53 +68,95 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
         }
         join_button.setOnClickListener {
             join()
-            userRefresher.refreshUser(this)
+            FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext())
         }
         join_button.visibility = View.GONE
         badgeComments.setOnClickListener {
-            parentFragmentManager.beginTransaction()
-                .replace(R.id.fragment_container, CommentsFragment(badgeId), "CommentsFragment")
-                .commit()
+            val action =
+                DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.badgeId)
+            findNavController().navigate(action)
         }
-        documentOnSuccess(projectCollectionPath, badgeId) { document ->
-            if (document != null) {
+        documentOnSuccess(projectCollectionPath, args.badgeId) { document ->
 
-                badgeModel = document.toObject(Project::class.java)!!
+            badgeModel = document.toObject(Project::class.java)!!
 
-                badgeName.text = document.get("name") as String
-                categoryName.text = getString(R.string.category) + ": " + document.get("category") as String
-                badgeDescription.text = document.get("description") as String
-                firestore.collection(userCollectionPath).document(document.get("creator") as String)
-                    .get().addOnSuccessListener { creatorDoc ->
-                        if (creatorDoc?.get("name") != null) {
-                            badgeCreator.text = creatorDoc.get("name") as String
-                        }
+            badgeName.text = document.get("name") as String
+            categoryName.text =
+                getString(R.string.category) + ": " + document.get("category") as String
+            badgeDescription.text = document.get("description") as String
+            firestore.collection(userCollectionPath).document(document.get("creator") as String)
+                .get().addOnSuccessListener { creatorDoc ->
+                    if (creatorDoc?.get("name") != null) {
+                        badgeCreator.text = creatorDoc.get("name") as String
                     }
-                val formatter = SimpleDateFormat("yyyy.MM.dd")
-                badgeDeadline.text =
-                    formatter.format((document.get("deadline") as Timestamp).toDate())
-                //badgeProgress.progress = (document.get("overall_progress") as Number).toInt()
-                Picasso.get().load(document.get("icon") as String).into(avatar_imagebutton)
+                    val formatter = SimpleDateFormat("yyyy.MM.dd")
+                    badgeDeadline.text =
+                        formatter.format((document.get("deadline") as Timestamp).toDate())
+                    //badgeProgress.progress = (document.get("overall_progress") as Number).toInt()
 
-                val editors = document.get("editors") as List<String>
-                if (editors.contains(userModel.documentId)) {
-                    userIsEditor = true
+                    val iconURL = document.get("icon") as String
+                    val iconFileName = getIconFileName(iconURL)
+                    val iconFile = File(context?.filesDir, iconFileName)
+                    if (iconFile.exists()) {
+                        Log.i(TAG, "loading badge icon " + iconFile.path)
+                        val bitmap: Bitmap = BitmapFactory.decodeFile(iconFile.path)
+                        avatar_imagebutton.setImageBitmap(bitmap)
+                    } else {
+                        Log.i(TAG, "downloading badge icon " + model.icon)
+                        val callback = object : Callback {
+                            override fun onSuccess() {
+                                // save image
+                                Log.i(TAG, "saving badge icon " + iconFile.path)
+                                val bitmap: Bitmap = avatar_imagebutton.drawable.toBitmap()
+                                val fos: FileOutputStream?
+                                try {
+                                    fos = FileOutputStream(iconFile)
+                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                                    fos.flush()
+                                    fos.close()
+                                } catch (e: IOException) {
+                                    e.printStackTrace()
+                                }
+                            }
+
+                            override fun onError(e: java.lang.Exception?) {
+                                Log.e(TAG, e.toString())
+                            }
+                        }
+                        Picasso.get().load(iconURL).into(avatar_imagebutton, callback)
+                    }
+
+                    val editors = document.get("editors") as List<*>
+                    if (editors.contains(userModel.documentId)) {
+                        userIsEditor = true
+                    }
+                    changeVisibilities()
+                    initEditButton()
                 }
-                changeVisibilities()
-            }
+            changeVisibilities()
         }
         // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
     }
 
+    private fun initEditButton() {
+        if (badgeModel.creator == userModel.uid) {
+            editButton.visibility = View.VISIBLE
+            editButton.setOnClickListener {
+                val dialog = EditBadgeFragment(badgeModel, this)
+                dialog.show(parentFragmentManager, "EditBadgeDialog")
+            }
+        }
+    }
+
     private fun getMemberIds() {
-        val docRef = firestore.collection(projectCollectionPath).document(badgeId)
+        val docRef = firestore.collection(projectCollectionPath).document(args.badgeId)
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null) {
                     Log.d(TAG, "DocumentSnapshot data: ${document.data}")
                     model = document.toObject(Project::class.java)!!
                     getMembers(model.members)
-                    Log.d(TAG, "Model data: ${model}")
+                    Log.d(TAG, "Model data: $model")
                 } else {
                     Log.d(TAG, "No such document")
                 }
@@ -115,7 +165,6 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
 
     private fun getMembers(members: List<String>?) {
         memberUsers = ArrayList()
-        Log.d(TAG, "LIST: ${members}")
         members?.forEach {
             val docRef = firestore.collection(userCollectionPath).document(it)
             docRef.get()
@@ -123,7 +172,6 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
                     if (document != null) {
                         val user = document.toObject(User::class.java)!!
                         memberUsers.add(user)
-                        Log.d(TAG, "MEMBERS: ${memberUsers}")
 
                         if (members.size == memberUsers.size) {
                             initMembers()
@@ -136,9 +184,10 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
 
     @SuppressLint("SimpleDateFormat")
     fun getCommentIds() {
-        memberComments = ArrayList<Comment>()
+        memberComments = ArrayList()
         val collectionRef =
-            firestore.collection(projectCollectionPath).document(badgeId).collection(commentsId)
+            firestore.collection(projectCollectionPath).document(args.badgeId)
+                .collection(commentsId)
         collectionRef.get()
             .addOnSuccessListener { collection ->
                 if (collection != null && collection.documents.size > 0) {
@@ -217,24 +266,23 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
         }
     }
 
-    private fun join(){
-        if (userModel.joinedBadges.contains(badgeId)){
-            val userRef = firestore.collection("users").document(currentUser.uid)
-            userRef.update("joinedBadges", FieldValue.arrayRemove(badgeId))
+    private fun join() {
+        if (userModel.joinedBadges.contains(args.badgeId)) {
+            val userRef = firestore.collection("users").document(currentUser!!.uid)
+            userRef.update("joinedBadges", FieldValue.arrayRemove(args.badgeId))
 
-            val badgeRef = firestore.collection("projects").document(badgeId)
-            badgeRef.update("members", FieldValue.arrayRemove(currentUser.uid))
+            val badgeRef = firestore.collection("projects").document(args.badgeId)
+            badgeRef.update("members", FieldValue.arrayRemove(currentUser?.uid))
                 .addOnCompleteListener {
                     Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT).show()
                     getMemberIds()
                 }
-        }
-        else {
-            val userRef = firestore.collection("users").document(currentUser.uid)
-            userRef.update("joinedBadges", FieldValue.arrayUnion(badgeId))
+        } else {
+            val userRef = firestore.collection("users").document(currentUser!!.uid)
+            userRef.update("joinedBadges", FieldValue.arrayUnion(args.badgeId))
 
-            val badgeRef = firestore.collection("projects").document(badgeId)
-            badgeRef.update("members", FieldValue.arrayUnion(currentUser.uid))
+            val badgeRef = firestore.collection("projects").document(args.badgeId)
+            badgeRef.update("members", FieldValue.arrayUnion(currentUser?.uid))
                 .addOnCompleteListener {
                     Toast.makeText(context, "Sikeresen csatlakoztál!", Toast.LENGTH_SHORT).show()
                     getMemberIds()
@@ -245,11 +293,16 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
 
     private fun completed(userId: String) {
         Log.d("DetailsFragment", "completed")
-        Log.d("DetailsFragment", "BadgeID: " + badgeId)
+        Log.d("DetailsFragment", "args.badgeId: " + args.badgeId)
         val userRef = firestore.collection("users").document(userId)
-        userRef.update("joinedBadges", FieldValue.arrayRemove(badgeId)).addOnSuccessListener { Log.d("DetailsFragment", badgeId + " removed from " + userId) }.addOnFailureListener{e -> Log.d("DetailsFragment", "wtf " + e)}
-        userRef.update("collectedBadges", FieldValue.arrayUnion(badgeId))
-        val badgeRef = firestore.collection("projects").document(badgeId)
+        userRef.update("joinedBadges", FieldValue.arrayRemove(args.badgeId)).addOnSuccessListener {
+            Log.d(
+                "DetailsFragment",
+                args.badgeId + " removed from " + userId
+            )
+        }.addOnFailureListener { e -> Log.d("DetailsFragment", e.message.toString()) }
+        userRef.update("collectedBadges", FieldValue.arrayUnion(args.badgeId))
+        val badgeRef = firestore.collection("projects").document(args.badgeId)
         badgeRef.update("members", FieldValue.arrayRemove(userId))
             .addOnCompleteListener {
                 getMemberIds()
@@ -262,9 +315,9 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
         dialog.show(parentFragmentManager, "MembersDialog")
     }
 
-    override fun onMemberClicked(user: User) {
-        selectedMemberUID = user.documentId
-        val dialog = BadgeAcceptMemberDialogFragment(this, user.name)
+    override fun onMemberClicked(userId: User) {
+        selectedMemberUID = userId.documentId
+        val dialog = BadgeAcceptMemberDialogFragment(this, userId.name)
         dialog.show(parentFragmentManager, "AcceptDialog")
     }
 
@@ -272,21 +325,21 @@ class DetailsFragment(private val badgeId: String, private val userRefresher: Us
         completed(selectedMemberUID)
     }
 
-    private fun changeVisibilities(){
+    private fun changeVisibilities() {
         join_button.visibility = View.VISIBLE
         if (userModel.collectedBadges.contains(badgeModel.id))
             join_button.visibility = View.GONE
         else if (userModel.joinedBadges.contains(badgeModel.id))
-            join_button.text = "Lecsatlakozás"
+            join_button.text = getString(R.string.join)
         else if (!userModel.joinedBadges.contains(badgeModel.id))
-            join_button.text = "Csatlakozás"
+            join_button.text = getString(R.string.leave)
 
-        if (badgeModel.editors.contains(userModel.documentId)){
+        if (badgeModel.editors.contains(userModel.documentId)) {
             userIsEditor = true
         }
     }
 
-    override fun userRefreshed() {
-        changeVisibilities()
+    override fun onEdited() {
+        initLayout()
     }
 }

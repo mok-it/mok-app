@@ -14,6 +14,7 @@ import androidx.core.view.isVisible
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FieldPath
@@ -203,6 +204,8 @@ class AllBadgesListFragment :
 
     private fun initRecyclerView() {
         var adapter = getAdapter()
+        adapter.stateRestorationPolicy =
+            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
         recyclerView.adapter = adapter
         recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
@@ -251,4 +254,5 @@ class AllBadgesListFragment :
             addBadgeButton.visibility = View.VISIBLE
         }
     }
+
 }

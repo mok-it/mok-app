@@ -76,5 +76,8 @@
     <string name="under_construction_badge_icon"><![CDATA[https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef]]></string>
     <string name="close">Bezárás</string>
     <string name="filters">Filterek</string>
+    <string name="badge_icon">Mancs ikonja</string>
+    <string name="try_another_filter">Próbáld meg más szűrőfeltételekkel</string>
+    <string name="no_match">Nincs találat...</string>
 
 </resources>

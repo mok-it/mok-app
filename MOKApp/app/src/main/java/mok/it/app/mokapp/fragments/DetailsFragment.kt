@@ -108,7 +108,7 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
                                 // save image
                                 Log.i(TAG, "saving badge icon " + iconFile.path)
                                 val bitmap: Bitmap = avatar_imagebutton.drawable.toBitmap()
-                                var fos: FileOutputStream?
+                                val fos: FileOutputStream?
                                 try {
                                     fos = FileOutputStream(iconFile)
                                     bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
@@ -300,7 +300,7 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
                 "DetailsFragment",
                 args.badgeId + " removed from " + userId
             )
-        }.addOnFailureListener { e -> Log.d("DetailsFragment", "wtf " + e) }
+        }.addOnFailureListener { e -> Log.d("DetailsFragment", e.message.toString()) }
         userRef.update("collectedBadges", FieldValue.arrayUnion(args.badgeId))
         val badgeRef = firestore.collection("projects").document(args.badgeId)
         badgeRef.update("members", FieldValue.arrayRemove(userId))

@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
         nav_view.setNavigationItemSelectedListener {
             NavigationUI.onNavDestinationSelected(it, navController)
             if (it.title in mcsArray) {
-                navigateToBadgesByMCS(it.title.toString())
+                //navigateToBadgesByMCS(it.title.toString())
             } else {
                 when (it.itemId) {
                     R.id.nav_logout -> {
@@ -102,7 +102,8 @@ class MainActivity : AppCompatActivity() {
         refreshButton.setOnClickListener {
             refreshCurrentUserAndUserModel(this) { loadApp() }
         }
-        val requestOptions = RequestOptions().transforms(CenterCrop(), RoundedCorners(26))
+        val requestOptions =
+            RequestOptions().apply(RequestOptions().transform(CenterCrop(), RoundedCorners(26)))
         Glide.with(this).load(currentUser?.photoUrl).apply(requestOptions.override(250, 250))
             .into(image)
     }
@@ -131,12 +132,12 @@ class MainActivity : AppCompatActivity() {
         return NavigationUI.navigateUp(navController, drawer_layout)
     }
 
-    private fun navigateToBadgesByMCS(category: String) {
-//        val action = AllBadgesListFragmentDirections.actionAllBadgesListFragmentToBadgesByMCSFragment(
-//            category
-//        )
-//        findNavController().navigate(action)
-    }
+//    private fun navigateToBadgesByMCS(category: String) {
+////        val action = AllBadgesListFragmentDirections.actionAllBadgesListFragmentToBadgesByMCSFragment(
+////            category
+////        )
+////        findNavController().navigate(action)
+//    }
 
     private fun logout() {
         FirebaseUserObject.logout()
@@ -144,14 +145,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     //TODO ha változik a profile pic, az új képet elmenteni
-    private fun updateProfilePic() {
-//        val data = hashMapOf(
-//            "pictureURL" to user.photoUrl,
-//            "uid" to user.uid
-//        )
-//
-//        functions
-//            .getHttpsCallable("userLoggedIn")
-//            .call(data)
-    }
+//    private fun updateProfilePic() {
+////        val data = hashMapOf(
+////            "pictureURL" to user.photoUrl,
+////            "uid" to user.uid
+////        )
+////
+////        functions
+////            .getHttpsCallable("userLoggedIn")
+////            .call(data)
+//    }
 }

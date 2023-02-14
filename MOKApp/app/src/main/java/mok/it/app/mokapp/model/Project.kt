@@ -26,8 +26,8 @@ data class Project(
 
 fun getIconFileName(iconURL: String): String {
     // remove special characters
-    val re = Regex("[^A-Za-z0-9 ]")
+    val re = Regex("[^A-Za-z\\d ]")
     val alphanum = re.replace(iconURL, "")
     // append file type
-    return alphanum + ".png"
+    return "$alphanum.png"
 }

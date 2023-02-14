@@ -24,7 +24,8 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_all_badges_list.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
-import mok.it.app.mokapp.firebase.FirebaseUserObject
+import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
+import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.fragments.FilterDialogFragment.Companion.filterResultKey
 import mok.it.app.mokapp.model.Filter
@@ -93,10 +94,10 @@ class AllBadgesListFragment :
     }
 
     private fun loginOrLoad() {
-        if (FirebaseUserObject.currentUser == null) {
-            findNavController().navigate(AllBadgesListFragmentDirections.actionAllBadgesListFragmentToLoginFragment())
+        if (currentUser == null) {
+            findNavController().navigate(R.id.action_global_loginFragment)
         } else {
-            FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext()) {
+            refreshCurrentUserAndUserModel(requireContext()) {
                 initRecyclerView()
             }
         }
@@ -220,7 +221,7 @@ class AllBadgesListFragment :
             // a lehúzás csak az usert tölti újra, a mancsok maguktól frissülnek
             adapter = getAdapter()
             recyclerView.adapter = adapter
-            FirebaseUserObject.refreshCurrentUserAndUserModel(
+            refreshCurrentUserAndUserModel(
                 this.requireContext()
             ) { setAddBadgeButtonVisibility() }
             badgeSwipeRefresh.isRefreshing = false

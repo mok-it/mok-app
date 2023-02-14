@@ -15,6 +15,10 @@
         <argument
             android:name="badgeId"
             app:argType="string" />
+        <deepLink
+            android:id="@+id/badge_deeplink"
+            android:autoVerify="true"
+            app:uri="https://www.mokegyesulet.hu/badges/{badgeId}" />
     </fragment>
     <fragment
         android:id="@+id/commentsFragment"
@@ -45,10 +49,6 @@
         <action
             android:id="@+id/action_allBadgesListFragment_to_phoneBookFragment"
             app:destination="@id/phoneBookFragment" />
-        <action
-            android:id="@+id/action_allBadgesListFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:launchSingleTop="true" />
         <argument
             android:name="category"
             android:defaultValue="Univerzális"

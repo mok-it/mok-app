@@ -1,17 +1,19 @@
 package mok.it.app.mokapp.fragments
 
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.firebase.Timestamp
@@ -21,8 +23,8 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_details.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
-import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
+import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.Project
@@ -33,6 +35,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
+
 
 private const val TAG = "DetailsFragment"
 
@@ -58,9 +61,49 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getMemberIds()
-        getCommentIds()
-        initLayout()
+        if (currentUser == null) {
+            findNavController().navigate(R.id.action_global_loginFragment)
+        } else {
+            setupTopMenu()
+            refreshCurrentUserAndUserModel(requireContext()) {
+                getMemberIds()
+                getCommentIds()
+                initLayout()
+            }
+        }
+    }
+
+    private fun setupTopMenu() {
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menu.add(R.id.share, R.id.share, 0, R.string.share)
+                    .setIcon(R.drawable.baseline_share_white_24)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.share -> {
+                        val sendIntent: Intent = Intent().apply {
+                            action = Intent.ACTION_SEND
+                            //this should match the deeplink in the nav_graph. ikr it's ugly
+                            putExtra(
+                                Intent.EXTRA_TEXT,
+                                "https://www.mokegyesulet.hu/badges/" + args.badgeId
+                            )
+                            putExtra(Intent.EXTRA_TITLE, badgeModel.name)
+                            type = "text/plain"
+                        }
+                        val shareIntent = Intent.createChooser(sendIntent, null)
+                        startActivity(shareIntent)
+
+                        true
+                    }
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
     private fun initLayout() {
@@ -69,7 +112,7 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
         }
         join_button.setOnClickListener {
             join()
-            FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext())
+            refreshCurrentUserAndUserModel(requireContext())
         }
         join_button.visibility = View.GONE
         badgeComments.setOnClickListener {
@@ -78,7 +121,6 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
             findNavController().navigate(action)
         }
         documentOnSuccess(projectCollectionPath, args.badgeId) { document ->
-
             badgeModel = document.toObject(Project::class.java)!!
 
             badgeName.text = document.get("name") as String
@@ -136,7 +178,6 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
                 }
             changeVisibilities()
         }
-        // supportFragmentManager.beginTransaction().replace(R.id.fragment_container, ProfileFragment()).commit()
     }
 
     private fun initEditButton() {
@@ -153,13 +194,13 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
         val docRef = firestore.collection(projectCollectionPath).document(args.badgeId)
         docRef.get()
             .addOnSuccessListener { document ->
-                if (document != null) {
+                if (document != null && document.data != null) {
                     Log.d(TAG, "DocumentSnapshot data: ${document.data}")
                     model = document.toObject(Project::class.java)!!
                     getMembers(model.members)
                     Log.d(TAG, "Model data: $model")
                 } else {
-                    Log.d(TAG, "No such document")
+                    Log.d(TAG, "No such document or data is null")
                 }
             }
     }

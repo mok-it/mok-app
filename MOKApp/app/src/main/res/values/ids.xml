@@ -7,4 +7,6 @@
     <item name="progressBar" type="id" />
     <item name="disc_name_textview" type="id" />
     <item name="avatar_imagebutton" type="id" />
+    <item name="filter" type="id" />
+    <item name="share" type="id" />
 </resources>

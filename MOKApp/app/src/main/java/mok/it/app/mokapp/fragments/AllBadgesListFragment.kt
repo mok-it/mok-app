@@ -71,7 +71,9 @@ class AllBadgesListFragment :
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_main, menu)
+                menu.add(R.id.filter, R.id.filter, 0, R.string.filters)
+                    .setIcon(R.drawable.ic_filter_white)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {

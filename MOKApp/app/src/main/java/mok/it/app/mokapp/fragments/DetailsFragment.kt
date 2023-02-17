@@ -90,7 +90,7 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
                             //this should match the deeplink in the nav_graph. ikr it's ugly
                             putExtra(
                                 Intent.EXTRA_TEXT,
-                                "https://www.mokegyesulet.hu/badges/" + args.badgeId
+                                "www.mokegyesulet.hu/app/badges/${args.badgeId}"
                             )
                             putExtra(Intent.EXTRA_TITLE, badgeModel.name)
                             type = "text/plain"
@@ -212,7 +212,8 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
             docRef.get()
                 .addOnSuccessListener { document ->
                     if (document != null) {
-                        val user = document.toObject(User::class.java)!!
+                        val user =
+                            document.toObject(User::class.java)!! //TODO null check; sometimes it throws a NPE
                         memberUsers.add(user)
 
                         if (members.size == memberUsers.size) {

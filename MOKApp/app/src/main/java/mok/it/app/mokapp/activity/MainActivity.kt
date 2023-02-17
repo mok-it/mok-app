@@ -54,6 +54,7 @@ class MainActivity : AppCompatActivity() {
         nav_view.setNavigationItemSelectedListener {
             NavigationUI.onNavDestinationSelected(it, navController)
             if (it.title in mcsArray) {
+                //TODO
                 //navigateToBadgesByMCS(it.title.toString())
             } else {
                 when (it.itemId) {

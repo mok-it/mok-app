@@ -28,9 +28,12 @@ import mok.it.app.mokapp.recyclerview.CommentViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
 class CommentsFragment : BaseFireFragment() {
+    companion object {
+        const val TAG = "CommentsFragment"
+    }
 
-    private val commentsId = "comments" //TODO ez mi? ezt is át kell adni?
-    private val TAG = "CommentsFragment"
+    private val commentsId = "comments"
+
     val formatter: DateFormat = getDateTimeInstance()
     private val args: DetailsFragmentArgs by navArgs()
     override fun onCreateView(
@@ -43,7 +46,8 @@ class CommentsFragment : BaseFireFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val query =
-            firestore.collection(projectCollectionPath).document(args.badgeId).collection(commentsId)
+            firestore.collection(projectCollectionPath).document(args.badgeId)
+                .collection(commentsId)
                 .orderBy("time", Query.Direction.DESCENDING)
         val options =
             FirestoreRecyclerOptions.Builder<Comment>().setQuery(query, Comment::class.java)
@@ -90,7 +94,8 @@ class CommentsFragment : BaseFireFragment() {
                     FirebaseAuth.getInstance().currentUser!!.uid
                 )
 
-                firestore.collection(projectCollectionPath).document(args.badgeId).collection(commentsId)
+                firestore.collection(projectCollectionPath).document(args.badgeId)
+                    .collection(commentsId)
                     .add(comment).addOnSuccessListener { documentReference ->
                         Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
                     }.addOnFailureListener { e ->

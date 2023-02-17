@@ -22,6 +22,7 @@ import com.google.firebase.firestore.Query
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_all_badges_list.*
+import kotlinx.android.synthetic.main.fragment_all_badges_list.view.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.firebase.FirebaseUserObject
@@ -35,6 +36,7 @@ import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+
 
 private const val TAG = "AllBadgesListFragment"
 
@@ -92,7 +94,7 @@ class AllBadgesListFragment :
 
     private fun loginOrLoad() {
         if (FirebaseUserObject.currentUser == null) {
-            findNavController().navigate(AllBadgesListFragmentDirections.actionAllBadgesListFragmentToLoginFragment())
+            findNavController().navigate(R.id.action_global_loginFragment)
         } else {
             FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext()) {
                 initRecyclerView()
@@ -198,17 +200,37 @@ class AllBadgesListFragment :
                         )
                     findNavController().navigate(action)
                 }
+
+                stopShimmer()
             }
         }
     }
 
+    private fun stopShimmer() {
+        shimmerFrameLayout.hideShimmer()
+        shimmerFrameLayout.stopShimmer()
+        shimmerFrameLayout.visibility = View.GONE
+    }
+
+    private fun startShimmer() {
+        shimmerFrameLayout.visibility = View.VISIBLE
+        shimmerFrameLayout.startShimmer()
+    }
+
+
     private fun initRecyclerView() {
+        if (recyclerView.adapter == null || recyclerView.adapter?.itemCount == 0) {
+            //startShimmer()
+        }
+
         var adapter = getAdapter()
         adapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
         recyclerView.adapter = adapter
         recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
+        recyclerView.addBadgeButton
+
         addBadgeButton.setOnClickListener {
             val dialog = CreateBadgeFragment(args.category)
             dialog.show(parentFragmentManager, "CreateBadgeDialog")

@@ -23,7 +23,6 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
-import mok.it.app.mokapp.fragments.AllBadgesListFragmentDirections
 
 
 class MainActivity : AppCompatActivity() {
@@ -141,7 +140,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun logout() {
         FirebaseUserObject.logout()
-        navController.navigate(AllBadgesListFragmentDirections.actionAllBadgesListFragmentToLoginFragment())
+        navController.navigate(R.id.action_global_loginFragment)
     }
 
     //TODO ha változik a profile pic, az új képet elmenteni

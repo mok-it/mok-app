@@ -10,6 +10,36 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
 
+        <com.facebook.shimmer.ShimmerFrameLayout
+            android:id="@+id/shimmerFrameLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <include layout="@layout/card_badge_shimmer" />
+
+                <include layout="@layout/card_badge_shimmer" />
+
+                <include layout="@layout/card_badge_shimmer" />
+
+                <include layout="@layout/card_badge_shimmer" />
+
+                <include layout="@layout/card_badge_shimmer" />
+
+                <include layout="@layout/card_badge_shimmer" />
+
+                <include layout="@layout/card_badge_shimmer" />
+
+                <include layout="@layout/card_badge_shimmer" />
+            </LinearLayout>
+        </com.facebook.shimmer.ShimmerFrameLayout>
+
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerView"
             android:layout_width="match_parent"

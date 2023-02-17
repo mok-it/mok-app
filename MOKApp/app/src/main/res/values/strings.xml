@@ -78,6 +78,7 @@
     <string name="filters">Filterek</string>
     <string name="badge_icon">Mancs ikonja</string>
     <string name="try_another_filter">Próbáld meg más szűrőfeltételekkel</string>
-    <string name="no_match">Nincs találat...</string>
+    <string name="no_match">Nincs találat…</string>
+    <string name="share">Megosztás</string>
 
 </resources>

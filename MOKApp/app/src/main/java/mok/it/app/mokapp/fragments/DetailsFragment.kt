@@ -181,7 +181,7 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
     }
 
     private fun initEditButton() {
-        if (badgeModel.creator == userModel.uid) {
+        if (badgeModel.creator == userModel.documentId) {
             editButton.visibility = View.VISIBLE
             editButton.setOnClickListener {
                 val dialog = EditBadgeFragment(badgeModel, this)

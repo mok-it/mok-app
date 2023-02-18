@@ -18,8 +18,4 @@ data class User(
     val isCreator: Boolean = false,
     val photoURL: String = "",
     val phoneNumber: String = "",
-
-    //redundant to use (user documentId instead),
-    // but since some (at the time of this writing, all) documents have it, it is required here:
-    val uid: String = "",
 )

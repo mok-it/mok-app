@@ -288,7 +288,7 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
     }
 
     private fun initMembers() {
-        members_left.isVisible = false
+        members_left.isVisible = false //TODO sometimes throws an NPE (members_left is null)
         members_left_number.isVisible = false
 
         val members = listOf(member1, member2, member3)

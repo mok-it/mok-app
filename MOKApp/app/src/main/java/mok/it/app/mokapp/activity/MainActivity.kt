@@ -13,6 +13,8 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
@@ -20,7 +22,6 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header.*
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
@@ -140,11 +141,18 @@ class MainActivity : AppCompatActivity() {
 //    }
 
     private fun logout() {
-        FirebaseUserObject.logout()
-        navController.navigate(R.id.action_global_loginFragment)
+        currentUser = null
+        FirebaseAuth.getInstance().signOut()
+        GoogleSignIn.getClient(
+            this,
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
+        )
+            .signOut()
+            .addOnSuccessListener { navController.navigate(R.id.action_global_loginFragment) }
     }
+}
 
-    //TODO ha változik a profile pic, az új képet elmenteni
+//TODO ha változik a profile pic, az új képet elmenteni
 //    private fun updateProfilePic() {
 ////        val data = hashMapOf(
 ////            "pictureURL" to user.photoUrl,
@@ -155,4 +163,4 @@ class MainActivity : AppCompatActivity() {
 ////            .getHttpsCallable("userLoggedIn")
 ////            .call(data)
 //    }
-}
+//}

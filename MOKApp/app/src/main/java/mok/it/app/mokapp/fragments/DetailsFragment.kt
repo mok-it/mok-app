@@ -90,7 +90,7 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
                             //this should match the deeplink in the nav_graph. ikr it's ugly
                             putExtra(
                                 Intent.EXTRA_TEXT,
-                                "www.mokegyesulet.hu/app/badges/${args.badgeId}"
+                                "mokegyesulet.hu/app/badges/${args.badgeId}"
                             )
                             putExtra(Intent.EXTRA_TITLE, badgeModel.name)
                             type = "text/plain"

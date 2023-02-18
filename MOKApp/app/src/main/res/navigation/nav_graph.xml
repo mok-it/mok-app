@@ -18,7 +18,7 @@
         <deepLink
             android:id="@+id/badge_deeplink"
             android:autoVerify="true"
-            app:uri="www.mokegyesulet.hu/app/badges/{badgeId}" />
+            app:uri="mokegyesulet.hu/app/badges/{badgeId}" />
     </fragment>
     <fragment
         android:id="@+id/commentsFragment"

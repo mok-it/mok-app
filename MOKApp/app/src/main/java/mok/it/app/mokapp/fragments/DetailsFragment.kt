@@ -124,7 +124,6 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
         }
         documentOnSuccess(projectCollectionPath, args.badgeId) { document ->
             badgeModel = document.toObject(Project::class.java)!!
-
             badgeName.text = document.get("name") as String
             categoryName.text =
                 getString(R.string.category) + ": " + document.get("category") as String
@@ -325,6 +324,7 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
                 .addOnCompleteListener {
                     Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT).show()
                     getMemberIds()
+                    changeVisibilities()
                 }
         } else {
             val userRef = firestore.collection("users").document(currentUser!!.uid)
@@ -335,6 +335,7 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
                 .addOnCompleteListener {
                     Toast.makeText(context, "Sikeresen csatlakoztál!", Toast.LENGTH_SHORT).show()
                     getMemberIds()
+                    changeVisibilities()
                 }
         }
     }
@@ -379,9 +380,9 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
         if (userModel.collectedBadges.contains(badgeModel.id))
             join_button.visibility = View.GONE
         else if (userModel.joinedBadges.contains(badgeModel.id))
-            join_button.text = getString(R.string.join)
-        else if (!userModel.joinedBadges.contains(badgeModel.id))
             join_button.text = getString(R.string.leave)
+        else if (!userModel.joinedBadges.contains(badgeModel.id))
+            join_button.text = getString(R.string.join)
 
         if (badgeModel.editors.contains(userModel.documentId)) {
             userIsEditor = true

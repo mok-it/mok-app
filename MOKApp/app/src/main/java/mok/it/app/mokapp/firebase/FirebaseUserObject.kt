@@ -1,6 +1,8 @@
 package mok.it.app.mokapp.firebase
 
 import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.auth.FirebaseAuth
@@ -25,6 +27,15 @@ object FirebaseUserObject {
         context: Context,
         onSuccessFunction: (() -> Unit)? = null,
     ) {
+        refreshCurrentUserAndUserModelRecursive(context, onSuccessFunction, 1)
+    }
+
+    private fun refreshCurrentUserAndUserModelRecursive(
+        context: Context,
+        onSuccessFunction: (() -> Unit)? = null,
+        numberOfConsecutiveCalls: Int
+    ) {
+        val numberOfMaxTries = 100
         Firebase.firestore.collection("users")
             .document(
                 FirebaseAuth.getInstance().currentUser?.uid
@@ -40,13 +51,19 @@ object FirebaseUserObject {
                         ?: throw Exception("FirebaseAuth user is null")
                     Log.d(TAG, "refreshCurrentUser(): user refreshed")
                     onSuccessFunction?.invoke()
-                } else {
-                    Log.d(TAG, "refreshCurrentUserAndUserModel: ${document.data}")
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.user_data_load_failed),
-                        Toast.LENGTH_SHORT
-                    ).show()
+                } else if (numberOfConsecutiveCalls <= numberOfMaxTries) {
+                    Handler(Looper.getMainLooper()).postDelayed({
+                        Toast.makeText(
+                            context,
+                            "Kis türelmet...",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                        refreshCurrentUserAndUserModelRecursive(
+                            context,
+                            onSuccessFunction,
+                            numberOfConsecutiveCalls + 1
+                        )
+                    }, 1000)
                 }
             }
     }

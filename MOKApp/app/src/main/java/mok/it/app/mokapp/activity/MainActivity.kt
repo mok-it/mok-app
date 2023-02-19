@@ -150,7 +150,6 @@ class MainActivity : AppCompatActivity() {
             .signOut()
             .addOnSuccessListener { navController.navigate(R.id.action_global_loginFragment) }
     }
-}
 
 //TODO ha változik a profile pic, az új képet elmenteni
 //    private fun updateProfilePic() {
@@ -163,4 +162,4 @@ class MainActivity : AppCompatActivity() {
 ////            .getHttpsCallable("userLoggedIn")
 ////            .call(data)
 //    }
-//}
+}

@@ -215,17 +215,7 @@ class AllBadgesListFragment :
         shimmerFrameLayout.visibility = View.GONE
     }
 
-    private fun startShimmer() {
-        shimmerFrameLayout.visibility = View.VISIBLE
-        shimmerFrameLayout.startShimmer()
-    }
-
-
     private fun initRecyclerView() {
-        if (recyclerView.adapter == null || recyclerView.adapter?.itemCount == 0) {
-            //startShimmer()
-        }
-
         var adapter = getAdapter()
         adapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY

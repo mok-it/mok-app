@@ -21,7 +21,8 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.FragmentLoginBinding
-import mok.it.app.mokapp.firebase.FirebaseUserObject
+import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
+import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 
 class LoginFragment : Fragment() {
 
@@ -55,7 +56,7 @@ class LoginFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeAuth()
-        if (FirebaseUserObject.currentUser != null) {
+        if (currentUser != null) {
             navigateAuthUser()
             return
         }
@@ -92,7 +93,7 @@ class LoginFragment : Fragment() {
     }
 
     private fun navigateAuthUser() {
-        FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext())
+        refreshCurrentUserAndUserModel(requireContext())
         {
             findNavController().navigate(R.id.action_loginFragment_to_allBadgesListFragment)
         }

@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.icu.text.DateFormat.getDateInstance
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -108,7 +109,8 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
 
     private fun initLayout() {
         members_overlay_button.setOnClickListener {
-            openMembersDialog()
+            if (memberUsers.isNotEmpty())
+                openMembersDialog()
         }
         join_button.setOnClickListener {
             join()
@@ -130,9 +132,9 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
             firestore.collection(userCollectionPath).document(document.get("creator") as String)
                 .get().addOnSuccessListener { creatorDoc ->
                     if (creatorDoc?.get("name") != null) {
-                        badgeCreator.text = creatorDoc.get("name") as String
+                        badgeCreator.text = creatorDoc.get("name") as String //TODO NPE itt is
                     }
-                    val formatter = SimpleDateFormat("yyyy.MM.dd")
+                    val formatter = getDateInstance()
                     badgeDeadline.text =
                         formatter.format((document.get("deadline") as Timestamp).toDate())
                     //badgeProgress.progress = (document.get("overall_progress") as Number).toInt()
@@ -212,12 +214,16 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
             docRef.get()
                 .addOnSuccessListener { document ->
                     if (document != null) {
+                        Log.d(TAG, "fetched document: ${document.id}")
                         val user =
-                            document.toObject(User::class.java)!! //TODO null check; sometimes it throws a NPE
-                        memberUsers.add(user)
-
-                        if (members.size == memberUsers.size) {
-                            initMembers()
+                            document.toObject(User::class.java)
+                        if (user != null) {
+                            memberUsers.add(user)
+                            if (members.size == memberUsers.size) {
+                                initMembers()
+                            }
+                        } else {
+                            Log.e(TAG, "User is null, badge: ${badgeModel.name}")
                         }
                     }
                 }

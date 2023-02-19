@@ -54,9 +54,9 @@ class CommentsFragment : BaseFireFragment() {
                 .setLifecycleOwner(this).build()
         val adapter = object : FirestoreRecyclerAdapter<Comment, CommentViewHolder>(options) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
-                val view = LayoutInflater.from(this@CommentsFragment.context)
+                val itemView = LayoutInflater.from(this@CommentsFragment.context)
                     .inflate(R.layout.card_comment, parent, false)
-                return CommentViewHolder(view)
+                return CommentViewHolder(itemView)
             }
 
             override fun onBindViewHolder(
@@ -82,6 +82,7 @@ class CommentsFragment : BaseFireFragment() {
                             else tryLoadingImage(ivImg, getString(R.string.url_no_image))
                         }
                     }
+                commentsRecyclerView.smoothScrollToPosition(0)
             }
         }
 
@@ -108,9 +109,14 @@ class CommentsFragment : BaseFireFragment() {
             }
         }
 
-        comments_recyclerView.adapter = adapter
-        comments_recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
-        comments_recyclerView.smoothScrollToPosition(adapter.itemCount)
+        commentsRecyclerView.adapter = adapter
+        val layoutManager = WrapContentLinearLayoutManager(this.context)
+            .apply {
+                stackFromEnd = true
+                reverseLayout = true
+            }
+
+        commentsRecyclerView.layoutManager = layoutManager
     }
 
     private fun Fragment.hideKeyboard() {

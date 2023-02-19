@@ -80,5 +80,6 @@
     <string name="try_another_filter">Próbáld meg más szűrőfeltételekkel</string>
     <string name="no_match">Nincs találat…</string>
     <string name="share">Megosztás</string>
+    <string name="link_name">Link neve</string>
 
 </resources>

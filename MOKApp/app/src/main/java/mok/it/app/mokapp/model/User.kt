@@ -18,4 +18,4 @@ data class User(
     val isCreator: Boolean = false,
     val photoURL: String = "",
     val phoneNumber: String = "",
-)
+) : java.io.Serializable

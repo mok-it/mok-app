@@ -35,7 +35,7 @@
     <string name="project_icon">Projektikon</string>
     <string name="choose_manager">Válassz kezelőt</string>
     <string name="log_out">Kijelentkezés</string>
-    <string name="did_they_complete">Teljesítette?</string>
+    <string name="did_they_complete">Teljesítette a mancsot az alábbi tag?</string>
     <string name="cancel">Mégsem</string>
     <string name="badge_creator">Mancs készítője</string>
     <string name="deadline">Határidő</string>

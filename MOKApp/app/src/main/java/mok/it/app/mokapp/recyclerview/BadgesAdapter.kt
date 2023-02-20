@@ -5,12 +5,16 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Project
 
-class BadgesAdapter(private val dataSet: List<Project>, private val listener: BadgeClickedListener) :
+class BadgesAdapter(
+    private val dataSet: List<Project>,
+    private val listener: BadgeClickedListener
+) :
     RecyclerView.Adapter<BadgesAdapter.ViewHolder>() {
 
     var context: Context? = null
@@ -26,9 +30,11 @@ class BadgesAdapter(private val dataSet: List<Project>, private val listener: Ba
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val model = dataSet[position]
         val ivImg: ImageView = viewHolder.itemView.findViewById(R.id.imageView)
+        val tvBadgeName: TextView = viewHolder.itemView.findViewById(R.id.badgeName)
         loadImage(ivImg, model.icon)
+        tvBadgeName.text = model.name
 
-        viewHolder.itemView.setOnClickListener{
+        viewHolder.itemView.setOnClickListener {
             listener.onBadgeClicked(model.id)
         }
     }

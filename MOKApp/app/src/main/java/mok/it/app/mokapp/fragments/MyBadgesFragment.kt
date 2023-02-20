@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.ktx.firestore
@@ -74,9 +75,10 @@ class MyBadgesFragment :
     }
 
     override fun onBadgeClicked(badgeId: String) {
-        //listener.onItemClicked(badgeId, "Univerzális")
-        ///ez még szar
-        //parentFragmentManager.beginTransaction()
-        //    .replace(R.id.fragment_container, DetailsFragment(badgeId, userRefresher = ContainerActivity as UserRefresher), "DetailsFragment").commit()
+        findNavController().navigate(
+            MyBadgesFragmentDirections.actionMyBadgesFragmentToDetailsFragment(
+                badgeId
+            )
+        )
     }
 }

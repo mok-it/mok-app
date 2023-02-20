@@ -66,6 +66,14 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
         if (currentUser == null) {
             findNavController().navigate(R.id.action_global_loginFragment)
         } else {
+            findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(
+                BadgeAcceptMemberDialogFragment.acceptDialogResultKey
+            )
+                ?.observe(
+                    viewLifecycleOwner
+                ) { userId ->
+                    completed(userId)
+                }
             setupTopMenu()
             refreshCurrentUserAndUserModel(requireContext()) {
                 getMemberIds()
@@ -366,7 +374,7 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
     override fun onMemberClicked(user: User) {
         findNavController().navigate(
             DetailsFragmentDirections.actionDetailsFragmentToBadgeAcceptMemberDialogFragment(
-                user.name
+                user
             )
         )
     }

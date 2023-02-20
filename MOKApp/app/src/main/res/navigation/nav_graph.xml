@@ -124,7 +124,7 @@
         android:label="BadgeAcceptMemberDialogFragment"
         tools:layout="@layout/fragment_badge_accept_member_dialog">
         <argument
-            android:name="name"
-            app:argType="string" />
+            android:name="user"
+            app:argType="mok.it.app.mokapp.model.User" />
     </dialog>
 </navigation>

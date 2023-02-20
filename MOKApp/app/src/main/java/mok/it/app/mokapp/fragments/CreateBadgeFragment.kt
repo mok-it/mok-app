@@ -150,6 +150,7 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
             "icon" to "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef",
             "name" to nameTIET.text.toString(),
             "overall_progress" to 0,
+            "value" to 1,
             "mandatory" to false
 
         )

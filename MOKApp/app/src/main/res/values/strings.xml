@@ -81,5 +81,6 @@
     <string name="no_match">Nincs találat…</string>
     <string name="share">Megosztás</string>
     <string name="link_name">Link neve</string>
+    <string name="value">Érték:</string>
 
 </resources>

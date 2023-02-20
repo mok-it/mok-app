@@ -127,6 +127,8 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
             badgeName.text = document.get("name") as String
             categoryName.text =
                 getString(R.string.category) + ": " + document.get("category") as String
+            valueTextView.text =
+                getString(R.string.value) + " " + document.get("value")
             badgeDescription.text = document.get("description") as String
             firestore.collection(userCollectionPath).document(document.get("creator") as String)
                 .get().addOnSuccessListener { creatorDoc ->

@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.ktx.firestore
@@ -30,6 +31,14 @@ class MyBadgesFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<Boolean>(
+            BadgeAcceptMemberDialogFragment.acceptDialogResultKey
+        )
+            ?.observe(
+                viewLifecycleOwner
+            ) { result ->
+
+            }
         getBadges(userModel.collectedBadges)
     }
 

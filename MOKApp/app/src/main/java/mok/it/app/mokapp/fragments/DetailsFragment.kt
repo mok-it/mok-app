@@ -37,11 +37,13 @@ import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 
-
-private const val TAG = "DetailsFragment"
-
 class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener,
-    BadgeAcceptMemberDialogFragment.SuccessListener, EditBadgeFragment.EditBadgeListener {
+    EditBadgeFragment.EditBadgeListener {
+
+    companion object {
+        const val TAG = "DetailsFragment"
+    }
+
     //TODO test whether it updates itself when the "members" tab is open
     // if not, use FirestoreRecyclerAdapter instead
     private val args: DetailsFragmentArgs by navArgs()
@@ -51,7 +53,6 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
     private lateinit var memberUsers: ArrayList<User>
     private lateinit var memberComments: ArrayList<Comment>
     private var userIsEditor: Boolean = false
-    private var selectedMemberUID = ""
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -342,21 +343,18 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
 
 
     private fun completed(userId: String) {
-        Log.d("DetailsFragment", "completed")
-        Log.d("DetailsFragment", "args.badgeId: " + args.badgeId)
+        Log.d(TAG, "badge completed with id ${args.badgeId}")
         val userRef = firestore.collection("users").document(userId)
-        userRef.update("joinedBadges", FieldValue.arrayRemove(args.badgeId)).addOnSuccessListener {
-            Log.d(
-                "DetailsFragment",
-                args.badgeId + " removed from " + userId
-            )
-        }.addOnFailureListener { e -> Log.d("DetailsFragment", e.message.toString()) }
+        userRef.update("joinedBadges", FieldValue.arrayRemove(args.badgeId))
+            .addOnSuccessListener {
+                Log.d(TAG, args.badgeId + " removed from " + userId)
+            }.addOnFailureListener { e -> Log.d(TAG, e.message.toString()) }
         userRef.update("collectedBadges", FieldValue.arrayUnion(args.badgeId))
         val badgeRef = firestore.collection("projects").document(args.badgeId)
         badgeRef.update("members", FieldValue.arrayRemove(userId))
             .addOnCompleteListener {
                 getMemberIds()
-                Log.d("DetailsFragment", "removed")
+                Log.d(TAG, "member removed from badge's collection")
             }
     }
 
@@ -365,15 +363,18 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
         dialog.show(parentFragmentManager, "MembersDialog")
     }
 
-    override fun onMemberClicked(userId: User) {
-        selectedMemberUID = userId.documentId
-        val dialog = BadgeAcceptMemberDialogFragment(this, userId.name)
-        dialog.show(parentFragmentManager, "AcceptDialog")
+    override fun onMemberClicked(user: User) {
+        findNavController().navigate(
+            DetailsFragmentDirections.actionDetailsFragmentToBadgeAcceptMemberDialogFragment(
+                user.name
+            )
+        )
     }
 
-    override fun onSuccess() {
-        completed(selectedMemberUID)
-    }
+    //TODO: refactor this
+//    override fun onSuccess() {
+//        completed(selectedMemberUID)
+//    }
 
     private fun changeVisibilities() {
         join_button.visibility = View.VISIBLE

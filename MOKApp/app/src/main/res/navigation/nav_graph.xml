@@ -19,6 +19,9 @@
             android:id="@+id/badge_deeplink"
             android:autoVerify="true"
             app:uri="mokegyesulet.hu/app/badges/{badgeId}" />
+        <action
+            android:id="@+id/action_detailsFragment_to_badgeAcceptMemberDialogFragment"
+            app:destination="@id/badgeAcceptMemberDialogFragment" />
     </fragment>
     <fragment
         android:id="@+id/commentsFragment"
@@ -115,4 +118,13 @@
     <action
         android:id="@+id/action_global_loginFragment"
         app:destination="@id/loginFragment" />
+    <dialog
+        android:id="@+id/badgeAcceptMemberDialogFragment"
+        android:name="mok.it.app.mokapp.fragments.BadgeAcceptMemberDialogFragment"
+        android:label="BadgeAcceptMemberDialogFragment"
+        tools:layout="@layout/fragment_badge_accept_member_dialog">
+        <argument
+            android:name="name"
+            app:argType="string" />
+    </dialog>
 </navigation>

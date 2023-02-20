@@ -241,8 +241,9 @@ class AllBadgesListFragment :
     }
 
     private fun getFilteredQuery(): Query {
+        //itt szűrünk kategóriákra
         var query =
-            firestore.collection(projectCollectionPath).whereEqualTo("category", args.category)
+            firestore.collection(projectCollectionPath)
                 .orderBy("created", Query.Direction.DESCENDING)
         if (filter.mandatory) {
             query = query.whereEqualTo("mandatory", true)

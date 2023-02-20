@@ -22,6 +22,7 @@ data class Project(
     val mandatory: Boolean = false,
     val tasks: List<String> = ArrayList(),
     val comments: List<String> = ArrayList(),
+    val value: Int = 1,
 )
 
 fun getIconFileName(iconURL: String): String {

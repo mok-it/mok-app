@@ -14,8 +14,11 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_phonebook_item.view.*
+import kotlinx.android.synthetic.main.card_reward.view.*
+import kotlinx.android.synthetic.main.fragment_rewards.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.firebase.FirebaseUserObject
@@ -23,9 +26,9 @@ import mok.it.app.mokapp.model.Reward
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.PhoneBookViewHolder
 import mok.it.app.mokapp.recyclerview.RewardViewHolder
+import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
 class RewardsFragment : BaseFireFragment() {
-    private lateinit var recyclerView: RecyclerView
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
 
     override fun onCreateView(
@@ -52,16 +55,18 @@ class RewardsFragment : BaseFireFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getRewards()
-    }
-
-    private fun getRewards(){
-
+        initializeAdapter()
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager =
+            WrapContentLinearLayoutManager(this.context)
     }
 
     private fun initializeAdapter() {
         val options: FirestoreRecyclerOptions<Reward?> = FirestoreRecyclerOptions.Builder<Reward>()
-            .setQuery(firestore.collection(rewardCollectionPath).orderBy("price"), Reward::class.java)
+            .setQuery(
+                firestore.collection(rewardCollectionPath).orderBy("price", Query.Direction.ASCENDING),
+                Reward::class.java
+            )
             .build()
 
         adapter =
@@ -72,49 +77,16 @@ class RewardsFragment : BaseFireFragment() {
                     position: Int,
                     model: Reward
                 ) {
-                    val ivImg: ImageView = holder.itemView.findViewById(R.id.contact_image)
-                    loadImage(ivImg, model.photoURL)
-                    holder.itemView.contact_name.text = model.name
-                    holder.itemView.phone_number.text = model.phoneNumber.ifEmpty { getString(R.string.no_phone_number) }
-
-                    holder.itemView.call_button.setOnClickListener {
-                        // if the device is capable of making phone calls, the button opens the dialer
-                        if (isTelephonyEnabled() && model.phoneNumber.isNotEmpty()) {
-                            val intent = Intent(Intent.ACTION_DIAL)
-                            intent.data = Uri.parse("tel:${model.phoneNumber}}")
-                            this.context?.let { it2 ->
-                                ContextCompat.startActivity(
-                                    it2,
-                                    intent,
-                                    null
-                                )
-                            }
-                        }
-                        else if (model.phoneNumber.isEmpty()) // if the user doesn't have a phone number, it shows a toast
-                            Toast.makeText(context, getString(R.string.no_phone_number) , Toast.LENGTH_SHORT).show()
-                        else // ...if not, it copies the number to the clipboard
-                        {
-                            val clipboard =
-                                this.context?.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                            val clip = android.content.ClipData.newPlainText(
-                                "label",
-                                model.phoneNumber
-                            )
-                            clipboard.setPrimaryClip(clip)
-                        }
-                    }
-
-                    /* holder.itemView.sms_button.setOnClickListener {
-                         val intent = Intent(Intent.ACTION_SENDTO)
-                         intent.data = Uri.parse("smsto:0123456789")
-                         this.context?.let { it2 -> ContextCompat.startActivity(it2, intent, null) }
-                     }*/
+                    val ivImg: ImageView = holder.itemView.findViewById(R.id.rewardImage)
+                    loadImage(ivImg, model.icon)
+                    holder.itemView.rewardName.text = model.name
+                    holder.itemView.rewardPrice.text = model.price.toString()
                 }
 
-                override fun onCreateViewHolder(group: ViewGroup, i: Int): PhoneBookViewHolder {
+                override fun onCreateViewHolder(group: ViewGroup, i: Int): RewardViewHolder {
                     val view: View = LayoutInflater.from(group.context)
-                        .inflate(R.layout.card_phonebook_item, group, false)
-                    return PhoneBookViewHolder(view)
+                        .inflate(R.layout.card_reward, group, false)
+                    return RewardViewHolder(view)
                 }
 
                 override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -133,4 +105,5 @@ class RewardsFragment : BaseFireFragment() {
                     }
                 }
             }
+    }
 }

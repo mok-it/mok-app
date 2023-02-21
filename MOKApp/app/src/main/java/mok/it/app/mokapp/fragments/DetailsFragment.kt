@@ -19,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.ktx.toObject
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_details.*
@@ -342,20 +343,20 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
         }
     }
 
-
     private fun completed(userId: String) {
-        Log.d("DetailsFragment", "completed")
-        Log.d("DetailsFragment", "args.badgeId: " + args.badgeId)
         val userRef = firestore.collection("users").document(userId)
-        userRef.update("joinedBadges", FieldValue.arrayRemove(args.badgeId)).addOnSuccessListener {
-            Log.d(
-                "DetailsFragment",
-                args.badgeId + " removed from " + userId
-            )
-        }.addOnFailureListener { e -> Log.d("DetailsFragment", e.message.toString()) }
-        userRef.update("collectedBadges", FieldValue.arrayUnion(args.badgeId))
+        userRef.update(
+            "joinedBadges", FieldValue.arrayRemove(args.badgeId),
+            "points", FieldValue.increment(badgeModel.value.toDouble()),
+            "collectedBadges", FieldValue.arrayUnion(args.badgeId))
+            .addOnSuccessListener {
+                Log.d("DetailsFragment", args.badgeId + " removed from " + userId)
+            }
+            .addOnFailureListener { e -> Log.d("DetailsFragment", e.message.toString()) }
+
         val badgeRef = firestore.collection("projects").document(args.badgeId)
-        badgeRef.update("members", FieldValue.arrayRemove(userId))
+        badgeRef.update(
+            "members", FieldValue.arrayRemove(userId))
             .addOnCompleteListener {
                 getMemberIds()
                 Log.d("DetailsFragment", "removed")

@@ -17,11 +17,13 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_phonebook_item.view.*
+import kotlinx.android.synthetic.main.card_reward.*
 import kotlinx.android.synthetic.main.card_reward.view.*
 import kotlinx.android.synthetic.main.fragment_rewards.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.firebase.FirebaseUserObject
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Reward
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.PhoneBookViewHolder
@@ -56,6 +58,7 @@ class RewardsFragment : BaseFireFragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initializeAdapter()
+        updateUI()
         recyclerView.adapter = adapter
         recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)
@@ -81,6 +84,13 @@ class RewardsFragment : BaseFireFragment() {
                     loadImage(ivImg, model.icon)
                     holder.itemView.rewardName.text = model.name
                     holder.itemView.rewardPrice.text = model.price.toString()
+                    if (userModel.points >= model.price) {
+                        holder.itemView.requestButton.visibility = View.VISIBLE
+                    }
+                    if (userModel.requestedRewards.contains(model.documentId)) {
+                        holder.itemView.requestButton.visibility = View.GONE
+                        holder.itemView.achievedText.visibility = View.VISIBLE
+                    }
                 }
 
                 override fun onCreateViewHolder(group: ViewGroup, i: Int): RewardViewHolder {
@@ -105,5 +115,9 @@ class RewardsFragment : BaseFireFragment() {
                     }
                 }
             }
+    }
+
+    private fun updateUI(){
+        pointsText.text = getString(R.string.my_points) + " " + userModel.points
     }
 }

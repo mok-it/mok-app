@@ -18,4 +18,6 @@ data class User(
     val isCreator: Boolean = false,
     val photoURL: String = "",
     val phoneNumber: String = "",
+    val requestedRewards: List<String> = ArrayList(),
+    val points: Int = 0,
 )

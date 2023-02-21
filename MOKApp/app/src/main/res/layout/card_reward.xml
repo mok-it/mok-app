@@ -49,5 +49,29 @@
             android:layout_height="wrap_content"
             tools:text="@tools:sample/us_phones" />
 
+        <Button
+            android:id="@+id/requestButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/request"
+            android:background="@color/blue_dark"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <TextView
+            android:id="@+id/achievedText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/red_dark"
+            android:padding="2dp"
+            android:text="@string/achieved"
+            android:textColor="@color/light_gray"
+            android:textStyle="bold"
+            android:visibility="invisible"
+            app:layout_constraintBottom_toTopOf="@+id/requestButton"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

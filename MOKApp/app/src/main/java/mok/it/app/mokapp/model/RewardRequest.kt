@@ -1,0 +1,14 @@
+package mok.it.app.mokapp.model
+
+import com.google.firebase.firestore.DocumentId
+import java.util.*
+
+data class RewardRequest (
+    @DocumentId
+    val documentId: String = "",
+
+    val user: String = "",
+    val reward: String = "",
+    val value: String = "",
+    val created: Date = Date(),
+)

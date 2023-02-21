@@ -83,5 +83,8 @@
     <string name="link_name">Link neve</string>
     <string name="value">Érték:</string>
     <string name="rewards">Jutalmak</string>
+    <string name="request">Kérem!</string>
+    <string name="achieved">Megszerezve</string>
+    <string name="my_points">Pontjaim:</string>
 
 </resources>

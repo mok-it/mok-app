@@ -1,11 +1,9 @@
 package mok.it.app.mokapp.activity
 
 import android.os.Bundle
-import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
@@ -24,11 +22,9 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header.*
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
-import mok.it.app.mokapp.fragments.AllBadgesListFragment
 
 
 class MainActivity : AppCompatActivity() {
@@ -53,7 +49,7 @@ class MainActivity : AppCompatActivity() {
 
         //Ha a listfragment-re navigálunk, töltődjön újra a fejléc (regisztráció után ez tölti be)
         navController.addOnDestinationChangedListener { controller, destination, arguments ->
-            if(destination.id == R.id.allBadgesListFragment) {
+            if (destination.id == R.id.allBadgesListFragment) {
                 if (currentUser != null) refreshCurrentUserAndUserModel(this) {
                     loadApp()
                 }

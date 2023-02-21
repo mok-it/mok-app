@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="196dp"
     android:background="@color/blue"
     android:gravity="bottom"
+    android:orientation="vertical"
     android:padding="16dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark">
 
     <ImageView
+        android:id="@+id/image"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/image"
         android:layout_marginTop="8dp"
-        android:src="@mipmap/ic_launcher_round"/>
+        android:contentDescription="@string/profile_pic"
+        android:src="@mipmap/ic_launcher_round" />
 
 
     <LinearLayout
@@ -27,17 +27,18 @@
             android:orientation="vertical">
 
             <TextView
+                android:id="@+id/nameText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
-                android:id="@+id/nameText"
                 android:text="@tools:sample/full_names"
-                android:textAppearance="@style/TextAppearance.AppCompat.Body1"/>
+                android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
             <TextView
+                android:id="@+id/emailText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/emailText"
-                android:text="@string/example_email_address"/>
+                android:text="@string/example_email_address" />
 
         </LinearLayout>
 
@@ -46,9 +47,9 @@
             android:layout_width="50dp"
             android:layout_height="match_parent"
             android:background="@color/blue"
+            android:contentDescription="@string/refresh"
             android:src="@drawable/ic_refresh" />
     </LinearLayout>
-
 
 
 </LinearLayout>

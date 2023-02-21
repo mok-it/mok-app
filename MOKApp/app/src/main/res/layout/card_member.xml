@@ -29,6 +29,7 @@
             android:id="@+id/imageView"
             android:layout_width="@dimen/profile_circle_icon_size"
             android:layout_height="@dimen/profile_circle_icon_size"
+            android:contentDescription="@string/member_icon"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent"

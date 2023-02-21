@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/project_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -22,10 +21,12 @@
             android:id="@+id/icon"
             android:layout_width="50dp"
             android:layout_height="50dp"
+            android:contentDescription="@string/link_icon"
             android:scaleType="fitCenter"
+            android:src="@drawable/ic_link"
             card_view:layout_constraintStart_toStartOf="parent"
-            card_view:layout_constraintTop_toTopOf="parent"
-            android:src="@drawable/ic_link"/>
+            card_view:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/linkName"
             android:layout_width="0dp"
@@ -37,9 +38,9 @@
             android:text="@string/link_name"
             android:textSize="16sp"
             android:textStyle="bold"
+            card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintStart_toEndOf="@id/icon"
-            card_view:layout_constraintTop_toTopOf="parent"
-            card_view:layout_constraintBottom_toBottomOf="parent"/>
+            card_view:layout_constraintTop_toTopOf="parent" />
 
-        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

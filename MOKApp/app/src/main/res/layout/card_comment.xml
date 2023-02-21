@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:card_view="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/comment_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -10,12 +10,12 @@
     android:layout_marginTop="12dp"
     android:layout_marginRight="16dp"
     android:foreground="?selectableItemBackground"
-    card_view:contentPadding="4dp"
-
     app:cardCornerRadius="8dp"
+
     app:cardElevation="2dp"
+    app:strokeColor="@color/blue_dark"
     app:strokeWidth="1dp"
-    app:strokeColor="@color/blue_dark">
+    card_view:contentPadding="4dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -28,6 +28,7 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
+            android:contentDescription="@string/image_of_writer_of_the_comment"
             android:scaleType="fitCenter"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"

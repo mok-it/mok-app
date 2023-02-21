@@ -11,6 +11,7 @@ open class BaseFireFragment : Fragment() {
     val projectCollectionPath: String = "/projects"
     val userCollectionPath: String = "/users"
     val linkCollectionPath: String = "/links"
+    val rewardCollectionPath: String = "/rewards"
     val firestore = Firebase.firestore
 
     lateinit var model: Project

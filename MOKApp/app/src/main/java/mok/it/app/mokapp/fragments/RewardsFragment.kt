@@ -4,14 +4,13 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.telephony.TelephonyManager
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -19,12 +18,13 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_phonebook_item.view.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
+import mok.it.app.mokapp.firebase.FirebaseUserObject
+import mok.it.app.mokapp.model.Reward
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.PhoneBookViewHolder
-import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import mok.it.app.mokapp.recyclerview.RewardViewHolder
 
-
-class PhoneBookFragment : BaseFireFragment() {
+class RewardsFragment : BaseFireFragment() {
     private lateinit var recyclerView: RecyclerView
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
 
@@ -32,7 +32,7 @@ class PhoneBookFragment : BaseFireFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_phone_list, container, false)
+        return inflater.inflate(R.layout.fragment_rewards, container, false)
     }
 
     override fun onDestroyView() {
@@ -52,31 +52,25 @@ class PhoneBookFragment : BaseFireFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initializeAdapter()
-
-         recyclerView = this.requireView().findViewById(R.id.fragment_phone_list)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager =
-            WrapContentLinearLayoutManager(this.context)
+        getRewards()
     }
 
-    private fun isTelephonyEnabled(): Boolean {
-        val telephonyManager = getSystemService(this.requireContext(), TelephonyManager::class.java)
-        return (telephonyManager != null) && (telephonyManager.simState == TelephonyManager.SIM_STATE_READY)
+    private fun getRewards(){
+
     }
 
     private fun initializeAdapter() {
-        val options: FirestoreRecyclerOptions<User?> = FirestoreRecyclerOptions.Builder<User>()
-            .setQuery(firestore.collection(userCollectionPath).orderBy("name"), User::class.java)
+        val options: FirestoreRecyclerOptions<Reward?> = FirestoreRecyclerOptions.Builder<Reward>()
+            .setQuery(firestore.collection(rewardCollectionPath).orderBy("price"), Reward::class.java)
             .build()
 
         adapter =
-            object : FirestoreRecyclerAdapter<User?, PhoneBookViewHolder?>(options) {
+            object : FirestoreRecyclerAdapter<Reward?, RewardViewHolder?>(options) {
                 var context: Context? = null
                 override fun onBindViewHolder(
-                    holder: PhoneBookViewHolder,
+                    holder: RewardViewHolder,
                     position: Int,
-                    model: User
+                    model: Reward
                 ) {
                     val ivImg: ImageView = holder.itemView.findViewById(R.id.contact_image)
                     loadImage(ivImg, model.photoURL)
@@ -139,5 +133,4 @@ class PhoneBookFragment : BaseFireFragment() {
                     }
                 }
             }
-    }
 }

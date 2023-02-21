@@ -87,6 +87,11 @@
 
         tools:layout="@layout/fragment_my_badges" />
     <fragment
+        android:id="@+id/rewardsFragment"
+        android:name="mok.it.app.mokapp.fragments.RewardsFragment"
+        android:label="Jutalmak"
+        tools:layout="@layout/fragment_rewards" />
+    <fragment
         android:id="@+id/adminFragment"
         android:name="mok.it.app.mokapp.fragments.AdminFragment"
         android:label="Admin oldal"

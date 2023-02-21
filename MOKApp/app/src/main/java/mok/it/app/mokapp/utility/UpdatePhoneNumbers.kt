@@ -2,57 +2,68 @@ package mok.it.app.mokapp.utility
 
 import android.app.Activity
 import android.content.ContentValues
+import android.text.TextUtils
 import android.util.Log
+import android.util.Patterns
 import com.beust.klaxon.Klaxon
 import com.google.firebase.firestore.FirebaseFirestore
 import java.text.Normalizer
 
 
-private var result = listOf<Person>()
+private var personList = listOf<Person>()
 
-private class Person(val Név: String, val Telefonszám: String)
+private class Person(val name: String, val phoneNumber: String, val email: String)
 
 private fun CharSequence.unaccent(): String {
     val temp = Normalizer.normalize(this, Normalizer.Form.NFD)
     return "\\p{InCombiningDiacriticalMarks}+".toRegex().replace(temp, "")
 }
 
-private fun findPhoneNumber(
+private fun findPhoneNumberInJson(
     vezeteknev: String,
     keresztnev: String,
-    masodikkeresztnev: String = ""
+    email: String = "",
+    masodikkeresztnev: String = "",
 ): String {
-    var count = 0
+    var found = false
     var phoneNumber = ""
-    result.forEach {
-        val name = it.Név.unaccent()
-        if (name.contains(vezeteknev) && (name.contains(keresztnev) || (masodikkeresztnev != "" && name.contains(
-                masodikkeresztnev
-            )))
-        )
-            if (count >= 1) {
-                Log.d(
-                    "UpdatePhoneNumbers",
-                    "Too many results, there are (at least partly) matching names: $vezeteknev $keresztnev $masodikkeresztnev"
-                )
-                return ""
-            } else {
-                count++
-                phoneNumber = it.Telefonszám
+    if (email != "") {
+        personList.forEach { person ->
+            if (person.email == email) {
+                found = true
+                phoneNumber = person.phoneNumber
             }
+        }
     }
-    return if (count == 0) {
+    if (!found)
+        personList.forEach { person ->
+            val name = person.name.unaccent()
+            if (name.contains(vezeteknev)
+                && (name.contains(keresztnev)
+                        || (masodikkeresztnev != "" && name.contains(masodikkeresztnev)))
+            )
+                if (found) {
+                    Log.d(
+                        "UpdatePhoneNumbers",
+                        "Too many results, there are (at least partly) matching names: $vezeteknev $keresztnev $masodikkeresztnev"
+                    )
+                    return ""
+                } else {
+                    found = true
+                    phoneNumber = person.phoneNumber
+                }
+        }
+    if (!found)
         Log.d(
             ContentValues.TAG,
             "findPhoneNumber: no phone number found for $vezeteknev $keresztnev"
         )
-        ""
-    } else phoneNumber
+    return phoneNumber
 }
 
 fun updatePhoneNumbers(activity: Activity) {
-    //phonenumbers.json file has to be in assets folder
-    result = Klaxon().parseArray(activity.assets.open("phonenumbers.json"))!!
+    //open "phonenumbers.json" file from the phonenumbers folder
+    personList = Klaxon().parseArray(activity.assets.open("phonenumbers.json"))!!
 
     val db = FirebaseFirestore.getInstance()
     val usersRef = db.collection("users")
@@ -60,28 +71,36 @@ fun updatePhoneNumbers(activity: Activity) {
     usersRef.get().addOnCompleteListener { task ->
         if (task.isSuccessful) {
             for (user in task.result!!) {
-                val nev = (user["name"] as String).split(" ")
+                val teljesNev = (user["name"] as String).split(" ")
                 val keresztnev: String
                 val vezeteknev: String
                 val phoneNumber: String
-                if (nev.count() == 2) {
-                    keresztnev = nev[0].unaccent()
-                    vezeteknev = nev[1].unaccent()
-                    phoneNumber = findPhoneNumber(vezeteknev, keresztnev)
-                } else if (nev.count() == 3) {
-                    keresztnev = nev[0].unaccent()
-                    val masodikkeresztnev = nev[1].unaccent()
-                    vezeteknev = nev[2].unaccent()
-                    phoneNumber = findPhoneNumber(vezeteknev, keresztnev, masodikkeresztnev)
+                val email =
+                    if (isValidEmail(user["email"] as String)) user["email"] as String else ""
+                if (teljesNev.count() == 2) {
+                    keresztnev = teljesNev[0].unaccent()
+                    vezeteknev = teljesNev[1].unaccent()
+                    phoneNumber = findPhoneNumberInJson(vezeteknev, keresztnev, email)
+                } else if (teljesNev.count() == 3) {
+                    keresztnev = teljesNev[0].unaccent()
+                    val masodikkeresztnev = teljesNev[1].unaccent()
+                    vezeteknev = teljesNev[2].unaccent()
+                    phoneNumber = findPhoneNumberInJson(
+                        vezeteknev,
+                        keresztnev,
+                        email,
+                        masodikkeresztnev
+                    )
                 } else {
                     Log.d(
                         ContentValues.TAG,
-                        "name length is not appropriate, skipping (name: $nev)"
+                        "name length is not appropriate, skipping (name: $teljesNev)"
                     )
                     continue
                 }
-                //if the phoneNumber field is not already phoneNumber, update it
+                //if the phoneNumber field is not already equal to phoneNumber, update it
                 //if there are multiple people with the same name, the phone number will be empty
+                //(unless their email is the same as on the website)
                 if (user["phoneNumber"] != phoneNumber) {
                     user.reference.update("phoneNumber", phoneNumber)
                     Log.d(
@@ -95,3 +114,8 @@ fun updatePhoneNumbers(activity: Activity) {
         }
     }
 }
+
+private fun isValidEmail(email: String): Boolean {
+    return !TextUtils.isEmpty(email) && Patterns.EMAIL_ADDRESS.matcher(email).matches()
+}
+

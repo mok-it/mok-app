@@ -87,5 +87,6 @@
     <string name="link_icon">link ikon</string>
     <string name="member_icon">tag ikonja</string>
     <string name="refresh">frissítés</string>
+    <string name="mutual_badges">Közös Mancsaitok:</string>
 
 </resources>

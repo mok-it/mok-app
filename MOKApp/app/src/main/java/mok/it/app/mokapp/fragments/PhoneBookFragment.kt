@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.telephony.PhoneNumberUtils.formatNumber
 import android.telephony.TelephonyManager
 import android.view.LayoutInflater
 import android.view.View
@@ -81,7 +82,16 @@ class PhoneBookFragment : BaseFireFragment() {
                     val ivImg: ImageView = holder.itemView.findViewById(R.id.contact_image)
                     loadImage(ivImg, model.photoURL)
                     holder.itemView.contact_name.text = model.name
-                    holder.itemView.phone_number.text = model.phoneNumber.ifEmpty { getString(R.string.no_phone_number) }
+                    holder.itemView.phone_number.text =
+                            // if the number is too long, something is wrong with it, so it shows the raw data
+                        if (model.phoneNumber.length > 14)
+                            model.phoneNumber
+                        else if (model.phoneNumber.isNotEmpty())
+                            formatNumber(
+                                model.phoneNumber,
+                                "IT"
+                            )
+                        else getString(R.string.no_phone_number)
 
                     holder.itemView.call_button.setOnClickListener {
                         // if the device is capable of making phone calls, the button opens the dialer
@@ -95,9 +105,12 @@ class PhoneBookFragment : BaseFireFragment() {
                                     null
                                 )
                             }
-                        }
-                        else if (model.phoneNumber.isEmpty()) // if the user doesn't have a phone number, it shows a toast
-                            Toast.makeText(context, getString(R.string.no_phone_number) , Toast.LENGTH_SHORT).show()
+                        } else if (model.phoneNumber.isEmpty()) // if the user doesn't have a phone number, it shows a toast
+                            Toast.makeText(
+                                context,
+                                getString(R.string.no_phone_number),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         else // ...if not, it copies the number to the clipboard
                         {
                             val clipboard =

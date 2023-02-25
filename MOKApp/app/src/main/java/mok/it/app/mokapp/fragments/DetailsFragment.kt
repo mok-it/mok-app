@@ -27,6 +27,7 @@ import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
+import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
@@ -347,23 +348,38 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
                     changeVisibilities()
                 }
         }
+
+        MyFirebaseMessagingService.sendNotificationToUsers(
+            "Csatlakoztak egy mancshoz",
+            "${userModel.name} csatlakozott a(z) \"${badgeModel.name}\" nevű mancshoz!",
+            listOf(badgeModel.creator + badgeModel.editors)
+        )
     }
 
 
     private fun completed(userId: String) {
         Log.d(TAG, "badge completed with id ${args.badgeId}")
+
         val userRef = firestore.collection("users").document(userId)
         userRef.update("joinedBadges", FieldValue.arrayRemove(args.badgeId))
             .addOnSuccessListener {
                 Log.d(TAG, args.badgeId + " removed from " + userId)
             }.addOnFailureListener { e -> Log.d(TAG, e.message.toString()) }
+
         userRef.update("collectedBadges", FieldValue.arrayUnion(args.badgeId))
-        val badgeRef = firestore.collection("projects").document(args.badgeId)
-        badgeRef.update("members", FieldValue.arrayRemove(userId))
+
+        firestore.collection("projects").document(args.badgeId)
+            .update("members", FieldValue.arrayRemove(userId))
             .addOnCompleteListener {
                 getMemberIds()
                 Log.d(TAG, "member removed from badge's collection")
             }
+
+        MyFirebaseMessagingService.sendNotificationToUsers(
+            "Mancs teljesítve!",
+            "A(z) \"${badgeModel.name}\" nevű mancsot sikeresen teljesítetted!",
+            listOf(userId)
+        )
     }
 
     private fun openMembersDialog() {
@@ -378,11 +394,6 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
             )
         )
     }
-
-    //TODO: refactor this
-//    override fun onSuccess() {
-//        completed(selectedMemberUID)
-//    }
 
     private fun changeVisibilities() {
         join_button.visibility = View.VISIBLE

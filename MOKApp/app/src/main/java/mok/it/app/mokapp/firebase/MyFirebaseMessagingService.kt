@@ -17,10 +17,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     companion object {
         private const val TAG = "MyFirebaseMsgService"
 
-        fun sendNotificationToUsers(
+        fun sendNotificationToUsersById(
             title: String,
             messageBody: String,
-            adresseeUserIdList: List<String>
+            adresseeUserIdList: List<String>,
         ) {
             if (adresseeUserIdList.count() > 10)
                 throw IllegalArgumentException("too many users to send notification to (the limit is 10)")

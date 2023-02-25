@@ -131,4 +131,8 @@
             android:name="user"
             app:argType="mok.it.app.mokapp.model.User" />
     </dialog>
+    <dialog
+        android:id="@+id/badgeAllMemberDialogFragment"
+        android:name="mok.it.app.mokapp.fragments.BadgeAllMemberDialogFragment"
+        android:label="BadgeAllMemberDialogFragment" />
 </navigation>

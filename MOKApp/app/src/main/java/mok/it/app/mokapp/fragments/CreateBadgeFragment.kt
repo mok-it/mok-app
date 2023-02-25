@@ -16,11 +16,11 @@ import com.google.android.material.textfield.TextInputEditText
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_create_badge.*
-import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
+import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
 import mok.it.app.mokapp.model.User
 import java.util.*
-import kotlin.collections.ArrayList
 
 
 /**
@@ -176,6 +176,12 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
 
         val success = commitNewBadgeToDatabase()
 
+        MyFirebaseMessagingService.sendNotificationToUsers(
+            "Új mancs lett létrehozva",
+            "${userModel.name} egy új mancsot hozott létre ebben a kategóriában: $category",
+            users.filterNot { it.documentId == userModel.documentId }
+        )
+
         return if (success) {
             true
         } else {
@@ -232,7 +238,7 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
         Toast.LENGTH_SHORT
     ).show()
 
-    protected open fun getUsers(){
+    protected open fun getUsers() {
         users = ArrayList()
 
         firestore.collection(userCollectionPath)
@@ -244,28 +250,28 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
                         users.add(document.toObject(User::class.java))
                         Log.d("Users", users.toString())
                     }
-                    names = Array(users.size){i->users[i].name}
-                    checkedNames = BooleanArray(users.size){false}
+                    names = Array(users.size) { i -> users[i].name }
+                    checkedNames = BooleanArray(users.size) { false }
                     initEditorsDialog()
                 }
             }
     }
 
-    protected fun initEditorsDialog(){
+    protected fun initEditorsDialog() {
         val builder = AlertDialog.Builder(context)
         builder.setTitle("Válassz kezelőt!")
-        builder.setMultiChoiceItems(names, checkedNames){_, which, isChecked ->
+        builder.setMultiChoiceItems(names, checkedNames) { _, which, isChecked ->
             checkedNames[which] = isChecked
         }
-        builder.setPositiveButton("Ok"){_, _ ->
-            for (i in names.indices){
-                if (checkedNames[i]){
+        builder.setPositiveButton("Ok") { _, _ ->
+            for (i in names.indices) {
+                if (checkedNames[i]) {
                     Log.d("Selected", names[i])
                     selectedEditors.add(users[i].documentId)
                 }
             }
         }
-        builder.setNegativeButton("Mégsem"){dialog, _ ->
+        builder.setNegativeButton("Mégsem") { dialog, _ ->
             dialog.cancel()
         }
         val dialog: AlertDialog = builder.create()

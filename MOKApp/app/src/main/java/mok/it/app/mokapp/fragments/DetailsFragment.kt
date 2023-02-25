@@ -349,7 +349,7 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
                 }
         }
 
-        MyFirebaseMessagingService.sendNotificationToUsers(
+        MyFirebaseMessagingService.sendNotificationToUsersById(
             "Csatlakoztak egy mancshoz",
             "${userModel.name} csatlakozott a(z) \"${badgeModel.name}\" nevű mancshoz!",
             listOf(badgeModel.creator + badgeModel.editors)
@@ -375,7 +375,7 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
                 Log.d(TAG, "member removed from badge's collection")
             }
 
-        MyFirebaseMessagingService.sendNotificationToUsers(
+        MyFirebaseMessagingService.sendNotificationToUsersById(
             "Mancs teljesítve!",
             "A(z) \"${badgeModel.name}\" nevű mancsot sikeresen teljesítetted!",
             listOf(userId)

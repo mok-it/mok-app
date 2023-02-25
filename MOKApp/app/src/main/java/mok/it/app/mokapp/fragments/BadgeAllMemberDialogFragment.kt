@@ -11,7 +11,12 @@ import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.MembersAdapter
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
-class BadgeAllMemberDialogFragment(private val memberUsers: ArrayList<User>, private val listener: MembersAdapter.MemberClickedListener,private val canEdit: Boolean) : DialogFragment() {
+class BadgeAllMemberDialogFragment(
+    private val memberUsers: ArrayList<User>,
+    private val listener: MembersAdapter.MemberClickedListener,
+    private val canEdit: Boolean
+) : DialogFragment() {
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -25,7 +30,7 @@ class BadgeAllMemberDialogFragment(private val memberUsers: ArrayList<User>, pri
         initRecyclerView()
     }
 
-    private fun initRecyclerView(){
+    private fun initRecyclerView() {
         recyclerView.adapter = MembersAdapter(memberUsers, listener, canEdit)
         recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)

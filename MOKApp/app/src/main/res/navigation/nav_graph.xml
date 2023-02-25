@@ -38,24 +38,12 @@
             android:id="@+id/action_allBadgesListFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />
         <action
-            android:id="@+id/action_allBadgesListFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
-        <action
             android:id="@+id/action_allBadgesListFragment_to_myBadgesFragment"
             app:destination="@id/myBadgesFragment" />
-        <action
-            android:id="@+id/action_allBadgesListFragment_to_adminFragment"
-            app:destination="@id/adminFragment" />
-        <action
-            android:id="@+id/action_allBadgesListFragment_to_phoneBookFragment"
-            app:destination="@id/phoneBookFragment" />
         <argument
             android:name="category"
             android:defaultValue="Univerzális"
             app:argType="string" />
-        <action
-            android:id="@+id/action_allBadgesListFragment_to_linksFragment"
-            app:destination="@id/linksFragment" />
         <argument
             android:name="filter"
             android:defaultValue="@null"

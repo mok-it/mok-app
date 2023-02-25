@@ -47,7 +47,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             adresseeUserList.toHashSet().forEach { addresseeUser ->
                 Firebase.firestore.collection("users").document(addresseeUser.documentId)
                     .get().addOnSuccessListener { document ->
-                        val fcmToken = document.get("FCM token") as String
+                        val fcmToken = document.get("FCMtoken") as String
                         Log.d(TAG, "sending notification to ${document.get("name")}")
 
                         FirebaseMessaging.getInstance().send(
@@ -94,7 +94,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             if (this != null) {
                 //upload the new token to the "FCM tokens" array of the user
                 Firebase.firestore.collection("users").document(this.uid)
-                    .update("FCMtokens", userModel.FCMTokens + token)
+                    //TODO make it a list, so that other devices with the same account are also able to receive notifications
+                    .update("FCMtokens", token)
                     .addOnSuccessListener {
                         Log.d(TAG, "onNewToken: token uploaded to firestore")
                     }

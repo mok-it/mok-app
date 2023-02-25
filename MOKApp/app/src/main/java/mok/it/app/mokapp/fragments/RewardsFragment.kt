@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -25,10 +26,12 @@ import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Reward
+import mok.it.app.mokapp.model.RewardRequest
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.PhoneBookViewHolder
 import mok.it.app.mokapp.recyclerview.RewardViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import java.util.*
 
 class RewardsFragment : BaseFireFragment() {
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
@@ -91,6 +94,10 @@ class RewardsFragment : BaseFireFragment() {
                         holder.itemView.requestButton.visibility = View.GONE
                         holder.itemView.achievedText.visibility = View.VISIBLE
                     }
+                    holder.itemView.requestButton.setOnClickListener{
+                        Log.d("Reward", "requested")
+                        requestReward(model)
+                    }
                 }
 
                 override fun onCreateViewHolder(group: ViewGroup, i: Int): RewardViewHolder {
@@ -119,5 +126,21 @@ class RewardsFragment : BaseFireFragment() {
 
     private fun updateUI(){
         pointsText.text = getString(R.string.my_points) + " " + userModel.points
+    }
+
+    private fun requestReward(reward: Reward){
+        val request = hashMapOf(
+            "user" to userModel.documentId,
+            "reward" to reward.documentId,
+            "price" to reward.price,
+            "created" to Date()
+        )
+        firestore.collection(rewardRequestCollectionPath).add(request)
+            .addOnSuccessListener { documentRef ->
+                Log.d("Reward", "DocumentSnapshot written with ID: ${documentRef.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w("Reward", "Error adding document", e)
+            }
     }
 }

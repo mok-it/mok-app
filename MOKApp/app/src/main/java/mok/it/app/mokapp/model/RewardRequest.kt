@@ -9,6 +9,6 @@ data class RewardRequest (
 
     val user: String = "",
     val reward: String = "",
-    val value: String = "",
+    val price: String = "",
     val created: Date = Date(),
 )

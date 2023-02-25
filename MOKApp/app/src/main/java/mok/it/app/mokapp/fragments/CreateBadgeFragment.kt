@@ -178,7 +178,7 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
 
         MyFirebaseMessagingService.sendNotificationToUsers(
             "Új mancs lett létrehozva",
-            "${userModel.name} egy új mancsot hozott létre ebben a kategóriában: $category",
+            "${userModel.name} egy új mancsot hozott létre az alábbi névvel: ${nameTIET.text}",
             users.filterNot { it.documentId == userModel.documentId }
         )
 

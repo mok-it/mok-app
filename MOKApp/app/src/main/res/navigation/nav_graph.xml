@@ -108,4 +108,9 @@
     <action
         android:id="@+id/action_global_loginFragment"
         app:destination="@id/loginFragment" />
+    <fragment
+        android:id="@+id/allMembersFragment"
+        android:name="mok.it.app.mokapp.fragments.AllMembersFragment"
+        android:label="fragment_all_members"
+        tools:layout="@layout/fragment_all_members" />
 </navigation>

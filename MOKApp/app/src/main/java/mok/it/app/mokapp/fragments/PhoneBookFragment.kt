@@ -35,19 +35,9 @@ class PhoneBookFragment : BaseFireFragment() {
         return inflater.inflate(R.layout.fragment_phone_list, container, false)
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        adapter.stopListening()
-    }
-
     override fun onStart() {
         super.onStart()
         adapter.startListening()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        adapter.stopListening()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -81,7 +71,8 @@ class PhoneBookFragment : BaseFireFragment() {
                     val ivImg: ImageView = holder.itemView.findViewById(R.id.contact_image)
                     loadImage(ivImg, model.photoURL)
                     holder.itemView.contact_name.text = model.name
-                    holder.itemView.phone_number.text = model.phoneNumber.ifEmpty { getString(R.string.no_phone_number) }
+                    holder.itemView.phone_number.text =
+                        model.phoneNumber.ifEmpty { getString(R.string.no_phone_number) }
 
                     holder.itemView.call_button.setOnClickListener {
                         // if the device is capable of making phone calls, the button opens the dialer
@@ -95,9 +86,12 @@ class PhoneBookFragment : BaseFireFragment() {
                                     null
                                 )
                             }
-                        }
-                        else if (model.phoneNumber.isEmpty()) // if the user doesn't have a phone number, it shows a toast
-                            Toast.makeText(context, getString(R.string.no_phone_number) , Toast.LENGTH_SHORT).show()
+                        } else if (model.phoneNumber.isEmpty()) // if the user doesn't have a phone number, it shows a toast
+                            Toast.makeText(
+                                context,
+                                getString(R.string.no_phone_number),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         else // ...if not, it copies the number to the clipboard
                         {
                             val clipboard =

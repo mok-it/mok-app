@@ -102,7 +102,11 @@
         android:id="@+id/phoneBookFragment"
         android:name="mok.it.app.mokapp.fragments.PhoneBookFragment"
         android:label="Telefonkönyv"
-        tools:layout="@layout/fragment_phone_list" />
+        tools:layout="@layout/fragment_phone_list">
+        <action
+            android:id="@+id/action_phoneBookFragment_to_memberFragment"
+            app:destination="@id/memberFragment" />
+    </fragment>
     <fragment
         android:id="@+id/linksFragment"
         android:name="mok.it.app.mokapp.fragments.LinksFragment"
@@ -134,5 +138,15 @@
     <dialog
         android:id="@+id/badgeAllMemberDialogFragment"
         android:name="mok.it.app.mokapp.fragments.BadgeAllMemberDialogFragment"
-        android:label="BadgeAllMemberDialogFragment" />
+        android:label="BadgeAllMemberDialogFragment"
+        tools:layout="@layout/fragment_badge_all_members_dialog" />
+    <fragment
+        android:id="@+id/memberFragment"
+        android:name="mok.it.app.mokapp.fragments.MemberFragment"
+        android:label="Adatok"
+        tools:layout="@layout/fragment_member">
+        <argument
+            android:name="user"
+            app:argType="mok.it.app.mokapp.model.User" />
+    </fragment>
 </navigation>

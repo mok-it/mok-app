@@ -78,7 +78,7 @@
             tools:text="3" />
 
         <TextView
-            android:id="@+id/badge_count_ped"
+            android:id="@+id/badge_count_pedagogia"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
@@ -87,7 +87,7 @@
             tools:text="2" />
 
         <TextView
-            android:id="@+id/badge_count_fel"
+            android:id="@+id/badge_count_feladatsor"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
@@ -96,7 +96,7 @@
             tools:text="0" />
 
         <TextView
-            android:id="@+id/badge_count_kre"
+            android:id="@+id/badge_count_kreativ"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
@@ -105,7 +105,7 @@
             tools:text="0" />
 
         <TextView
-            android:id="@+id/badge_count_gra"
+            android:id="@+id/badge_count_grafika"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"

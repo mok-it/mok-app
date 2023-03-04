@@ -19,4 +19,5 @@ data class User(
     val photoURL: String = "",
     val phoneNumber: String = "",
     val FCMTokens: List<String> = ArrayList(),
+    val nickname: String = "",
 ) : java.io.Serializable

@@ -47,11 +47,12 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             adresseeUserList.toHashSet().forEach { addresseeUser ->
                 Firebase.firestore.collection("users").document(addresseeUser.documentId)
                     .get().addOnSuccessListener { document ->
-                        val fcmToken = document.get("FCMtoken") as String
+                        val fcmToken = document.get("FCMtokens") as List<*>
+                        Log.d(TAG, "fcmtoken: ${fcmToken[0]}")
                         Log.d(TAG, "sending notification to ${document.get("name")}")
 
                         FirebaseMessaging.getInstance().send(
-                            RemoteMessage.Builder(fcmToken)
+                            RemoteMessage.Builder(fcmToken[0] as String)
                                 .setMessageId(generateMessageId())
                                 .addData("title", title)
                                 .addData("message", messageBody)

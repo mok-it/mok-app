@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -81,7 +82,16 @@ class PhoneBookFragment : BaseFireFragment() {
                     val ivImg: ImageView = holder.itemView.findViewById(R.id.contact_image)
                     loadImage(ivImg, model.photoURL)
                     holder.itemView.contact_name.text = model.name
-                    holder.itemView.phone_number.text = model.phoneNumber.ifEmpty { getString(R.string.no_phone_number) }
+                    holder.itemView.phone_number.text =
+                        model.phoneNumber.ifEmpty { getString(R.string.no_phone_number) }
+
+                    holder.itemView.contact_item.setOnClickListener {
+                        findNavController().navigate(
+                            PhoneBookFragmentDirections.actionPhoneBookFragmentToMemberFragment(
+                                model
+                            )
+                        )
+                    }
 
                     holder.itemView.call_button.setOnClickListener {
                         // if the device is capable of making phone calls, the button opens the dialer
@@ -95,9 +105,12 @@ class PhoneBookFragment : BaseFireFragment() {
                                     null
                                 )
                             }
-                        }
-                        else if (model.phoneNumber.isEmpty()) // if the user doesn't have a phone number, it shows a toast
-                            Toast.makeText(context, getString(R.string.no_phone_number) , Toast.LENGTH_SHORT).show()
+                        } else if (model.phoneNumber.isEmpty()) // if the user doesn't have a phone number, it shows a toast
+                            Toast.makeText(
+                                context,
+                                getString(R.string.no_phone_number),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         else // ...if not, it copies the number to the clipboard
                         {
                             val clipboard =

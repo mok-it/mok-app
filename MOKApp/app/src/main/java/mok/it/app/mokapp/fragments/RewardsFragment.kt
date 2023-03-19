@@ -1,6 +1,8 @@
 package mok.it.app.mokapp.fragments
 
+import android.app.AlertDialog
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -15,6 +17,7 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_phonebook_item.view.*
@@ -22,6 +25,7 @@ import kotlinx.android.synthetic.main.card_reward.*
 import kotlinx.android.synthetic.main.card_reward.view.*
 import kotlinx.android.synthetic.main.fragment_rewards.*
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.activity.MainActivity
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
@@ -33,7 +37,7 @@ import mok.it.app.mokapp.recyclerview.RewardViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import java.util.*
 
-class RewardsFragment : BaseFireFragment() {
+class RewardsFragment : BaseFireFragment(), RewardAcceptDialogFragment.RewardAcceptListener {
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
 
     override fun onCreateView(
@@ -60,11 +64,12 @@ class RewardsFragment : BaseFireFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        initializeAdapter()
         updateUI()
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager =
-            WrapContentLinearLayoutManager(this.context)
+    }
+
+    private fun updateUI(){
+        pointsText.text = getString(R.string.my_points) + " " + userModel.points
+        initializeAdapter()
     }
 
     private fun initializeAdapter() {
@@ -95,7 +100,6 @@ class RewardsFragment : BaseFireFragment() {
                         holder.itemView.achievedText.visibility = View.VISIBLE
                     }
                     holder.itemView.requestButton.setOnClickListener{
-                        Log.d("Reward", "requested")
                         requestReward(model)
                     }
                 }
@@ -122,25 +126,49 @@ class RewardsFragment : BaseFireFragment() {
                     }
                 }
             }
+        recyclerView.adapter = adapter
+        recyclerView.layoutManager =
+            WrapContentLinearLayoutManager(this.context)
     }
 
-    private fun updateUI(){
-        pointsText.text = getString(R.string.my_points) + " " + userModel.points
-    }
+
 
     private fun requestReward(reward: Reward){
+        val dialog = RewardAcceptDialogFragment(this, reward)
+        dialog.show(parentFragmentManager, "NoticeDialogFragment")
+    }
+
+    override fun rewardAccepted(reward: Reward) {
         val request = hashMapOf(
             "user" to userModel.documentId,
             "reward" to reward.documentId,
             "price" to reward.price,
             "created" to Date()
         )
-        firestore.collection(rewardRequestCollectionPath).add(request)
-            .addOnSuccessListener { documentRef ->
-                Log.d("Reward", "DocumentSnapshot written with ID: ${documentRef.id}")
+        firestore.runTransaction{
+            firestore.collection(rewardRequestCollectionPath).add(request)
+                .addOnSuccessListener { documentRef ->
+                    Log.d("Reward", "DocumentSnapshot written with ID: ${documentRef.id}")
+                }
+                .addOnFailureListener { e ->
+                    Log.w("Reward", "Error adding document", e)
+                }
+
+            val userRef = firestore.collection("users").document(userModel.documentId)
+            userRef.update(
+                "requestedRewards", FieldValue.arrayUnion(reward.documentId),
+                "points", FieldValue.increment(-1 * reward.price.toDouble()))
+                .addOnCompleteListener {
+                    Log.d("Reward", "Reward added to requested")
+                }
+        }.addOnSuccessListener {
+            context?.let { context ->
+                FirebaseUserObject.refreshCurrentUserAndUserModel(context){
+                    updateUI()
+                    adapter.startListening()
+                }
             }
-            .addOnFailureListener { e ->
-                Log.w("Reward", "Error adding document", e)
-            }
+
+        }
     }
 }

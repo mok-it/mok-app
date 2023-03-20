@@ -54,7 +54,7 @@ class PhoneBookFragment : BaseFireFragment() {
         super.onViewCreated(view, savedInstanceState)
         initializeAdapter()
 
-        recyclerView = this.requireView().findViewById(R.id.fragment_phone_list)
+         recyclerView = this.requireView().findViewById(R.id.fragment_phone_list)
         recyclerView.adapter = adapter
         recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)

@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.fragments.placeholder.PlaceholderContent
 
-class AllMembers : Fragment() {
+class AllMembersFragment : Fragment() {
 
     private var columnCount = 1
 
@@ -19,7 +19,7 @@ class AllMembers : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_all_members_list, container, false)
+        val view = inflater.inflate(R.layout.fragment_all_members, container, false)
 
         //TODO use FirestoreRecyclerAdapter instead
         // Set the adapter

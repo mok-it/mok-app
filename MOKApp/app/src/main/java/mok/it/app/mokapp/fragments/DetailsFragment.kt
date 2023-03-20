@@ -19,6 +19,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.ktx.toObject
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_details.*
@@ -136,6 +137,8 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
             badgeName.text = document.get("name") as String
             categoryName.text =
                 getString(R.string.category) + ": " + document.get("category") as String
+            valueTextView.text =
+                getString(R.string.value) + " " + document.get("value")
             badgeDescription.text = document.get("description") as String
             firestore.collection(userCollectionPath).document(document.get("creator") as String)
                 .get().addOnSuccessListener { creatorDoc ->
@@ -349,17 +352,20 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
         }
     }
 
-
     private fun completed(userId: String) {
-        Log.d(TAG, "badge completed with id ${args.badgeId}")
         val userRef = firestore.collection("users").document(userId)
-        userRef.update("joinedBadges", FieldValue.arrayRemove(args.badgeId))
+        userRef.update(
+            "joinedBadges", FieldValue.arrayRemove(args.badgeId),
+            "points", FieldValue.increment(badgeModel.value.toDouble()),
+            "collectedBadges", FieldValue.arrayUnion(args.badgeId))
             .addOnSuccessListener {
-                Log.d(TAG, args.badgeId + " removed from " + userId)
-            }.addOnFailureListener { e -> Log.d(TAG, e.message.toString()) }
-        userRef.update("collectedBadges", FieldValue.arrayUnion(args.badgeId))
+                Log.d("DetailsFragment", args.badgeId + " removed from " + userId)
+            }
+            .addOnFailureListener { e -> Log.d("DetailsFragment", e.message.toString()) }
+
         val badgeRef = firestore.collection("projects").document(args.badgeId)
-        badgeRef.update("members", FieldValue.arrayRemove(userId))
+        badgeRef.update(
+            "members", FieldValue.arrayRemove(userId))
             .addOnCompleteListener {
                 getMemberIds()
                 Log.d(TAG, "member removed from badge's collection")

@@ -59,6 +59,16 @@
                         android:minHeight="10pt"
                         android:textSize="14sp"
                         tools:text="@string/category" />
+
+                    <TextView
+                        android:id="@+id/valueTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:minHeight="10pt"
+                        android:textSize="14sp"
+                        tools:text="@string/value" />
                 </LinearLayout>
             </LinearLayout>
 

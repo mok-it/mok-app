@@ -33,6 +33,10 @@
             android:icon="@drawable/ic_smiley"
             android:title="@string/grafika_mcs" />
         <item
+            android:id="@+id/rewardsFragment"
+            android:icon="@drawable/ic_star"
+            android:title="@string/rewards" />
+        <item
             android:id="@+id/adminFragment"
             android:icon="@drawable/ic_admin"
             android:title="@string/admin" />

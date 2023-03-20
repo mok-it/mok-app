@@ -34,7 +34,8 @@
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent"
             tools:layout_conversion_absoluteHeight="40dp"
-            tools:layout_conversion_absoluteWidth="40dp" />
+            tools:layout_conversion_absoluteWidth="40dp"
+            tools:src="@tools:sample/avatars" />
 
         <TextView
             android:id="@+id/textView"

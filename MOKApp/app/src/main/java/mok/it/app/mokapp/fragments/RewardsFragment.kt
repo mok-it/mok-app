@@ -1,38 +1,25 @@
 package mok.it.app.mokapp.fragments
 
-import android.app.AlertDialog
 import android.content.Context
-import android.content.DialogInterface
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.card_phonebook_item.view.*
-import kotlinx.android.synthetic.main.card_reward.*
 import kotlinx.android.synthetic.main.card_reward.view.*
 import kotlinx.android.synthetic.main.fragment_rewards.*
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.activity.MainActivity
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Reward
-import mok.it.app.mokapp.model.RewardRequest
-import mok.it.app.mokapp.model.User
-import mok.it.app.mokapp.recyclerview.PhoneBookViewHolder
 import mok.it.app.mokapp.recyclerview.RewardViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import java.util.*
@@ -130,8 +117,6 @@ class RewardsFragment : BaseFireFragment(), RewardAcceptDialogFragment.RewardAcc
         recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)
     }
-
-
 
     private fun requestReward(reward: Reward){
         val dialog = RewardAcceptDialogFragment(this, reward)

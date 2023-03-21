@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.fragments
+package mok.it.app.mokapp.dialog
 
 import android.os.Bundle
 import android.view.LayoutInflater

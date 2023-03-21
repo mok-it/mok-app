@@ -7,6 +7,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
@@ -18,8 +19,8 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.FragmentCreateBadgeBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
+import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.model.User
-import java.time.LocalDate
 import java.util.*
 
 
@@ -29,11 +30,12 @@ import java.util.*
  * badge to the server.
  */
 
+@Suppress("DEPRECATION")
 open class CreateBadgeFragment : DialogFragment() {
 
     private val args: CreateBadgeFragmentArgs by navArgs()
 
-    private val binding get() = _binding!!
+    val binding get() = _binding!!
     private var _binding: FragmentCreateBadgeBinding? = null
 
     lateinit var users: ArrayList<User>
@@ -52,23 +54,27 @@ open class CreateBadgeFragment : DialogFragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentCreateBadgeBinding.inflate(inflater, container, false)
+        initializeDropdown()
         return binding.root
+    }
+
+    private fun initializeDropdown() {
+        val adapter = ArrayAdapter(requireContext(), R.layout.mcs_dropdown_item, Category.values())
+        binding.badgeMcs.setAdapter(adapter)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        view.apply {
-            binding.closeButton.setOnClickListener {
-                onCloseButtonPressed()
-            }
+        binding.closeButton.setOnClickListener {
+            onCloseButtonPressed()
+        }
 
-            binding.createButton.setOnClickListener {
-                onCreateBadgePressed()
-            }
+        binding.createButton.setOnClickListener {
+            onCreateBadgePressed()
+        }
 
-            editorSelect.setOnClickListener {
-                getUsers()
-            }
+        binding.editorSelect.setOnClickListener {
+            getUsers()
         }
     }
 
@@ -119,12 +125,12 @@ open class CreateBadgeFragment : DialogFragment() {
         Log.d("Create desc", binding.badgeDescription.text.toString())
         Log.d("Create creator", userModel.documentId)
         Log.d("Create category", args.category.toString())
-        val deadline = LocalDate.of(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
+        val deadline = Date(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
         Log.d("Create date", deadline.toString())
         Log.d("Create editors", selectedEditors.toString())
 
         val newBadge = hashMapOf(
-            "category" to args.category.toString(),
+            "category" to binding.badgeMcs.text.toString(),
             "created" to Date(),
             "creator" to userModel.documentId,
             "deadline" to deadline,

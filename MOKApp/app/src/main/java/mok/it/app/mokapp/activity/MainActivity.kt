@@ -126,7 +126,7 @@ class MainActivity : AppCompatActivity() {
     private fun setMenuVisibility() {
         //TODO admin is empty, we shouldn't show it yet
         //TODO MCS categories are deprecated, the filter menu will include them
-        val menu = nav_view.menu
+//        val menu = nav_view.menu
 //        val adm = menu.findItem(R.id.adminFragment)
 //        adm?.isVisible = userModel.admin
     }

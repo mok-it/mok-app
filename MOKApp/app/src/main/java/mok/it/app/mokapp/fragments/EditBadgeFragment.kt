@@ -2,38 +2,30 @@ package mok.it.app.mokapp.fragments
 
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_create_badge.*
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.databinding.FragmentCreateBadgeBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.User
-import java.time.LocalDate
 import java.util.*
 
+@Suppress("DEPRECATION")
 class EditBadgeFragment : CreateBadgeFragment() {
 
     private val args: EditBadgeFragmentArgs by navArgs()
 
-    private val binding get() = _binding!!
-    private var _binding: FragmentCreateBadgeBinding? = null
-
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentCreateBadgeBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         binding.badgeName.setText(args.badge.name)
         binding.badgeDescription.setText(args.badge.description)
+        Log.d(TAG, "category dropdown count: ${binding.badgeMcs.adapter.count}")
+        binding.badgeMcs.setText(
+            args.badge.categoryEnum.toString(),
+            false
+        ) // 0 nem csinál semmit, 1<= kifagy
+        //binding.badgeMcs.setSelection(Category.values().indexOf(args.badge.categoryEnum))
         val cal: Calendar = Calendar.getInstance()
         cal.time = args.badge.deadline
         datePicker.updateDate(
@@ -45,7 +37,6 @@ class EditBadgeFragment : CreateBadgeFragment() {
         binding.createButton.text = getString(R.string.edit_text)
 
         selectedEditors = args.badge.editors.toMutableList()
-        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun getUsers() {
@@ -85,9 +76,9 @@ class EditBadgeFragment : CreateBadgeFragment() {
     }
 
     private fun commitEditedBadgeToDatabase(): Boolean {
-        val deadline = LocalDate.of(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
+        val deadline = Date(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
         val editedBadge = hashMapOf(
-            "category" to args.badge.categoryEnum,
+            "category" to binding.badgeMcs.text.toString(),
             "created" to Date(),
             "creator" to userModel.documentId,
             "deadline" to deadline,
@@ -110,10 +101,5 @@ class EditBadgeFragment : CreateBadgeFragment() {
             }
 
         return true
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 }

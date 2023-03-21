@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.fragments
+package mok.it.app.mokapp.dialog
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,7 +13,7 @@ import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import mok.it.app.mokapp.utility.Utility.setFullScreen
 
 class BadgeMembersDialogFragment : DialogFragment() {
-    private val args: BadgeAllMemberDialogFragmentArgs by navArgs()
+    private val args: BadgeMembersDialogFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,

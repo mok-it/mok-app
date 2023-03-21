@@ -44,6 +44,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             messageBody: String,
             adresseeUserList: List<User>
         ) {
+            TODO("doesn't work correctly yet, npe")
             adresseeUserList.toHashSet().forEach { addresseeUser ->
                 Firebase.firestore.collection("users").document(addresseeUser.documentId)
                     .get().addOnSuccessListener { document ->

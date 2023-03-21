@@ -13,8 +13,8 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.card_member.view.*
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.dialog.BadgeMembersDialogFragmentDirections
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
-import mok.it.app.mokapp.fragments.BadgeAllMemberDialogFragmentDirections
 import mok.it.app.mokapp.model.User
 
 class MembersAdapter(
@@ -52,7 +52,7 @@ class MembersAdapter(
         //opening the person's profile if someone clicks on the card
         viewHolder.itemView.setOnClickListener(
             Navigation.createNavigateOnClickListener(
-                BadgeAllMemberDialogFragmentDirections.actionGlobalMemberFragment(
+                BadgeMembersDialogFragmentDirections.actionGlobalMemberFragment(
                     user
                 )
             )
@@ -62,7 +62,7 @@ class MembersAdapter(
             viewHolder.itemView.btnCompleted.visibility = View.VISIBLE
             viewHolder.itemView.setOnClickListener(
                 Navigation.createNavigateOnClickListener(
-                    BadgeAllMemberDialogFragmentDirections.actionBadgeAllMemberDialogFragmentToBadgeAcceptMemberDialogFragment(
+                    BadgeMembersDialogFragmentDirections.actionBadgeAllMemberDialogFragmentToBadgeAcceptMemberDialogFragment(
                         user
                     )
                 )

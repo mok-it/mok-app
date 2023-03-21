@@ -26,10 +26,10 @@ import kotlinx.android.synthetic.main.fragment_all_badges_list.*
 import kotlinx.android.synthetic.main.fragment_all_badges_list.view.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
+import mok.it.app.mokapp.dialog.FilterDialogFragment.Companion.filterResultKey
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
-import mok.it.app.mokapp.fragments.FilterDialogFragment.Companion.filterResultKey
 import mok.it.app.mokapp.model.Filter
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder

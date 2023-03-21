@@ -116,7 +116,7 @@
         tools:layout="@layout/fragment_links" />
     <dialog
         android:id="@+id/filterDialogFragment"
-        android:name="mok.it.app.mokapp.fragments.FilterDialogFragment"
+        android:name="mok.it.app.mokapp.dialog.FilterDialogFragment"
         android:label="Filterek"
         tools:layout="@layout/fragment_filter_dialog">
         <argument
@@ -130,7 +130,7 @@
         app:destination="@id/loginFragment" />
     <dialog
         android:id="@+id/badgeAcceptMemberDialogFragment"
-        android:name="mok.it.app.mokapp.fragments.BadgeAcceptMemberDialogFragment"
+        android:name="mok.it.app.mokapp.dialog.BadgeAcceptMemberDialogFragment"
         android:label="BadgeAcceptMemberDialogFragment"
         tools:layout="@layout/fragment_badge_accept_member_dialog">
         <argument
@@ -139,7 +139,7 @@
     </dialog>
     <dialog
         android:id="@+id/badgeAllMemberDialogFragment"
-        android:name="mok.it.app.mokapp.fragments.BadgeMembersDialogFragment"
+        android:name="mok.it.app.mokapp.dialog.BadgeMembersDialogFragment"
         android:label="BadgeAllMemberDialogFragment"
         tools:layout="@layout/fragment_badge_all_members_dialog">
         <argument

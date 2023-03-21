@@ -24,6 +24,7 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_details.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
+import mok.it.app.mokapp.dialog.BadgeAcceptMemberDialogFragment
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel

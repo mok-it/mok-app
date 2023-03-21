@@ -20,20 +20,25 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_phonebook_item.view.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
+import mok.it.app.mokapp.databinding.FragmentPhoneListBinding
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.PhoneBookViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
 
 class PhoneBookFragment : BaseFireFragment() {
+    private val binding get() = _binding!!
+    private var _binding: FragmentPhoneListBinding? = null
+
     private lateinit var recyclerView: RecyclerView
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_phone_list, container, false)
+    ): View {
+        _binding = FragmentPhoneListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -55,9 +60,8 @@ class PhoneBookFragment : BaseFireFragment() {
         super.onViewCreated(view, savedInstanceState)
         initializeAdapter()
 
-        recyclerView = this.requireView().findViewById(R.id.fragment_phone_list)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager =
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)
     }
 
@@ -87,7 +91,7 @@ class PhoneBookFragment : BaseFireFragment() {
 
                     holder.itemView.contact_item.setOnClickListener {
                         findNavController().navigate(
-                            PhoneBookFragmentDirections.actionPhoneBookFragmentToMemberFragment(
+                            PhoneBookFragmentDirections.actionGlobalMemberFragment(
                                 model
                             )
                         )

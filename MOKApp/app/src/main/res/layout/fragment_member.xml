@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="?colorOnBackground"
     app:cardCornerRadius="8dp"
     app:cardElevation="4dp"
     app:cardUseCompatPadding="true">
@@ -122,5 +123,13 @@
             android:textSize="14sp"
             android:textStyle="bold" />
 
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/myBadgesFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:layout="@layout/fragment_my_badges"
+            tools:layout_height="500dp" />
+
     </LinearLayout>
+
 </com.google.android.material.card.MaterialCardView>

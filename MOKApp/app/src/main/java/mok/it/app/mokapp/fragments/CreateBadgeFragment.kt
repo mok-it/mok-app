@@ -7,19 +7,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageButton
 import android.widget.Toast
-import androidx.cardview.widget.CardView
 import androidx.fragment.app.DialogFragment
-import com.google.android.material.textfield.TextInputEditText
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_create_badge.*
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.FragmentCreateBadgeBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
 import mok.it.app.mokapp.model.User
+import java.time.LocalDate
 import java.util.*
 
 
@@ -29,13 +29,12 @@ import java.util.*
  * badge to the server.
  */
 
-open class CreateBadgeFragment(val category: String) : DialogFragment() {
+open class CreateBadgeFragment : DialogFragment() {
 
-    lateinit var nameTIET: TextInputEditText
-    lateinit var descriptionTIET: TextInputEditText
-    lateinit var iconSelectCard: CardView
-    lateinit var closeButton: ImageButton
-    lateinit var createButton: Button
+    private val args: CreateBadgeFragmentArgs by navArgs()
+
+    private val binding get() = _binding!!
+    private var _binding: FragmentCreateBadgeBinding? = null
 
     lateinit var users: ArrayList<User>
     val userCollectionPath: String = "/users"
@@ -43,7 +42,7 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
 
     lateinit var names: Array<String>
     lateinit var checkedNames: BooleanArray
-    var selectedEditors: ArrayList<String> = ArrayList()
+    var selectedEditors: MutableList<String> = mutableListOf()
 
     private val isNameRequired = true
     private val isDescriptionRequired = true
@@ -51,25 +50,19 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_create_badge, container, false)
+    ): View {
+        _binding = FragmentCreateBadgeBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         view.apply {
-            nameTIET = findViewById(R.id.badge_name)
-            descriptionTIET = findViewById(R.id.badge_description)
-            iconSelectCard = findViewById(R.id.icon_select_card)
-            closeButton = findViewById(R.id.close_button)
-            createButton = findViewById(R.id.create_button)
-
-            closeButton.setOnClickListener {
+            binding.closeButton.setOnClickListener {
                 onCloseButtonPressed()
             }
 
-            createButton.setOnClickListener {
+            binding.createButton.setOnClickListener {
                 onCreateBadgePressed()
             }
 
@@ -90,17 +83,7 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
             isCancelable = false
         }
 
-        selectedEditors = ArrayList()
-        selectedEditors.add(userModel.documentId)
-    }
-
-    /**
-     * Called if the dialog needs to be closed.
-     */
-    protected fun closeDialog() {
-        dialog?.dismiss() ?: run {
-            Log.w(TAG, "Can not close dialog, it is null.")
-        }
+        selectedEditors = mutableListOf(userModel.documentId)
     }
 
     /**
@@ -109,7 +92,7 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
     private fun onCloseButtonPressed() {
 
         if (isBlank()) {
-            closeDialog()
+            findNavController().navigateUp()
             return
         }
 
@@ -120,7 +103,7 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
             .setMessage(R.string.unsaved_changes)
             .setPositiveButton(
                 R.string.discard
-            ) { _, _ -> closeDialog() }
+            ) { _, _ -> findNavController().navigateUp() }
             .setNegativeButton(R.string.edit, null)
             .create()
             .show()
@@ -132,23 +115,23 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
      *  @return true if successful
      */
     private fun commitNewBadgeToDatabase(): Boolean {
-        Log.d("Create name", nameTIET.text.toString())
-        Log.d("Create desc", descriptionTIET.text.toString())
+        Log.d("Create name", binding.badgeName.text.toString())
+        Log.d("Create desc", binding.badgeDescription.text.toString())
         Log.d("Create creator", userModel.documentId)
-        Log.d("Create category", category)
-        val deadline = Date(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
+        Log.d("Create category", args.category.toString())
+        val deadline = LocalDate.of(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
         Log.d("Create date", deadline.toString())
         Log.d("Create editors", selectedEditors.toString())
 
         val newBadge = hashMapOf(
-            "category" to category,
+            "category" to args.category.toString(),
             "created" to Date(),
             "creator" to userModel.documentId,
             "deadline" to deadline,
-            "description" to descriptionTIET.text.toString(),
+            "description" to binding.badgeDescription.text.toString(),
             "editors" to selectedEditors,
             "icon" to "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef",
-            "name" to nameTIET.text.toString(),
+            "name" to binding.badgeName.text.toString(),
             "overall_progress" to 0,
             "mandatory" to false
 
@@ -178,7 +161,7 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
 
         MyFirebaseMessagingService.sendNotificationToUsers(
             "Új mancs lett létrehozva",
-            "${userModel.name} egy új mancsot hozott létre az alábbi névvel: ${nameTIET.text}",
+            "${userModel.name} egy új mancsot hozott létre az alábbi névvel: ${binding.badgeName.text}",
             users.filterNot { it.documentId == userModel.documentId }
         )
 
@@ -197,7 +180,7 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
         val shouldCloseDialog = onCreateBadge()
 
         if (shouldCloseDialog) {
-            closeDialog()
+            findNavController().navigateUp()
         }
     }
 
@@ -209,8 +192,8 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
      */
     private fun isBlank() = when {
 
-        !nameTIET.text.isNullOrBlank() -> false
-        !descriptionTIET.text.isNullOrBlank() -> false
+        !binding.badgeName.text.isNullOrBlank() -> false
+        !binding.badgeDescription.text.isNullOrBlank() -> false
 
         else -> true
     }
@@ -219,12 +202,12 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
      * @return if all required fields are complete. If something is missing, can warn the user.
      */
     private fun isComplete(showWarning: Boolean): Boolean = when {
-        isNameRequired && nameTIET.text.isNullOrBlank() -> {
+        isNameRequired && binding.badgeName.text.isNullOrBlank() -> {
             if (showWarning) toast(R.string.badge_name_is_required) // TODO snackbar
             false
         }
 
-        isDescriptionRequired && descriptionTIET.text.isNullOrBlank() -> {
+        isDescriptionRequired && binding.badgeDescription.text.isNullOrBlank() -> {
             if (showWarning) toast(R.string.badge_description_is_required) // TODO snackbar
             false
         }
@@ -242,7 +225,7 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
         users = ArrayList()
 
         firestore.collection(userCollectionPath)
-            .whereArrayContains("categories", category)
+            .whereArrayContains("categories", args.category.toString())
             .get()
             .addOnSuccessListener { documents ->
                 if (documents != null) {
@@ -251,6 +234,7 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
                         Log.d("Users", users.toString())
                     }
                     names = Array(users.size) { i -> users[i].name }
+                    names.sort()
                     checkedNames = BooleanArray(users.size) { false }
                     initEditorsDialog()
                 }
@@ -258,28 +242,32 @@ open class CreateBadgeFragment(val category: String) : DialogFragment() {
     }
 
     protected fun initEditorsDialog() {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Válassz kezelőt!")
-        builder.setMultiChoiceItems(names, checkedNames) { _, which, isChecked ->
-            checkedNames[which] = isChecked
-        }
-        builder.setPositiveButton("Ok") { _, _ ->
-            for (i in names.indices) {
-                if (checkedNames[i]) {
-                    Log.d("Selected", names[i])
-                    selectedEditors.add(users[i].documentId)
+        AlertDialog.Builder(context)
+            .setTitle("Válassz kezelőt!")
+            .setMultiChoiceItems(names, checkedNames) { _, which, isChecked ->
+                checkedNames[which] = isChecked
+            }
+            .setPositiveButton("Ok") { _, _ ->
+                for (i in names.indices) {
+                    if (checkedNames[i]) {
+                        Log.d("Selected", names[i])
+                        selectedEditors.add(users[i].documentId)
+                    }
                 }
             }
-        }
-        builder.setNegativeButton("Mégsem") { dialog, _ ->
-            dialog.cancel()
-        }
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
+            .setNegativeButton("Mégsem") { dialog, _ ->
+                dialog.cancel()
+            }
+            .create()
+            .show()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 
     companion object {
         const val TAG = "CreateBadgeFragment"
-        fun newInstance() = CreateBadgeFragment("")
     }
 }

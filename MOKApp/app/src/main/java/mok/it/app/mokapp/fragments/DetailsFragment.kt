@@ -31,15 +31,13 @@ import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
-import mok.it.app.mokapp.model.getIconFileName
-import mok.it.app.mokapp.recyclerview.MembersAdapter
+import mok.it.app.mokapp.utility.Utility.getIconFileName
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
 
-class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener,
-    EditBadgeFragment.EditBadgeListener {
+class DetailsFragment : BaseFireFragment() {
 
     companion object {
         const val TAG = "DetailsFragment"
@@ -51,7 +49,7 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
 
     private lateinit var badgeModel: Project
     private val commentsId = "comments"
-    private lateinit var memberUsers: ArrayList<User>
+    private lateinit var memberUsers: MutableList<User>
     private lateinit var memberComments: ArrayList<Comment>
     private var userIsEditor: Boolean = false
 
@@ -117,10 +115,20 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
+    override fun onResume() {
+        super.onResume()
+        initLayout()
+    }
+
     private fun initLayout() {
         members_overlay_button.setOnClickListener {
             if (memberUsers.isNotEmpty())
-                openMembersDialog()
+                findNavController().navigate(
+                    DetailsFragmentDirections.actionDetailsFragmentToBadgeAllMemberDialogFragment(
+                        memberUsers.toTypedArray(),
+                        userIsEditor
+                    )
+                )
         }
         join_button.setOnClickListener {
             join()
@@ -136,7 +144,7 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
             badgeModel = document.toObject(Project::class.java)!!
             badgeName.text = document.get("name") as String
             categoryName.text =
-                getString(R.string.category) + ": " + document.get("category") as String
+                getString(R.string.specific_category, document.get("category") as String)
             badgeDescription.text = document.get("description") as String
             firestore.collection(userCollectionPath).document(document.get("creator") as String)
                 .get().addOnSuccessListener { creatorDoc ->
@@ -195,8 +203,11 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
         if (badgeModel.creator == userModel.documentId) {
             editButton.visibility = View.VISIBLE
             editButton.setOnClickListener {
-                val dialog = EditBadgeFragment(badgeModel, this)
-                dialog.show(parentFragmentManager, "EditBadgeDialog")
+                findNavController().navigate(
+                    DetailsFragmentDirections.actionDetailsFragmentToEditBadgeFragment(
+                        badgeModel
+                    )
+                )
             }
         }
     }
@@ -297,7 +308,7 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
 
         Log.d(TAG, "textSizeSP = $textSizeSP")
 
-        members_left_number.text = "+$numOfExtraMembers"
+        members_left_number.text = getString(R.string.extra_members, numOfExtraMembers)
         members_left_number.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSP)
 
     }
@@ -382,19 +393,6 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
         )
     }
 
-    private fun openMembersDialog() {
-        val dialog = BadgeAllMemberDialogFragment(memberUsers, this, userIsEditor)
-        dialog.show(parentFragmentManager, "MembersDialog")
-    }
-
-    override fun onMemberClicked(user: User) {
-        findNavController().navigate(
-            DetailsFragmentDirections.actionDetailsFragmentToBadgeAcceptMemberDialogFragment(
-                user
-            )
-        )
-    }
-
     private fun changeVisibilities() {
         join_button.visibility = View.VISIBLE
         if (userModel.collectedBadges.contains(badgeModel.id))
@@ -407,9 +405,5 @@ class DetailsFragment : BaseFireFragment(), MembersAdapter.MemberClickedListener
         if (badgeModel.editors.contains(userModel.documentId)) {
             userIsEditor = true
         }
-    }
-
-    override fun onEdited() {
-        initLayout()
     }
 }

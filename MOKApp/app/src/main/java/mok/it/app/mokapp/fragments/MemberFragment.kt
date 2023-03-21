@@ -10,7 +10,7 @@ import androidx.navigation.fragment.navArgs
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.FragmentMemberBinding
 import mok.it.app.mokapp.fragments.viewmodels.MemberViewModel
-import mok.it.app.mokapp.model.BadgeCategory
+import mok.it.app.mokapp.model.Category
 
 class MemberFragment : Fragment() {
 
@@ -20,8 +20,7 @@ class MemberFragment : Fragment() {
     private val viewModel: MemberViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
+        inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMemberBinding.inflate(inflater, container, false)
@@ -37,37 +36,44 @@ class MemberFragment : Fragment() {
         binding.email.text = args.user.email
         viewModel.loadImage(binding.profilePicture, args.user.photoURL)
 
-        //TODO közös mancsok
+        loadBadgeCounts()
+        loadMutualBadges()
+    }
 
-        viewModel.getUserBadgeCountByCategory(args.user, BadgeCategory.UNIVERZALIS)
+    private fun loadMutualBadges() {
+
+    }
+
+    private fun loadBadgeCounts() {
+        viewModel.getUserBadgeCountByCategory(args.user, Category.UNIVERZALIS)
             .observe(viewLifecycleOwner) {
                 binding.badgeCountUniversal.text =
-                    getString(R.string.badge_count, BadgeCategory.UNIVERZALIS, it)
+                    getString(R.string.badge_count, Category.UNIVERZALIS, it)
             }
-        viewModel.getUserBadgeCountByCategory(args.user, BadgeCategory.FELADATSOR)
+        viewModel.getUserBadgeCountByCategory(args.user, Category.FELADATSOR)
             .observe(viewLifecycleOwner) {
                 binding.badgeCountFeladatsor.text =
-                    getString(R.string.badge_count, BadgeCategory.FELADATSOR, it)
+                    getString(R.string.badge_count, Category.FELADATSOR, it)
             }
-        viewModel.getUserBadgeCountByCategory(args.user, BadgeCategory.PEDAGOGIA)
+        viewModel.getUserBadgeCountByCategory(args.user, Category.PEDAGOGIA)
             .observe(viewLifecycleOwner) {
                 binding.badgeCountPedagogia.text =
-                    getString(R.string.badge_count, BadgeCategory.PEDAGOGIA, it)
+                    getString(R.string.badge_count, Category.PEDAGOGIA, it)
             }
-        viewModel.getUserBadgeCountByCategory(args.user, BadgeCategory.KREATIV)
+        viewModel.getUserBadgeCountByCategory(args.user, Category.KREATIV)
             .observe(viewLifecycleOwner) {
                 binding.badgeCountKreativ.text =
-                    getString(R.string.badge_count, BadgeCategory.KREATIV, it)
+                    getString(R.string.badge_count, Category.KREATIV, it)
             }
-        viewModel.getUserBadgeCountByCategory(args.user, BadgeCategory.IT)
+        viewModel.getUserBadgeCountByCategory(args.user, Category.IT)
             .observe(viewLifecycleOwner) {
                 binding.badgeCountIt.text =
-                    getString(R.string.badge_count, BadgeCategory.IT, it)
+                    getString(R.string.badge_count, Category.IT, it)
             }
-        viewModel.getUserBadgeCountByCategory(args.user, BadgeCategory.GRAFIKA)
+        viewModel.getUserBadgeCountByCategory(args.user, Category.GRAFIKA)
             .observe(viewLifecycleOwner) {
                 binding.badgeCountGrafika.text =
-                    getString(R.string.badge_count, BadgeCategory.GRAFIKA, it)
+                    getString(R.string.badge_count, Category.GRAFIKA, it)
             }
     }
 

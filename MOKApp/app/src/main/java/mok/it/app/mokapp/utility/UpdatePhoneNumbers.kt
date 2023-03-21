@@ -7,17 +7,12 @@ import android.util.Log
 import android.util.Patterns
 import com.beust.klaxon.Klaxon
 import com.google.firebase.firestore.FirebaseFirestore
-import java.text.Normalizer
+import mok.it.app.mokapp.utility.Utility.unaccent
 
 
 private var personList = listOf<Person>()
 
 private class Person(val name: String, val phoneNumber: String, val email: String)
-
-private fun CharSequence.unaccent(): String {
-    val temp = Normalizer.normalize(this, Normalizer.Form.NFD)
-    return "\\p{InCombiningDiacriticalMarks}+".toRegex().replace(temp, "")
-}
 
 private fun findPhoneNumberInJson(
     vezeteknev: String,

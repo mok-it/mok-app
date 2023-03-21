@@ -8,17 +8,17 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
-import mok.it.app.mokapp.model.BadgeCategory
+import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.model.User
 
 class MemberViewModel : ViewModel() {
-    fun getUserBadgeCountByCategory(user: User, badgeCategory: BadgeCategory): LiveData<Int> {
+    fun getUserBadgeCountByCategory(user: User, category: Category): LiveData<Int> {
         val count = MutableLiveData(0)
 
         user.collectedBadges.chunked(10).let {
             it.forEach { batch ->
                 Firebase.firestore.collection("projects")
-                    .whereEqualTo("category", badgeCategory.toString())
+                    .whereEqualTo("category", category.toString())
                     .whereIn(FieldPath.documentId(), batch)
                     .get()
                     .addOnSuccessListener { documents ->

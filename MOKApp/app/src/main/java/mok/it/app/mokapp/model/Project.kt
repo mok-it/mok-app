@@ -1,15 +1,19 @@
 package mok.it.app.mokapp.model
 
+import android.os.Parcelable
 import com.google.firebase.firestore.DocumentId
+import kotlinx.android.parcel.Parcelize
+import mok.it.app.mokapp.utility.Utility.unaccent
 import java.util.*
 
 //the fields of the class should exactly match the fields in Firestore DB
+@Parcelize
 data class Project(
 
     @DocumentId
     val id: String = "",
 
-    val category: String = "",
+    val category: String = "", // can't mark it private, but don't use it
     val created: Date = Date(),
     val creator: String = "",
     val deadline: Date = Date(),
@@ -22,12 +26,8 @@ data class Project(
     val mandatory: Boolean = false,
     val tasks: List<String> = ArrayList(),
     val comments: List<String> = ArrayList(),
-)
-
-fun getIconFileName(iconURL: String): String {
-    // remove special characters
-    val re = Regex("[^A-Za-z\\d ]")
-    val alphanum = re.replace(iconURL, "")
-    // append file type
-    return "$alphanum.png"
+) : Parcelable {
+    
+    val categoryEnum: Category
+        get() = Category.valueOf(category.uppercase().unaccent())
 }

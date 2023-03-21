@@ -25,11 +25,13 @@ import kotlinx.android.synthetic.main.nav_header.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
-import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 
 
 class MainActivity : AppCompatActivity() {
-    private val TAG = "MainActivity"
+    companion object {
+        const val TAG = "MainActivity"
+    }
+
     val firestore = Firebase.firestore
     private lateinit var navController: NavController
     private val mcsArray = arrayOf("IT", "Pedagógia", "Feladatsor", "Kreatív", "Grafika")
@@ -49,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
 
         //Ha a listfragment-re navigálunk, töltődjön újra a fejléc (regisztráció után ez tölti be)
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+        navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.allBadgesListFragment) {
                 if (currentUser != null) refreshCurrentUserAndUserModel(this) {
                     loadApp()
@@ -122,23 +124,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setMenuVisibility() {
+        //TODO admin is empty, we shouldn't show it yet
+        //TODO MCS categories are deprecated, the filter menu will include them
         val menu = nav_view.menu
-
-        //MCS Kategóriák láthatósága
-        val it = menu.findItem(R.id.it)
-        val ped = menu.findItem(R.id.ped)
-        val fel = menu.findItem(R.id.fel)
-        val kre = menu.findItem(R.id.kre)
-        val gra = menu.findItem(R.id.gra)
-        it?.isVisible = userModel.categories.contains("IT")
-        ped?.isVisible = userModel.categories.contains("Pedagógia")
-        fel?.isVisible = userModel.categories.contains("Feladatsor")
-        kre?.isVisible = userModel.categories.contains("Kreatív")
-        gra?.isVisible = userModel.categories.contains("Grafika")
-
-        //Admin láthatósága
-        val adm = menu.findItem(R.id.adminFragment)
-        adm?.isVisible = userModel.admin
+//        val adm = menu.findItem(R.id.adminFragment)
+//        adm?.isVisible = userModel.admin
     }
 
     override fun onSupportNavigateUp(): Boolean {

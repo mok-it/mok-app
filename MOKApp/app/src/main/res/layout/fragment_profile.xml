@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/profileFragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/profileFragment">
+    android:background="?colorOnBackground">
 
     <TextView
         android:id="@+id/categoryTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         android:text="@string/my_categories"
-        android:textSize="30sp">
-    </TextView>
+        android:textSize="30sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"
@@ -22,7 +23,9 @@
         android:padding="6dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/categoryTextView" />
+        app:layout_constraintTop_toBottomOf="@id/categoryTextView"
+        tools:itemCount="3"
+        tools:listitem="@layout/card_category_name" />
 
     <Button
         android:id="@+id/modifyButton"
@@ -33,5 +36,5 @@
         app:layout_constraintTop_toBottomOf="@id/recyclerView">
 
     </Button>
-    
+
 </androidx.constraintlayout.widget.ConstraintLayout>

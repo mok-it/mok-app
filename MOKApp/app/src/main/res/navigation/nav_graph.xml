@@ -20,8 +20,11 @@
             android:autoVerify="true"
             app:uri="mokegyesulet.hu/app/badges/{badgeId}" />
         <action
-            android:id="@+id/action_detailsFragment_to_badgeAcceptMemberDialogFragment"
-            app:destination="@id/badgeAcceptMemberDialogFragment" />
+            android:id="@+id/action_detailsFragment_to_badgeAllMemberDialogFragment"
+            app:destination="@id/badgeAllMemberDialogFragment" />
+        <action
+            android:id="@+id/action_detailsFragment_to_editBadgeFragment"
+            app:destination="@id/editBadgeFragment" />
     </fragment>
     <fragment
         android:id="@+id/commentsFragment"
@@ -54,8 +57,8 @@
             app:destination="@id/phoneBookFragment" />
         <argument
             android:name="category"
-            android:defaultValue="Univerzális"
-            app:argType="string" />
+            android:defaultValue="UNIVERZALIS"
+            app:argType="mok.it.app.mokapp.model.Category" />
         <action
             android:id="@+id/action_allBadgesListFragment_to_linksFragment"
             app:destination="@id/linksFragment" />
@@ -67,6 +70,9 @@
         <action
             android:id="@+id/action_allBadgesListFragment_to_filterDialogFragment"
             app:destination="@id/filterDialogFragment" />
+        <action
+            android:id="@+id/action_allBadgesListFragment_to_createBadgeFragment"
+            app:destination="@id/createBadgeFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -102,11 +108,7 @@
         android:id="@+id/phoneBookFragment"
         android:name="mok.it.app.mokapp.fragments.PhoneBookFragment"
         android:label="Telefonkönyv"
-        tools:layout="@layout/fragment_phone_list">
-        <action
-            android:id="@+id/action_phoneBookFragment_to_memberFragment"
-            app:destination="@id/memberFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_phone_list" />
     <fragment
         android:id="@+id/linksFragment"
         android:name="mok.it.app.mokapp.fragments.LinksFragment"
@@ -137,9 +139,20 @@
     </dialog>
     <dialog
         android:id="@+id/badgeAllMemberDialogFragment"
-        android:name="mok.it.app.mokapp.fragments.BadgeAllMemberDialogFragment"
+        android:name="mok.it.app.mokapp.fragments.BadgeMembersDialogFragment"
         android:label="BadgeAllMemberDialogFragment"
-        tools:layout="@layout/fragment_badge_all_members_dialog" />
+        tools:layout="@layout/fragment_badge_all_members_dialog">
+        <argument
+            android:name="canEdit"
+            android:defaultValue="false"
+            app:argType="boolean" />
+        <argument
+            android:name="users"
+            app:argType="mok.it.app.mokapp.model.User[]" />
+        <action
+            android:id="@+id/action_badgeAllMemberDialogFragment_to_badgeAcceptMemberDialogFragment"
+            app:destination="@id/badgeAcceptMemberDialogFragment" />
+    </dialog>
     <fragment
         android:id="@+id/memberFragment"
         android:name="mok.it.app.mokapp.fragments.MemberFragment"
@@ -149,4 +162,25 @@
             android:name="user"
             app:argType="mok.it.app.mokapp.model.User" />
     </fragment>
+    <action
+        android:id="@+id/action_global_memberFragment"
+        app:destination="@id/memberFragment" />
+    <dialog
+        android:id="@+id/createBadgeFragment"
+        android:name="mok.it.app.mokapp.fragments.CreateBadgeFragment"
+        android:label="CreateBadgeFragment"
+        tools:layout="@layout/fragment_create_badge">
+        <argument
+            android:name="category"
+            app:argType="mok.it.app.mokapp.model.Category" />
+    </dialog>
+    <dialog
+        android:id="@+id/editBadgeFragment"
+        android:name="mok.it.app.mokapp.fragments.EditBadgeFragment"
+        android:label="EditBadgeFragment"
+        tools:layout="@layout/fragment_create_badge">
+        <argument
+            android:name="badge"
+            app:argType="mok.it.app.mokapp.model.Project" />
+    </dialog>
 </navigation>

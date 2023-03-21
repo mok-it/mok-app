@@ -11,8 +11,8 @@ import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.ImageView
-import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -20,10 +20,12 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Query
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.card_comment.view.*
 import kotlinx.android.synthetic.main.fragment_comments.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.model.Comment
+import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.CommentViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
@@ -62,26 +64,36 @@ class CommentsFragment : BaseFireFragment() {
             override fun onBindViewHolder(
                 holder: CommentViewHolder, position: Int, model: Comment
             ) {
-                val tvSender: TextView = holder.itemView.findViewById(R.id.comment_sender)
-                val tvTimestamp: TextView = holder.itemView.findViewById(R.id.comment_timestamp)
-                val tvText: TextView = holder.itemView.findViewById(R.id.comment_text)
-                val ivImg: ImageView = holder.itemView.findViewById(R.id.comment_icon)
+                val tvSender = holder.itemView.comment_sender
+                val tvTimestamp = holder.itemView.comment_timestamp
+                val tvText = holder.itemView.comment_text
+                val ivImg = holder.itemView.comment_icon
                 tvSender.text = model.uid
                 tvTimestamp.text = formatter.format(model.time.toDate())
                 tvText.text = model.text
 
                 firestore.collection(userCollectionPath).document(model.uid).get()
-                    .addOnSuccessListener { senderDoc ->
-                        if (senderDoc != null) {
-                            if (senderDoc.get("name") != null) tvSender.text =
-                                senderDoc.get("name") as String
+                    .addOnSuccessListener { document ->
+                        if (document != null) {
+                            val user: User? = document.toObject(User::class.java)
 
-                            if (senderDoc.get("photoURL") != null) tryLoadingImage(
-                                ivImg, senderDoc.get("photoURL") as String
+                            tvSender.text = user?.name
+                            tryLoadingImage(
+                                ivImg, user?.photoURL ?: getString(R.string.url_no_image)
                             )
-                            else tryLoadingImage(ivImg, getString(R.string.url_no_image))
+
+                            user?.let {
+                                holder.itemView.comment_card.setOnClickListener {
+                                    findNavController().navigate(
+                                        CommentsFragmentDirections.actionGlobalMemberFragment(
+                                            user
+                                        )
+                                    )
+                                }
+                            }
                         }
                     }
+
                 commentsRecyclerView.smoothScrollToPosition(0)
             }
         }

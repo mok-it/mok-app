@@ -2,41 +2,56 @@ package mok.it.app.mokapp.fragments
 
 import android.os.Bundle
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_create_badge.*
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.FragmentCreateBadgeBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
-import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
+import java.time.LocalDate
 import java.util.*
 
-class EditBadgeFragment(
-    private val badge: Project,
-    private val detailsFragment: EditBadgeListener
-) : CreateBadgeFragment(badge.category) {
+class EditBadgeFragment : CreateBadgeFragment() {
+
+    private val args: EditBadgeFragmentArgs by navArgs()
+
+    private val binding get() = _binding!!
+    private var _binding: FragmentCreateBadgeBinding? = null
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentCreateBadgeBinding.inflate(inflater, container, false)
+        return binding.root
+    }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        view.apply {
-            badge_name.setText(badge.name)
-            badge_description.setText(badge.description)
-            val cal: Calendar = Calendar.getInstance()
-            cal.time = badge.deadline
-            datePicker.updateDate(
-                cal.get(Calendar.YEAR),
-                cal.get(Calendar.MONTH),
-                cal.get(Calendar.DAY_OF_MONTH)
-            )
-            textViewTitle.text = getString(R.string.edit_badge_text)
-            create_button.text = getString(R.string.edit_text)
-        }
-        selectedEditors = badge.editors as ArrayList<String>
+        binding.badgeName.setText(args.badge.name)
+        binding.badgeDescription.setText(args.badge.description)
+        val cal: Calendar = Calendar.getInstance()
+        cal.time = args.badge.deadline
+        datePicker.updateDate(
+            cal.get(Calendar.YEAR),
+            cal.get(Calendar.MONTH),
+            cal.get(Calendar.DAY_OF_MONTH)
+        )
+        binding.textViewTitle.text = getString(R.string.edit_badge_text)
+        binding.createButton.text = getString(R.string.edit_text)
+
+        selectedEditors = args.badge.editors.toMutableList()
         super.onViewCreated(view, savedInstanceState)
     }
 
     override fun getUsers() {
         users = ArrayList()
         firestore.collection(userCollectionPath)
-            .whereArrayContains("categories", category)
+            .whereArrayContains("categories", args.badge.categoryEnum)
             .get()
             .addOnSuccessListener { documents ->
                 if (documents != null) {
@@ -45,7 +60,7 @@ class EditBadgeFragment(
                     }
                     names = Array(users.size) { i -> users[i].name }
                     checkedNames = BooleanArray(users.size) { i ->
-                        badge.editors.contains(users[i].documentId)
+                        args.badge.editors.contains(users[i].documentId)
                     }
                     super.initEditorsDialog()
                 }
@@ -55,8 +70,7 @@ class EditBadgeFragment(
     override fun onCreateBadgePressed() {
         val shouldCloseDialog = onEditBadge()
         if (shouldCloseDialog) {
-            closeDialog()
-            detailsFragment.onEdited()
+            findNavController().navigateUp()
         }
     }
 
@@ -71,25 +85,25 @@ class EditBadgeFragment(
     }
 
     private fun commitEditedBadgeToDatabase(): Boolean {
-        val deadline = Date(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
+        val deadline = LocalDate.of(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
         val editedBadge = hashMapOf(
-            "category" to category,
+            "category" to args.badge.categoryEnum,
             "created" to Date(),
             "creator" to userModel.documentId,
             "deadline" to deadline,
-            "description" to descriptionTIET.text.toString(),
+            "description" to binding.badgeDescription.text.toString(),
             "editors" to selectedEditors,
             "icon" to getString(R.string.under_construction_badge_icon),
-            "name" to nameTIET.text.toString(),
+            "name" to binding.badgeName.text.toString(),
             "overall_progress" to 0,
             "mandatory" to false
 
         )
         firestore.collection("/projects")
-            .document(badge.id)
+            .document(args.badge.id)
             .update(editedBadge as Map<String, Any>)
             .addOnSuccessListener {
-                Log.d(TAG, "DocumentSnapshot edited with ID: ${badge.id}")
+                Log.d(TAG, "DocumentSnapshot edited with ID: ${args.badge.id}")
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error editing document", e)
@@ -98,7 +112,8 @@ class EditBadgeFragment(
         return true
     }
 
-    interface EditBadgeListener {
-        fun onEdited()
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }

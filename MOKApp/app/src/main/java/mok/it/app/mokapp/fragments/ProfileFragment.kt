@@ -2,7 +2,6 @@ package mok.it.app.mokapp.fragments
 
 import android.app.AlertDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,14 +13,14 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Category
+import mok.it.app.mokapp.model.Category.Companion.toCategory
 import mok.it.app.mokapp.recyclerview.CategoryNameAdapter
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
 class ProfileFragment : Fragment() {
-    lateinit var categories: ArrayList<Category>
-    lateinit var names: Array<String>
-    lateinit var checkedNames: BooleanArray
-    var selectedCategories: ArrayList<String> = ArrayList()
+    private lateinit var names: MutableList<String>
+    private lateinit var checkedNames: BooleanArray
+    private var selectedCategories: MutableList<String> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -39,57 +38,37 @@ class ProfileFragment : Fragment() {
     }
 
     private fun getCategories() {
-        categories = ArrayList()
+        names = Category.values().map { it.toString() }.toMutableList()
+        names.remove(Category.UNIVERZALIS.toString())
+        checkedNames =
+            BooleanArray(names.size) { i -> names[i] in userModel.categoryList.map { it.toString() } }
 
-        Firebase.firestore.collection("categories")
-            .whereNotEqualTo("name", "Univerzális")
-            .get()
-            .addOnSuccessListener { documents ->
-                if (documents != null) {
-                    for (document in documents) {
-                        categories.add(document.toObject(Category::class.java))
-                    }
-                    names = Array(categories.size) { i -> categories[i].name }
-                    checkedNames = BooleanArray(names.size) { false }
-                    names.forEachIndexed { index, name ->
-                        if (name in userModel.categories) {
-                            checkedNames[index] = true
-                        }
-                    }
-                    initCategoryDialog()
-                }
-            }
+        initCategoryDialog()
     }
 
     private fun initCategoryDialog() {
-        val builder = AlertDialog.Builder(context)
-        builder.setTitle("Válaszd ki a munkacsoportjaid!")
-        builder.setMultiChoiceItems(names, checkedNames) { _, which, isChecked ->
-            checkedNames[which] = isChecked
-        }
-        builder.setPositiveButton("Ok") { _, _ ->
-            selectedCategories = ArrayList()
-            selectedCategories.add("Univerzális")
-            for (i in names.indices) {
-                if (checkedNames[i]) {
-                    Log.d("Selected", names[i])
-                    selectedCategories.add(names[i])
-                }
+        AlertDialog.Builder(context)
+            .setTitle("Válaszd ki a munkacsoportjaid!")
+            .setMultiChoiceItems(names.toTypedArray(), checkedNames) { _, which, isChecked ->
+                checkedNames[which] = isChecked
             }
-            updateCategories()
-        }
-        builder.setNegativeButton("Mégsem") { dialog, _ ->
-            dialog.cancel()
-        }
-        val dialog: AlertDialog = builder.create()
-        dialog.show()
+            .setPositiveButton("Ok") { _, _ ->
+                selectedCategories =
+                    names.filterIndexed { index, _ -> checkedNames[index] }.toMutableList()
+                selectedCategories.add(Category.UNIVERZALIS.toString())
+                updateCategories()
+            }
+            .setNegativeButton("Mégsem") { dialog, _ ->
+                dialog.cancel()
+            }
+            .create()
+            .show()
     }
 
     private fun updateCategories() {
         val userRef = Firebase.firestore.collection("users").document(currentUser!!.uid)
         userRef.update("categories", selectedCategories)
-        // TODO refesh user(?)
-        //listener.userRefreshed()
+        userModel.categoryList = selectedCategories.map { it.toCategory() }.toMutableList()
 
         //TODO ez csúnya, összekötni a Firestore-ból visszaérkező adattal?
         recyclerView.adapter = CategoryNameAdapter(selectedCategories)
@@ -97,7 +76,7 @@ class ProfileFragment : Fragment() {
 
     private fun initRecyclerView() {
         // TODO use FirestoreRecyclerAdapter instead
-        recyclerView.adapter = CategoryNameAdapter(userModel.categories as ArrayList<String>)
+        recyclerView.adapter = CategoryNameAdapter(userModel.categoryList.map { it.toString() })
         recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)
     }

@@ -5,17 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
+import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_badge_all_members_dialog.*
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.MembersAdapter
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import mok.it.app.mokapp.utility.Utility.setFullScreen
 
-class BadgeAllMemberDialogFragment(
-    private val memberUsers: ArrayList<User>,
-    private val listener: MembersAdapter.MemberClickedListener,
-    private val canEdit: Boolean
-) : DialogFragment() {
+class BadgeMembersDialogFragment : DialogFragment() {
+    private val args: BadgeAllMemberDialogFragmentArgs by navArgs()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -27,11 +25,12 @@ class BadgeAllMemberDialogFragment(
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        setFullScreen()
         initRecyclerView()
     }
 
     private fun initRecyclerView() {
-        recyclerView.adapter = MembersAdapter(memberUsers, listener, canEdit)
+        recyclerView.adapter = MembersAdapter(args.users, args.canEdit)
         recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)
     }

@@ -19,11 +19,14 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_comment.view.*
 import kotlinx.android.synthetic.main.fragment_comments.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
+import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.CommentViewHolder
@@ -48,55 +51,60 @@ class CommentsFragment : BaseFireFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val query =
-            firestore.collection(projectCollectionPath).document(args.badgeId)
+            Firebase.firestore.collection(Collections.projectsPath).document(args.badgeId)
                 .collection(commentsId)
                 .orderBy("time", Query.Direction.DESCENDING)
         val options =
-            FirestoreRecyclerOptions.Builder<Comment>().setQuery(query, Comment::class.java)
+            FirestoreRecyclerOptions.Builder<Comment>()
+                .setQuery(query, Comment::class.java)
                 .setLifecycleOwner(this).build()
-        val adapter = object : FirestoreRecyclerAdapter<Comment, CommentViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentViewHolder {
-                val itemView = LayoutInflater.from(this@CommentsFragment.context)
-                    .inflate(R.layout.card_comment, parent, false)
-                return CommentViewHolder(itemView)
-            }
+        val adapter =
+            object : FirestoreRecyclerAdapter<Comment, CommentViewHolder>(options) {
+                override fun onCreateViewHolder(
+                    parent: ViewGroup,
+                    viewType: Int
+                ): CommentViewHolder {
+                    val itemView = LayoutInflater.from(this@CommentsFragment.context)
+                        .inflate(R.layout.card_comment, parent, false)
+                    return CommentViewHolder(itemView)
+                }
 
-            override fun onBindViewHolder(
-                holder: CommentViewHolder, position: Int, model: Comment
-            ) {
-                val tvSender = holder.itemView.comment_sender
-                val tvTimestamp = holder.itemView.comment_timestamp
-                val tvText = holder.itemView.comment_text
-                val ivImg = holder.itemView.comment_icon
-                tvSender.text = model.uid
-                tvTimestamp.text = formatter.format(model.time.toDate())
-                tvText.text = model.text
+                override fun onBindViewHolder(
+                    holder: CommentViewHolder, position: Int, model: Comment
+                ) {
+                    val tvSender = holder.itemView.comment_sender
+                    val tvTimestamp = holder.itemView.comment_timestamp
+                    val tvText = holder.itemView.comment_text
+                    val ivImg = holder.itemView.comment_icon
+                    tvSender.text = model.uid
+                    tvTimestamp.text = formatter.format(model.time.toDate())
+                    tvText.text = model.text
 
-                firestore.collection(userCollectionPath).document(model.uid).get()
-                    .addOnSuccessListener { document ->
-                        if (document != null) {
-                            val user: User? = document.toObject(User::class.java)
+                    Firebase.firestore.collection(Collections.usersPath).document(model.uid).get()
+                        .addOnSuccessListener { document ->
+                            if (document != null) {
+                                val user: User? = document.toObject(User::class.java)
 
-                            tvSender.text = user?.name
-                            tryLoadingImage(
-                                ivImg, user?.photoURL ?: getString(R.string.url_no_image)
-                            )
+                                tvSender.text = user?.name
+                                tryLoadingImage(
+                                    ivImg, user?.photoURL ?: getString(R.string.url_no_image)
+                                )
 
-                            user?.let {
-                                holder.itemView.comment_card.setOnClickListener {
-                                    findNavController().navigate(
-                                        CommentsFragmentDirections.actionGlobalMemberFragment(
-                                            user
+                                user?.let {
+                                    holder.itemView.comment_card.setOnClickListener {
+                                        findNavController().navigate(
+                                            CommentsFragmentDirections.actionGlobalMemberFragment(
+                                                user
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                             }
                         }
-                    }
 
-                commentsRecyclerView.smoothScrollToPosition(0)
+                    commentsRecyclerView.smoothScrollToPosition(0)
+                }
             }
-        }
 
         send_comment_fab.setOnClickListener {
             if (commentEditText.text.toString() != "") {
@@ -107,7 +115,7 @@ class CommentsFragment : BaseFireFragment() {
                     FirebaseAuth.getInstance().currentUser!!.uid
                 )
 
-                firestore.collection(projectCollectionPath).document(args.badgeId)
+                Firebase.firestore.collection(Collections.projectsPath).document(args.badgeId)
                     .collection(commentsId)
                     .add(comment).addOnSuccessListener { documentReference ->
                         Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")

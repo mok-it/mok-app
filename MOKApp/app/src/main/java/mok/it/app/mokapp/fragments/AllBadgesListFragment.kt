@@ -19,6 +19,8 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_badge.view.*
@@ -30,6 +32,7 @@ import mok.it.app.mokapp.dialog.FilterDialogFragment.Companion.filterResultKey
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
+import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Filter
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
@@ -247,7 +250,7 @@ class AllBadgesListFragment :
     private fun getFilteredQuery(): Query {
         //itt szűrünk kategóriákra
         var query =
-            firestore.collection(projectCollectionPath)
+            Firebase.firestore.collection(Collections.projectsPath)
                 .orderBy("created", Query.Direction.DESCENDING)
         if (filter.mandatory) {
             query = query.whereEqualTo("mandatory", true)

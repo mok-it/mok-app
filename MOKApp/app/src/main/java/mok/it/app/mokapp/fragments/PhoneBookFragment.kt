@@ -16,11 +16,14 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_phonebook_item.view.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.databinding.FragmentPhoneListBinding
+import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.PhoneBookViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
@@ -30,7 +33,6 @@ class PhoneBookFragment : BaseFireFragment() {
     private val binding get() = _binding!!
     private var _binding: FragmentPhoneListBinding? = null
 
-    private lateinit var recyclerView: RecyclerView
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
 
     override fun onCreateView(
@@ -72,7 +74,10 @@ class PhoneBookFragment : BaseFireFragment() {
 
     private fun initializeAdapter() {
         val options: FirestoreRecyclerOptions<User?> = FirestoreRecyclerOptions.Builder<User>()
-            .setQuery(firestore.collection(userCollectionPath).orderBy("name"), User::class.java)
+            .setQuery(
+                Firebase.firestore.collection(Collections.usersPath).orderBy("name"),
+                User::class.java
+            )
             .build()
 
         adapter =

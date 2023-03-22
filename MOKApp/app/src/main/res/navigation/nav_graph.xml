@@ -181,5 +181,8 @@
         <argument
             android:name="canEdit"
             app:argType="boolean" />
+        <argument
+            android:name="badge"
+            app:argType="mok.it.app.mokapp.model.Project" />
     </dialog>
 </navigation>

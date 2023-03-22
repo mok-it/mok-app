@@ -10,6 +10,7 @@ import java.text.Normalizer
  * Utility class for various functions
  */
 object Utility {
+
     fun CharSequence.unaccent(): String {
         val temp = Normalizer.normalize(this, Normalizer.Form.NFD)
         return "\\p{InCombiningDiacriticalMarks}+".toRegex().replace(temp, "")

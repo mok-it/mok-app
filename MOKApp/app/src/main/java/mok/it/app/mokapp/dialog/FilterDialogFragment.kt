@@ -13,13 +13,12 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Filter
 
 class FilterDialogFragment : DialogFragment() {
-    private val args: FilterDialogFragmentArgs by navArgs()
-    private var filter: Filter = Filter()
-
     companion object {
         const val filterResultKey = "filter"
     }
 
+    private val args: FilterDialogFragmentArgs by navArgs()
+    private var filter: Filter = Filter()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

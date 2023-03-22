@@ -22,6 +22,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             messageBody: String,
             adresseeUserIdList: List<String>,
         ) {
+            return
+            TODO("haven't been tested yet")
             if (adresseeUserIdList.count() > 10)
                 throw IllegalArgumentException("too many users to send notification to (the limit is 10)")
 
@@ -44,6 +46,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             messageBody: String,
             adresseeUserList: List<User>
         ) {
+            return
             TODO("doesn't work correctly yet, npe")
             adresseeUserList.toHashSet().forEach { addresseeUser ->
                 Firebase.firestore.collection("users").document(addresseeUser.documentId)
@@ -92,20 +95,16 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      */
     override fun onNewToken(token: String) {
         Log.d(TAG, "Refreshed token: $token")
-        currentUser.apply {
-            if (this != null) {
-                //upload the new token to the "FCM tokens" array of the user
-                Firebase.firestore.collection("users").document(this.uid)
-                    //TODO make it a list, so that other devices with the same account are also able to receive notifications
-                    .update("FCMtokens", token)
-                    .addOnSuccessListener {
-                        Log.d(TAG, "onNewToken: token uploaded to firestore")
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.d(TAG, "onNewToken: token upload failed", exception)
-                    }
-            } else
-                Log.d(TAG, "onNewToken: currentUser is null")
+        currentUser?.apply {
+            Firebase.firestore.collection("users").document(this.uid)
+                //TODO make it a list, so that other devices with the same account are also able to receive notifications
+                .update("FCMtokens", token)
+                .addOnSuccessListener {
+                    Log.d(TAG, "onNewToken: token uploaded to firestore")
+                }
+                .addOnFailureListener { exception ->
+                    Log.d(TAG, "onNewToken: token upload failed", exception)
+                }
         }
     }
 }

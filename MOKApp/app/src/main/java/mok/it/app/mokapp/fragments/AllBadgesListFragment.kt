@@ -19,21 +19,25 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import kotlinx.android.synthetic.main.card_badge.view.*
 import kotlinx.android.synthetic.main.fragment_all_badges_list.*
 import kotlinx.android.synthetic.main.fragment_all_badges_list.view.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
+import mok.it.app.mokapp.dialog.FilterDialogFragment.Companion.filterResultKey
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
-import mok.it.app.mokapp.fragments.FilterDialogFragment.Companion.filterResultKey
+import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Filter
 import mok.it.app.mokapp.model.Project
-import mok.it.app.mokapp.model.getIconFileName
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import mok.it.app.mokapp.utility.Utility.getIconFileName
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -153,10 +157,10 @@ class AllBadgesListFragment :
                 position: Int,
                 model: Project
             ) {
-                val tvName: TextView = holder.itemView.findViewById(R.id.projectName)
-                val tvDesc: TextView = holder.itemView.findViewById(R.id.projectDescription)
-                val ivImg: ImageView = holder.itemView.findViewById(R.id.projectIcon)
-                val tvMandatory: TextView = holder.itemView.findViewById(R.id.mandatoryTextView)
+                val tvName: TextView = holder.itemView.projectName
+                val tvDesc: TextView = holder.itemView.projectDescription
+                val ivImg: ImageView = holder.itemView.projectIcon
+                val tvMandatory: TextView = holder.itemView.mandatoryTextView
                 tvName.text = model.name
                 tvDesc.text = model.description
                 tvMandatory.isVisible = model.mandatory
@@ -225,8 +229,11 @@ class AllBadgesListFragment :
         recyclerView.addBadgeButton
 
         addBadgeButton.setOnClickListener {
-            val dialog = CreateBadgeFragment(args.category)
-            dialog.show(parentFragmentManager, "CreateBadgeDialog")
+            findNavController().navigate(
+                AllBadgesListFragmentDirections.actionAllBadgesListFragmentToCreateBadgeFragment(
+                    args.category
+                )
+            )
         }
         setAddBadgeButtonVisibility()
         badgeSwipeRefresh.setOnRefreshListener {
@@ -243,7 +250,7 @@ class AllBadgesListFragment :
     private fun getFilteredQuery(): Query {
         //itt szűrünk kategóriákra
         var query =
-            firestore.collection(projectCollectionPath)
+            Firebase.firestore.collection(Collections.projectsPath)
                 .orderBy("created", Query.Direction.DESCENDING)
         if (filter.mandatory) {
             query = query.whereEqualTo("mandatory", true)
@@ -270,5 +277,4 @@ class AllBadgesListFragment :
             addBadgeButton.visibility = View.VISIBLE
         }
     }
-
 }

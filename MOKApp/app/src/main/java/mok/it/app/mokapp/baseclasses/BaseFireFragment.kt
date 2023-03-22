@@ -6,12 +6,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import mok.it.app.mokapp.model.Project
 
-open class BaseFireFragment : Fragment() {
+abstract class BaseFireFragment : Fragment() {
     //TODO ez a class többet árt, mint segít sztem, kitörölni
-    val projectCollectionPath: String = "/projects"
-    val userCollectionPath: String = "/users"
-    val linkCollectionPath: String = "/links"
-    val firestore = Firebase.firestore
 
     lateinit var model: Project
 
@@ -20,7 +16,7 @@ open class BaseFireFragment : Fragment() {
         document: String,
         onSuccesListener: (DocumentSnapshot) -> (Unit)
     ) {
-        firestore.collection(collectionPath).document(document).get()
+        Firebase.firestore.collection(collectionPath).document(document).get()
             .addOnSuccessListener(onSuccesListener)
     }
 }

@@ -1,6 +1,7 @@
 package mok.it.app.mokapp.activity
 
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
@@ -24,11 +25,13 @@ import kotlinx.android.synthetic.main.nav_header.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
-import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 
 
 class MainActivity : AppCompatActivity() {
-    private val TAG = "MainActivity"
+    companion object {
+        const val TAG = "MainActivity"
+    }
+
     val firestore = Firebase.firestore
     private lateinit var navController: NavController
     private val mcsArray = arrayOf("IT", "Pedagógia", "Feladatsor", "Kreatív", "Grafika")
@@ -48,7 +51,7 @@ class MainActivity : AppCompatActivity() {
         findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
 
         //Ha a listfragment-re navigálunk, töltődjön újra a fejléc (regisztráció után ez tölti be)
-        navController.addOnDestinationChangedListener { controller, destination, arguments ->
+        navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.allBadgesListFragment) {
                 if (currentUser != null) refreshCurrentUserAndUserModel(this) {
                     loadApp()
@@ -87,6 +90,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
@@ -120,23 +124,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setMenuVisibility() {
-        val menu = nav_view.menu
-
-        //MCS Kategóriák láthatósága
-        val it = menu.findItem(R.id.it)
-        val ped = menu.findItem(R.id.ped)
-        val fel = menu.findItem(R.id.fel)
-        val kre = menu.findItem(R.id.kre)
-        val gra = menu.findItem(R.id.gra)
-        it?.isVisible = userModel.categories.contains("IT")
-        ped?.isVisible = userModel.categories.contains("Pedagógia")
-        fel?.isVisible = userModel.categories.contains("Feladatsor")
-        kre?.isVisible = userModel.categories.contains("Kreatív")
-        gra?.isVisible = userModel.categories.contains("Grafika")
-
-        //Admin láthatósága
-        val adm = menu.findItem(R.id.adminFragment)
-        adm?.isVisible = userModel.admin
+        //TODO admin is empty, we shouldn't show it yet
+        //TODO MCS categories are deprecated, the filter menu will include them
+//        val menu = nav_view.menu
+//        val adm = menu.findItem(R.id.adminFragment)
+//        adm?.isVisible = userModel.admin
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -149,6 +141,35 @@ class MainActivity : AppCompatActivity() {
 ////        )
 ////        findNavController().navigate(action)
 //    }
+
+    // Declare the launcher at the top of your Activity/Fragment:
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (!isGranted) {
+            // TODO: Inform user that that your app will not show notifications.
+        }
+    }
+
+//    private fun askNotificationPermission() {
+//        // This is only necessary for API level >= 33 (TIRAMISU)
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+//                PackageManager.PERMISSION_GRANTED
+//            ) {
+//                // FCM SDK (and your app) can post notifications.
+//            } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+//                // TODO: display an educational UI explaining to the user the features that will be enabled
+//                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
+//                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
+//                //       If the user selects "No thanks," allow the user to continue without notifications.
+//            } else {
+//                // Directly ask for the permission
+//                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+//            }
+//        }
+//    }
+
 
     private fun logout() {
         currentUser = null

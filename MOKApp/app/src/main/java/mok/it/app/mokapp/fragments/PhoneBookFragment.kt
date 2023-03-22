@@ -12,27 +12,35 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_phonebook_item.view.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
+import mok.it.app.mokapp.databinding.FragmentPhoneListBinding
+import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.PhoneBookViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
 
 class PhoneBookFragment : BaseFireFragment() {
-    private lateinit var recyclerView: RecyclerView
+    private val binding get() = _binding!!
+    private var _binding: FragmentPhoneListBinding? = null
+
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_phone_list, container, false)
+    ): View {
+        _binding = FragmentPhoneListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -54,9 +62,8 @@ class PhoneBookFragment : BaseFireFragment() {
         super.onViewCreated(view, savedInstanceState)
         initializeAdapter()
 
-        recyclerView = this.requireView().findViewById(R.id.fragment_phone_list)
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager =
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)
     }
 
@@ -67,7 +74,10 @@ class PhoneBookFragment : BaseFireFragment() {
 
     private fun initializeAdapter() {
         val options: FirestoreRecyclerOptions<User?> = FirestoreRecyclerOptions.Builder<User>()
-            .setQuery(firestore.collection(userCollectionPath).orderBy("name"), User::class.java)
+            .setQuery(
+                Firebase.firestore.collection(Collections.usersPath).orderBy("name"),
+                User::class.java
+            )
             .build()
 
         adapter =
@@ -81,7 +91,16 @@ class PhoneBookFragment : BaseFireFragment() {
                     val ivImg: ImageView = holder.itemView.findViewById(R.id.contact_image)
                     loadImage(ivImg, model.photoURL)
                     holder.itemView.contact_name.text = model.name
-                    holder.itemView.phone_number.text = model.phoneNumber.ifEmpty { getString(R.string.no_phone_number) }
+                    holder.itemView.phone_number.text =
+                        model.phoneNumber.ifEmpty { getString(R.string.no_phone_number) }
+
+                    holder.itemView.contact_item.setOnClickListener {
+                        findNavController().navigate(
+                            PhoneBookFragmentDirections.actionGlobalMemberFragment(
+                                model
+                            )
+                        )
+                    }
 
                     holder.itemView.call_button.setOnClickListener {
                         // if the device is capable of making phone calls, the button opens the dialer
@@ -95,9 +114,12 @@ class PhoneBookFragment : BaseFireFragment() {
                                     null
                                 )
                             }
-                        }
-                        else if (model.phoneNumber.isEmpty()) // if the user doesn't have a phone number, it shows a toast
-                            Toast.makeText(context, getString(R.string.no_phone_number) , Toast.LENGTH_SHORT).show()
+                        } else if (model.phoneNumber.isEmpty()) // if the user doesn't have a phone number, it shows a toast
+                            Toast.makeText(
+                                context,
+                                getString(R.string.no_phone_number),
+                                Toast.LENGTH_SHORT
+                            ).show()
                         else // ...if not, it copies the number to the clipboard
                         {
                             val clipboard =

@@ -11,9 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_all_badges_list.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
+import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.recyclerview.LinkViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
@@ -40,7 +43,8 @@ class LinksFragment : BaseFireFragment() {
 
     private fun getAdapter(): FirestoreRecyclerAdapter<mok.it.app.mokapp.model.Link, LinkViewHolder> {
         val query =
-            firestore.collection(linkCollectionPath).orderBy("title", Query.Direction.ASCENDING)
+            Firebase.firestore.collection(Collections.linksPath)
+                .orderBy("title", Query.Direction.ASCENDING)
         val options =
             FirestoreRecyclerOptions.Builder<mok.it.app.mokapp.model.Link>()
                 .setQuery(query, mok.it.app.mokapp.model.Link::class.java)

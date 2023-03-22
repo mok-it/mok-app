@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import mok.it.app.mokapp.R
 
-class CategoryNameAdapter(private val dataSet: ArrayList<String>) :
+class CategoryNameAdapter(private val dataSet: List<String>) :
     RecyclerView.Adapter<CategoryNameAdapter.ViewHolder>() {
 
     var context: Context? = null

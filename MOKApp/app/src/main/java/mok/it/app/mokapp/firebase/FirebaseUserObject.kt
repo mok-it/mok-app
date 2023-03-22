@@ -9,7 +9,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.User
 
 
@@ -47,6 +46,7 @@ object FirebaseUserObject {
                 Log.d(TAG, "refreshCurrentUser(): got document ${userToBe.toString()}")
                 if (userToBe != null) {
                     userModel = userToBe
+                    userModel.generateCategories()
                     currentUser = FirebaseAuth.getInstance().currentUser
                         ?: throw Exception("FirebaseAuth user is null")
                     Log.d(TAG, "refreshCurrentUser(): user refreshed")

@@ -4,30 +4,26 @@ import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import kotlinx.android.synthetic.main.card_member.view.*
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.dialog.BadgeMembersDialogFragment
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.User
 
 class MembersAdapter(
-    private val userArrayList: ArrayList<User>,
-    private val listener: MemberClickedListener,
-    private val userIsEditor: Boolean
+    private val userArray: Array<User>,
+    private val userIsEditor: Boolean,
+    private val badgeMembersDialogFragment: BadgeMembersDialogFragment
 ) :
     RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
 
-    var context: Context? = null
+    lateinit var context: Context
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textView: TextView = view.findViewById(R.id.textView)
-        val imageView: ImageView = view.findViewById(R.id.imageView)
-    }
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
@@ -36,26 +32,31 @@ class MembersAdapter(
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val model = userArrayList[position]
-        viewHolder.textView.text = model.name
-        //kép
-        var requestOptions = RequestOptions()
-        requestOptions = requestOptions.transforms(CenterCrop(), RoundedCorners(26))
+        val user = userArray[position]
+        viewHolder.itemView.textView.text = user.name
+        val requestOptions = RequestOptions()
         Glide
-            .with(context!!)
-            .load(model.photoURL)
+            .with(context)
+            .load(user.photoURL)
             .apply(requestOptions.override(250, 250))
-            .into(viewHolder.imageView)
+            .apply(RequestOptions.centerCropTransform())
+            .apply(RequestOptions.bitmapTransform(RoundedCorners(26)))
+            .into(viewHolder.itemView.imageView)
 
+//        //opening the person's profile if someone clicks on the card
+        viewHolder.itemView.setOnClickListener {
+            badgeMembersDialogFragment.navigateToMemberFragment(user)
+        }
 
         if (canAccept()) {
-            viewHolder.itemView.setOnClickListener {
-                listener.onMemberClicked(model)
+            viewHolder.itemView.btnCompleted.visibility = View.VISIBLE
+            viewHolder.itemView.btnCompleted.setOnClickListener {
+                badgeMembersDialogFragment.navigateToBadgeAcceptMemberDialogFragment(user)
             }
         }
     }
 
-    override fun getItemCount() = userArrayList.size
+    override fun getItemCount() = userArray.size
 
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
@@ -68,7 +69,7 @@ class MembersAdapter(
         return false
     }
 
-    interface MemberClickedListener {
-        fun onMemberClicked(user: User)
+    companion object {
+        private const val TAG = "MembersAdapter"
     }
 }

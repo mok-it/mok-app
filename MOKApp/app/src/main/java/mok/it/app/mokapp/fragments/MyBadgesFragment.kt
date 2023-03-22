@@ -6,11 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
+import mok.it.app.mokapp.databinding.FragmentMyBadgesBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.BadgeCategoriesAdapter
@@ -19,14 +18,16 @@ import mok.it.app.mokapp.recyclerview.BadgesAdapter
 
 class MyBadgesFragment :
     BaseFireFragment(), BadgesAdapter.BadgeClickedListener {
-    private lateinit var recyclerView: RecyclerView
-    private lateinit var collectedBadges: ArrayList<Project>
+    private val binding get() = _binding!!
+    private var _binding: FragmentMyBadgesBinding? = null
 
+    private lateinit var collectedBadges: ArrayList<Project>
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_my_badges, container, false)
+    ): View {
+        _binding = FragmentMyBadgesBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -55,22 +56,21 @@ class MyBadgesFragment :
     private fun initRecyclerView() {
         val categoryBadges: ArrayList<ArrayList<Project>> = ArrayList()
 
-        for (c in 0 until userModel.categories.size) {
+        for (c in 0 until userModel.categoryList.size) {
             categoryBadges.add(ArrayList())
             for (badge in collectedBadges) {
-                if (badge.category == userModel.categories[c]) {
+                if (badge.categoryEnum == userModel.categoryList[c]) {
                     categoryBadges[c].add(badge)
                 }
             }
         }
-        recyclerView = this.requireView().findViewById(R.id.recyclerView)
         //TODO use FirestoreRecyclerAdapter instead
-        recyclerView.adapter = BadgeCategoriesAdapter(
-            userModel.categories,
+        binding.recyclerView.adapter = BadgeCategoriesAdapter(
+            userModel.categoryList.map { it.toString() },
             categoryBadges,
             this
         )
-        recyclerView.layoutManager =
+        binding.recyclerView.layoutManager =
             LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
     }
 
@@ -80,5 +80,10 @@ class MyBadgesFragment :
                 badgeId
             )
         )
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

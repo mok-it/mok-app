@@ -85,7 +85,7 @@
     <string name="rewards">Jutalmak</string>
     <string name="request">Kérem!</string>
     <string name="achieved">Megszerezve</string>
-    <string name="my_points">Pontjaim:</string>
+    <string name="my_points">Pontjaim: %1$d</string>
     <string name="icon_of_badge">mancs ikonja</string>
     <string name="icon_of_loading_badge">mancs ikonja (betöltés)</string>
     <string name="image_of_writer_of_the_comment">a komment írójának képe</string>

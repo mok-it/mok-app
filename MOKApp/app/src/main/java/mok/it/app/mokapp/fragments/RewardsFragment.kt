@@ -12,6 +12,8 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_reward.view.*
 import kotlinx.android.synthetic.main.fragment_rewards.*
@@ -19,6 +21,7 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
+import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Reward
 import mok.it.app.mokapp.recyclerview.RewardViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
@@ -54,15 +57,16 @@ class RewardsFragment : BaseFireFragment(), RewardAcceptDialogFragment.RewardAcc
         updateUI()
     }
 
-    private fun updateUI(){
-        pointsText.text = getString(R.string.my_points) + " " + userModel.points
+    private fun updateUI() {
+        pointsText.text = getString(R.string.my_points, userModel.points)
         initializeAdapter()
     }
 
     private fun initializeAdapter() {
         val options: FirestoreRecyclerOptions<Reward?> = FirestoreRecyclerOptions.Builder<Reward>()
             .setQuery(
-                firestore.collection(rewardCollectionPath).orderBy("price", Query.Direction.ASCENDING),
+                Firebase.firestore.collection(Collections.rewardsPath)
+                    .orderBy("price", Query.Direction.ASCENDING),
                 Reward::class.java
             )
             .build()
@@ -86,7 +90,7 @@ class RewardsFragment : BaseFireFragment(), RewardAcceptDialogFragment.RewardAcc
                         holder.itemView.requestButton.visibility = View.GONE
                         holder.itemView.achievedText.visibility = View.VISIBLE
                     }
-                    holder.itemView.requestButton.setOnClickListener{
+                    holder.itemView.requestButton.setOnClickListener {
                         requestReward(model)
                     }
                 }
@@ -118,7 +122,7 @@ class RewardsFragment : BaseFireFragment(), RewardAcceptDialogFragment.RewardAcc
             WrapContentLinearLayoutManager(this.context)
     }
 
-    private fun requestReward(reward: Reward){
+    private fun requestReward(reward: Reward) {
         val dialog = RewardAcceptDialogFragment(this, reward)
         dialog.show(parentFragmentManager, "NoticeDialogFragment")
     }
@@ -130,8 +134,8 @@ class RewardsFragment : BaseFireFragment(), RewardAcceptDialogFragment.RewardAcc
             "price" to reward.price,
             "created" to Date()
         )
-        firestore.runTransaction{
-            firestore.collection(rewardRequestCollectionPath).add(request)
+        Firebase.firestore.runTransaction {
+            Firebase.firestore.collection(Collections.rewardrequestsPath).add(request)
                 .addOnSuccessListener { documentRef ->
                     Log.d("Reward", "DocumentSnapshot written with ID: ${documentRef.id}")
                 }
@@ -139,16 +143,18 @@ class RewardsFragment : BaseFireFragment(), RewardAcceptDialogFragment.RewardAcc
                     Log.w("Reward", "Error adding document", e)
                 }
 
-            val userRef = firestore.collection("users").document(userModel.documentId)
+            val userRef =
+                Firebase.firestore.collection(Collections.usersPath).document(userModel.documentId)
             userRef.update(
                 "requestedRewards", FieldValue.arrayUnion(reward.documentId),
-                "points", FieldValue.increment(-1 * reward.price.toDouble()))
+                "points", FieldValue.increment(-1 * reward.price.toDouble())
+            )
                 .addOnCompleteListener {
                     Log.d("Reward", "Reward added to requested")
                 }
         }.addOnSuccessListener {
             context?.let { context ->
-                FirebaseUserObject.refreshCurrentUserAndUserModel(context){
+                FirebaseUserObject.refreshCurrentUserAndUserModel(context) {
                     updateUI()
                     adapter.startListening()
                 }

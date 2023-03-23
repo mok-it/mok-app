@@ -43,19 +43,9 @@ class PhoneBookFragment : BaseFireFragment() {
         return binding.root
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        adapter.stopListening()
-    }
-
     override fun onStart() {
         super.onStart()
         adapter.startListening()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        adapter.stopListening()
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {

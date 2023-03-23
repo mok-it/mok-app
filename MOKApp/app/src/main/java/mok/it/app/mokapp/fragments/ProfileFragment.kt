@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_profile.*
@@ -16,6 +17,7 @@ import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.model.Category.Companion.toCategory
 import mok.it.app.mokapp.recyclerview.CategoryNameAdapter
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+
 
 class ProfileFragment : Fragment() {
     private lateinit var names: MutableList<String>
@@ -32,6 +34,7 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         initRecyclerView()
+        loadProfileFragment()
         modifyButton.setOnClickListener {
             getCategories()
         }
@@ -79,5 +82,14 @@ class ProfileFragment : Fragment() {
         recyclerView.adapter = CategoryNameAdapter(userModel.categoryList.map { it.toString() })
         recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)
+    }
+
+    private fun loadProfileFragment(){
+        val childFragment: Fragment = MemberFragment()
+        val bundle = Bundle()
+        bundle.putParcelable("user", userModel)
+        childFragment.arguments = bundle
+        val transaction: FragmentTransaction = childFragmentManager.beginTransaction()
+        transaction.replace(R.id.fragmentContainer, childFragment).commit()
     }
 }

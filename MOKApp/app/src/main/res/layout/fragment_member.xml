@@ -114,21 +114,21 @@
             android:textStyle="bold"
             tools:text="0" />
 
-        <TextView
-            android:id="@+id/mutual_badges"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:text="@string/mutual_badges"
-            android:textSize="14sp"
-            android:textStyle="bold" />
+        <!--        <TextView-->
+        <!--            android:id="@+id/mutual_badges"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:paddingTop="8dp"-->
+        <!--            android:text="@string/mutual_badges"-->
+        <!--            android:textSize="14sp"-->
+        <!--            android:textStyle="bold" />-->
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/myBadgesFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:layout="@layout/fragment_my_badges"
-            tools:layout_height="500dp" />
+        <!--        <androidx.fragment.app.FragmentContainerView-->
+        <!--            android:id="@+id/myBadgesFragment"-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="match_parent"-->
+        <!--            tools:layout="@layout/fragment_my_badges"-->
+        <!--            tools:layout_height="500dp" />-->
 
     </LinearLayout>
 

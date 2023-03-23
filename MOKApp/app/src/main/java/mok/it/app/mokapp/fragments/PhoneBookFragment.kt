@@ -52,6 +52,8 @@ class PhoneBookFragment : BaseFireFragment() {
         super.onViewCreated(view, savedInstanceState)
         initializeAdapter()
 
+        adapter.stateRestorationPolicy =
+            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)

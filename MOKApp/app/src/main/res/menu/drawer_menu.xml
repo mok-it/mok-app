@@ -13,11 +13,15 @@
             android:icon="@drawable/paw_solid"
             android:title="@string/my_badges" />
         <item
+            android:id="@+id/rewardsFragment"
+            android:icon="@drawable/ic_star"
+            android:title="@string/rewards" />
+        <item
             android:id="@+id/adminFragment"
             android:icon="@drawable/ic_admin"
+            android:title="@string/admin"
             android:visible="false"
-            tools:visible="true"
-            android:title="@string/admin" />
+            tools:visible="true" />
     </group>
 
     <item android:title="@string/misc">

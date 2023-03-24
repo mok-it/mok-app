@@ -1,11 +1,40 @@
 package mok.it.app.mokapp.model
 
-import com.google.firebase.firestore.DocumentId
+import mok.it.app.mokapp.utility.Utility.unaccent
 
-class Category(
+enum class Category {
+    UNIVERZALIS {
+        override fun toString(): String {
+            return "Univerzális"
+        }
+    },
+    FELADATSOR {
+        override fun toString(): String {
+            return "Feladatsor"
+        }
+    },
+    GRAFIKA {
+        override fun toString(): String {
+            return "Grafika"
+        }
+    },
+    KREATIV {
+        override fun toString(): String {
+            return "Kreatív"
+        }
+    },
+    IT {
+        override fun toString(): String {
+            return "IT"
+        }
+    },
+    PEDAGOGIA {
+        override fun toString(): String {
+            return "Pedagógia"
+        }
+    };
 
-    @DocumentId
-    val id: String = "",
-
-    val name: String = "",
-)
+    companion object {
+        fun String.toCategory() = Category.valueOf(this.unaccent().uppercase())
+    }
+}

@@ -5,6 +5,8 @@
     <color name="light_gray">#E1E1E1</color>
     <color name="lighter_gray">#F5F5F5</color>
     <color name="darker_gray">#AAAAAA</color>
+    <color name="background_black">#121212</color>
+    <color name="card_grey">#282828</color>
 
     <color name="purple_200">#BB86FC</color>
     <color name="purple_500">#6200EE</color>

@@ -148,6 +148,7 @@ exports.createUser = functions.auth.user().onCreate((user) => {
       joinedBadges: [],
       collectedBadges: [],
       categories: ["Univerzális"],
+      phoneNumber: "",
       // ide minden más attribute jöhet majd
     });
   return null;

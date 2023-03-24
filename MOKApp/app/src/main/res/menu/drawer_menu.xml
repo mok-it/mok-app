@@ -6,36 +6,22 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/profileFragment"
-            android:icon="@drawable/ic_profile"
+            android:icon="@drawable/baseline_person_24"
             android:title="@string/profile" />
         <item
             android:id="@+id/myBadgesFragment"
             android:icon="@drawable/paw_solid"
             android:title="@string/my_badges" />
         <item
-            android:id="@+id/it"
-            android:icon="@drawable/ic_smiley"
-            android:title="@string/it_mcs" />
-        <item
-            android:id="@+id/ped"
-            android:icon="@drawable/ic_smiley"
-            android:title="@string/ped_mcs" />
-        <item
-            android:id="@+id/fel"
-            android:icon="@drawable/ic_smiley"
-            android:title="@string/feladatsor_mcs" />
-        <item
-            android:id="@+id/kre"
-            android:icon="@drawable/ic_smiley"
-            android:title="@string/kreativ_mcs" />
-        <item
-            android:id="@+id/gra"
-            android:icon="@drawable/ic_smiley"
-            android:title="@string/grafika_mcs" />
+            android:id="@+id/rewardsFragment"
+            android:icon="@drawable/ic_star"
+            android:title="@string/rewards" />
         <item
             android:id="@+id/adminFragment"
             android:icon="@drawable/ic_admin"
-            android:title="@string/admin" />
+            android:title="@string/admin"
+            android:visible="false"
+            tools:visible="true" />
     </group>
 
     <item android:title="@string/misc">

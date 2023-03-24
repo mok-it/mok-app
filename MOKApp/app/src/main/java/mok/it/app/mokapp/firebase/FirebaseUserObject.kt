@@ -9,7 +9,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.User
 
 
@@ -17,11 +16,6 @@ object FirebaseUserObject {
     lateinit var userModel: User
     var currentUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     private const val TAG = "FirebaseUserObject"
-
-    fun logout() {
-        FirebaseAuth.getInstance().signOut()
-        currentUser = null
-    }
 
     /**
      * Refreshes the currentUser and userModel objects and invokes the given method on success, if there's one
@@ -40,7 +34,7 @@ object FirebaseUserObject {
         onSuccessFunction: (() -> Unit)? = null,
         numberOfConsecutiveCalls: Int
     ) {
-        val numberOfMaxTries = 5
+        val numberOfMaxTries = 100
         Firebase.firestore.collection("users")
             .document(
                 FirebaseAuth.getInstance().currentUser?.uid
@@ -52,6 +46,7 @@ object FirebaseUserObject {
                 Log.d(TAG, "refreshCurrentUser(): got document ${userToBe.toString()}")
                 if (userToBe != null) {
                     userModel = userToBe
+                    userModel.generateCategories()
                     currentUser = FirebaseAuth.getInstance().currentUser
                         ?: throw Exception("FirebaseAuth user is null")
                     Log.d(TAG, "refreshCurrentUser(): user refreshed")
@@ -60,8 +55,7 @@ object FirebaseUserObject {
                     Handler(Looper.getMainLooper()).postDelayed({
                         Toast.makeText(
                             context,
-                            "Nem sikerült betölteni a felhasználó adatait, " +
-                                    "újrapróbálkozás...($numberOfConsecutiveCalls. próba)",
+                            "Kis türelmet...",
                             Toast.LENGTH_SHORT
                         ).show()
                         refreshCurrentUserAndUserModelRecursive(
@@ -70,12 +64,6 @@ object FirebaseUserObject {
                             numberOfConsecutiveCalls + 1
                         )
                     }, 1000)
-                } else {
-                    Toast.makeText(
-                        context,
-                        context.getString(R.string.user_data_load_failed),
-                        Toast.LENGTH_SHORT
-                    ).show()
                 }
             }
     }

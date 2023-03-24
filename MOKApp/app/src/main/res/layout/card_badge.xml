@@ -5,14 +5,14 @@
     android:id="@+id/project_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_margin="8dp"
     android:layout_marginBottom="8dp"
     android:clickable="true"
+    android:focusable="true"
     android:foreground="?selectableItemBackground"
     card_view:cardCornerRadius="8dp"
-    card_view:contentPadding="2dp"
-    android:layout_margin="8dp"
     card_view:cardElevation="4dp"
-    android:focusable="true">
+    card_view:contentPadding="2dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -22,6 +22,7 @@
             android:id="@+id/projectIcon"
             android:layout_width="80dp"
             android:layout_height="80dp"
+            android:contentDescription="@string/icon_of_badge"
             android:scaleType="fitCenter"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent"
@@ -53,14 +54,14 @@
             <TextView
                 android:id="@+id/projectName"
                 android:layout_width="0dp"
-                android:textStyle="bold"
-                android:textSize="16sp"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="2dp"
                 android:layout_marginEnd="8dp"
                 android:fontFamily="sans-serif"
                 android:text="@string/badge_name"
+                android:textSize="16sp"
+                android:textStyle="bold"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintStart_toStartOf="parent"
                 card_view:layout_constraintTop_toTopOf="parent" />
@@ -69,11 +70,11 @@
                 android:id="@+id/mandatoryTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:background="@color/red_dark"
+                android:padding="2dp"
                 android:text="@string/mandatory"
                 android:textColor="@color/light_gray"
                 android:textStyle="bold"
-                android:background="@color/red_dark"
-                android:padding="2dp"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintTop_toTopOf="parent" />
 

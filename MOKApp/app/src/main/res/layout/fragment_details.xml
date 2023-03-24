@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:orientation="vertical"
+
             android:padding="5pt">
 
             <LinearLayout
@@ -31,7 +32,6 @@
                     android:layout_height="100dp"
                     android:layout_gravity="center"
                     android:contentDescription="@string/badge_icon"
-                    android:src="@android:drawable/ic_menu_myplaces"
                     tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck"
                     tools:src="@android:drawable/ic_menu_myplaces" />
 
@@ -47,9 +47,9 @@
                         android:layout_weight="3"
                         android:gravity="center"
                         android:minHeight="10pt"
-                        android:text="@string/badge_name"
                         android:textSize="24sp"
-                        android:textStyle="bold" />
+                        tools:text="@string/badge_name"
+                        tools:textStyle="bold" />
 
                     <TextView
                         android:id="@+id/categoryName"
@@ -58,13 +58,23 @@
                         android:layout_weight="2"
                         android:gravity="center"
                         android:minHeight="10pt"
-                        android:text="@string/category"
-                        android:textSize="14sp" />
+                        android:textSize="14sp"
+                        tools:text="@string/category" />
+
+                    <TextView
+                        android:id="@+id/valueTextView"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:minHeight="10pt"
+                        android:textSize="14sp"
+                        tools:text="@string/value" />
                 </LinearLayout>
             </LinearLayout>
 
             <androidx.constraintlayout.widget.ConstraintLayout
-                android:id="@+id/linearLayout3"
+                android:id="@+id/constraintLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_weight="3">
@@ -74,23 +84,23 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/badge_creator"
                     android:textAlignment="center"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/badgeDeadline"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toTopOf="parent" />
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="@string/badge_creator" />
 
                 <TextView
                     android:id="@+id/badgeDeadline"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="@string/deadline"
                     android:textAlignment="center"
                     app:layout_constraintEnd_toStartOf="@+id/editButton"
                     app:layout_constraintStart_toEndOf="@+id/badgeCreator"
-                    app:layout_constraintTop_toTopOf="@+id/badgeCreator" />
+                    app:layout_constraintTop_toTopOf="@+id/badgeCreator"
+                    tools:text="@string/deadline" />
 
                 <ImageView
                     android:id="@+id/editButton"
@@ -102,9 +112,15 @@
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/badgeDeadline"
                     app:layout_constraintTop_toTopOf="@+id/badgeCreator"
-                    app:tint="@color/blue" />
+                    app:tint="@color/blue"
+                    tools:visibility="visible" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
 
         <View
             android:layout_width="match_parent"
@@ -136,7 +152,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="@string/description" />
+                    tools:text="@string/description" />
 
                 <androidx.constraintlayout.widget.ConstraintLayout
                     android:id="@+id/members"
@@ -217,6 +233,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="2"
+
             android:orientation="vertical">
 
             <TextView

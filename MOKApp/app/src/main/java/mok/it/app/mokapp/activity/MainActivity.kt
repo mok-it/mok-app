@@ -1,32 +1,36 @@
 package mok.it.app.mokapp.activity
 
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
+import androidx.navigation.ui.setupActionBarWithNavController
 import androidx.navigation.ui.setupWithNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header.*
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
-import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
-import mok.it.app.mokapp.fragments.AllBadgesListFragmentDirections
 
 
 class MainActivity : AppCompatActivity() {
+    companion object {
+        const val TAG = "MainActivity"
+    }
 
     val firestore = Firebase.firestore
     private lateinit var navController: NavController
@@ -41,12 +45,21 @@ class MainActivity : AppCompatActivity() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
-        val appBarConfiguration = AppBarConfiguration(
-            navController.graph, drawer_layout
-        )
-        findViewById<Toolbar>(R.id.toolbar)
-            .setupWithNavController(navController, appBarConfiguration)
+        setSupportActionBar(findViewById(R.id.toolbar))
+        val appBarConfiguration = AppBarConfiguration(navController.graph, drawer_layout)
+        setupActionBarWithNavController(navController, appBarConfiguration)
+        findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
 
+        //Ha a listfragment-re navigálunk, töltődjön újra a fejléc (regisztráció után ez tölti be)
+        navController.addOnDestinationChangedListener { _, destination, _ ->
+            if (destination.id == R.id.allBadgesListFragment) {
+                if (currentUser != null) refreshCurrentUserAndUserModel(this) {
+                    loadApp()
+                }
+            } else {
+
+            }
+        }
         removeBackArrowFromLoginFragment(navController)
         setNavigationItemSelected(navController)
     }
@@ -55,6 +68,7 @@ class MainActivity : AppCompatActivity() {
         nav_view.setNavigationItemSelectedListener {
             NavigationUI.onNavDestinationSelected(it, navController)
             if (it.title in mcsArray) {
+                //TODO
                 //navigateToBadgesByMCS(it.title.toString())
             } else {
                 when (it.itemId) {
@@ -76,6 +90,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
             drawer_layout.closeDrawer(GravityCompat.START)
@@ -86,7 +101,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (FirebaseAuth.getInstance().currentUser != null) refreshCurrentUserAndUserModel(this) {
+        if (currentUser != null) refreshCurrentUserAndUserModel(this) {
             loadApp()
         }
     }
@@ -109,23 +124,11 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setMenuVisibility() {
-        val menu = nav_view.menu
-
-        //MCS Kategóriák láthatósága
-        val it = menu.findItem(R.id.it)
-        val ped = menu.findItem(R.id.ped)
-        val fel = menu.findItem(R.id.fel)
-        val kre = menu.findItem(R.id.kre)
-        val gra = menu.findItem(R.id.gra)
-        it?.isVisible = userModel.categories.contains("IT")
-        ped?.isVisible = userModel.categories.contains("Pedagógia")
-        fel?.isVisible = userModel.categories.contains("Feladatsor")
-        kre?.isVisible = userModel.categories.contains("Kreatív")
-        gra?.isVisible = userModel.categories.contains("Grafika")
-
-        //Admin láthatósága
-        val adm = menu.findItem(R.id.adminFragment)
-        adm?.isVisible = userModel.admin
+        //TODO admin is empty, we shouldn't show it yet
+        //TODO MCS categories are deprecated, the filter menu will include them
+//        val menu = nav_view.menu
+//        val adm = menu.findItem(R.id.adminFragment)
+//        adm?.isVisible = userModel.admin
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -139,12 +142,47 @@ class MainActivity : AppCompatActivity() {
 ////        findNavController().navigate(action)
 //    }
 
-    private fun logout() {
-        FirebaseUserObject.logout()
-        navController.navigate(AllBadgesListFragmentDirections.actionAllBadgesListFragmentToLoginFragment())
+    // Declare the launcher at the top of your Activity/Fragment:
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (!isGranted) {
+            // TODO: Inform user that that your app will not show notifications.
+        }
     }
 
-    //TODO ha változik a profile pic, az új képet elmenteni
+//    private fun askNotificationPermission() {
+//        // This is only necessary for API level >= 33 (TIRAMISU)
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS) ==
+//                PackageManager.PERMISSION_GRANTED
+//            ) {
+//                // FCM SDK (and your app) can post notifications.
+//            } else if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+//                // TODO: display an educational UI explaining to the user the features that will be enabled
+//                //       by them granting the POST_NOTIFICATION permission. This UI should provide the user
+//                //       "OK" and "No thanks" buttons. If the user selects "OK," directly request the permission.
+//                //       If the user selects "No thanks," allow the user to continue without notifications.
+//            } else {
+//                // Directly ask for the permission
+//                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+//            }
+//        }
+//    }
+
+
+    private fun logout() {
+        currentUser = null
+        FirebaseAuth.getInstance().signOut()
+        GoogleSignIn.getClient(
+            this,
+            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
+        )
+            .signOut()
+            .addOnSuccessListener { navController.navigate(R.id.action_global_loginFragment) }
+    }
+
+//TODO ha változik a profile pic, az új képet elmenteni
 //    private fun updateProfilePic() {
 ////        val data = hashMapOf(
 ////            "pictureURL" to user.photoUrl,

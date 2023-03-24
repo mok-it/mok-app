@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true">
@@ -32,7 +33,7 @@
                 android:contentDescription="@string/close"
                 android:src="@android:drawable/ic_menu_close_clear_cancel"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/textViewTitle"
+                app:layout_constraintEnd_toEndOf="@+id/textViewTitle"
                 app:layout_constraintTop_toTopOf="parent"
                 app:tint="@color/red_dark" />
 
@@ -100,6 +101,26 @@
                         android:maxLines="4"
                         android:singleLine="false"
                         android:textSize="14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@+id/badgeDescription">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/badge_mcs"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:cursorVisible="false"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:hint="@string/choose_mcs"
+                        android:inputType="none" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <androidx.cardview.widget.CardView
@@ -184,7 +205,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
-                    <Button
+                    <com.google.android.material.button.MaterialButton
                         android:id="@+id/create_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"

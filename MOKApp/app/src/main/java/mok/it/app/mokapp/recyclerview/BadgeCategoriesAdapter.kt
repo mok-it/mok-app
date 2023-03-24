@@ -14,7 +14,8 @@ import mok.it.app.mokapp.model.Project
 class BadgeCategoriesAdapter(
     private val categoryNames: List<String>,
     private val collectedBadges: List<List<Project>>,
-    private val listener: BadgesAdapter.BadgeClickedListener) :
+    private val listener: BadgesAdapter.BadgeClickedListener
+) :
 
     RecyclerView.Adapter<BadgeCategoriesAdapter.ViewHolder>() {
 
@@ -31,17 +32,17 @@ class BadgeCategoriesAdapter(
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val catNameTv: TextView = viewHolder.itemView.findViewById(R.id.badge_category_name)
         val catEmptyTv: TextView = viewHolder.itemView.findViewById(R.id.no_collected_badge)
-        val collectedBadgesRV: RecyclerView = viewHolder.itemView.findViewById(R.id.collected_badges)
+        val collectedBadgesRV: RecyclerView =
+            viewHolder.itemView.findViewById(R.id.collected_badges)
 
-        catNameTv.setText(categoryNames[position])
+        catNameTv.text = categoryNames[position]
 
         if (collectedBadges[position].isEmpty()) {
-            catEmptyTv.visibility = View.VISIBLE;
-            collectedBadgesRV.visibility = View.GONE;
-        }
-        else {
-            catEmptyTv.visibility = View.GONE;
-            collectedBadgesRV.visibility = View.VISIBLE;
+            catEmptyTv.visibility = View.VISIBLE
+            collectedBadgesRV.visibility = View.GONE
+        } else {
+            catEmptyTv.visibility = View.GONE
+            collectedBadgesRV.visibility = View.VISIBLE
             collectedBadgesRV.adapter = BadgesAdapter(collectedBadges[position], listener)
             collectedBadgesRV.layoutManager =
                 GridLayoutManager(this.context, 2, LinearLayoutManager.VERTICAL, false)

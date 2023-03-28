@@ -1,4 +1,4 @@
-# MÖK App - terjesztési infók
+# MÖK App - terjesztési  & karbantartási infók
 
 ## Disztributálás
 
@@ -17,6 +17,31 @@ Az AppCircle jelenleg úgy van bekonfigurálva, hogy minden push (vagy PR) a mas
 3) [Play Console-ban](https://play.google.com/console/developers) a **Zárt tesztelés - Alpha**  nevű csatornára mész, megnyomod a *Csatorna kezelése* gombot, majd az *Új kiadás létrehozása* gombot. 
 4) A *Hozzáadás könyvtárból* gomb használatával kiválasztod az imént feltöltött App bundle-t, majd a *Hozzáadás a kiadáshoz* gombra kattintasz. Néha itt nem látszik a legfrissebb App bundle, ez fogalmam sincs, mitől van. *Következő* gomb, majd - miután elolvastad az esetleges warningokat - rákattintasz a *Közzététel megkezdése a következő csatornán: [csatornanév]* gombra. 
 5) Innentől már csak meg kell várni, hogy a Google ellenőrizze az új verziót, ez általában max fél óra, de akár 1-2 nap is lehet. Ha ez lefutott, akkor az alkalmazás automatikusan elérhetővé válik és mindenki tud frissíteni rá, aki az adott csatornát használja.
+
+### Karbantartás
+
+Jelenleg egy dolog van, amit néha meg kell csinálni "kézzel"; ez pedig a telefonszámok felvitele az adatbázisba. A legfrissebb adatok a telefonszámokról a honlapon találhatóak (ezt tekintjük SSoT-nak), mivel azonban ez mindig kézzel kerül frissítésre, nem pedig egy adatbázisból, ezért jobb ötlet híján a néz ki a folyamat: 
+
+1) Lescrapeljük a honlapról a telószámokat
+2) Feltöltjük őket Firebase-re a megfelelő személy dokumentumába
+
+Mivel egy felhasználónak akkor jön létre dokumentum, amikor először regisztrál az appba, ezért a következő folyamatot mindig meg kell ismételni, amikor (releváns mennyiségű) új tag regisztrál az appba.
+A scrapelés egy Octoparse nevű program segítségével megy. 
+
+A folyamat részletesen:
+
+1) Töltsük le az [Octoparse](https://www.octoparse.com/download/windows)-t
+2) Octoparse-ban a Dashboard fület megnyitva drag-and-dropoljuk a git repóban található *phonenumbers/Mök-tagok telefonszámai.otd* nevű fájlt
+3) A workflow-on jobb oldali három pötty -> settings -> more settings -> edit workflow
+4) Ezt követően a jobb oldali panelen a felső *Enter text* dobozra kattintva írd át a lenti *Textbox 1* mező értékét a **medvematek.hu-s felhasználónevedre**. A szerkesztés után kattints a jobb lenti *Apply* gombra. A bejelentkezési adatok megadása azért kell, mert a tagok adatai nem elérhetőek nyilvánosan a honlapon, csak login után. Nyugi, nem adjuk el orosz hackereknek az adataidat. 
+
+![](images/octoparse1.png)
+5) Ismételd meg ugyanezt az eggyel lentebbi *Enter text1* feliratú dobozzal is. Ide a medvematek.hu-s jelszavadat írd. 
+6) Ha ez kész, a jobb fenti *Run* gombra, majd felugró ablak bal oldali (azaz *Run on your device*-nél levő) *Standard mode* gombra kattints. Ekkor kezdődik el a scrapelés.   
+7) Ha a scrapelés elkészültével felugró popup azt írja, hogy "no data has been extracted", akkor valami félrement, nézd meg, hogy jól írtad-e be az adataidat és elmentetted-e őket. Ha megváltozott az oldal struktúrája azóta, az is gondot jelenthet. 
+
+
+Per pill nekem se működik ez valamiért, amúgy is google-ből kéne a telószámokat venni, majd fixáljuk xd
 
 ### További potenciális terjesztési módszerek
 

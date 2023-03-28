@@ -94,11 +94,13 @@ exports.updatePointsOnBadgeCollectionChange = functions.firestore
       const projectValue = projectDoc.data().value;
       points += projectValue;
     }
+    //log points
+    functions.logger.log("points: " + points + " points");
 
     // Subtract the sum of requested rewards from the user's points
 
     const rewardIds = newUser.requestedRewards;
-    if (rewardIds != undefined)
+    if (rewardIds != undefined) {
       for (const rewardId of rewardIds) {
         const rewardDoc = await admin
           .firestore()
@@ -108,6 +110,10 @@ exports.updatePointsOnBadgeCollectionChange = functions.firestore
         const rewardValue = rewardDoc.data().price;
         points -= rewardValue;
       }
+      functions.logger.log(
+        "price of all requested stuff: " + points + " points"
+      );
+    }
 
     // Update the user's points field
     await admin.firestore().collection("users").doc(userId).update({ points });

@@ -65,7 +65,7 @@ class RewardsFragment : BaseFireFragment(), RewardAcceptDialogFragment.RewardAcc
     private fun initializeAdapter() {
         val options: FirestoreRecyclerOptions<Reward?> = FirestoreRecyclerOptions.Builder<Reward>()
             .setQuery(
-                Firebase.firestore.collection(Collections.rewardsPath)
+                Firebase.firestore.collection(Collections.rewards)
                     .orderBy("price", Query.Direction.ASCENDING),
                 Reward::class.java
             )
@@ -135,7 +135,7 @@ class RewardsFragment : BaseFireFragment(), RewardAcceptDialogFragment.RewardAcc
             "created" to Date()
         )
         Firebase.firestore.runTransaction {
-            Firebase.firestore.collection(Collections.rewardrequestsPath).add(request)
+            Firebase.firestore.collection(Collections.rewardrequests).add(request)
                 .addOnSuccessListener { documentRef ->
                     Log.d("Reward", "DocumentSnapshot written with ID: ${documentRef.id}")
                 }
@@ -144,7 +144,7 @@ class RewardsFragment : BaseFireFragment(), RewardAcceptDialogFragment.RewardAcc
                 }
 
             val userRef =
-                Firebase.firestore.collection(Collections.usersPath).document(userModel.documentId)
+                Firebase.firestore.collection(Collections.users).document(userModel.documentId)
             userRef.update(
                 "requestedRewards", FieldValue.arrayUnion(reward.documentId),
                 "points", FieldValue.increment(-1 * reward.price.toDouble())

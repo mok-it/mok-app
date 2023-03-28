@@ -1,11 +1,11 @@
 package mok.it.app.mokapp.model
 
 object Collections {
-    val categoriesPath = "/categories"
-    val linksPath = "/links"
-    val projectsPath = "/projects"
-    val rewardrequestsPath = "/rewardrequests"
-    val rewardsPath = "/rewards"
-    val usersPath = "/users"
-    val commentsRelativePath = "comments"
+    const val categories = "/categories"
+    const val projects = "/projects"
+    const val links = "/links"
+    const val rewardrequests = "/rewardrequests"
+    const val rewards = "/rewards"
+    const val users = "/users"
+    const val commentsRelativePath = "comments"
 }

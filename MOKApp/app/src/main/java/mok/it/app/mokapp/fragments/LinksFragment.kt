@@ -43,7 +43,7 @@ class LinksFragment : BaseFireFragment() {
 
     private fun getAdapter(): FirestoreRecyclerAdapter<mok.it.app.mokapp.model.Link, LinkViewHolder> {
         val query =
-            Firebase.firestore.collection(Collections.linksPath)
+            Firebase.firestore.collection(Collections.links)
                 .orderBy("title", Query.Direction.ASCENDING)
         val options =
             FirestoreRecyclerOptions.Builder<mok.it.app.mokapp.model.Link>()

@@ -28,7 +28,7 @@ class DetailsFragmentViewModel : ViewModel() {
     }
 
     private fun getMemberIds(badgeId: String) {
-        val docRef = Firebase.firestore.collection(Collections.projectsPath).document(badgeId)
+        val docRef = Firebase.firestore.collection(Collections.projects).document(badgeId)
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.data != null) {
@@ -44,7 +44,7 @@ class DetailsFragmentViewModel : ViewModel() {
 
     fun getMembers(members: List<String>?) {
         members?.forEach {
-            val docRef = Firebase.firestore.collection(Collections.usersPath).document(it)
+            val docRef = Firebase.firestore.collection(Collections.users).document(it)
             docRef.get()
                 .addOnSuccessListener { document ->
                     if (document != null) {

@@ -25,7 +25,6 @@ import kotlinx.android.synthetic.main.nav_header.*
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
-import mok.it.app.mokapp.model.Collections
 
 
 class MainActivity : AppCompatActivity() {
@@ -40,10 +39,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         setupNavigation()
-
-        Firebase.firestore.collection(Collections.users)
-
-
     }
 
     private fun setupNavigation() {
@@ -61,8 +56,6 @@ class MainActivity : AppCompatActivity() {
                 if (currentUser != null) refreshCurrentUserAndUserModel(this) {
                     loadApp()
                 }
-            } else {
-
             }
         }
         removeBackArrowFromLoginFragment(navController)

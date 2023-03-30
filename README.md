@@ -1,61 +1,59 @@
-# MÖK App
+# MÖK App - terjesztési  & karbantartási infók
 
-## Add your files
+## Disztributálás
 
-- [ ] [Create](https://gitlab.com/-/experiment/new_project_readme_content:5f6da9acca389d9fdb8844b2494e0e75?https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://gitlab.com/-/experiment/new_project_readme_content:5f6da9acca389d9fdb8844b2494e0e75?https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://gitlab.com/-/experiment/new_project_readme_content:5f6da9acca389d9fdb8844b2494e0e75?https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+Jelenleg az app egyetlen terjesztési platformja a Google Play, ahol egy **Zárt tesztelés - Alpha** nevű zárt tesztelési csatornán tesszük közzé mindig a legfrissebb verziót. A csatornához két Google-csoport tagjai férhetnek hozzá; a mökösök és a premökösök. 
 
-```
-cd existing_repo
-git remote add origin https://gitlab.com/m3905/moek-app.git
-git branch -M main
-git push -uf origin main
-```
- 
-## Integrate with your tools
+**Fontos: attól, hogy valaki tagja valamelyik csoportnak, elvileg még nem fogja automatikusan látni az appot Playen, ehhez a csatorna *Tesztelők* fülén alul található linkre kell nyomnia.** Van egy *Mök app útmutató* nevű [pdf](https://drive.google.com/file/d/1eMaKQr0us9mFG9qGp9zOppQC-xfoefIE/view) (és [Google doksi](https://docs.google.com/document/d/1oqiUdERlxIFXEY-pgikNSeupS-pza2KINxd7jSDis0A/edit)) a Drive-on, ebben található a telepítés mikéntje és a link is. Ha egy fiók tulajdonosa rákattintott egyszer a linkre (és telepítette is az appot?), onnantól neki meg fog jelenni a Playen az app, innentől nem szükséges neki a link.
 
-- [ ] [Set up project integrations](https://gitlab.com/-/experiment/new_project_readme_content:5f6da9acca389d9fdb8844b2494e0e75?https://docs.gitlab.com/ee/user/project/integrations/)
+## Új verzió kiadása
 
-## Collaborate with your team
+Az AppCircle jelenleg úgy van bekonfigurálva, hogy minden push (vagy PR) a master branchre automatikusan lebuildeli az appot és feltölti Google Play Console-ba. Ez még nem válik automatikusan elérhetővé, mint frissítés, ehhez a következő lépéseket kell követni:
 
-- [ ] [Invite team members and collaborators](https://gitlab.com/-/experiment/new_project_readme_content:5f6da9acca389d9fdb8844b2494e0e75?https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://gitlab.com/-/experiment/new_project_readme_content:5f6da9acca389d9fdb8844b2494e0e75?https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://gitlab.com/-/experiment/new_project_readme_content:5f6da9acca389d9fdb8844b2494e0e75?https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Automatically merge when pipeline succeeds](https://gitlab.com/-/experiment/new_project_readme_content:5f6da9acca389d9fdb8844b2494e0e75?https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+*Fontos megjegyzés: a folyamat ezen része mindig egy kicsit káoszos és ráadásul pont most változott, szóval nincs rá garancia, hogy az alábbiak pontosan működnek.*
 
-## Test and Deploy
+1) Elkészíted a kiadni kívánt verziót a **develop** branchre, megbizonyosodsz róla, hogy rendesen működik, majd a developot egy PR-ral a **master**be mergeled.
+2) Az AppCircle automatikusan lebuildeli az appot és feltölti a Google Play Console-ba. Ha nem sikerült buildelnie, akkor nem jó az app jelenlegi állapota. Kezdd újra az egészet.
+3) [Play Console-ban](https://play.google.com/console/developers) a **Zárt tesztelés - Alpha**  nevű csatornára mész, megnyomod a *Csatorna kezelése* gombot, majd az *Új kiadás létrehozása* gombot. 
+4) A *Hozzáadás könyvtárból* gomb használatával kiválasztod az imént feltöltött App bundle-t, majd a *Hozzáadás a kiadáshoz* gombra kattintasz. Néha itt nem látszik a legfrissebb App bundle, ez fogalmam sincs, mitől van. *Következő* gomb, majd - miután elolvastad az esetleges warningokat - rákattintasz a *Közzététel megkezdése a következő csatornán: [csatornanév]* gombra. 
+5) Innentől már csak meg kell várni, hogy a Google ellenőrizze az új verziót, ez általában max fél óra, de akár 1-2 nap is lehet. Ha ez lefutott, akkor az alkalmazás automatikusan elérhetővé válik és mindenki tud frissíteni rá, aki az adott csatornát használja.
 
-Use the built-in continuous integration in GitLab.
+### Karbantartás
 
-- [ ] [Get started with GitLab CI/CD](https://gitlab.com/-/experiment/new_project_readme_content:5f6da9acca389d9fdb8844b2494e0e75?https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://gitlab.com/-/experiment/new_project_readme_content:5f6da9acca389d9fdb8844b2494e0e75?https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://gitlab.com/-/experiment/new_project_readme_content:5f6da9acca389d9fdb8844b2494e0e75?https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://gitlab.com/-/experiment/new_project_readme_content:5f6da9acca389d9fdb8844b2494e0e75?https://docs.gitlab.com/ee/user/clusters/agent/)
+Jelenleg egy dolog van, amit néha meg kell csinálni "kézzel"; ez pedig a telefonszámok felvitele az adatbázisba. A legfrissebb adatok a telefonszámokról a honlapon találhatóak (ezt tekintjük SSoT-nak), mivel azonban ez mindig kézzel kerül frissítésre, nem pedig egy adatbázisból, ezért jobb ötlet híján a néz ki a folyamat: 
 
-***
+1) Lescrapeljük a honlapról a telószámokat
+2) Feltöltjük őket Firebase-re a megfelelő személy dokumentumába
 
-# Editing this README
+Mivel egy felhasználónak akkor jön létre dokumentum, amikor először regisztrál az appba, ezért a következő folyamatot mindig meg kell ismételni, amikor (releváns mennyiségű) új tag regisztrál az appba.
+A scrapelés egy Octoparse nevű program segítségével megy. 
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!).  Thank you to [makeareadme.com](https://gitlab.com/-/experiment/new_project_readme_content:5f6da9acca389d9fdb8844b2494e0e75?https://www.makeareadme.com/) for this template.
+A folyamat részletesen:
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+1) Töltsük le az [Octoparse](https://www.octoparse.com/download/windows)-t
+2) Octoparse-ban a Dashboard fület megnyitva drag-and-dropoljuk a git repóban található *phonenumbers/Mök-tagok telefonszámai.otd* nevű fájlt
+3) A workflow-on jobb oldali három pötty -> settings -> more settings -> edit workflow
+4) Ezt követően a jobb oldali panelen a felső *Enter text* dobozra kattintva írd át a lenti *Textbox 1* mező értékét a **medvematek.hu-s felhasználónevedre**. A szerkesztés után kattints a jobb lenti *Apply* gombra. A bejelentkezési adatok megadása azért kell, mert a tagok adatai nem elérhetőek nyilvánosan a honlapon, csak login után. Nyugi, nem adjuk el orosz hackereknek az adataidat. 
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+![](images/octoparse1.png)
+5) Ismételd meg ugyanezt az eggyel lentebbi *Enter text1* feliratú dobozzal is. Ide a medvematek.hu-s jelszavadat írd. 
+6) Ha ez kész, a jobb fenti *Run* gombra, majd felugró ablak bal oldali (azaz *Run on your device*-nél levő) *Standard mode* gombra kattints. Ekkor kezdődik el a scrapelés.   
+7) Ha a scrapelés elkészültével felugró popup azt írja, hogy "no data has been extracted", akkor valami félrement, nézd meg, hogy jól írtad-e be az adataidat és elmentetted-e őket. Ha megváltozott az oldal struktúrája azóta, az is gondot jelenthet. 
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+Per pill nekem se működik ez valamiért, amúgy is google-ből kéne a telószámokat venni, majd fixáljuk xd
 
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
+### További potenciális terjesztési módszerek
 
-## License
-For open source projects, say how it is licensed.
+A Firebase elvileg csak azokkal az alkalmazásokkal működik, amiknek megadtuk előzetesen az SHA fingerprintjét. A Google Playre feltöltött appoknak ez automatikusan generálódik, szóval egyszer kellett csak beírni a Firebase-be ezt, azóta működik a Playre feltöltött verziókkal. Viszont ha nem (csak) Playen terjesztjük az új verziót, akkor sanszos, hogy nem fog működni, hacsak be nem írjuk Firebase-be az új SHA fingerprintet. Ezért szerintem kicsit körülményes a lenti módszereket használni, plusz ha elfelejtődik a fingerprint beírása, akkor csodálkozni fogunk, hogy miért nem megy az app. Ha esetleg valakinek mégis szüksége lenne rá a továbbiakban, akkor hajrá.
 
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+Az [AppCircle](https://my.appcircle.io/dashboard) nevű CI/CD tool, amit használunk, lehetőséget nyújt két további terjesztési módszerre is; egyrészt el lehet küldeni automatikusan emailben előre meghatározott személyeknek a frissítést, másrészt létezik egy ún. [Enterprise App Store-ja](https://e49pp5xye21y.store.appcircle.io/) is, ahova fel lehet tölteni egy kattintással az appot. Ez esetleg azoknak lehet hasznos, akik emulátorról használják az appot.
 
+Ezen kívül a Firebase-nak is van egy *Firebase app distribution* nevű szolgáltatása, bár ez kifejezetten a tesztelőkhöz való eljuttatásra való szerintük.
+
+
+## Kérdések
+
+Ha valami nem pont úgy működik, ahogy az a fentiekben írva van, szerkeszd nyugodtan a doksit.
+
+Ha bármilyen kérés, kérdés felmerül benned, akkor keresd bármikor és bárhol engem (Olivér) vagy Zalánt. Ha hibát találtál, nyiss új issue-t, amit a megfelelő labellel ellátsz. :)

@@ -67,7 +67,7 @@ class PhoneBookFragment : BaseFireFragment() {
     private fun initializeAdapter() {
         val options: FirestoreRecyclerOptions<User?> = FirestoreRecyclerOptions.Builder<User>()
             .setQuery(
-                Firebase.firestore.collection(Collections.usersPath).orderBy("name"),
+                Firebase.firestore.collection(Collections.users).orderBy("name"),
                 User::class.java
             )
             .build()

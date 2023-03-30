@@ -51,7 +51,7 @@ class CommentsFragment : BaseFireFragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val query =
-            Firebase.firestore.collection(Collections.projectsPath).document(args.badgeId)
+            Firebase.firestore.collection(Collections.projects).document(args.badgeId)
                 .collection(commentsId)
                 .orderBy("time", Query.Direction.DESCENDING)
         val options =
@@ -80,7 +80,7 @@ class CommentsFragment : BaseFireFragment() {
                     tvTimestamp.text = formatter.format(model.time.toDate())
                     tvText.text = model.text
 
-                    Firebase.firestore.collection(Collections.usersPath).document(model.uid).get()
+                    Firebase.firestore.collection(Collections.users).document(model.uid).get()
                         .addOnSuccessListener { document ->
                             if (document != null) {
                                 val user: User? = document.toObject(User::class.java)
@@ -115,7 +115,7 @@ class CommentsFragment : BaseFireFragment() {
                     FirebaseAuth.getInstance().currentUser!!.uid
                 )
 
-                Firebase.firestore.collection(Collections.projectsPath).document(args.badgeId)
+                Firebase.firestore.collection(Collections.projects).document(args.badgeId)
                     .collection(commentsId)
                     .add(comment).addOnSuccessListener { documentReference ->
                         Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")

@@ -56,8 +56,6 @@ class MainActivity : AppCompatActivity() {
                 if (currentUser != null) refreshCurrentUserAndUserModel(this) {
                     loadApp()
                 }
-            } else {
-
             }
         }
         removeBackArrowFromLoginFragment(navController)

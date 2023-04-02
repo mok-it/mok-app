@@ -13,10 +13,8 @@ Az AppCircle jelenleg úgy van bekonfigurálva, hogy minden push (vagy PR) a mas
 *Fontos megjegyzés: a folyamat ezen része mindig egy kicsit káoszos és ráadásul pont most változott, szóval nincs rá garancia, hogy az alábbiak pontosan működnek.*
 
 1) Elkészíted a kiadni kívánt verziót a **develop** branchre, megbizonyosodsz róla, hogy rendesen működik, majd a developot egy PR-ral a **master**be mergeled.
-2) Az AppCircle automatikusan lebuildeli az appot és feltölti a Google Play Console-ba. Ha nem sikerült buildelnie, akkor nem jó az app jelenlegi állapota. Kezdd újra az egészet.
-3) [Play Console-ban](https://play.google.com/console/developers) a **Zárt tesztelés - Alpha**  nevű csatornára mész, megnyomod a *Csatorna kezelése* gombot, majd az *Új kiadás létrehozása* gombot. 
-4) A *Hozzáadás könyvtárból* gomb használatával kiválasztod az imént feltöltött App bundle-t, majd a *Hozzáadás a kiadáshoz* gombra kattintasz. Néha itt nem látszik a legfrissebb App bundle, ez fogalmam sincs, mitől van. *Következő* gomb, majd - miután elolvastad az esetleges warningokat - rákattintasz a *Közzététel megkezdése a következő csatornán: [csatornanév]* gombra. 
-5) Innentől már csak meg kell várni, hogy a Google ellenőrizze az új verziót, ez általában max fél óra, de akár 1-2 nap is lehet. Ha ez lefutott, akkor az alkalmazás automatikusan elérhetővé válik és mindenki tud frissíteni rá, aki az adott csatornát használja.
+2) Az AppCircle automatikusan lebuildeli az appot és feltölti a Google Play Console-ba. Ez akár 15-20 perc is lehet a sikeres buildtől számítva, légy türelmes. Ha nem sikerült buildelnie, akkor nem jó az app jelenlegi állapota. Kezdd újra az egészet.
+3) Innentől már csak meg kell várni, hogy a Google ellenőrizze az új verziót, ez általában max fél óra, de akár 1-2 nap is lehet. Ha ez lefutott, akkor az alkalmazás automatikusan elérhetővé válik és mindenki tud frissíteni rá, aki az adott csatornát használja.
 
 ### Karbantartás
 

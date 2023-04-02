@@ -252,7 +252,6 @@ class AllBadgesListFragment :
         var query =
             Firebase.firestore.collection(Collections.projects)
                 .orderBy("created", Query.Direction.DESCENDING)
-                .whereIn("category", userModel.categories)
         if (filter.mandatory) {
             query = query.whereEqualTo("mandatory", true)
         }

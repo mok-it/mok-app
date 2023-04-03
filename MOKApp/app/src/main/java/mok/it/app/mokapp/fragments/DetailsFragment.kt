@@ -238,10 +238,12 @@ class DetailsFragment : BaseFireFragment() {
 
     private fun join() {
         if (userModel.joinedBadges.contains(args.badgeId)) {
-            val userRef = Firebase.firestore.collection("users").document(currentUser!!.uid)
+            val userRef =
+                Firebase.firestore.collection(Collections.users).document(currentUser!!.uid)
             userRef.update("joinedBadges", FieldValue.arrayRemove(args.badgeId))
 
-            val badgeRef = Firebase.firestore.collection("projects").document(args.badgeId)
+            val badgeRef =
+                Firebase.firestore.collection(Collections.projects).document(args.badgeId)
             badgeRef.update("members", FieldValue.arrayRemove(currentUser?.uid))
                 .addOnCompleteListener {
                     Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT).show()
@@ -249,10 +251,12 @@ class DetailsFragment : BaseFireFragment() {
                     changeVisibilities()
                 }
         } else {
-            val userRef = Firebase.firestore.collection("users").document(currentUser!!.uid)
+            val userRef =
+                Firebase.firestore.collection(Collections.users).document(currentUser!!.uid)
             userRef.update("joinedBadges", FieldValue.arrayUnion(args.badgeId))
 
-            val badgeRef = Firebase.firestore.collection("projects").document(args.badgeId)
+            val badgeRef =
+                Firebase.firestore.collection(Collections.projects).document(args.badgeId)
             badgeRef.update("members", FieldValue.arrayUnion(currentUser?.uid))
                 .addOnCompleteListener {
                     Toast.makeText(context, "Sikeresen csatlakoztál!", Toast.LENGTH_SHORT).show()

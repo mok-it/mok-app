@@ -62,7 +62,7 @@ class DetailsFragmentViewModel : ViewModel() {
     fun completed(userId: String, badge: Project) {
         Log.d(DetailsFragment.TAG, "badge completed with id ${badge.name}")
 
-        val userRef = Firebase.firestore.collection("users").document(userId)
+        val userRef = Firebase.firestore.collection(Collections.users).document(userId)
         userRef.update("joinedBadges", FieldValue.arrayRemove(badge.id))
             .addOnSuccessListener {
                 Log.d(DetailsFragment.TAG, badge.name + " removed from " + userId)
@@ -70,7 +70,7 @@ class DetailsFragmentViewModel : ViewModel() {
 
         userRef.update("collectedBadges", FieldValue.arrayUnion(badge.id))
 
-        Firebase.firestore.collection("projects").document(badge.id)
+        Firebase.firestore.collection(Collections.projects).document(badge.id)
             .update("members", FieldValue.arrayRemove(userId))
             .addOnCompleteListener {
                 getMemberIds(badge.id)

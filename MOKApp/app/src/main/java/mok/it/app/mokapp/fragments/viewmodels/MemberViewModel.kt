@@ -9,6 +9,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import mok.it.app.mokapp.model.Category
+import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 
 class MemberViewModel : ViewModel() {
@@ -17,7 +18,7 @@ class MemberViewModel : ViewModel() {
 
         user.collectedBadges.chunked(10).let {
             it.forEach { batch ->
-                Firebase.firestore.collection("projects")
+                Firebase.firestore.collection(Collections.projects)
                     .whereEqualTo("category", category.toString())
                     .whereIn(FieldPath.documentId(), batch)
                     .get()

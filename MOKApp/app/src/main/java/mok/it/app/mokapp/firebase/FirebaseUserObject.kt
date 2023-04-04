@@ -9,6 +9,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 
 
@@ -35,7 +36,7 @@ object FirebaseUserObject {
         numberOfConsecutiveCalls: Int
     ) {
         val numberOfMaxTries = 100
-        Firebase.firestore.collection("users")
+        Firebase.firestore.collection(Collections.users)
             .document(
                 FirebaseAuth.getInstance().currentUser?.uid
                     ?: throw Exception("FirebaseAuth user is null")

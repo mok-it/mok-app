@@ -7,6 +7,7 @@ import android.util.Log
 import android.util.Patterns
 import com.beust.klaxon.Klaxon
 import com.google.firebase.firestore.FirebaseFirestore
+import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.utility.Utility.unaccent
 
 
@@ -61,7 +62,7 @@ fun updatePhoneNumbers(activity: Activity) {
     personList = Klaxon().parseArray(activity.assets.open("phonenumbers.json"))!!
 
     val db = FirebaseFirestore.getInstance()
-    val usersRef = db.collection("users")
+    val usersRef = db.collection(Collections.users)
 
     usersRef.get().addOnCompleteListener { task ->
         if (task.isSuccessful) {

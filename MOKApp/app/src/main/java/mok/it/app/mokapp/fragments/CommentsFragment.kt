@@ -37,8 +37,6 @@ class CommentsFragment : BaseFireFragment() {
         const val TAG = "CommentsFragment"
     }
 
-    private val commentsId = "comments"
-
     val formatter: DateFormat = getDateTimeInstance()
     private val args: DetailsFragmentArgs by navArgs()
     override fun onCreateView(
@@ -52,7 +50,7 @@ class CommentsFragment : BaseFireFragment() {
 
         val query =
             Firebase.firestore.collection(Collections.projects).document(args.badgeId)
-                .collection(commentsId)
+                .collection(Collections.commentsRelativePath)
                 .orderBy("time", Query.Direction.DESCENDING)
         val options =
             FirestoreRecyclerOptions.Builder<Comment>()
@@ -109,14 +107,14 @@ class CommentsFragment : BaseFireFragment() {
         send_comment_fab.setOnClickListener {
             if (commentEditText.text.toString() != "") {
                 val comment = Comment(
-                    commentsId,
+                    Collections.commentsRelativePath,
                     commentEditText.text.toString(),
                     Timestamp.now(),
                     FirebaseAuth.getInstance().currentUser!!.uid
                 )
 
                 Firebase.firestore.collection(Collections.projects).document(args.badgeId)
-                    .collection(commentsId)
+                    .collection(Collections.commentsRelativePath)
                     .add(comment).addOnSuccessListener { documentReference ->
                         Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
                     }.addOnFailureListener { e ->

@@ -9,6 +9,7 @@ import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
+import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import java.util.*
 
@@ -27,7 +28,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             if (adresseeUserIdList.count() > 10)
                 throw IllegalArgumentException("too many users to send notification to (the limit is 10)")
 
-            Firebase.firestore.collection("users")
+            Firebase.firestore.collection(Collections.users)
                 .whereIn(FieldPath.documentId(), adresseeUserIdList)
                 .get().addOnSuccessListener { documents ->
                     val addresseeUserList = ArrayList<User>()
@@ -49,7 +50,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             return
             TODO("doesn't work correctly yet, npe")
             adresseeUserList.toHashSet().forEach { addresseeUser ->
-                Firebase.firestore.collection("users").document(addresseeUser.documentId)
+                Firebase.firestore.collection(Collections.users).document(addresseeUser.documentId)
                     .get().addOnSuccessListener { document ->
                         val fcmToken = document.get("FCMtokens") as List<*>
                         Log.d(TAG, "fcmtoken: ${fcmToken[0]}")
@@ -96,7 +97,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         Log.d(TAG, "Refreshed token: $token")
         currentUser?.apply {
-            Firebase.firestore.collection("users").document(this.uid)
+            Firebase.firestore.collection(Collections.users).document(this.uid)
                 //TODO make it a list, so that other devices with the same account are also able to receive notifications
                 .update("FCMtokens", token)
                 .addOnSuccessListener {

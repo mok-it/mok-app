@@ -18,7 +18,7 @@ class AboutFragment : Fragment() {
         return AboutPage(context)
             .setImage(R.drawable.ic_logo_foreground)
             .setDescription(getString(R.string.about_description))
-            .addItem(Element().setTitle("Verzió: ${BuildConfig.VERSION_NAME}"))
+            .addItem(Element().setTitle("Verzió: ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"))
             .addGroup("Elérhetőségeink")
             .addWebsite("https://www.mokegyesulet.hu/", "Egyesületi weboldal")
             .addPlayStore("mok.it.app.mokapp", "Play Store")

@@ -73,7 +73,7 @@
     <string name="no_phone_number">Nincs elérhető telefonszám</string>
     <string name="profile_pic">Profilkép</string>
     <string name="links">Linkek</string>
-    <string name="under_construction_badge_icon"><![CDATA[https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef]]></string>
+    <string name="under_construction_badge_icon"><![CDATA[https://firebasestorage.googleapis.com/v0/b/mokapp–51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d–5aa8-4f1b-a8b6-f36f24317fef]]></string>
     <string name="close">Bezárás</string>
     <string name="filters">Filterek</string>
     <string name="badge_icon">Mancs ikonja</string>
@@ -100,5 +100,8 @@
     <string name="mcs_name">Kreatív/Feladatsor/Pedagógia/stb</string>
     <string name="universal">Univerzális</string>
     <string name="choose_mcs">Munkacsoport</string>
+    <string name="about">Az appról</string>
+    <string name="about_description">A MÖK Egyesület hivatalos belsős alkalmazása. Készítette: az IT Munkacsoport</string>
+    <string name="bug_report">Hibabejelentés</string>
 
 </resources>

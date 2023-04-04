@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:contentDescription="@string/completed_description"
             android:visibility="invisible"
-            app:icon="@drawable/baseline_check_circle_24"
+            app:icon="@drawable/ic_check_circle"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:visibility="visible" />

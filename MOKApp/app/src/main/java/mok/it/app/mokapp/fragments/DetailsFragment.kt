@@ -88,7 +88,7 @@ class DetailsFragment : BaseFireFragment() {
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menu.add(R.id.share, R.id.share, 0, R.string.share)
-                    .setIcon(R.drawable.baseline_share_white_24)
+                    .setIcon(R.drawable.ic_share)
                     .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
             }
 

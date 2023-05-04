@@ -8,14 +8,20 @@ Jelenleg az app egyetlen terjesztési platformja a Google Play, ahol egy **Zárt
 
 ## Új verzió kiadása
 
-Az AppCircle jelenleg úgy van bekonfigurálva, hogy minden push (vagy PR) a master branchre automatikusan lebuildeli az appot és feltölti Google Play Console-ba. Ez még nem válik automatikusan elérhetővé, mint frissítés, ehhez a következő lépéseket kell követni:
+Az AppCircle jelenleg úgy van bekonfigurálva, hogy minden push (vagy PR) a master branchre automatikusan lebuildeli az appot és feltölti Google Play Console-ba. Fontos tudnivaló, hogy Gitflow-t használunk és tipikusan GitKraken klienst, a leírás most következő része is ennek figyelembevételével készült. Ha új kiadást szeretnél csinálni az appból, ehhez a következő lépéseket kell követni:
 
 *Fontos megjegyzés: a folyamat ezen része mindig egy kicsit káoszos és ráadásul pont most változott, szóval nincs rá garancia, hogy az alábbiak pontosan működnek.*
 
-0) Növeled az appszintű build.gradle-ben a *versionName* változót a [semantic versioning](https://semver.org/) szabályai alapján (röviden: minor.mayor.patch, pl. 3.0.1). Ha ez kimarad, ugyanúgy felmegy majd a frissítés, csak nehezebben lesz követhető, hogy kinek milyen verzió van telepítve. 
-1) Elkészíted a kiadni kívánt verziót a **develop** branchre, megbizonyosodsz róla, hogy rendesen működik, majd a developot egy PR-ral a **master**be mergeled.
-2) Az AppCircle automatikusan lebuildeli az appot és feltölti a Google Play Console-ba. Ez akár 15-20 perc is lehet a sikeres buildtől számítva, légy türelmes. Ha nem sikerült buildelnie, akkor nem jó az app jelenlegi állapota. Kezdd újra az egészet.
-3) Innentől már csak meg kell várni, hogy a Google ellenőrizze az új verziót, ez általában max fél óra, de akár 1-2 nap is lehet. Ha ez lefutott, akkor az alkalmazás automatikusan elérhetővé válik és mindenki tud frissíteni rá, aki az adott csatornát használja.
+0) Kitalálod, mi lesz az új verzió száma a [semantic versioning](https://semver.org/) szabályai alapján (röviden: minor.mayor.patch, pl. 3.0.1).
+1) Elkészíted a kiadni kívánt verziót a **develop** branchre, megbizonyosodsz róla, hogy rendesen működik, majd készítesz egy új release-t a Gitflow szabályai alapján. Branchnévnek az új verziószámot add meg (pl. 3.0.1). 
+   
+   GitKrakenben:  *Gitflow/Start release*
+2) Átírod (az újonnan készült **release** branchen állva) az appszintű build.gradle-ben a *versionName* változót az új verzióra (ha ez kimarad, ugyanúgy felmegy majd a frissítés, csak nehezebben lesz követhető, hogy kinek milyen verzió van telepítve). A *versionCode*-ot nem kell átírni, az automatikusan nő minden buildnél.
+3) Commitolod a változtatásokat, majd befejezed a release-t. Tag message-nek add meg ugyanúgy az új verziószámot, majd pusholj. 
+
+    GitKrakenben: *Gitflow/Finish release*, a "Delete branch" maradjon bepipálva
+4) Az AppCircle automatikusan lebuildeli az appot és feltölti a Google Play Console-ba. Ez akár 15-20 perc is lehet a sikeres buildtől számítva, légy türelmes. Ha nem sikerült buildelnie, akkor nem jó az app jelenlegi állapota. Kezdd újra az egészet.
+5) Innentől már csak meg kell várni, hogy a Google ellenőrizze az új verziót, ez általában max fél óra, de akár 1-2 nap is lehet. Ha ez lefutott, akkor az alkalmazás automatikusan elérhetővé válik és mindenki tud frissíteni rá, aki az adott csatornát használja.
 
 ### Karbantartás
 

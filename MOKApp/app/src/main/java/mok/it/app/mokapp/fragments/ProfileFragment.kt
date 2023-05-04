@@ -15,6 +15,7 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.model.Category.Companion.toCategory
+import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.recyclerview.CategoryNameAdapter
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
@@ -69,7 +70,7 @@ class ProfileFragment : Fragment() {
     }
 
     private fun updateCategories() {
-        val userRef = Firebase.firestore.collection("users").document(currentUser!!.uid)
+        val userRef = Firebase.firestore.collection(Collections.users).document(currentUser!!.uid)
         userRef.update("categories", selectedCategories)
         userModel.categoryList = selectedCategories.map { it.toCategory() }.toMutableList()
 
@@ -84,7 +85,7 @@ class ProfileFragment : Fragment() {
             WrapContentLinearLayoutManager(this.context)
     }
 
-    private fun loadProfileFragment(){
+    private fun loadProfileFragment() {
         val childFragment: Fragment = MemberFragment()
         val bundle = Bundle()
         bundle.putParcelable("user", userModel)

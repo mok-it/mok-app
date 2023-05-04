@@ -18,7 +18,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -88,7 +87,7 @@ class DetailsFragment : BaseFireFragment() {
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menu.add(R.id.share, R.id.share, 0, R.string.share)
-                    .setIcon(R.drawable.baseline_share_white_24)
+                    .setIcon(R.drawable.ic_share)
                     .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
             }
 
@@ -144,30 +143,31 @@ class DetailsFragment : BaseFireFragment() {
         }
         documentOnSuccess(Collections.projects, args.badgeId) { document ->
             badgeModel = document.toObject(Project::class.java)!!
-            badgeName.text = document.get("name") as String
+            badgeName.text = badgeModel.name
             categoryName.text =
-                getString(R.string.specific_category, document.get("category") as String)
-            badgeDescription.text = document.get("description") as String
+                getString(R.string.specific_category, badgeModel.category)
+            if (badgeModel.value > 1) {
+                valueTextView.text = badgeModel.value.toString()
+            }
+            badgeDescription.text = badgeModel.description
             Firebase.firestore.collection(Collections.users)
-                .document(document.get("creator") as String)
+                .document(badgeModel.creator)
                 .get().addOnSuccessListener { creatorDoc ->
                     if (creatorDoc?.get("name") != null) {
                         badgeCreator.text = creatorDoc.get("name") as String //TODO NPE itt is
                     }
                     val formatter = getDateInstance()
                     badgeDeadline.text =
-                        formatter.format((document.get("deadline") as Timestamp).toDate())
-                    //badgeProgress.progress = (document.get("overall_progress") as Number).toInt()
+                        formatter.format(badgeModel.created)
 
-                    val iconURL = document.get("icon") as String
-                    val iconFileName = getIconFileName(iconURL)
+                    val iconFileName = getIconFileName(badgeModel.icon)
                     val iconFile = File(context?.filesDir, iconFileName)
                     if (iconFile.exists()) {
                         Log.i(TAG, "loading badge icon " + iconFile.path)
                         val bitmap: Bitmap = BitmapFactory.decodeFile(iconFile.path)
                         avatar_imagebutton.setImageBitmap(bitmap)
                     } else {
-                        Log.i(TAG, "downloading badge icon " + model.icon)
+                        Log.i(TAG, "downloading badge icon " + badgeModel.icon)
                         val callback = object : Callback {
                             override fun onSuccess() {
                                 // save image
@@ -188,10 +188,10 @@ class DetailsFragment : BaseFireFragment() {
                                 Log.e(TAG, e.toString())
                             }
                         }
-                        Picasso.get().load(iconURL).into(avatar_imagebutton, callback)
+                        Picasso.get().load(badgeModel.icon).into(avatar_imagebutton, callback)
                     }
 
-                    val editors = document.get("editors") as List<*>
+                    val editors = badgeModel.editors
                     if (editors.contains(userModel.documentId)) {
                         userIsEditor = true
                     }
@@ -238,10 +238,12 @@ class DetailsFragment : BaseFireFragment() {
 
     private fun join() {
         if (userModel.joinedBadges.contains(args.badgeId)) {
-            val userRef = Firebase.firestore.collection("users").document(currentUser!!.uid)
+            val userRef =
+                Firebase.firestore.collection(Collections.users).document(currentUser!!.uid)
             userRef.update("joinedBadges", FieldValue.arrayRemove(args.badgeId))
 
-            val badgeRef = Firebase.firestore.collection("projects").document(args.badgeId)
+            val badgeRef =
+                Firebase.firestore.collection(Collections.projects).document(args.badgeId)
             badgeRef.update("members", FieldValue.arrayRemove(currentUser?.uid))
                 .addOnCompleteListener {
                     Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT).show()
@@ -249,10 +251,12 @@ class DetailsFragment : BaseFireFragment() {
                     changeVisibilities()
                 }
         } else {
-            val userRef = Firebase.firestore.collection("users").document(currentUser!!.uid)
+            val userRef =
+                Firebase.firestore.collection(Collections.users).document(currentUser!!.uid)
             userRef.update("joinedBadges", FieldValue.arrayUnion(args.badgeId))
 
-            val badgeRef = Firebase.firestore.collection("projects").document(args.badgeId)
+            val badgeRef =
+                Firebase.firestore.collection(Collections.projects).document(args.badgeId)
             badgeRef.update("members", FieldValue.arrayUnion(currentUser?.uid))
                 .addOnCompleteListener {
                     Toast.makeText(context, "Sikeresen csatlakoztál!", Toast.LENGTH_SHORT).show()

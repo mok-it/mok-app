@@ -6,7 +6,7 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/profileFragment"
-            android:icon="@drawable/baseline_person_24"
+            android:icon="@drawable/ic_person"
             android:title="@string/profile" />
         <item
             android:id="@+id/myBadgesFragment"
@@ -34,6 +34,10 @@
                 android:id="@+id/linksFragment"
                 android:icon="@drawable/ic_link"
                 android:title="@string/links" />
+            <item
+                android:id="@+id/aboutFragment"
+                android:icon="@drawable/ic_info"
+                android:title="@string/about" />
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/ic_logout"

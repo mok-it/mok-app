@@ -181,4 +181,12 @@
             android:name="badge"
             app:argType="mok.it.app.mokapp.model.Project" />
     </dialog>
+    <fragment
+        android:id="@+id/aboutFragment"
+        android:name="mok.it.app.mokapp.fragments.AboutFragment"
+        android:label="@string/about"
+        tools:layout="@layout/fragment_about" />
+    <dialog
+        android:id="@+id/rewardAcceptDialogFragment"
+        android:name="mok.it.app.mokapp.fragments.RewardAcceptDialogFragment" />
 </navigation>

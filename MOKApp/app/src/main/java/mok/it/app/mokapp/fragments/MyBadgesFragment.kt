@@ -11,6 +11,7 @@ import com.google.firebase.ktx.Firebase
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.databinding.FragmentMyBadgesBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
+import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.BadgeCategoriesAdapter
 import mok.it.app.mokapp.recyclerview.BadgesAdapter
@@ -39,7 +40,7 @@ class MyBadgesFragment :
         collectedBadges = ArrayList()
         initRecyclerView()
         badges?.forEach {
-            val docRef = Firebase.firestore.collection("projects").document(it)
+            val docRef = Firebase.firestore.collection(Collections.projects).document(it)
             docRef.get()
                 .addOnSuccessListener { document ->
                     if (document != null) {

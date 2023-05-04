@@ -99,6 +99,9 @@ dependencies {
     //Shimmer
     implementation 'com.facebook.shimmer:shimmer:0.5.0'
     implementation 'com.todkars:shimmer-recyclerview:0.4.1'
+
+    //Android about page
+    implementation 'io.github.medyo:android-about-page:2.0.0'
 }
 
 apply plugin: 'com.google.gms.google-services'

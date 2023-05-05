@@ -15,8 +15,12 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.card_reward.view.*
-import kotlinx.android.synthetic.main.fragment_rewards.*
+import kotlinx.android.synthetic.main.card_reward.view.achievedText
+import kotlinx.android.synthetic.main.card_reward.view.requestButton
+import kotlinx.android.synthetic.main.card_reward.view.rewardName
+import kotlinx.android.synthetic.main.card_reward.view.rewardPrice
+import kotlinx.android.synthetic.main.fragment_rewards.pointsText
+import kotlinx.android.synthetic.main.fragment_rewards.recyclerView
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.firebase.FirebaseUserObject
@@ -25,7 +29,7 @@ import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Reward
 import mok.it.app.mokapp.recyclerview.RewardViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
-import java.util.*
+import java.util.Date
 
 class RewardsFragment : BaseFireFragment(), RewardAcceptDialogFragment.RewardAcceptListener {
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
@@ -84,7 +88,7 @@ class RewardsFragment : BaseFireFragment(), RewardAcceptDialogFragment.RewardAcc
                     holder.itemView.rewardName.text = model.name
                     holder.itemView.rewardPrice.text = model.price.toString()
                     if (userModel.points >= model.price) {
-                        holder.itemView.requestButton.visibility = View.VISIBLE
+                        holder.itemView.requestButton.isEnabled = true
                     }
                     if (userModel.requestedRewards.contains(model.documentId)) {
                         holder.itemView.requestButton.visibility = View.GONE

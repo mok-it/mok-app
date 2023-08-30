@@ -15,7 +15,7 @@ android {
     defaultConfig {
         applicationId "mok.it.app.mokapp"
         minSdk 26
-        targetSdk 32
+        targetSdk 34
         versionCode 4
         versionName "3.1.4"
 

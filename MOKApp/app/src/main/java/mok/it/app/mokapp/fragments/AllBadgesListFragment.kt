@@ -4,7 +4,12 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.graphics.drawable.toBitmap
@@ -23,9 +28,15 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.card_badge.view.*
-import kotlinx.android.synthetic.main.fragment_all_badges_list.*
-import kotlinx.android.synthetic.main.fragment_all_badges_list.view.*
+import kotlinx.android.synthetic.main.card_badge.view.mandatoryTextView
+import kotlinx.android.synthetic.main.card_badge.view.projectDescription
+import kotlinx.android.synthetic.main.card_badge.view.projectIcon
+import kotlinx.android.synthetic.main.card_badge.view.projectName
+import kotlinx.android.synthetic.main.fragment_all_badges_list.addBadgeButton
+import kotlinx.android.synthetic.main.fragment_all_badges_list.badgeSwipeRefresh
+import kotlinx.android.synthetic.main.fragment_all_badges_list.recyclerView
+import kotlinx.android.synthetic.main.fragment_all_badges_list.shimmerFrameLayout
+import kotlinx.android.synthetic.main.fragment_all_badges_list.view.addBadgeButton
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.dialog.FilterDialogFragment.Companion.filterResultKey
@@ -93,6 +104,7 @@ class AllBadgesListFragment :
                         )
                         true
                     }
+
                     else -> false
                 }
             }
@@ -161,7 +173,8 @@ class AllBadgesListFragment :
                 val tvDesc: TextView = holder.itemView.projectDescription
                 val ivImg: ImageView = holder.itemView.projectIcon
                 val tvMandatory: TextView = holder.itemView.mandatoryTextView
-                tvName.text = model.name
+                tvName.text =
+                    "${model.name} (${model.categoryEnum})" //TODO create better UX to avoid solutions like this
                 tvDesc.text = model.description
                 tvMandatory.isVisible = model.mandatory
 

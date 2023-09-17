@@ -1,10 +1,9 @@
-# MÖK App - terjesztési  & karbantartási infók
+# MÖK App
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mok-it_mok-app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mok-it_mok-app)
 
 ## Disztributálás
 
-Jelenleg az app egyetlen terjesztési platformja a Google Play, ahol egy **Zárt tesztelés - Alpha** nevű zárt tesztelési csatornán tesszük közzé mindig a legfrissebb verziót. A csatornához két Google-csoport tagjai férhetnek hozzá; a mökösök és a premökösök. 
-
-**Fontos: attól, hogy valaki tagja valamelyik csoportnak, elvileg még nem fogja automatikusan látni az appot Playen, ehhez a csatorna *Tesztelők* fülén alul található linkre kell nyomnia.** Van egy *Mök app útmutató* nevű [pdf](https://drive.google.com/file/d/1eMaKQr0us9mFG9qGp9zOppQC-xfoefIE/view) (és [Google doksi](https://docs.google.com/document/d/1oqiUdERlxIFXEY-pgikNSeupS-pza2KINxd7jSDis0A/edit)) a Drive-on, ebben található a telepítés mikéntje és a link is. Ha egy fiók tulajdonosa rákattintott egyszer a linkre (és telepítette is az appot?), onnantól neki meg fog jelenni a Playen az app, innentől nem szükséges neki a link.
+Jelenleg az app egyetlen terjesztési platformja a Google Play, ahol **Éles verzióként** tesszük közzé mindig a legfrissebb verziót. A csatornához _terv szerint_ két Google-csoport tagjai férhetnek hozzá; a mökösök és a premökösök. Jelenleg a bejelentkezés és regisztráció le van tiltva, mivel nincs még validálva, hogy milyen Google-fiókokkal lehet belépni.
 
 ## Új verzió kiadása
 

@@ -141,7 +141,7 @@ class DetailsFragment : BaseFireFragment() {
                 DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.badgeId)
             findNavController().navigate(action)
         }
-        documentOnSuccess(Collections.projects, args.badgeId) { document ->
+        documentOnSuccess(Collections.badges, args.badgeId) { document ->
             badgeModel = document.toObject(Project::class.java)!!
             badgeName.text = badgeModel.name
             categoryName.text =
@@ -243,7 +243,7 @@ class DetailsFragment : BaseFireFragment() {
             userRef.update("joinedBadges", FieldValue.arrayRemove(args.badgeId))
 
             val badgeRef =
-                Firebase.firestore.collection(Collections.projects).document(args.badgeId)
+                Firebase.firestore.collection(Collections.badges).document(args.badgeId)
             badgeRef.update("members", FieldValue.arrayRemove(currentUser?.uid))
                 .addOnCompleteListener {
                     Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT).show()
@@ -256,7 +256,7 @@ class DetailsFragment : BaseFireFragment() {
             userRef.update("joinedBadges", FieldValue.arrayUnion(args.badgeId))
 
             val badgeRef =
-                Firebase.firestore.collection(Collections.projects).document(args.badgeId)
+                Firebase.firestore.collection(Collections.badges).document(args.badgeId)
             badgeRef.update("members", FieldValue.arrayUnion(currentUser?.uid))
                 .addOnCompleteListener {
                     Toast.makeText(context, "Sikeresen csatlakoztál!", Toast.LENGTH_SHORT).show()
@@ -275,7 +275,7 @@ class DetailsFragment : BaseFireFragment() {
     private lateinit var memberComments: ArrayList<Comment>
 
     private fun getMemberIds() {
-        val docRef = Firebase.firestore.collection(Collections.projects).document(args.badgeId)
+        val docRef = Firebase.firestore.collection(Collections.badges).document(args.badgeId)
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.data != null) {
@@ -293,7 +293,7 @@ class DetailsFragment : BaseFireFragment() {
     fun getCommentIds() {
         memberComments = ArrayList()
         val collectionRef =
-            Firebase.firestore.collection(Collections.projects).document(args.badgeId)
+            Firebase.firestore.collection(Collections.badges).document(args.badgeId)
                 .collection(Collections.commentsRelativePath)
         collectionRef.get()
             .addOnSuccessListener { collection ->

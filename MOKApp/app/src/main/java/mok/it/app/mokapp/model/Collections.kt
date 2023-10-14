@@ -6,7 +6,7 @@ object Collections {
     const val categories = "/categories"
     const val projects = "/projects"
     const val links = "/links"
-    const val rewardrequests = "/rewardrequests"
+    const val rewardrequests = "/rewardrequests2024"
     const val rewards = "/rewards"
     const val users = "/users"
     const val commentsRelativePath = "comments"

@@ -234,6 +234,7 @@ open class CreateBadgeFragment : DialogFragment() {
 
         firestore.collection(userCollectionPath)
             .whereArrayContains("categories", args.category.toString())
+            .orderBy("name")
             .get()
             .addOnSuccessListener { documents ->
                 if (documents != null) {
@@ -242,7 +243,6 @@ open class CreateBadgeFragment : DialogFragment() {
                         Log.d("Users", users.toString())
                     }
                     names = Array(users.size) { i -> users[i].name }
-                    names.sort()
                     checkedNames = BooleanArray(users.size) { false }
                     initEditorsDialog()
                 }
@@ -260,6 +260,7 @@ open class CreateBadgeFragment : DialogFragment() {
                     for (i in names.indices) {
                         if (checkedNames[i]) {
                             Log.d("Selected", names[i])
+                            Log.d("Selected", users[i].documentId)
                             selectedEditors.add(users[i].documentId)
                         }
                     }

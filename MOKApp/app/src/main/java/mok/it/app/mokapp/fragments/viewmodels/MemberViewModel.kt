@@ -18,7 +18,7 @@ class MemberViewModel : ViewModel() {
 
         user.collectedBadges.chunked(10).let {
             it.forEach { batch ->
-                Firebase.firestore.collection(Collections.projects)
+                Firebase.firestore.collection(Collections.badges)
                     .whereEqualTo("category", category.toString())
                     .whereIn(FieldPath.documentId(), batch)
                     .get()

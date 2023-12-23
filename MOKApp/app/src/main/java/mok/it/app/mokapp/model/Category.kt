@@ -8,19 +8,24 @@ enum class Category {
             return "Univerzális"
         }
     },
+    SZERVEZETFEJLESZTES {
+        override fun toString(): String {
+            return "Szervezetfejlesztés"
+        }
+    },
     FELADATSOR {
         override fun toString(): String {
             return "Feladatsor"
         }
     },
-    GRAFIKA {
+    MEDIAESDIY {
         override fun toString(): String {
-            return "Grafika"
+            return "Média és DIY"
         }
     },
-    KREATIV {
+    TABORIPROGRAMESELOKESZITES {
         override fun toString(): String {
-            return "Kreatív"
+            return "Tábori program és előkészítés"
         }
     },
     IT {
@@ -35,6 +40,6 @@ enum class Category {
     };
 
     companion object {
-        fun String.toCategory() = Category.valueOf(this.unaccent().uppercase())
+        fun String.toCategory() = Category.valueOf(this.replace(" ","").unaccent().uppercase())
     }
 }

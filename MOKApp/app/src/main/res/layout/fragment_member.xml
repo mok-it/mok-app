@@ -70,6 +70,15 @@
             tools:text="10" />
 
         <TextView
+            android:id="@+id/badge_count_szervezetfejlesztes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="8dp"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            tools:text="10" />
+
+        <TextView
             android:id="@+id/badge_count_it"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -97,7 +106,7 @@
             tools:text="0" />
 
         <TextView
-            android:id="@+id/badge_count_kreativ"
+            android:id="@+id/badge_count_taboriprogram"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"
@@ -106,7 +115,7 @@
             tools:text="0" />
 
         <TextView
-            android:id="@+id/badge_count_grafika"
+            android:id="@+id/badge_count_media"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingTop="8dp"

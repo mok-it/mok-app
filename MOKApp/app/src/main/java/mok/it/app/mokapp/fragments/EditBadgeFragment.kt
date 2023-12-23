@@ -8,6 +8,7 @@ import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_create_badge.datePicker
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
+import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import java.util.Calendar
 import java.util.Date
@@ -91,7 +92,7 @@ class EditBadgeFragment : CreateBadgeFragment() {
             "mandatory" to false
 
         )
-        firestore.collection("/projects")
+        firestore.collection(Collections.badges)
             .document(args.badge.id)
             .update(editedBadge as Map<String, Any>)
             .addOnSuccessListener {

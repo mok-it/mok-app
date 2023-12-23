@@ -21,6 +21,7 @@ import mok.it.app.mokapp.databinding.FragmentCreateBadgeBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
 import mok.it.app.mokapp.model.Category
+import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import java.util.Date
 
@@ -39,7 +40,7 @@ open class CreateBadgeFragment : DialogFragment() {
     val binding get() = _binding!!
     private var _binding: FragmentCreateBadgeBinding? = null
 
-    lateinit var users: ArrayList<User>
+    var users: ArrayList<User> = ArrayList()
     val userCollectionPath: String = "/users"
     val firestore = Firebase.firestore
 
@@ -144,7 +145,7 @@ open class CreateBadgeFragment : DialogFragment() {
             "mandatory" to false
 
         )
-        firestore.collection("/projects")
+        firestore.collection(Collections.badges)
             .add(newBadge)
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
@@ -240,6 +241,7 @@ open class CreateBadgeFragment : DialogFragment() {
 
         firestore.collection(userCollectionPath)
             .whereArrayContains("categories", args.category.toString())
+            .orderBy("name")
             .get()
             .addOnSuccessListener { documents ->
                 if (documents != null) {
@@ -248,7 +250,6 @@ open class CreateBadgeFragment : DialogFragment() {
                         Log.d("Users", users.toString())
                     }
                     names = Array(users.size) { i -> users[i].name }
-                    names.sort()
                     checkedNames = BooleanArray(users.size) { false }
                     initEditorsDialog()
                 }
@@ -262,10 +263,13 @@ open class CreateBadgeFragment : DialogFragment() {
                 checkedNames[which] = isChecked
             }
             .setPositiveButton("Ok") { _, _ ->
-                for (i in names.indices) {
-                    if (checkedNames[i]) {
-                        Log.d("Selected", names[i])
-                        selectedEditors.add(users[i].documentId)
+                if (!names.indices.isEmpty()){
+                    for (i in names.indices) {
+                        if (checkedNames[i]) {
+                            Log.d("Selected", names[i])
+                            Log.d("Selected", users[i].documentId)
+                            selectedEditors.add(users[i].documentId)
+                        }
                     }
                 }
             }

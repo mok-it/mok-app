@@ -12,16 +12,17 @@ import android.widget.Toast
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.fragment_create_badge.*
+import kotlinx.android.synthetic.main.fragment_create_badge.datePicker
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.FragmentCreateBadgeBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
 import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.model.User
-import java.util.*
+import java.util.Date
 
 
 /**
@@ -210,17 +211,23 @@ open class CreateBadgeFragment : DialogFragment() {
      */
     private fun isComplete(showWarning: Boolean): Boolean = when {
         isNameRequired && binding.badgeName.text.isNullOrBlank() -> {
-            if (showWarning) toast(R.string.badge_name_is_required) // TODO snackbar
+            if (showWarning) snackbar(R.string.badge_name_is_required)
             false
         }
 
         isDescriptionRequired && binding.badgeDescription.text.isNullOrBlank() -> {
-            if (showWarning) toast(R.string.badge_description_is_required) // TODO snackbar
+            if (showWarning) snackbar(R.string.badge_description_is_required)
             false
         }
 
         else -> true
     }
+
+    private fun snackbar(textResource: Int) = Snackbar.make(
+        binding.root,
+        textResource,
+        Snackbar.LENGTH_SHORT
+    ).show()
 
     fun toast(textResource: Int) = Toast.makeText(
         context,

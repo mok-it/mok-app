@@ -22,17 +22,22 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.card_comment.view.*
-import kotlinx.android.synthetic.main.fragment_comments.*
+import kotlinx.android.synthetic.main.card_comment.view.comment_card
+import kotlinx.android.synthetic.main.card_comment.view.comment_icon
+import kotlinx.android.synthetic.main.card_comment.view.comment_sender
+import kotlinx.android.synthetic.main.card_comment.view.comment_text
+import kotlinx.android.synthetic.main.card_comment.view.comment_timestamp
+import kotlinx.android.synthetic.main.fragment_comments.commentEditText
+import kotlinx.android.synthetic.main.fragment_comments.commentsRecyclerView
+import kotlinx.android.synthetic.main.fragment_comments.send_comment_fab
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.CommentViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
-class CommentsFragment : BaseFireFragment() {
+class CommentsFragment : Fragment() {
     companion object {
         const val TAG = "CommentsFragment"
     }

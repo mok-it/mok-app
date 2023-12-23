@@ -4,11 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.databinding.FragmentMyBadgesBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Collections
@@ -18,7 +18,7 @@ import mok.it.app.mokapp.recyclerview.BadgesAdapter
 
 
 class MyBadgesFragment :
-    BaseFireFragment(), BadgesAdapter.BadgeClickedListener {
+    Fragment(), BadgesAdapter.BadgeClickedListener {
     private val binding get() = _binding!!
     private var _binding: FragmentMyBadgesBinding? = null
 

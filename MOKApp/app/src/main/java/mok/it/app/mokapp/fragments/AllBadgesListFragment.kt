@@ -16,6 +16,7 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.core.view.isVisible
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -38,7 +39,6 @@ import kotlinx.android.synthetic.main.fragment_all_badges_list.recyclerView
 import kotlinx.android.synthetic.main.fragment_all_badges_list.shimmerFrameLayout
 import kotlinx.android.synthetic.main.fragment_all_badges_list.view.addBadgeButton
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.dialog.FilterDialogFragment.Companion.filterResultKey
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
@@ -57,7 +57,7 @@ import java.io.IOException
 private const val TAG = "AllBadgesListFragment"
 
 class AllBadgesListFragment :
-    BaseFireFragment() {
+    Fragment() {
 
     private val args: AllBadgesListFragmentArgs by navArgs()
     private lateinit var filter: Filter

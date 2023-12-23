@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
@@ -19,9 +20,11 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.card_phonebook_item.view.*
+import kotlinx.android.synthetic.main.card_phonebook_item.view.call_button
+import kotlinx.android.synthetic.main.card_phonebook_item.view.contact_item
+import kotlinx.android.synthetic.main.card_phonebook_item.view.contact_name
+import kotlinx.android.synthetic.main.card_phonebook_item.view.phone_number
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.databinding.FragmentPhoneListBinding
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
@@ -29,7 +32,7 @@ import mok.it.app.mokapp.recyclerview.PhoneBookViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
 
-class PhoneBookFragment : BaseFireFragment() {
+class PhoneBookFragment : Fragment() {
     private val binding get() = _binding!!
     private var _binding: FragmentPhoneListBinding? = null
 

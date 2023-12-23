@@ -11,7 +11,7 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
-import java.util.*
+import java.util.Calendar
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -25,8 +25,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         ) {
             return
             TODO("haven't been tested yet")
-            if (adresseeUserIdList.count() > 10)
-                throw IllegalArgumentException("too many users to send notification to (the limit is 10)")
+            require(adresseeUserIdList.size <= 10)
+            { "too many users to send notification to (the limit is 10)" }
 
             Firebase.firestore.collection(Collections.users)
                 .whereIn(FieldPath.documentId(), adresseeUserIdList)
@@ -52,7 +52,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             adresseeUserList.toHashSet().forEach { addresseeUser ->
                 Firebase.firestore.collection(Collections.users).document(addresseeUser.documentId)
                     .get().addOnSuccessListener { document ->
-                        val fcmToken = document.get("FCMtokens") as List<*>
+                        val fcmToken = document["FCMtokens"] as List<*>
                         Log.d(TAG, "fcmtoken: ${fcmToken[0]}")
                         Log.d(TAG, "sending notification to ${document.get("name")}")
 
@@ -98,7 +98,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         Log.d(TAG, "Refreshed token: $token")
         currentUser?.apply {
             Firebase.firestore.collection(Collections.users).document(this.uid)
-                //TODO make it a list, so that other devices with the same account are also able to receive notifications
                 .update("FCMtokens", token)
                 .addOnSuccessListener {
                     Log.d(TAG, "onNewToken: token uploaded to firestore")

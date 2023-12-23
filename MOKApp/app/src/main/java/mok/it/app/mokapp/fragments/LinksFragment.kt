@@ -7,20 +7,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.fragment_all_badges_list.*
+import kotlinx.android.synthetic.main.fragment_all_badges_list.recyclerView
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.recyclerview.LinkViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
-class LinksFragment : BaseFireFragment() {
+class LinksFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

@@ -54,7 +54,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                     .get().addOnSuccessListener { document ->
                         val fcmToken = document["FCMtokens"] as List<*>
                         Log.d(TAG, "fcmtoken: ${fcmToken[0]}")
-                        Log.d(TAG, "sending notification to ${document.get("name")}")
+                        Log.d(TAG, "sending notification to ${document["name"]}")
 
                         FirebaseMessaging.getInstance().send(
                             RemoteMessage.Builder(fcmToken[0] as String)

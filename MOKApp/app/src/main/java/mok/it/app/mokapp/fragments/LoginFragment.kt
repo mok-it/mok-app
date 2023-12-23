@@ -20,7 +20,6 @@ import com.google.firebase.FirebaseApp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.GoogleAuthProvider
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.activity.MainActivity
 import mok.it.app.mokapp.databinding.FragmentLoginBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel

@@ -7,6 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
@@ -22,7 +23,6 @@ import kotlinx.android.synthetic.main.card_reward.view.rewardPrice
 import kotlinx.android.synthetic.main.fragment_rewards.pointsText
 import kotlinx.android.synthetic.main.fragment_rewards.recyclerView
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.baseclasses.BaseFireFragment
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Collections
@@ -31,7 +31,7 @@ import mok.it.app.mokapp.recyclerview.RewardViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import java.util.Date
 
-class RewardsFragment : BaseFireFragment(), RewardAcceptDialogFragment.RewardAcceptListener {
+class RewardsFragment : Fragment(), RewardAcceptDialogFragment.RewardAcceptListener {
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
 
     override fun onCreateView(

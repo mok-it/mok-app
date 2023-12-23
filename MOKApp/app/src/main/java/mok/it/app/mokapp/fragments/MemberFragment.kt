@@ -41,7 +41,7 @@ class MemberFragment : Fragment() {
     }
 
     private fun loadMutualBadges() {
-
+        //TODO implement feature
     }
 
     private fun loadBadgeCounts() {

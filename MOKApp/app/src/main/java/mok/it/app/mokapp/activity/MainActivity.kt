@@ -20,8 +20,13 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.nav_header.*
+import kotlinx.android.synthetic.main.activity_main.drawer_layout
+import kotlinx.android.synthetic.main.activity_main.nav_view
+import kotlinx.android.synthetic.main.activity_main.toolbar
+import kotlinx.android.synthetic.main.nav_header.emailText
+import kotlinx.android.synthetic.main.nav_header.image
+import kotlinx.android.synthetic.main.nav_header.nameText
+import kotlinx.android.synthetic.main.nav_header.refreshButton
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
@@ -52,10 +57,10 @@ class MainActivity : AppCompatActivity() {
 
         //Ha a listfragment-re navigálunk, töltődjön újra a fejléc (regisztráció után ez tölti be)
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.allBadgesListFragment) {
-                if (currentUser != null) refreshCurrentUserAndUserModel(this) {
-                    loadApp()
-                }
+            if (destination.id == R.id.allBadgesListFragment && currentUser != null) refreshCurrentUserAndUserModel(
+                this
+            ) {
+                loadApp()
             }
         }
         removeBackArrowFromLoginFragment(navController)

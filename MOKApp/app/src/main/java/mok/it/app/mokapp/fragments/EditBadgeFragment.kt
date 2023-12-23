@@ -5,12 +5,13 @@ import android.util.Log
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.android.synthetic.main.fragment_create_badge.*
+import kotlinx.android.synthetic.main.fragment_create_badge.datePicker
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
-import java.util.*
+import java.util.Calendar
+import java.util.Date
 
 @Suppress("DEPRECATION")
 class EditBadgeFragment : CreateBadgeFragment() {
@@ -30,9 +31,9 @@ class EditBadgeFragment : CreateBadgeFragment() {
         val cal: Calendar = Calendar.getInstance()
         cal.time = args.badge.deadline
         datePicker.updateDate(
-            cal.get(Calendar.YEAR),
-            cal.get(Calendar.MONTH),
-            cal.get(Calendar.DAY_OF_MONTH)
+            cal[Calendar.YEAR],
+            cal[Calendar.MONTH],
+            cal[Calendar.DAY_OF_MONTH]
         )
         binding.textViewTitle.text = getString(R.string.edit_badge_text)
         binding.createButton.text = getString(R.string.edit_text)

@@ -57,7 +57,7 @@ class BadgesAdapter(
         }
     }
 
-    interface BadgeClickedListener {
+    fun interface BadgeClickedListener {
         fun onBadgeClicked(badgeId: String)
     }
 }

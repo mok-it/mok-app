@@ -3,8 +3,6 @@ package mok.it.app.mokapp.utility
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import mok.it.app.mokapp.model.Collections
-import mok.it.app.mokapp.model.User
 
 class Config {
     companion object {

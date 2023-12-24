@@ -103,5 +103,7 @@
     <string name="about">Az appról</string>
     <string name="about_description">A MÖK Egyesület hivatalos belsős alkalmazása. Készítette: az IT Munkacsoport</string>
     <string name="bug_report">Hibabejelentés</string>
+    <string name="badgeName">%1$s (%2$s)</string>
+    <string name="no_notifications">Oké, nem fogunk értesítéseket küldeni :/</string>
 
 </resources>

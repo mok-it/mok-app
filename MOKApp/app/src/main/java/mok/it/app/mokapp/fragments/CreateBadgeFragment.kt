@@ -86,7 +86,7 @@ open class CreateBadgeFragment : DialogFragment() {
 
         dialog?.also {
             val width = ViewGroup.LayoutParams.MATCH_PARENT
-            val height = ViewGroup.LayoutParams.WRAP_CONTENT // TODO fix tall layout scrolling
+            val height = ViewGroup.LayoutParams.WRAP_CONTENT
             it.window?.setLayout(width, height)
             isCancelable = false
         }
@@ -194,9 +194,6 @@ open class CreateBadgeFragment : DialogFragment() {
     }
 
     /**
-     * TODO Known bug: the contents of an input field seems to always register as blank
-     * if the cursor is in it
-     *
      * @return false if there exists any user-given piece of information in the dialog
      */
     private fun isBlank() = when {
@@ -263,7 +260,7 @@ open class CreateBadgeFragment : DialogFragment() {
                 checkedNames[which] = isChecked
             }
             .setPositiveButton("Ok") { _, _ ->
-                if (!names.indices.isEmpty()){
+                if (!names.indices.isEmpty()) {
                     for (i in names.indices) {
                         if (checkedNames[i]) {
                             Log.d("Selected", names[i])

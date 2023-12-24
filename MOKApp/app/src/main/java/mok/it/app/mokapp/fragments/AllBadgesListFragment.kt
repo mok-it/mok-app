@@ -174,7 +174,7 @@ class AllBadgesListFragment :
                 val ivImg: ImageView = holder.itemView.projectIcon
                 val tvMandatory: TextView = holder.itemView.mandatoryTextView
                 tvName.text =
-                    "${model.name} (${model.categoryEnum})" //TODO create better UX to avoid solutions like this
+                    getString(R.string.badgeName, model.name, model.categoryEnum)
                 tvDesc.text = model.description
                 tvMandatory.isVisible = model.mandatory
 

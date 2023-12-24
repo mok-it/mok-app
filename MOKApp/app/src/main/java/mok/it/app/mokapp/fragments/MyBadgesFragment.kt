@@ -65,7 +65,6 @@ class MyBadgesFragment :
                 }
             }
         }
-        //TODO use FirestoreRecyclerAdapter instead
         binding.recyclerView.adapter = BadgeCategoriesAdapter(
             userModel.categoryList.map { it.toString() },
             categoryBadges,

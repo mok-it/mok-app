@@ -2,6 +2,7 @@ package mok.it.app.mokapp.model
 
 import android.os.Parcelable
 import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.PropertyName
 import kotlinx.android.parcel.Parcelize
 import mok.it.app.mokapp.utility.Utility.unaccent
 import java.util.*
@@ -22,13 +23,14 @@ data class Project(
     val icon: String = "",
     val members: List<String> = ArrayList(),
     val name: String = "",
-    val overall_progress: Int = 0,
+    @get:PropertyName("overall_progress")
+    val overallProgress: Int = 0,
     val mandatory: Boolean = false,
     val tasks: List<String> = ArrayList(),
     val comments: List<String> = ArrayList(),
     val value: Int = 1,
 ) : Parcelable {
-    
+
     val categoryEnum: Category
         get() = Category.valueOf(category.uppercase().unaccent())
 }

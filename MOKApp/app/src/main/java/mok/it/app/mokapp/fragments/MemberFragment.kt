@@ -37,11 +37,6 @@ class MemberFragment : Fragment() {
         viewModel.loadImage(binding.profilePicture, args.user.photoURL)
 
         loadBadgeCounts()
-        loadMutualBadges()
-    }
-
-    private fun loadMutualBadges() {
-        //TODO implement feature
     }
 
     private fun loadBadgeCounts() {

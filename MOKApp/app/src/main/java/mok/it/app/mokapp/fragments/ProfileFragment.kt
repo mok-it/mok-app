@@ -9,7 +9,8 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentTransaction
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlinx.android.synthetic.main.fragment_profile.modifyButton
+import kotlinx.android.synthetic.main.fragment_profile.recyclerView
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
@@ -74,12 +75,10 @@ class ProfileFragment : Fragment() {
         userRef.update("categories", selectedCategories)
         userModel.categoryList = selectedCategories.map { it.toCategory() }.toMutableList()
 
-        //TODO ez csúnya, összekötni a Firestore-ból visszaérkező adattal?
         recyclerView.adapter = CategoryNameAdapter(selectedCategories)
     }
 
     private fun initRecyclerView() {
-        // TODO use FirestoreRecyclerAdapter instead
         recyclerView.adapter = CategoryNameAdapter(userModel.categoryList.map { it.toString() })
         recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)

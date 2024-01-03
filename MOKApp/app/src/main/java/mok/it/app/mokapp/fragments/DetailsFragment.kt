@@ -21,6 +21,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -146,7 +147,7 @@ class DetailsFragment : Fragment() {
                 DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.badgeId)
             findNavController().navigate(action)
         }
-        Firebase.firestore.collection(Collections.projects).document(args.badgeId).get()
+        Firebase.firestore.collection(Collections.badges).document(args.badgeId).get()
             .addOnSuccessListener { document ->
                 badgeModel = document.toObject(Project::class.java)!!
                 badgeName.text = badgeModel.name

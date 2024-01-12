@@ -30,5 +30,5 @@ data class Project(
 ) : Parcelable {
     
     val categoryEnum: Category
-        get() = Category.valueOf(category.uppercase().unaccent())
+        get() = Category.valueOf(category.replace(" ","").uppercase().unaccent())
 }

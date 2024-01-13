@@ -7,7 +7,7 @@ import mok.it.app.mokapp.utility.Utility.unaccent
 import java.util.*
 
 //the fields of the class should exactly match the fields in Firestore DB
-@Parcelize
+@Parcelize 
 data class Project(
 
     @DocumentId

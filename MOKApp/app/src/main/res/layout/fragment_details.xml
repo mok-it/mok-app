@@ -114,6 +114,20 @@
                     app:layout_constraintTop_toTopOf="@+id/badgeCreator"
                     app:tint="@color/blue"
                     tools:visibility="visible" />
+
+                <ImageView
+                    android:id="@+id/rewardButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/rewards"
+                    android:layout_marginTop="8dp"
+                    android:src="@drawable/ic_star"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toEndOf="@+id/badgeDeadline"
+                    app:layout_constraintTop_toBottomOf="@+id/badgeCreator"
+                    app:tint="@color/blue"
+                    tools:visibility="visible" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </LinearLayout>
 

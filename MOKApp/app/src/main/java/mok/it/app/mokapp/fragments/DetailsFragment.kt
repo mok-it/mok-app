@@ -21,7 +21,6 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
@@ -204,18 +203,34 @@ class DetailsFragment : Fragment() {
                         }
                         changeVisibilities()
                         initEditButton()
+                        initAdminButton()
                     }
                 changeVisibilities()
             }
     }
 
     private fun initEditButton() {
-        if (badgeModel.creator == userModel.documentId) {
+        //if (badgeModel.creator == userModel.documentId) {
+        if (true) { //TODO: use commented out line above instead of this!
             editButton.visibility = View.VISIBLE
             editButton.setOnClickListener {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToEditBadgeFragment(
                         badgeModel
+                    )
+                )
+            }
+        }
+    }
+
+    private fun initAdminButton() {
+//        if (badgeModel.creator == userModel.documentId || userIsEditor) {
+        if (true) { //TODO: use commented out line above instead of this!
+            rewardButton.visibility = View.VISIBLE
+            rewardButton.setOnClickListener {
+                findNavController().navigate(
+                    DetailsFragmentDirections.actionDetailsFragmentToAdminPanelFragment(
+                        //badgeModel
                     )
                 )
             }

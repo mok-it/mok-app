@@ -39,11 +39,12 @@
             android:id="@+id/participantName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
             android:textSize="14sp"
-            app:layout_constraintBottom_toBottomOf="@+id/imageView"
-            app:layout_constraintStart_toEndOf="@+id/imageView"
-            app:layout_constraintTop_toTopOf="@+id/imageView"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@+id/badgeSlider"
+            app:layout_constraintHorizontal_bias="0.15"
+            app:layout_constraintStart_toEndOf="@+id/participantPicture"
+            app:layout_constraintTop_toTopOf="parent"
             tools:text="@tools:sample/full_names" />
 
 

@@ -33,6 +33,7 @@ import kotlinx.android.synthetic.main.card_project_participant.view.maximumBadge
 import kotlinx.android.synthetic.main.card_project_participant.view.participantName
 import kotlinx.android.synthetic.main.card_project_participant.view.participantPicture
 import kotlinx.android.synthetic.main.fragment_admin_panel.addParticipant
+import kotlinx.android.synthetic.main.fragment_admin_panel.participants
 import kotlinx.android.synthetic.main.fragment_all_badges_list.recyclerView
 import kotlinx.android.synthetic.main.fragment_details.avatar_imagebutton
 import kotlinx.android.synthetic.main.fragment_details.badgeComments
@@ -49,14 +50,14 @@ import mok.it.app.mokapp.utility.Utility
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
+import kotlin.math.log
 
 class AdminPanelFragment : Fragment() {
     companion object {
         const val TAG = "AdminPanelFragment"
     }
 
-    private val args: DetailsFragmentArgs by navArgs()
-    private lateinit var badgeModel: Project
+    private val args: AdminPanelFragmentArgs by navArgs()
     private lateinit var project: Project
 
 
@@ -74,6 +75,7 @@ class AdminPanelFragment : Fragment() {
         if (FirebaseUserObject.currentUser == null) {
             findNavController().navigate(R.id.action_global_loginFragment)
         } else {
+            project = args.project
 //                setupTopMenu()
             FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext()) {
                 getMemberIds()
@@ -85,12 +87,12 @@ class AdminPanelFragment : Fragment() {
 
 
     private fun getMemberIds() {
-        val docRef = Firebase.firestore.collection(Collections.badges).document(args.badgeId)
+        val docRef = Firebase.firestore.collection(Collections.badges).document(args.project.id)
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.data != null) {
                     Log.d(DetailsFragment.TAG, "DocumentSnapshot data: ${document.data}")
-                    project = document.toObject(Project::class.java)!!
+                    //project = document.toObject(Project::class.java)!!
                     Log.d(DetailsFragment.TAG, "Model data: $project")
                 } else {
                     Log.d(DetailsFragment.TAG, "No such document or data is null")
@@ -103,16 +105,17 @@ class AdminPanelFragment : Fragment() {
         adapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = WrapContentLinearLayoutManager(context)
+        participants.adapter = adapter
+        participants.layoutManager = WrapContentLinearLayoutManager(context)
 
     }
 
 
     private fun participantsQuery(): Query {
+        Log.w("DEBUG QUERY", "number of members: " + args.project.members.size)
             return Firebase.firestore.collection(Collections.users)
                 .orderBy("name", Query.Direction.ASCENDING)
-                .whereIn(FieldPath.documentId(), project.members) //NOTE: can not handle lists of size greater than 30
+                .whereIn(FieldPath.documentId(), args.project.members) //NOTE: can not handle lists of size greater than 30
     }
     private fun getAdapter(): FirestoreRecyclerAdapter<User, ProjectViewHolder> {
         val query = participantsQuery()
@@ -141,11 +144,6 @@ class AdminPanelFragment : Fragment() {
         }
     }
     private fun initLayout() {
-        badgeComments.setOnClickListener {
-            val action =
-                DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.badgeId)
-            findNavController().navigate(action)
-        }
         addParticipant.setOnClickListener {
             Toast.makeText(context, "Hamarosan...", Toast.LENGTH_SHORT).show()
         }

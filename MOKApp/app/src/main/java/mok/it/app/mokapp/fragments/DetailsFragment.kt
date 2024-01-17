@@ -230,7 +230,7 @@ class DetailsFragment : Fragment() {
             rewardButton.setOnClickListener {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToAdminPanelFragment(
-                        //badgeModel
+                        badgeModel
                     )
                 )
             }

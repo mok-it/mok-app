@@ -20,6 +20,8 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
+import com.google.android.material.slider.RangeSlider
+import com.google.android.material.slider.Slider
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -29,7 +31,12 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_badge.view.mandatoryTextView
 import kotlinx.android.synthetic.main.card_badge.view.projectDescription
 import kotlinx.android.synthetic.main.card_badge.view.projectIcon
+import kotlinx.android.synthetic.main.card_project_participant.badgeSlider
+import kotlinx.android.synthetic.main.card_project_participant.maximumBadgeValue
+import kotlinx.android.synthetic.main.card_project_participant.minimumBadgeValue
+import kotlinx.android.synthetic.main.card_project_participant.view.badgeSlider
 import kotlinx.android.synthetic.main.card_project_participant.view.maximumBadgeValue
+import kotlinx.android.synthetic.main.card_project_participant.view.minimumBadgeValue
 import kotlinx.android.synthetic.main.card_project_participant.view.participantName
 import kotlinx.android.synthetic.main.card_project_participant.view.participantPicture
 import kotlinx.android.synthetic.main.fragment_admin_panel.addParticipant
@@ -126,6 +133,7 @@ class AdminPanelFragment : Fragment() {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
                 val view = LayoutInflater.from(this@AdminPanelFragment.context)
                     .inflate(R.layout.card_project_participant, parent, false)
+
                 return ProjectViewHolder(view)
             }
 
@@ -136,10 +144,18 @@ class AdminPanelFragment : Fragment() {
             ) {
                 val tvName: TextView = holder.itemView.participantName
                 val tvMaxBadge: TextView = holder.itemView.maximumBadgeValue
+                val tvMinBadge: TextView = holder.itemView.minimumBadgeValue
                 val ivImg: ImageView = holder.itemView.participantPicture
+                val slBadge: RangeSlider = holder.itemView.badgeSlider
                 tvName.text = model.name
                 Picasso.get().load(model.photoURL).into(ivImg)
                 tvMaxBadge.text = project.value.toString()
+                slBadge.stepSize = 0.5f
+                slBadge.bottom = 0
+                slBadge.top = project.value
+                tvMinBadge.text = "0"
+                tvMaxBadge.text = project.value.toString()
+                slBadge.setLabelFormatter { value -> value.toString() } //TODO: does not work currently
             }
         }
     }

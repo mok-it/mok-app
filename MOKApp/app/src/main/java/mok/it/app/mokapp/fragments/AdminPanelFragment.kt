@@ -65,7 +65,7 @@ class AdminPanelFragment : Fragment() {
     companion object {
         const val TAG = "AdminPanelFragment"
     }
-
+    //TODO: using args.project.id to get the project because it should be updated. Could pass id only
     private val args: AdminPanelFragmentArgs by navArgs()
     private lateinit var project: Project
 
@@ -84,29 +84,17 @@ class AdminPanelFragment : Fragment() {
         if (FirebaseUserObject.currentUser == null) {
             findNavController().navigate(R.id.action_global_loginFragment)
         } else {
-            project = args.project //TODO: should use the id of the project to get the document again
-//                setupTopMenu()
+            Firebase.firestore.collection(Collections.badges).document(args.project.id).get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.data != null) {
+                        project = document.toObject(Project::class.java)!!
+                    }
+                }
             FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext()) {
-                getMemberIds()
                 initLayout()
                 initRecyclerView()
             }
         }
-    }
-
-
-    private fun getMemberIds() {
-        val docRef = Firebase.firestore.collection(Collections.badges).document(args.project.id)
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.data != null) {
-                    Log.d(DetailsFragment.TAG, "DocumentSnapshot data: ${document.data}")
-                    //project = document.toObject(Project::class.java)!!
-                    Log.d(DetailsFragment.TAG, "Model data: $project")
-                } else {
-                    Log.d(DetailsFragment.TAG, "No such document or data is null")
-                }
-            }
     }
 
     private fun initRecyclerView() {
@@ -121,10 +109,10 @@ class AdminPanelFragment : Fragment() {
 
 
     private fun participantsQuery(): Query {
-        Log.w("DEBUG QUERY", "number of members: " + args.project.members.size)
+        Log.w("DEBUG QUERY", "number of members: " + project.members.size)
             return Firebase.firestore.collection(Collections.users)
                 .orderBy("name", Query.Direction.ASCENDING)
-                .whereIn(FieldPath.documentId(), args.project.members) //NOTE: can not handle lists of size greater than 30
+                .whereIn(FieldPath.documentId(), project.members) //NOTE: can not handle lists of size greater than 30
     }
     private fun getAdapter(): FirestoreRecyclerAdapter<User, ProjectViewHolder> {
         val query = participantsQuery()
@@ -191,7 +179,7 @@ class AdminPanelFragment : Fragment() {
 
     private fun setSliderToDBValue(slider: RangeSlider, badges: Map<String, Int>) {
         //TODO why does this have to be so complicated?? should be one-liner:
-        //slBadge.setValues(it[project.id]?.toFloat() ?: 0f)
+        //slBadge.setValues(it[project.id]?.toFloat() ?: 0f) //Throws ClassCastException
         val badgeCount = when (badges.containsKey(project.id)) {
             true -> badges[project.id]!!.toFloat()
             false -> 0f

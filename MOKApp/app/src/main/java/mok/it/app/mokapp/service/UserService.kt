@@ -5,7 +5,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import mok.it.app.mokapp.model.Collections
 
-class UserService : IUserService {
+object UserService : IUserService {
     override fun addBadges(
         userId: String,
         badgeId: String,

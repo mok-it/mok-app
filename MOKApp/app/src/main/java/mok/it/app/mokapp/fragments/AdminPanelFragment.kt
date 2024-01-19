@@ -53,11 +53,13 @@ import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import mok.it.app.mokapp.service.UserService
 import mok.it.app.mokapp.utility.Utility
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import kotlin.math.log
+import kotlin.math.roundToInt
 
 class AdminPanelFragment : Fragment() {
     companion object {
@@ -82,7 +84,7 @@ class AdminPanelFragment : Fragment() {
         if (FirebaseUserObject.currentUser == null) {
             findNavController().navigate(R.id.action_global_loginFragment)
         } else {
-            project = args.project
+            project = args.project //TODO: should use the id of the project to get the document again
 //                setupTopMenu()
             FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext()) {
                 getMemberIds()
@@ -140,22 +142,44 @@ class AdminPanelFragment : Fragment() {
             override fun onBindViewHolder(
                 holder: ProjectViewHolder,
                 position: Int,
-                model: User
+                user: User
             ) {
                 val tvName: TextView = holder.itemView.participantName
                 val tvMaxBadge: TextView = holder.itemView.maximumBadgeValue
                 val tvMinBadge: TextView = holder.itemView.minimumBadgeValue
                 val ivImg: ImageView = holder.itemView.participantPicture
                 val slBadge: RangeSlider = holder.itemView.badgeSlider
-                tvName.text = model.name
-                Picasso.get().load(model.photoURL).into(ivImg)
+                tvName.text = user.name
+                Picasso.get().load(user.photoURL).into(ivImg)
                 tvMaxBadge.text = project.value.toString()
-                slBadge.stepSize = 0.5f
                 slBadge.bottom = 0
                 slBadge.top = project.value
+                slBadge.stepSize = 1f
+                UserService.getProjectBadges(user.documentId, {
+                    setSliderToDBValue(slBadge, it)
+                }, {})
                 tvMinBadge.text = "0"
                 tvMaxBadge.text = project.value.toString()
                 slBadge.setLabelFormatter { value -> value.toString() } //TODO: does not work currently
+                slBadge.addOnChangeListener { _slider, value, _fromUser ->
+                    UserService.addBadges(user.documentId, project.id, value.roundToInt(),
+                        {
+                            Log.i("AdinPanelFragment", "Badge count of user ${user.documentId} on project ${project.id} was set to $value")
+                    },
+                        {
+                            UserService.getProjectBadges(user.documentId, {
+                                setSliderToDBValue(slBadge, it)
+                                Log.e(TAG, "Could not set badge count " +
+                                        "on project ${project.id} for user ${user.documentId}")
+                                Toast.makeText(context,
+                                    "Mancsok módosítása sikertelen." +
+                                            " Kérlek ellenőrizd a kapcsolatot" +
+                                            " vagy próbáld újra később.",
+                                    Toast.LENGTH_LONG)
+                                    .show()
+                            }, {})
+                        })
+                }
             }
         }
     }
@@ -164,5 +188,16 @@ class AdminPanelFragment : Fragment() {
             Toast.makeText(context, "Hamarosan...", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun setSliderToDBValue(slider: RangeSlider, badges: Map<String, Int>) {
+        //TODO why does this have to be so complicated?? should be one-liner:
+        //slBadge.setValues(it[project.id]?.toFloat() ?: 0f)
+        val badgeCount = when (badges.containsKey(project.id)) {
+            true -> badges[project.id]!!.toFloat()
+            false -> 0f
+        }
+        slider.setValues(badgeCount)
+    }
 }
+
 

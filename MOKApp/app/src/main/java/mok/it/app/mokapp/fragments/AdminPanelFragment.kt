@@ -77,8 +77,6 @@ class AdminPanelFragment : Fragment() {
         return inflater.inflate(R.layout.fragment_admin_panel, container, false)
     }
 
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         if (FirebaseUserObject.currentUser == null) {
@@ -109,7 +107,6 @@ class AdminPanelFragment : Fragment() {
 
 
     private fun participantsQuery(): Query {
-        Log.w("DEBUG QUERY", "number of members: " + project.members.size)
             return Firebase.firestore.collection(Collections.users)
                 .orderBy("name", Query.Direction.ASCENDING)
                 .whereIn(FieldPath.documentId(), project.members) //NOTE: can not handle lists of size greater than 30
@@ -173,7 +170,11 @@ class AdminPanelFragment : Fragment() {
     }
     private fun initLayout() {
         addParticipant.setOnClickListener {
-            Toast.makeText(context, "Hamarosan...", Toast.LENGTH_SHORT).show()
+            //TODO: fails if clicked before fragment fully loads??
+            findNavController().navigate(
+                AdminPanelFragmentDirections
+                    .actionAdminPanelFragmentToAddParticipantsDialogFragment(args.project.id)
+            )
         }
     }
 

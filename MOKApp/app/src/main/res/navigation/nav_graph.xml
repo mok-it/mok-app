@@ -195,5 +195,16 @@
         <argument
             android:name="project"
             app:argType="mok.it.app.mokapp.model.Project" />
+        <action
+            android:id="@+id/action_adminPanelFragment_to_addParticipantsDialogFragment"
+            app:destination="@id/addParticipantsDialogFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addParticipantsDialogFragment"
+        android:name="mok.it.app.mokapp.dialog.AddParticipantsDialogFragment"
+        android:label="AddParticipantsDialogFragment" >
+        <argument
+            android:name="projectId"
+            app:argType="string" />
     </fragment>
 </navigation>

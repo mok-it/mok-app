@@ -106,5 +106,8 @@
     <string name="participant">Résztvevő</string>
     <string name="badge_reward">Mancs jutalom</string>
     <string name="add_participant">résztvevő felvétele</string>
+    <string name="add_description">Hozzáadás</string>
+    <string name="add_participants">Résztvevők felvétele</string>
+    <string name="add">Hozzáadás</string>
 
 </resources>

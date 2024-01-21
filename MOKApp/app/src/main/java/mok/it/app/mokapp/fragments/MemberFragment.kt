@@ -45,36 +45,7 @@ class MemberFragment : Fragment() {
                 binding.badgeCountUniversal.text =
                     getString(R.string.badge_count, Category.UNIVERZALIS, it)
             }
-        viewModel.getUserBadgeCountByCategory(args.user, Category.SZERVEZETFEJLESZTES)
-            .observe(viewLifecycleOwner) {
-                binding.badgeCountSzervezetfejlesztes.text =
-                    getString(R.string.badge_count, Category.SZERVEZETFEJLESZTES, it)
-            }
-        viewModel.getUserBadgeCountByCategory(args.user, Category.FELADATSOR)
-            .observe(viewLifecycleOwner) {
-                binding.badgeCountFeladatsor.text =
-                    getString(R.string.badge_count, Category.FELADATSOR, it)
-            }
-        viewModel.getUserBadgeCountByCategory(args.user, Category.PEDAGOGIA)
-            .observe(viewLifecycleOwner) {
-                binding.badgeCountPedagogia.text =
-                    getString(R.string.badge_count, Category.PEDAGOGIA, it)
-            }
-        viewModel.getUserBadgeCountByCategory(args.user, Category.MEDIAESDIY)
-            .observe(viewLifecycleOwner) {
-                binding.badgeCountMedia.text =
-                    getString(R.string.badge_count, Category.MEDIAESDIY, it)
-            }
-        viewModel.getUserBadgeCountByCategory(args.user, Category.IT)
-            .observe(viewLifecycleOwner) {
-                binding.badgeCountIt.text =
-                    getString(R.string.badge_count, Category.IT, it)
-            }
-        viewModel.getUserBadgeCountByCategory(args.user, Category.TABORIPROGRAMESELOKESZITES)
-            .observe(viewLifecycleOwner) {
-                binding.badgeCountTaboriprogram.text =
-                    getString(R.string.badge_count, Category.TABORIPROGRAMESELOKESZITES, it)
-            }
+      
     }
 
     override fun onDestroy() {

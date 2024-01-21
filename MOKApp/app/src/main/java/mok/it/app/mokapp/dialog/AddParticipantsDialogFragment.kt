@@ -22,30 +22,18 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.card_project_participant.view.badgeSlider
-import kotlinx.android.synthetic.main.card_project_participant.view.maximumBadgeValue
-import kotlinx.android.synthetic.main.card_project_participant.view.minimumBadgeValue
-import kotlinx.android.synthetic.main.card_project_participant.view.participantName
-import kotlinx.android.synthetic.main.card_project_participant.view.participantPicture
-import kotlinx.android.synthetic.main.card_select_member.view.cbSelect
 import kotlinx.android.synthetic.main.card_select_member.view.memberName
 import kotlinx.android.synthetic.main.card_select_member.view.memberPicture
+import kotlinx.android.synthetic.main.card_select_member.view.memberSelect
 import kotlinx.android.synthetic.main.fragment_add_participants_dialog.btnAddParticipants
 import kotlinx.android.synthetic.main.fragment_add_participants_dialog.nonParticipantsList
-import kotlinx.android.synthetic.main.fragment_admin_panel.participants
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject
-import mok.it.app.mokapp.fragments.AdminPanelFragment
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
-import mok.it.app.mokapp.service.UserService
-import kotlin.math.roundToInt
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
 
 class AddParticipantsDialogFragment : DialogFragment() {
     companion object{
@@ -53,6 +41,7 @@ class AddParticipantsDialogFragment : DialogFragment() {
     }
     private val args: AddParticipantsDialogFragmentArgs by navArgs()
     private lateinit var project: Project
+    private var selectedUsers: MutableList<String> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -115,8 +104,20 @@ class AddParticipantsDialogFragment : DialogFragment() {
             ) {
                 val tvName: TextView = holder.itemView.memberName
                 val ivImg: ImageView = holder.itemView.memberPicture
+                val cbSelect: CheckBox = holder.itemView.memberSelect
                 tvName.text = user.name
                 Picasso.get().load(user.photoURL).into(ivImg)
+                cbSelect.isSelected = selectedUsers.contains(user.documentId)
+                cbSelect.setOnClickListener {
+                    if (!cbSelect.isSelected) {
+                        cbSelect.isSelected = true
+                        selectedUsers.add(user.documentId)
+                    }
+                    else {
+                        cbSelect.isSelected = false
+                        selectedUsers.remove(user.documentId)
+                    }
+                }
             }
         }
     }

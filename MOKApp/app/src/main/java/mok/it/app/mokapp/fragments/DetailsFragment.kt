@@ -210,7 +210,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initEditButton() {
-        //if (badgeModel.creator == userModel.documentId) {
+        //if (badgeModel.creator == userModel.documentId || userIsEditor) {
         if (true) { //TODO: use commented out line above instead of this!
             editButton.visibility = View.VISIBLE
             editButton.setOnClickListener {

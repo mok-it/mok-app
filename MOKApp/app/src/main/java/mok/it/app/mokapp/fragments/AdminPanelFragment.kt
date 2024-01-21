@@ -68,6 +68,7 @@ class AdminPanelFragment : Fragment() {
     //TODO: using args.project.id to get the project because it should be updated. Could pass id only
     private val args: AdminPanelFragmentArgs by navArgs()
     private lateinit var project: Project
+    private lateinit var userBadges: MutableMap<String, Int>
 
 
     override fun onCreateView(
@@ -82,16 +83,7 @@ class AdminPanelFragment : Fragment() {
         if (FirebaseUserObject.currentUser == null) {
             findNavController().navigate(R.id.action_global_loginFragment)
         } else {
-            Firebase.firestore.collection(Collections.badges).document(args.project.id).get()
-                .addOnSuccessListener { document ->
-                    if (document != null && document.data != null) {
-                        project = document.toObject(Project::class.java)!!
-                    }
-                }
-            FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext()) {
-                initLayout()
-                initRecyclerView()
-            }
+            initUserBadges()
         }
     }
 
@@ -140,9 +132,7 @@ class AdminPanelFragment : Fragment() {
                 slBadge.bottom = 0
                 slBadge.top = project.value
                 slBadge.stepSize = 1f
-                UserService.getProjectBadges(user.documentId, {
-                    setSliderToDBValue(slBadge, it)
-                }, {})
+                slBadge.setValues(userBadges[user.documentId]?.toFloat() ?: 0f)
                 tvMinBadge.text = "0"
                 tvMaxBadge.text = project.value.toString()
                 slBadge.setLabelFormatter { value -> value.toString() } //TODO: does not work currently
@@ -150,19 +140,18 @@ class AdminPanelFragment : Fragment() {
                     UserService.addBadges(user.documentId, project.id, value.roundToInt(),
                         {
                             Log.i("AdinPanelFragment", "Badge count of user ${user.documentId} on project ${project.id} was set to $value")
+                            userBadges[user.documentId] = value.roundToInt()
                     },
                         {
-                            UserService.getProjectBadges(user.documentId, {
-                                setSliderToDBValue(slBadge, it)
-                                Log.e(TAG, "Could not set badge count " +
-                                        "on project ${project.id} for user ${user.documentId}")
-                                Toast.makeText(context,
-                                    "Mancsok módosítása sikertelen." +
-                                            " Kérlek ellenőrizd a kapcsolatot" +
-                                            " vagy próbáld újra később.",
-                                    Toast.LENGTH_LONG)
-                                    .show()
-                            }, {})
+                            slBadge.setValues(userBadges[user.documentId]?.toFloat() ?: 0f)
+                            Log.e(TAG, "Could not set badge count " +
+                                    "on project ${project.id} for user ${user.documentId}")
+                            Toast.makeText(context,
+                                "Mancsok módosítása sikertelen." +
+                                        " Kérlek ellenőrizd a kapcsolatot" +
+                                        " vagy próbáld újra később.",
+                                Toast.LENGTH_LONG)
+                                .show()
                         })
                 }
             }
@@ -170,7 +159,6 @@ class AdminPanelFragment : Fragment() {
     }
     private fun initLayout() {
         addParticipant.setOnClickListener {
-            //TODO: fails if clicked before fragment fully loads??
             findNavController().navigate(
                 AdminPanelFragmentDirections
                     .actionAdminPanelFragmentToAddParticipantsDialogFragment(args.project.id)
@@ -178,14 +166,25 @@ class AdminPanelFragment : Fragment() {
         }
     }
 
-    private fun setSliderToDBValue(slider: RangeSlider, badges: Map<String, Int>) {
-        //TODO why does this have to be so complicated?? should be one-liner:
-        //slBadge.setValues(it[project.id]?.toFloat() ?: 0f) //Throws ClassCastException
-        val badgeCount = when (badges.containsKey(project.id)) {
-            true -> badges[project.id]!!.toFloat()
-            false -> 0f
-        }
-        slider.setValues(badgeCount)
+    private fun initUserBadges() {
+        UserService.getProjectUsersAndBadges(
+            args.project.id,
+            {userBadges = it.toMutableMap()
+                getProjectData()
+            },
+            {}
+        )
+    }
+
+    private fun getProjectData() {
+        Firebase.firestore.collection(Collections.badges).document(args.project.id).get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.data != null) {
+                    project = document.toObject(Project::class.java)!!
+                    initLayout()
+                    initRecyclerView()
+                }
+            }
     }
 }
 

@@ -72,7 +72,7 @@ class AddParticipantsDialogFragment : DialogFragment() {
     private fun initLayout() {
         btnAddParticipants.setOnClickListener {
             if (selectedUsers.isEmpty()) {
-                Toast.makeText(context, "Előbb válassz résztvevőket a fenti listából!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "Előbb válassz résztvevőket a listából!", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
             }
             UserService.joinUsersToProject( project.id, selectedUsers, {

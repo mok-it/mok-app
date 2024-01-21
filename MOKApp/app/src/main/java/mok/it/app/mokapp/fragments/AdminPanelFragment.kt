@@ -135,8 +135,8 @@ class AdminPanelFragment : Fragment() {
                 slBadge.setValues(userBadges[user.documentId]?.toFloat() ?: 0f)
                 tvMinBadge.text = "0"
                 tvMaxBadge.text = project.value.toString()
-                slBadge.setLabelFormatter { value -> value.toString() } //TODO: does not work currently
-                slBadge.addOnChangeListener { _slider, value, _fromUser ->
+                slBadge.setLabelFormatter { value -> value.toString() }
+                slBadge.addOnChangeListener { _, value, _ ->
                     UserService.addBadges(user.documentId, project.id, value.roundToInt(),
                         {
                             Log.i("AdinPanelFragment", "Badge count of user ${user.documentId} on project ${project.id} was set to $value")

@@ -120,10 +120,13 @@ object UserService : IUserService {
         onFailure: (Exception) -> Unit
     ) {
         val batch = Firebase.firestore.batch()
+        val projectDocumentRef = Firebase.firestore
+            .collection(Collections.badges).document(projectId)
 
         for (userId in userIds) {
             val userDocumentRef = Firebase.firestore.collection(Collections.users).document(userId)
             batch.update(userDocumentRef, "joinedBadges", FieldValue.arrayUnion(projectId))
+            batch.update(projectDocumentRef, "members", FieldValue.arrayUnion(userId))
         }
 
         batch.commit()

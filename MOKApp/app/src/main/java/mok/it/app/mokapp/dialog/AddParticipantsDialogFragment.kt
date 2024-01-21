@@ -34,6 +34,7 @@ import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import mok.it.app.mokapp.service.UserService
 
 class AddParticipantsDialogFragment : DialogFragment() {
     companion object{
@@ -60,21 +61,33 @@ class AddParticipantsDialogFragment : DialogFragment() {
                     if (document != null && document.data != null) {
                         project = document.toObject(Project::class.java)!!
                     }
+                    FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext()) {
+                        initLayout()
+                        initRecyclerView()
+                    }
                 }
-            FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext()) {
-                initLayout()
-                initRecyclerView()
-            }
         }
     }
 
     private fun initLayout() {
         btnAddParticipants.setOnClickListener {
-            Toast.makeText(context, "Hamarosan...", Toast.LENGTH_SHORT).show()
+            if (selectedUsers.isEmpty()) {
+                Toast.makeText(context, "Előbb válassz résztvevőket a fenti listából!", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+            UserService.joinUsersToProject( project.id, selectedUsers, {
+                Log.i(TAG, "Adding ${selectedUsers.size} users to project ${project.id}")
+                Toast.makeText(context, "Résztvevők hozzáadva!", Toast.LENGTH_SHORT).show()
+                findNavController().popBackStack()
+
+                }, {
+                    Toast.makeText(context, "A résztvevők hozzáadása sikertelen, kérlek próbáld újra később.", Toast.LENGTH_SHORT).show()
+                }
+            )
         }
     }
 
-    private fun initRecyclerView() { //TODO: terrible copy-paste boilerplate!
+    private fun initRecyclerView() {
         var adapter = getAdapter()
         adapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
@@ -107,14 +120,13 @@ class AddParticipantsDialogFragment : DialogFragment() {
                 val cbSelect: CheckBox = holder.itemView.memberSelect
                 tvName.text = user.name
                 Picasso.get().load(user.photoURL).into(ivImg)
-                cbSelect.isSelected = selectedUsers.contains(user.documentId)
-                cbSelect.setOnClickListener {
-                    if (!cbSelect.isSelected) {
-                        cbSelect.isSelected = true
+                cbSelect.setOnCheckedChangeListener(null)
+                cbSelect.isChecked = selectedUsers.contains(user.documentId)
+                cbSelect.setOnCheckedChangeListener { _, enabled ->
+                    if (enabled) {
                         selectedUsers.add(user.documentId)
                     }
                     else {
-                        cbSelect.isSelected = false
                         selectedUsers.remove(user.documentId)
                     }
                 }

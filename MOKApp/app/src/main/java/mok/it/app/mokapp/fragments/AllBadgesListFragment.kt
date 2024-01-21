@@ -38,6 +38,7 @@ import kotlinx.android.synthetic.main.fragment_all_badges_list.badgeSwipeRefresh
 import kotlinx.android.synthetic.main.fragment_all_badges_list.recyclerView
 import kotlinx.android.synthetic.main.fragment_all_badges_list.shimmerFrameLayout
 import kotlinx.android.synthetic.main.fragment_all_badges_list.view.addBadgeButton
+import kotlinx.android.synthetic.main.fragment_details.view.badgeValueTextView
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.dialog.FilterDialogFragment.Companion.filterResultKey
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
@@ -173,10 +174,13 @@ class AllBadgesListFragment :
                 val tvDesc: TextView = holder.itemView.projectDescription
                 val ivImg: ImageView = holder.itemView.projectIcon
                 val tvMandatory: TextView = holder.itemView.mandatoryTextView
+                val tvBadgeValue: TextView = holder.itemView.badgeValueTextView
+
                 tvName.text =
                     getString(R.string.badgeName, model.name, model.categoryEnum)
                 tvDesc.text = model.description
                 tvMandatory.isVisible = model.mandatory
+                tvBadgeValue.text = model.value.toString()
 
                 val iconFileName = getIconFileName(model.icon)
                 val iconFile = File(context?.filesDir, iconFileName)
@@ -195,8 +199,10 @@ class AllBadgesListFragment :
                             try {
                                 fos = FileOutputStream(iconFile)
                                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
-                                fos.flush()
-                                fos.close()
+                                fos.run {
+                                    flush()
+                                    close()
+                                }
                             } catch (e: IOException) {
                                 e.printStackTrace()
                             }

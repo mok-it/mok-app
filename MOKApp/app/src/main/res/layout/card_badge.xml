@@ -46,10 +46,10 @@
                 android:ellipsize="end"
                 android:gravity="top"
                 android:maxLines="2"
-                android:text="@string/loremipsum_long"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintStart_toStartOf="parent"
-                card_view:layout_constraintTop_toBottomOf="@+id/projectName" />
+                card_view:layout_constraintTop_toBottomOf="@+id/projectName"
+                tools:text="@string/loremipsum_long" />
 
             <TextView
                 android:id="@+id/projectName"
@@ -70,13 +70,33 @@
                 android:id="@+id/mandatoryTextView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="8dp"
                 android:background="@color/red_dark"
                 android:padding="2dp"
                 android:text="@string/mandatory"
                 android:textColor="@color/light_gray"
                 android:textStyle="bold"
                 card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintEnd_toStartOf="@id/projectBadgeValueTextView"
                 card_view:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/projectBadgeValueTextView"
+                android:layout_width="20dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginTop="2dp"
+                android:layout_marginEnd="8dp"
+                android:background="@drawable/circle"
+                android:fontFamily="sans-serif"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintTop_toTopOf="parent"
+                tools:text="2" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

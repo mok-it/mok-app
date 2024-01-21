@@ -35,6 +35,7 @@ import kotlinx.android.synthetic.main.fragment_details.badgeCreator
 import kotlinx.android.synthetic.main.fragment_details.badgeDeadline
 import kotlinx.android.synthetic.main.fragment_details.badgeDescription
 import kotlinx.android.synthetic.main.fragment_details.badgeName
+import kotlinx.android.synthetic.main.fragment_details.badgeValueTextView
 import kotlinx.android.synthetic.main.fragment_details.categoryName
 import kotlinx.android.synthetic.main.fragment_details.editButton
 import kotlinx.android.synthetic.main.fragment_details.join_button
@@ -44,7 +45,6 @@ import kotlinx.android.synthetic.main.fragment_details.member3
 import kotlinx.android.synthetic.main.fragment_details.members_left
 import kotlinx.android.synthetic.main.fragment_details.members_left_number
 import kotlinx.android.synthetic.main.fragment_details.members_overlay_button
-import kotlinx.android.synthetic.main.fragment_details.valueTextView
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
@@ -189,7 +189,7 @@ class DetailsFragment : Fragment() {
     private fun updateBadgeViews() {
         badgeName.text = badgeModel.name
         categoryName.text = getString(R.string.specific_category, badgeModel.category)
-        valueTextView.text = getString(R.string.specific_value, badgeModel.value)
+        badgeValueTextView.text = getString(R.string.specific_value, badgeModel.value)
         badgeDescription.text = badgeModel.description
         loadCreatorDetails()
     }

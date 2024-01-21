@@ -13,8 +13,10 @@ import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 
 class MemberViewModel : ViewModel() {
-    fun getUserBadgeCountByCategory(user: User, category: Category): LiveData<Int> {
-        val count = MutableLiveData(0)
+    data class BadgeData(val finishedProjectCount: Int, val finishedProjectBadgeSum: Int)
+
+    fun getUserBadgeCountByCategory(user: User, category: Category): LiveData<BadgeData> {
+        val badgeData = MutableLiveData(BadgeData(0, 0))
 
         user.collectedBadges.chunked(10).let {
             it.forEach { batch ->
@@ -23,12 +25,20 @@ class MemberViewModel : ViewModel() {
                     .whereIn(FieldPath.documentId(), batch)
                     .get()
                     .addOnSuccessListener { documents ->
-                        count.value = count.value?.plus(documents.size())
+                        var finishedProjectCount = badgeData.value?.finishedProjectCount ?: 0
+                        var finishedProjectBadgeSum = badgeData.value?.finishedProjectBadgeSum ?: 0
+
+                        for (document in documents) {
+                            finishedProjectCount++
+                            finishedProjectBadgeSum += document.getDouble("value")?.toInt() ?: 0
+                        }
+
+                        badgeData.value = BadgeData(finishedProjectCount, finishedProjectBadgeSum)
                     }
             }
         }
 
-        return count
+        return badgeData
     }
 
     fun loadImage(imageView: ImageView, imageURL: String): Boolean {

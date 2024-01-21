@@ -1,6 +1,5 @@
 package mok.it.app.mokapp.service
 
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import mok.it.app.mokapp.model.Collections

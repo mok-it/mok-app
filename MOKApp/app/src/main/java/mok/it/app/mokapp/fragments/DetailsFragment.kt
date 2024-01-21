@@ -8,7 +8,12 @@ import android.icu.text.DateFormat.getDateInstance
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
-import android.view.*
+import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.MenuHost
@@ -24,7 +29,22 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_details.*
+import kotlinx.android.synthetic.main.fragment_details.avatar_imagebutton
+import kotlinx.android.synthetic.main.fragment_details.badgeComments
+import kotlinx.android.synthetic.main.fragment_details.badgeCreator
+import kotlinx.android.synthetic.main.fragment_details.badgeDeadline
+import kotlinx.android.synthetic.main.fragment_details.badgeDescription
+import kotlinx.android.synthetic.main.fragment_details.badgeName
+import kotlinx.android.synthetic.main.fragment_details.categoryName
+import kotlinx.android.synthetic.main.fragment_details.editButton
+import kotlinx.android.synthetic.main.fragment_details.join_button
+import kotlinx.android.synthetic.main.fragment_details.member1
+import kotlinx.android.synthetic.main.fragment_details.member2
+import kotlinx.android.synthetic.main.fragment_details.member3
+import kotlinx.android.synthetic.main.fragment_details.members_left
+import kotlinx.android.synthetic.main.fragment_details.members_left_number
+import kotlinx.android.synthetic.main.fragment_details.members_overlay_button
+import kotlinx.android.synthetic.main.fragment_details.valueTextView
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
@@ -169,9 +189,7 @@ class DetailsFragment : Fragment() {
     private fun updateBadgeViews() {
         badgeName.text = badgeModel.name
         categoryName.text = getString(R.string.specific_category, badgeModel.category)
-        if (badgeModel.value > 1) {
-            valueTextView.text = badgeModel.value.toString()
-        }
+        valueTextView.text = getString(R.string.specific_value, badgeModel.value)
         badgeDescription.text = badgeModel.description
         loadCreatorDetails()
     }

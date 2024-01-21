@@ -81,7 +81,7 @@
     <string name="no_match">Nincs találat…</string>
     <string name="share">Megosztás</string>
     <string name="link_name">Link neve</string>
-    <string name="value">Érték:</string>
+    <string name="value">Érték</string>
     <string name="rewards">Jutalmak</string>
     <string name="request">Kérem!</string>
     <string name="achieved">Megszerezve</string>
@@ -95,6 +95,7 @@
     <string name="mutual_badges">Közös Mancsaitok:</string>
     <string name="badge_count">%1$s: %2$d</string>
     <string name="specific_category">Kategória: %1$s</string>
+    <string name="specific_value">Érték: %1$d</string>
     <string name="extra_members">+%1$d</string>
     <string name="completed_description">Teljesítette</string>
     <string name="mcs_name">Kreatív/Feladatsor/Pedagógia/stb</string>

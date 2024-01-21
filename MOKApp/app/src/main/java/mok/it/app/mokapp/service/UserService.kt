@@ -112,4 +112,26 @@ object UserService : IUserService {
                 onFailure.invoke(e)
             }
     }
+
+    override fun joinUsersToProject(
+        projectId: String,
+        userIds: List<String>,
+        onComplete: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val batch = Firebase.firestore.batch()
+
+        for (userId in userIds) {
+            val userDocumentRef = Firebase.firestore.collection(Collections.users).document(userId)
+            batch.update(userDocumentRef, "joinedBadges", FieldValue.arrayUnion(projectId))
+        }
+
+        batch.commit()
+            .addOnSuccessListener {
+                onComplete.invoke()
+            }
+            .addOnFailureListener { e ->
+                onFailure.invoke(e)
+            }
+    }
 }

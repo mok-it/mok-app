@@ -14,7 +14,7 @@ class CategoryNameAdapter(private val dataSet: List<String>) :
     var context: Context? = null
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val textView: TextView = view.findViewById(R.id.textView)
+        val textView: TextView = view.findViewById(R.id.participantName)
     }
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {

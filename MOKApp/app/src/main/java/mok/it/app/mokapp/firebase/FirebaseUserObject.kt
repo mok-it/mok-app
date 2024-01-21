@@ -36,6 +36,7 @@ object FirebaseUserObject {
         numberOfConsecutiveCalls: Int
     ) {
         val numberOfMaxTries = 100
+        Log.d("MOKApp", FirebaseAuth.getInstance().currentUser?.uid.toString())
         Firebase.firestore.collection(Collections.users)
             .document(
                 FirebaseAuth.getInstance().currentUser?.uid

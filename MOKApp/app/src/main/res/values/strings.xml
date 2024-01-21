@@ -106,5 +106,11 @@
     <string name="bug_report">Hibabejelentés</string>
     <string name="badgeName">%1$s (%2$s)</string>
     <string name="no_notifications">Oké, nem fogunk értesítéseket küldeni :/</string>
+    <string name="participant">Résztvevő</string>
+    <string name="badge_reward">Mancs jutalom</string>
+    <string name="add_participant">résztvevő felvétele</string>
+    <string name="add_description">Hozzáadás</string>
+    <string name="add_participants">Résztvevők felvétele</string>
+    <string name="add">Hozzáadás</string>
 
 </resources>

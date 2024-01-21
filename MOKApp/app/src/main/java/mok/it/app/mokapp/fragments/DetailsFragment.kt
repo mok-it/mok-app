@@ -176,10 +176,7 @@ class DetailsFragment : Fragment() {
                 DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.badgeId)
             findNavController().navigate(action)
         }
-    }
-
-    private fun loadBadgeDetails() {
-        Firebase.firestore.collection(Collections.projects).document(args.badgeId).get()
+        Firebase.firestore.collection(Collections.badges).document(args.badgeId).get()
             .addOnSuccessListener { document ->
                 badgeModel = document.toObject(Project::class.java)!!
                 updateBadgeViews()
@@ -194,13 +191,21 @@ class DetailsFragment : Fragment() {
         loadCreatorDetails()
     }
 
-    private fun loadCreatorDetails() {
-        Firebase.firestore.collection(Collections.users).document(badgeModel.creator)
-            .get().addOnSuccessListener { creatorDoc ->
-                badgeCreator.text = creatorDoc?.get("name") as? String
-                setBadgeDeadline()
-                loadBadgeIcon()
-                checkUserEditorStatus()
+                                override fun onError(e: java.lang.Exception?) {
+                                    Log.e(TAG, e.toString())
+                                }
+                            }
+                            Picasso.get().load(badgeModel.icon).into(avatar_imagebutton, callback)
+                        }
+
+                        val editors = badgeModel.editors
+                        if (editors.contains(userModel.documentId)) {
+                            userIsEditor = true
+                        }
+                        changeVisibilities()
+                        initEditButton()
+                        initAdminButton()
+                    }
                 changeVisibilities()
                 initEditButton()
             }
@@ -267,11 +272,26 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initEditButton() {
-        if (badgeModel.creator == userModel.documentId) {
+        //if (badgeModel.creator == userModel.documentId || userIsEditor) {
+        if (true) { //TODO: use commented out line above instead of this!
             editButton.visibility = View.VISIBLE
             editButton.setOnClickListener {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToEditBadgeFragment(
+                        badgeModel
+                    )
+                )
+            }
+        }
+    }
+
+    private fun initAdminButton() {
+//        if (badgeModel.creator == userModel.documentId || userIsEditor) {
+        if (true) { //TODO: use commented out line above instead of this!
+            rewardButton.visibility = View.VISIBLE
+            rewardButton.setOnClickListener {
+                findNavController().navigate(
+                    DetailsFragmentDirections.actionDetailsFragmentToAdminPanelFragment(
                         badgeModel
                     )
                 )

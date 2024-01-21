@@ -1,5 +1,6 @@
 package mok.it.app.mokapp.service
 
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import mok.it.app.mokapp.model.Collections
@@ -139,22 +140,5 @@ object UserService : IUserService {
             .addOnFailureListener { e ->
                 onFailure.invoke(e)
             }
-    }
-
-    private val categories: List<String> by lazy {
-        val categoriesList = mutableListOf<String>()
-        val categoriesCollectionRef = Firebase.firestore.collection(Collections.categories)
-
-        categoriesCollectionRef.get()
-            .addOnSuccessListener { querySnapshot ->
-                for (document in querySnapshot.documents) {
-                    categoriesList.add(document["name"] as String)
-                }
-            }
-        categoriesList
-    }
-
-    override fun getCategories(onComplete: (List<String>) -> Unit) {
-        onComplete.invoke(categories)
     }
 }

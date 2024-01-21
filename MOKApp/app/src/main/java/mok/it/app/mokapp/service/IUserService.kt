@@ -28,8 +28,4 @@ interface IUserService {
         onComplete: () -> Unit,
         onFailure: (Exception) -> Unit
     )
-
-    fun getCategories(
-        onComplete: (List<String>) -> Unit,
-    )
 }

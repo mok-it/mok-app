@@ -45,6 +45,7 @@ import kotlinx.android.synthetic.main.fragment_details.member3
 import kotlinx.android.synthetic.main.fragment_details.members_left
 import kotlinx.android.synthetic.main.fragment_details.members_left_number
 import kotlinx.android.synthetic.main.fragment_details.members_overlay_button
+import kotlinx.android.synthetic.main.fragment_details.rewardButton
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
@@ -67,8 +68,12 @@ class DetailsFragment : Fragment() {
         const val TAG = "DetailsFragment"
     }
 
+    //TODO test whether it updates itself when the "members" tab is open
+    // if not, use FirestoreRecyclerAdapter instead
+
     private val args: DetailsFragmentArgs by navArgs()
 
+    //TODO refactor this to make proper use of the viewModel
     private val viewModel: DetailsFragmentViewModel by viewModels()
 
     private lateinit var badgeModel: Project
@@ -141,16 +146,8 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initLayout() {
-        initMembersOverlayButton()
-        initJoinButton()
-        initBadgeComments()
-        loadBadgeDetails()
-    }
-
-    private fun initMembersOverlayButton() {
         members_overlay_button.setOnClickListener {
-            val isNotEmpty = viewModel.members.value?.isNotEmpty() != false
-            if (isNotEmpty && ::badgeModel.isInitialized) {
+            if (viewModel.members.value?.isNotEmpty() != false && ::badgeModel.isInitialized) {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToBadgeMembersDialogFragment(
                         viewModel.members.value!!,
@@ -160,17 +157,11 @@ class DetailsFragment : Fragment() {
                 )
             }
         }
-    }
-
-    private fun initJoinButton() {
         join_button.setOnClickListener {
             join()
             refreshCurrentUserAndUserModel(requireContext())
         }
         join_button.visibility = View.GONE
-    }
-
-    private fun initBadgeComments() {
         badgeComments.setOnClickListener {
             val action =
                 DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.badgeId)
@@ -179,17 +170,45 @@ class DetailsFragment : Fragment() {
         Firebase.firestore.collection(Collections.badges).document(args.badgeId).get()
             .addOnSuccessListener { document ->
                 badgeModel = document.toObject(Project::class.java)!!
-                updateBadgeViews()
-            }
-    }
+                badgeName.text = badgeModel.name
+                categoryName.text =
+                    getString(R.string.specific_category, badgeModel.category)
+                badgeValueTextView.text = getString(R.string.specific_value, badgeModel.value)
+                badgeDescription.text = badgeModel.description
 
-    private fun updateBadgeViews() {
-        badgeName.text = badgeModel.name
-        categoryName.text = getString(R.string.specific_category, badgeModel.category)
-        badgeValueTextView.text = getString(R.string.specific_value, badgeModel.value)
-        badgeDescription.text = badgeModel.description
-        loadCreatorDetails()
-    }
+                Firebase.firestore.collection(Collections.users)
+                    .document(badgeModel.creator)
+                    .get().addOnSuccessListener { creatorDoc ->
+                        if (creatorDoc?.get("name") != null) {
+                            badgeCreator.text = creatorDoc["name"] as String //TODO NPE itt is
+                        }
+                        val formatter = getDateInstance()
+                        badgeDeadline.text =
+                            formatter.format(badgeModel.created)
+
+                        val iconFileName = getIconFileName(badgeModel.icon)
+                        val iconFile = File(context?.filesDir, iconFileName)
+                        if (iconFile.exists()) {
+                            Log.i(TAG, "loading badge icon " + iconFile.path)
+                            val bitmap: Bitmap = BitmapFactory.decodeFile(iconFile.path)
+                            avatar_imagebutton.setImageBitmap(bitmap)
+                        } else {
+                            Log.i(TAG, "downloading badge icon " + badgeModel.icon)
+                            val callback = object : Callback {
+                                override fun onSuccess() {
+                                    // save image
+                                    Log.i(TAG, "saving badge icon " + iconFile.path)
+                                    val bitmap: Bitmap = avatar_imagebutton.drawable.toBitmap()
+                                    val fos: FileOutputStream?
+                                    try {
+                                        fos = FileOutputStream(iconFile)
+                                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                                        fos.flush()
+                                        fos.close()
+                                    } catch (e: IOException) {
+                                        e.printStackTrace()
+                                    }
+                                }
 
                                 override fun onError(e: java.lang.Exception?) {
                                     Log.e(TAG, e.toString())
@@ -207,73 +226,11 @@ class DetailsFragment : Fragment() {
                         initAdminButton()
                     }
                 changeVisibilities()
-                initEditButton()
             }
-        changeVisibilities()
-    }
-
-    private fun setBadgeDeadline() {
-        val formatter = getDateInstance()
-        badgeDeadline.text = formatter.format(badgeModel.created)
-    }
-
-    private fun loadBadgeIcon() {
-        val iconFileName = getIconFileName(badgeModel.icon)
-        val iconFile = File(context?.filesDir, iconFileName)
-
-        if (iconFile.exists()) {
-            loadCachedBadgeIcon(iconFile)
-        } else {
-            downloadAndCacheBadgeIcon(iconFile)
-        }
-    }
-
-    private fun loadCachedBadgeIcon(iconFile: File) {
-        Log.i(TAG, "loading badge icon " + iconFile.path)
-        val bitmap: Bitmap = BitmapFactory.decodeFile(iconFile.path)
-        avatar_imagebutton.setImageBitmap(bitmap)
-    }
-
-    private fun downloadAndCacheBadgeIcon(iconFile: File) {
-        Log.i(TAG, "downloading badge icon " + badgeModel.icon)
-        val callback = createPicassoCallback(iconFile)
-        Picasso.get().load(badgeModel.icon).into(avatar_imagebutton, callback)
-    }
-
-    private fun createPicassoCallback(iconFile: File): Callback {
-        return object : Callback {
-            override fun onSuccess() {
-                saveBadgeIcon(iconFile)
-            }
-
-            override fun onError(e: Exception?) {
-                Log.e(TAG, e.toString())
-            }
-        }
-    }
-
-    private fun saveBadgeIcon(iconFile: File) {
-        Log.i(TAG, "saving badge icon " + iconFile.path)
-        val bitmap: Bitmap = avatar_imagebutton.drawable.toBitmap()
-        val fos: FileOutputStream?
-        try {
-            fos = FileOutputStream(iconFile)
-            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
-            fos.flush()
-            fos.close()
-        } catch (e: IOException) {
-            e.printStackTrace()
-        }
-    }
-
-    private fun checkUserEditorStatus() {
-        val editors = badgeModel.editors
-        userIsEditor = editors.contains(userModel.documentId)
     }
 
     private fun initEditButton() {
-        //if (badgeModel.creator == userModel.documentId || userIsEditor) {
-        if (true) { //TODO: use commented out line above instead of this!
+        if (badgeModel.creator == userModel.documentId || userIsEditor) {
             editButton.visibility = View.VISIBLE
             editButton.setOnClickListener {
                 findNavController().navigate(
@@ -286,8 +243,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initAdminButton() {
-//        if (badgeModel.creator == userModel.documentId || userIsEditor) {
-        if (true) { //TODO: use commented out line above instead of this!
+        if (badgeModel.creator == userModel.documentId || userIsEditor) {
             rewardButton.visibility = View.VISIBLE
             rewardButton.setOnClickListener {
                 findNavController().navigate(
@@ -416,7 +372,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initMembers() {
-        members_left.isVisible = false
+        members_left.isVisible = false //TODO sometimes throws an NPE (members_left is null)
         members_left_number.isVisible = false
 
         val members = listOf(member1, member2, member3)

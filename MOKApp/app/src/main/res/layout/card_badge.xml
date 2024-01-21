@@ -55,14 +55,13 @@
                 android:id="@+id/projectName"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="2dp"
-                android:layout_marginEnd="8dp"
                 android:fontFamily="sans-serif"
                 android:text="@string/badge_name"
                 android:textSize="16sp"
                 android:textStyle="bold"
-                card_view:layout_constraintEnd_toEndOf="parent"
+                card_view:layout_constraintEnd_toStartOf="@+id/mandatoryTextView"
                 card_view:layout_constraintStart_toStartOf="parent"
                 card_view:layout_constraintTop_toTopOf="parent" />
 

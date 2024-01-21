@@ -30,6 +30,7 @@ import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_badge.view.mandatoryTextView
+import kotlinx.android.synthetic.main.card_badge.view.projectBadgeValueTextView
 import kotlinx.android.synthetic.main.card_badge.view.projectDescription
 import kotlinx.android.synthetic.main.card_badge.view.projectIcon
 import kotlinx.android.synthetic.main.card_badge.view.projectName
@@ -38,7 +39,6 @@ import kotlinx.android.synthetic.main.fragment_all_badges_list.badgeSwipeRefresh
 import kotlinx.android.synthetic.main.fragment_all_badges_list.recyclerView
 import kotlinx.android.synthetic.main.fragment_all_badges_list.shimmerFrameLayout
 import kotlinx.android.synthetic.main.fragment_all_badges_list.view.addBadgeButton
-import kotlinx.android.synthetic.main.fragment_details.view.badgeValueTextView
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.dialog.FilterDialogFragment.Companion.filterResultKey
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
@@ -174,7 +174,7 @@ class AllBadgesListFragment :
                 val tvDesc: TextView = holder.itemView.projectDescription
                 val ivImg: ImageView = holder.itemView.projectIcon
                 val tvMandatory: TextView = holder.itemView.mandatoryTextView
-                val tvBadgeValue: TextView = holder.itemView.badgeValueTextView
+                val tvBadgeValue: TextView = holder.itemView.projectBadgeValueTextView
 
                 tvName.text =
                     getString(R.string.badgeName, model.name, model.categoryEnum)

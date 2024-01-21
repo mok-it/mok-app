@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -40,12 +41,25 @@ class MemberFragment : Fragment() {
     }
 
     private fun loadBadgeCounts() {
-        viewModel.getUserBadgeCountByCategory(args.user, Category.UNIVERZALIS)
-            .observe(viewLifecycleOwner) {
-                binding.badgeCountUniversal.text =
-                    getString(R.string.badge_count, Category.UNIVERZALIS, it)
-            }
-      
+        var sumOfBadges = 0
+        var numberOfAllProjects = 0
+        for (category in Category.values()) {
+            viewModel.getUserBadgeCountByCategory(args.user, category)
+                .observe(viewLifecycleOwner) { badgeData ->
+                    val badgeTextView = TextView(context)
+                    badgeTextView.text = getString(
+                        R.string.badge_count,
+                        category.name,
+                        badgeData.finishedProjectCount
+                    )
+                    sumOfBadges += badgeData.finishedProjectBadgeSum
+                    numberOfAllProjects += badgeData.finishedProjectCount
+                    binding.badgeContainer.addView(badgeTextView)
+                }
+        }
+
+        binding.collectedBadgesSummary.text =
+            getString(R.string.collectedBadgesSummary, sumOfBadges, numberOfAllProjects)
     }
 
     override fun onDestroy() {

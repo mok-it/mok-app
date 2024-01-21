@@ -18,7 +18,9 @@ object UserService : IUserService {
 
         userDocumentRef.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
-                val currentBadges = documentSnapshot.data?.get("projectBadges") as? HashMap<String, Int> ?: hashMapOf()
+                val currentBadges =
+                    documentSnapshot.data?.get("projectBadges") as? HashMap<String, Int>
+                        ?: hashMapOf()
                 currentBadges[badgeId] = badgeAmount
 
                 userDocumentRef.update("projectBadges", currentBadges)
@@ -47,7 +49,9 @@ object UserService : IUserService {
 
         userDocumentRef.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
-                val currentBadges = documentSnapshot.data?.get("projectBadges") as? HashMap<String, Int> ?: hashMapOf()
+                val currentBadges =
+                    documentSnapshot.data?.get("projectBadges") as? HashMap<String, Int>
+                        ?: hashMapOf()
 
                 // Calculate the sum of badge amounts
                 val sum = currentBadges.values.sum()
@@ -61,6 +65,7 @@ object UserService : IUserService {
                 onFailure.invoke(e)
             }
     }
+
     override fun getProjectBadges(
         userId: String,
         onComplete: (Map<String, Int>) -> Unit,
@@ -71,7 +76,8 @@ object UserService : IUserService {
 
         userDocumentRef.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
-                val projectBadges = documentSnapshot.data?.get("projectBadges") as? Map<String, Int> ?: mapOf()
+                val projectBadges =
+                    documentSnapshot.data?.get("projectBadges") as? Map<String, Int> ?: mapOf()
 
                 onComplete.invoke(projectBadges)
             } else {
@@ -82,6 +88,7 @@ object UserService : IUserService {
                 onFailure.invoke(e)
             }
     }
+
     override fun getProjectUsersAndBadges(
         projectId: String,
         onComplete: (Map<String, Int>) -> Unit,
@@ -133,5 +140,22 @@ object UserService : IUserService {
             .addOnFailureListener { e ->
                 onFailure.invoke(e)
             }
+    }
+
+    private val categories: List<String> by lazy {
+        val categoriesList = mutableListOf<String>()
+        val categoriesCollectionRef = Firebase.firestore.collection(Collections.categories)
+
+        categoriesCollectionRef.get()
+            .addOnSuccessListener { querySnapshot ->
+                for (document in querySnapshot.documents) {
+                    categoriesList.add(document["name"] as String)
+                }
+            }
+        categoriesList
+    }
+
+    override fun getCategories(onComplete: (List<String>) -> Unit) {
+        onComplete.invoke(categories)
     }
 }

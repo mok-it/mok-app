@@ -1,8 +1,7 @@
-package mok.it.app.mokapp.dialog
+package mok.it.app.mokapp.fragments
 
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -16,7 +15,6 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.android.material.slider.RangeSlider
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -25,8 +23,8 @@ import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_select_member.view.memberName
 import kotlinx.android.synthetic.main.card_select_member.view.memberPicture
 import kotlinx.android.synthetic.main.card_select_member.view.memberSelect
-import kotlinx.android.synthetic.main.fragment_add_participants_dialog.btnAddParticipants
-import kotlinx.android.synthetic.main.fragment_add_participants_dialog.nonParticipantsList
+import kotlinx.android.synthetic.main.fragment_add_participants.btnAddParticipants
+import kotlinx.android.synthetic.main.fragment_add_participants.nonParticipantsList
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.model.Collections
@@ -36,11 +34,11 @@ import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import mok.it.app.mokapp.service.UserService
 
-class AddParticipantsDialogFragment : DialogFragment() {
+class AddParticipantsFragment : DialogFragment() {
     companion object{
         val TAG = "AddParticipantsDialogFragment"
     }
-    private val args: AddParticipantsDialogFragmentArgs by navArgs()
+    private val args: AddParticipantsFragmentArgs by navArgs()
     private lateinit var project: Project
     private var selectedUsers: MutableList<String> = mutableListOf()
 
@@ -48,7 +46,7 @@ class AddParticipantsDialogFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_add_participants_dialog, container, false)
+        return inflater.inflate(R.layout.fragment_add_participants, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -103,7 +101,7 @@ class AddParticipantsDialogFragment : DialogFragment() {
                 .setLifecycleOwner(this).build()
         return object : FirestoreRecyclerAdapter<User, ProjectViewHolder>(options) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
-                val view = LayoutInflater.from(this@AddParticipantsDialogFragment.context)
+                val view = LayoutInflater.from(this@AddParticipantsFragment.context)
                     .inflate(R.layout.card_select_member, parent, false)
 
                 return ProjectViewHolder(view)

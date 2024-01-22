@@ -190,8 +190,8 @@
     <fragment
         android:id="@+id/adminPanelFragment"
         android:name="mok.it.app.mokapp.fragments.AdminPanelFragment"
-        android:label="fragment_admin_panel"
-        tools:layout="@layout/fragment_admin_panel" >
+        android:label="Adminisztráció"
+        tools:layout="@layout/fragment_admin_panel">
         <argument
             android:name="project"
             app:argType="mok.it.app.mokapp.model.Project" />
@@ -201,8 +201,8 @@
     </fragment>
     <fragment
         android:id="@+id/addParticipantsDialogFragment"
-        android:name="mok.it.app.mokapp.dialog.AddParticipantsDialogFragment"
-        android:label="AddParticipantsDialogFragment" >
+        android:name="mok.it.app.mokapp.fragments.AddParticipantsFragment"
+        android:label="Résztvevők felvétele">
         <argument
             android:name="projectId"
             app:argType="string" />

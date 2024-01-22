@@ -1,6 +1,5 @@
 package mok.it.app.mokapp.model
 
-import android.os.Parcel
 import android.os.Parcelable
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.PropertyName
@@ -32,13 +31,5 @@ data class User(
 ) : Parcelable {
     fun generateCategories() {
         categoryList = categories.map { it.toCategory() }.toMutableList()
-    }
-
-    override fun describeContents(): Int {
-        TODO("Not yet implemented")
-    }
-
-    override fun writeToParcel(p0: Parcel, p1: Int) {
-        TODO("Not yet implemented")
     }
 }

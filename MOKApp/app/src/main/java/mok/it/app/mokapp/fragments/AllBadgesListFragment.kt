@@ -28,7 +28,6 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_badge.view.mandatoryTextView
 import kotlinx.android.synthetic.main.card_badge.view.projectBadgeValueTextView
 import kotlinx.android.synthetic.main.card_badge.view.projectDescription
@@ -50,6 +49,7 @@ import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import mok.it.app.mokapp.utility.Utility.getIconFileName
+import mok.it.app.mokapp.utility.Utility.loadImage
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -122,37 +122,6 @@ class AllBadgesListFragment :
         }
     }
 
-    /**
-     * Tries to load the image provided into the given view. If that did not
-     * succeed, it tries to load the default 'broken' image. If that also
-     * fails, leaves the image empty and logs an error message.
-     */
-    private fun loadImage(imageView: ImageView, imageURL: String, callback: Callback) {
-        if (tryLoadingImage(imageView, imageURL, callback)) return
-        if (tryLoadingImage(imageView, getString(R.string.url_no_image), callback)) return
-    }
-
-    /**
-     * Tries to load an image into the given image view. If for some reason
-     * the provided URL does not point to a valid image file, false is returned.
-     *
-     * @return true if the function succeeded, false if failed
-     */
-    private fun tryLoadingImage(
-        imageView: ImageView,
-        imageURL: String,
-        callback: Callback
-    ): Boolean {
-        return try {
-            Picasso.get().apply {
-                load(imageURL).into(imageView, callback)
-            }
-            true
-        } catch (e: Exception) {
-            false
-        }
-    }
-
     private fun getAdapter(): FirestoreRecyclerAdapter<Project, ProjectViewHolder> {
         val query = getFilteredQuery()
         val options =
@@ -190,29 +159,30 @@ class AllBadgesListFragment :
                     ivImg.setImageBitmap(bitmap)
                 } else {
                     Log.i(TAG, "downloading badge icon " + model.icon)
-                    val callback = object : Callback {
-                        override fun onSuccess() {
-                            // save image
-                            Log.i(TAG, "saving badge icon " + iconFile.path)
-                            val bitmap: Bitmap = ivImg.drawable.toBitmap()
-                            val fos: FileOutputStream?
-                            try {
-                                fos = FileOutputStream(iconFile)
-                                bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
-                                fos.run {
-                                    flush()
-                                    close()
+                    val callback =
+                        object : Callback {
+                            override fun onSuccess() {
+                                // save image
+                                Log.i(TAG, "saving badge icon " + iconFile.path)
+                                val bitmap: Bitmap = ivImg.drawable.toBitmap()
+                                val fos: FileOutputStream?
+                                try {
+                                    fos = FileOutputStream(iconFile)
+                                    bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                                    fos.run {
+                                        flush()
+                                        close()
+                                    }
+                                } catch (e: IOException) {
+                                    e.printStackTrace()
                                 }
-                            } catch (e: IOException) {
-                                e.printStackTrace()
+                            }
+
+                            override fun onError(e: java.lang.Exception?) {
+                                Log.e(TAG, e.toString())
                             }
                         }
-
-                        override fun onError(e: java.lang.Exception?) {
-                            Log.e(TAG, e.toString())
-                        }
-                    }
-                    loadImage(ivImg, model.icon, callback)
+                    loadImage(ivImg, model.icon, requireContext(), callback)
                 }
 
                 if (userModel.collectedBadges.contains(model.id)) {

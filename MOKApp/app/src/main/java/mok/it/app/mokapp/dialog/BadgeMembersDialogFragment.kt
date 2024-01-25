@@ -47,7 +47,7 @@ class BadgeMembersDialogFragment : DialogFragment() {
     }
 
     private fun initRecyclerView() {
-        binding.recyclerView.adapter = MembersAdapter(args.users, args.canEdit, this)
+        binding.recyclerView.adapter = MembersAdapter(args.users, this)
         binding.recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)
     }
@@ -60,17 +60,8 @@ class BadgeMembersDialogFragment : DialogFragment() {
         findNavController().navigate(action)
     }
 
-    fun navigateToBadgeAcceptMemberDialogFragment(user: User) {
-        val action =
-            BadgeMembersDialogFragmentDirections.actionBadgeMembersDialogFragmentToBadgeAcceptMemberDialogFragment(
-                user
-            )
-        findNavController().navigate(action)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
-
 }

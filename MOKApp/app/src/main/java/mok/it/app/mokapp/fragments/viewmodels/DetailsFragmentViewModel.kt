@@ -42,8 +42,9 @@ class DetailsFragmentViewModel : ViewModel() {
             }
     }
 
-    fun getMembers(members: List<String>?) {
-        members?.forEach {
+    fun getMembers(memberIds: List<String>?) {
+        val newMembers = MutableLiveData<Array<User>>()
+        memberIds?.forEach {
             val docRef = Firebase.firestore.collection(Collections.users).document(it)
             docRef.get()
                 .addOnSuccessListener { document ->
@@ -52,11 +53,13 @@ class DetailsFragmentViewModel : ViewModel() {
                         val user =
                             document.toObject(User::class.java)
                         if (user != null) {
-                            _members.value = _members.value?.plus(user)
+//                            _members.value = _members.value?.plus(user)
+                            newMembers.value = newMembers.value?.plus(user)
                         }
                     }
                 }
         }
+        _members.value = newMembers.value
     }
 
     fun completed(userId: String, badge: Project) {

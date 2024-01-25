@@ -133,8 +133,12 @@ class AddParticipantsFragment : DialogFragment() {
     }
 
     private fun nonParticipantsQuery(): Query {
+        if (project.members.isEmpty()) {
+            return Firebase.firestore.collection(Collections.users)
+                .orderBy("name", Query.Direction.ASCENDING)
+        }
         return Firebase.firestore.collection(Collections.users)
-            .orderBy("__name__", Query.Direction.ASCENDING)
+            .orderBy("name", Query.Direction.ASCENDING)
             .whereNotIn(FieldPath.documentId(), project.members) //NOTE: can not handle lists of size greater than 30
     }
 }

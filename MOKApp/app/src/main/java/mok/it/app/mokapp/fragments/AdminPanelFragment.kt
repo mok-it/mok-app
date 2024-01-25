@@ -44,6 +44,9 @@ import kotlinx.android.synthetic.main.card_project_participant.view.minimumBadge
 import kotlinx.android.synthetic.main.card_project_participant.view.participantName
 import kotlinx.android.synthetic.main.card_project_participant.view.participantPicture
 import kotlinx.android.synthetic.main.fragment_admin_panel.addParticipant
+import kotlinx.android.synthetic.main.fragment_admin_panel.admin_participants_empty
+import kotlinx.android.synthetic.main.fragment_admin_panel.badgeReward
+import kotlinx.android.synthetic.main.fragment_admin_panel.participant
 import kotlinx.android.synthetic.main.fragment_admin_panel.participants
 import kotlinx.android.synthetic.main.fragment_all_badges_list.recyclerView
 import kotlinx.android.synthetic.main.fragment_details.avatar_imagebutton
@@ -92,7 +95,14 @@ class AdminPanelFragment : Fragment() {
     }
 
     private fun initRecyclerView() {
-        var adapter = getAdapter()
+        val adapter = getAdapter()
+        if (adapter == null) {
+            admin_participants_empty.visibility = View.VISIBLE
+            participant.visibility = View.GONE
+            badgeReward.visibility = View.GONE
+            participants.visibility = View.GONE
+            return
+        }
         adapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
@@ -107,7 +117,10 @@ class AdminPanelFragment : Fragment() {
                 .orderBy("name", Query.Direction.ASCENDING)
                 .whereIn(FieldPath.documentId(), project.members) //NOTE: can not handle lists of size greater than 30
     }
-    private fun getAdapter(): FirestoreRecyclerAdapter<User, ProjectViewHolder> {
+    private fun getAdapter(): FirestoreRecyclerAdapter<User, ProjectViewHolder>? {
+        if (project.members.isEmpty()) {
+            return null
+        }
         val query = participantsQuery()
         val options =
             FirestoreRecyclerOptions.Builder<User>().setQuery(query, User::class.java)
@@ -191,5 +204,3 @@ class AdminPanelFragment : Fragment() {
             }
     }
 }
-
-

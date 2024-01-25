@@ -126,12 +126,6 @@ class PhoneBookFragment : Fragment() {
                             clipboard.setPrimaryClip(clip)
                         }
                     }
-
-                    /* holder.itemView.sms_button.setOnClickListener {
-                         val intent = Intent(Intent.ACTION_SENDTO)
-                         intent.data = Uri.parse("smsto:0123456789")
-                         this.context?.let { it2 -> ContextCompat.startActivity(it2, intent, null) }
-                     }*/
                 }
 
                 override fun onCreateViewHolder(group: ViewGroup, i: Int): PhoneBookViewHolder {

@@ -7,9 +7,12 @@ import androidx.fragment.app.DialogFragment
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Reward
 
-class RewardAcceptDialogFragment(private val listener: RewardAcceptListener, private val reward: Reward) : DialogFragment() {
+class RewardAcceptDialogFragment(
+    private val listener: RewardAcceptListener,
+    private val reward: Reward
+) : DialogFragment() {
 
-    interface RewardAcceptListener {
+    fun interface RewardAcceptListener {
         fun rewardAccepted(reward: Reward)
     }
 
@@ -18,8 +21,8 @@ class RewardAcceptDialogFragment(private val listener: RewardAcceptListener, pri
             .setTitle("Biztosan kéred a jutalmat?")
             .setMessage("${reward.price} pontba kerül.")
             .setPositiveButton(R.string.ok) { _, _ ->
-                    listener.rewardAccepted(reward)
-                }
+                listener.rewardAccepted(reward)
+            }
             .setNegativeButton(R.string.cancel) { _, _ -> }
             .create()
 }

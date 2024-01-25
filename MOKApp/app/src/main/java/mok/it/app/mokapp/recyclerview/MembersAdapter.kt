@@ -8,11 +8,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
-import kotlinx.android.synthetic.main.card_member.view.*
+import kotlinx.android.synthetic.main.card_member.view.btnCompleted
+import kotlinx.android.synthetic.main.card_member.view.imageView
+import kotlinx.android.synthetic.main.card_member.view.textView
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.dialog.BadgeMembersDialogFragment
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.User
+
 
 class MembersAdapter(
     private val userArray: Array<User>,
@@ -65,8 +68,7 @@ class MembersAdapter(
 
     //ha creator, editor vagy admin a felhasználó
     private fun canAccept(): Boolean {
-        if (userModel.admin || userModel.isCreator || userIsEditor) return true
-        return false
+        return userModel.admin || userModel.isCreator || userIsEditor
     }
 
     companion object {

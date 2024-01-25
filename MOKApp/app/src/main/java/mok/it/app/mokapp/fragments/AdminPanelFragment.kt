@@ -1,23 +1,13 @@
 package mok.it.app.mokapp.fragments
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.icu.text.DateFormat
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
-import androidx.core.graphics.drawable.toBitmap
-import androidx.core.graphics.drawable.toDrawable
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -25,19 +15,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.slider.RangeSlider
-import com.google.android.material.slider.Slider
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.card_badge.view.mandatoryTextView
-import kotlinx.android.synthetic.main.card_badge.view.projectDescription
-import kotlinx.android.synthetic.main.card_badge.view.projectIcon
-import kotlinx.android.synthetic.main.card_project_participant.badgeSlider
-import kotlinx.android.synthetic.main.card_project_participant.maximumBadgeValue
-import kotlinx.android.synthetic.main.card_project_participant.minimumBadgeValue
 import kotlinx.android.synthetic.main.card_project_participant.view.badgeSlider
 import kotlinx.android.synthetic.main.card_project_participant.view.maximumBadgeValue
 import kotlinx.android.synthetic.main.card_project_participant.view.minimumBadgeValue
@@ -48,11 +30,6 @@ import kotlinx.android.synthetic.main.fragment_admin_panel.admin_participants_em
 import kotlinx.android.synthetic.main.fragment_admin_panel.badgeReward
 import kotlinx.android.synthetic.main.fragment_admin_panel.participant
 import kotlinx.android.synthetic.main.fragment_admin_panel.participants
-import kotlinx.android.synthetic.main.fragment_all_badges_list.recyclerView
-import kotlinx.android.synthetic.main.fragment_details.avatar_imagebutton
-import kotlinx.android.synthetic.main.fragment_details.badgeComments
-import kotlinx.android.synthetic.main.fragment_details.badgeCreator
-import kotlinx.android.synthetic.main.fragment_details.badgeDeadline
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.model.Collections
@@ -61,11 +38,6 @@ import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import mok.it.app.mokapp.service.UserService
-import mok.it.app.mokapp.utility.Utility
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
-import kotlin.math.log
 import kotlin.math.roundToInt
 
 class AdminPanelFragment : Fragment() {
@@ -146,6 +118,8 @@ class AdminPanelFragment : Fragment() {
                 tvName.text = user.name
                 Picasso.get().load(user.photoURL).into(ivImg)
                 tvMaxBadge.text = project.value.toString()
+                slBadge.valueFrom = 0f
+                slBadge.valueTo = project.value.toFloat()
                 slBadge.bottom = 0
                 slBadge.top = project.value
                 slBadge.stepSize = 1f

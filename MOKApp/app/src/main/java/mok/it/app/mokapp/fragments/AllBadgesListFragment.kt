@@ -30,6 +30,7 @@ import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.card_badge.view.mandatoryTextView
+import kotlinx.android.synthetic.main.card_badge.view.projectBadgeValueTextView
 import kotlinx.android.synthetic.main.card_badge.view.projectDescription
 import kotlinx.android.synthetic.main.card_badge.view.projectIcon
 import kotlinx.android.synthetic.main.card_badge.view.projectName
@@ -173,10 +174,13 @@ class AllBadgesListFragment :
                 val tvDesc: TextView = holder.itemView.projectDescription
                 val ivImg: ImageView = holder.itemView.projectIcon
                 val tvMandatory: TextView = holder.itemView.mandatoryTextView
+                val tvBadgeValue: TextView = holder.itemView.projectBadgeValueTextView
+
                 tvName.text =
-                    "${model.name} (${model.categoryEnum})" //TODO create better UX to avoid solutions like this
+                    getString(R.string.badgeName, model.name, model.categoryEnum)
                 tvDesc.text = model.description
                 tvMandatory.isVisible = model.mandatory
+                tvBadgeValue.text = model.value.toString()
 
                 val iconFileName = getIconFileName(model.icon)
                 val iconFile = File(context?.filesDir, iconFileName)
@@ -195,8 +199,10 @@ class AllBadgesListFragment :
                             try {
                                 fos = FileOutputStream(iconFile)
                                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
-                                fos.flush()
-                                fos.close()
+                                fos.run {
+                                    flush()
+                                    close()
+                                }
                             } catch (e: IOException) {
                                 e.printStackTrace()
                             }

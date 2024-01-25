@@ -1,7 +1,6 @@
 package mok.it.app.mokapp.activity
 
 import android.os.Bundle
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.navigation.NavController
@@ -70,14 +69,9 @@ class MainActivity : AppCompatActivity() {
     private fun setNavigationItemSelected(navController: NavController) {
         nav_view.setNavigationItemSelectedListener {
             NavigationUI.onNavDestinationSelected(it, navController)
-            if (it.title in mcsArray) {
-                //TODO
-                //navigateToBadgesByMCS(it.title.toString())
-            } else {
-                when (it.itemId) {
-                    R.id.nav_logout -> {
-                        logout()
-                    }
+            when (it.itemId) {
+                R.id.nav_logout -> {
+                    logout()
                 }
             }
             drawer_layout.closeDrawer(GravityCompat.START)
@@ -127,33 +121,23 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setMenuVisibility() {
-        //TODO admin is empty, we shouldn't show it yet
-        //TODO MCS categories are deprecated, the filter menu will include them
 //        val menu = nav_view.menu
 //        val adm = menu.findItem(R.id.adminFragment)
-//        adm?.isVisible = userModel.admin
+//        adm?.isVisible = userModel.admin //admin is empty, we shouldn't show it yet
     }
 
     override fun onSupportNavigateUp(): Boolean {
         return NavigationUI.navigateUp(navController, drawer_layout)
     }
 
-//    private fun navigateToBadgesByMCS(category: String) {
-////        val action = AllBadgesListFragmentDirections.actionAllBadgesListFragmentToBadgesByMCSFragment(
-////            category
-////        )
-////        findNavController().navigate(action)
-//    }
-
     // Declare the launcher at the top of your Activity/Fragment:
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (!isGranted) {
-            // TODO: Inform user that that your app will not show notifications.
-        }
-    }
-
+//    private val requestPermissionLauncher = registerForActivityResult(
+//        ActivityResultContracts.RequestPermission()
+//    ) { isGranted: Boolean ->
+//        if (!isGranted) {
+//            // TODO: Inform user that that your app will not show notifications.
+//        }
+//    }
 //    private fun askNotificationPermission() {
 //        // This is only necessary for API level >= 33 (TIRAMISU)
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -184,16 +168,4 @@ class MainActivity : AppCompatActivity() {
             .signOut()
             .addOnSuccessListener { navController.navigate(R.id.action_global_loginFragment) }
     }
-
-//TODO ha változik a profile pic, az új képet elmenteni
-//    private fun updateProfilePic() {
-////        val data = hashMapOf(
-////            "pictureURL" to user.photoUrl,
-////            "uid" to user.uid
-////        )
-////
-////        functions
-////            .getHttpsCallable("userLoggedIn")
-////            .call(data)
-//    }
 }

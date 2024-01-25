@@ -1,7 +1,6 @@
 package mok.it.app.mokapp.model
 
 import android.os.Parcelable
-import com.beust.klaxon.token.VALUE_TYPE.value
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.PropertyName
 import kotlinx.android.parcel.Parcelize
@@ -26,7 +25,7 @@ data class User(
     val phoneNumber: String = "",
     val requestedRewards: List<String> = ArrayList(),
     val points: Int = 0,
-    val FCMTokens: List<String> = ArrayList(),
+    val fcmTokens: List<String> = ArrayList(),
     val nickname: String = "",
     val projectBadges: Map<String, Int> = HashMap<String, Int>()
 ) : Parcelable {

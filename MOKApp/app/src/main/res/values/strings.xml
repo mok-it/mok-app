@@ -81,7 +81,7 @@
     <string name="no_match">Nincs találat…</string>
     <string name="share">Megosztás</string>
     <string name="link_name">Link neve</string>
-    <string name="value">Érték:</string>
+    <string name="value">Érték</string>
     <string name="rewards">Jutalmak</string>
     <string name="request">Kérem!</string>
     <string name="achieved">Megszerezve</string>
@@ -95,6 +95,7 @@
     <string name="mutual_badges">Közös Mancsaitok:</string>
     <string name="badge_count">%1$s: %2$d</string>
     <string name="specific_category">Kategória: %1$s</string>
+    <string name="specific_value">Érték: %1$d</string>
     <string name="extra_members">+%1$d</string>
     <string name="completed_description">Teljesítette</string>
     <string name="mcs_name">Kreatív/Feladatsor/Pedagógia/stb</string>
@@ -103,6 +104,8 @@
     <string name="about">Az appról</string>
     <string name="about_description">A MÖK Egyesület hivatalos belsős alkalmazása. Készítette: az IT Munkacsoport</string>
     <string name="bug_report">Hibabejelentés</string>
+    <string name="badgeName">%1$s (%2$s)</string>
+    <string name="no_notifications">Oké, nem fogunk értesítéseket küldeni :/</string>
     <string name="participant">Résztvevő</string>
     <string name="badge_reward">Mancs jutalom</string>
     <string name="add_participant">résztvevő felvétele</string>
@@ -110,5 +113,6 @@
     <string name="add_participants">Résztvevők felvétele</string>
     <string name="add">Hozzáadás</string>
     <string name="no_results">A keresésre egyetlen eredmény sem található</string>
+    <string name="collectedBadgesSummary">Összes mancs: %1$d</string>
 
 </resources>

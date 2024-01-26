@@ -1,6 +1,7 @@
 package mok.it.app.mokapp.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,22 +45,26 @@ class MemberFragment : Fragment() {
         var sumOfBadges = 0
         var numberOfAllProjects = 0
         for (category in Category.values()) {
+            Log.d("MANCSAIM", Category.values().toString())
             viewModel.getUserBadgeCountByCategory(args.user, category)
                 .observe(viewLifecycleOwner) { badgeData ->
-                    val badgeTextView = TextView(context)
-                    badgeTextView.text = getString(
-                        R.string.badge_count,
-                        category.name,
-                        badgeData.finishedProjectCount
-                    )
-                    sumOfBadges += badgeData.finishedProjectBadgeSum
-                    numberOfAllProjects += badgeData.finishedProjectCount
-                    binding.badgeContainer.addView(badgeTextView)
+                    if (badgeData.finishedProjectBadgeSum != 0){
+                        val badgeTextView = TextView(context)
+                        badgeTextView.text = getString(
+                            R.string.badge_count,
+                            category.toString(),
+                            badgeData.finishedProjectBadgeSum
+                        )
+                        sumOfBadges += badgeData.finishedProjectBadgeSum
+                        numberOfAllProjects += badgeData.finishedProjectCount
+                        binding.badgeContainer.addView(badgeTextView)
+                    }
+                    binding.collectedBadgesSummary.text =
+                        getString(R.string.collectedBadgesSummary, sumOfBadges)
                 }
         }
 
-        binding.collectedBadgesSummary.text =
-            getString(R.string.collectedBadgesSummary, sumOfBadges, numberOfAllProjects)
+
     }
 
     override fun onDestroy() {

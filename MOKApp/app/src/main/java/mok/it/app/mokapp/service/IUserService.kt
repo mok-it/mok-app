@@ -28,4 +28,11 @@ interface IUserService {
         onComplete: () -> Unit,
         onFailure: (Exception) -> Unit
     )
+
+    fun getBadgeSumForUserInCategory(
+        userId: String,
+        category: String,
+        onComplete: (Int) -> Unit,
+        onFailure: (Exception) -> Unit
+    )
 }

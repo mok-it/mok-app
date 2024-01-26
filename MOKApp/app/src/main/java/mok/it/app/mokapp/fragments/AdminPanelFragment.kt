@@ -105,6 +105,8 @@ class AdminPanelFragment : Fragment() {
                 tvName.text = user.name
                 Picasso.get().load(user.photoURL).into(ivImg)
                 tvMaxBadge.text = project.value.toString()
+                slBadge.valueFrom = 0f
+                slBadge.valueTo = project.value.toFloat()
                 slBadge.bottom = 0
                 slBadge.top = project.value
                 slBadge.stepSize = 1f

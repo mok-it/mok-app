@@ -8,7 +8,6 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
-import kotlinx.android.synthetic.main.card_member.view.btnCompleted
 import kotlinx.android.synthetic.main.card_member.view.imageView
 import kotlinx.android.synthetic.main.card_member.view.textView
 import mok.it.app.mokapp.R
@@ -19,7 +18,6 @@ import mok.it.app.mokapp.model.User
 
 class MembersAdapter(
     private val userArray: Array<User>,
-    private val userIsEditor: Boolean,
     private val badgeMembersDialogFragment: BadgeMembersDialogFragment
 ) :
     RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
@@ -50,13 +48,6 @@ class MembersAdapter(
         viewHolder.itemView.setOnClickListener {
             badgeMembersDialogFragment.navigateToMemberFragment(user)
         }
-
-        if (canAccept()) {
-            viewHolder.itemView.btnCompleted.visibility = View.VISIBLE
-            viewHolder.itemView.btnCompleted.setOnClickListener {
-                badgeMembersDialogFragment.navigateToBadgeAcceptMemberDialogFragment(user)
-            }
-        }
     }
 
     override fun getItemCount() = userArray.size
@@ -67,10 +58,6 @@ class MembersAdapter(
     }
 
     //ha creator, editor vagy admin a felhasználó
-    private fun canAccept(): Boolean {
-        return userModel.admin || userModel.isCreator || userIsEditor
-    }
-
     companion object {
         private const val TAG = "MembersAdapter"
     }

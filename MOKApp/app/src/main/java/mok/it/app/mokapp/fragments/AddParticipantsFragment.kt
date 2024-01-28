@@ -15,7 +15,6 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -95,7 +94,7 @@ class AddParticipantsFragment : DialogFragment() {
     }
 
     private fun getAdapter(): FirestoreRecyclerAdapter<User, ProjectViewHolder> {
-        val query = nonParticipantsQuery()
+        val query = usersQuery()
         val options =
             FirestoreRecyclerOptions.Builder<User>().setQuery(query, User::class.java)
                 .setLifecycleOwner(this).build()
@@ -107,7 +106,6 @@ class AddParticipantsFragment : DialogFragment() {
                 return ProjectViewHolder(view)
             }
 
-            //TODO: checkbox is on viewholder, should be on user instead. Need viewModel?
             override fun onBindViewHolder(
                 holder: ProjectViewHolder,
                 position: Int,
@@ -119,26 +117,28 @@ class AddParticipantsFragment : DialogFragment() {
                 tvName.text = user.name
                 Picasso.get().load(user.photoURL).into(ivImg)
                 cbSelect.setOnCheckedChangeListener(null)
-                cbSelect.isChecked = selectedUsers.contains(user.documentId)
-                cbSelect.setOnCheckedChangeListener { _, enabled ->
-                    if (enabled) {
-                        selectedUsers.add(user.documentId)
-                    }
-                    else {
-                        selectedUsers.remove(user.documentId)
-                    }
+                if (user.joinedBadges.contains(project.id)) {
+                    cbSelect.isEnabled = false
+                    cbSelect.isChecked = true
+                }
+                else {
+                    cbSelect.isEnabled = true
+                    cbSelect.isChecked = selectedUsers.contains(user.documentId)
+                    cbSelect.setOnCheckedChangeListener { _, enabled ->
+                        if (enabled) {
+                            selectedUsers.add(user.documentId)
+                        }
+                        else {
+                            selectedUsers.remove(user.documentId)
+                        }
+                }
                 }
             }
         }
     }
 
-    private fun nonParticipantsQuery(): Query {
-        if (project.members.isEmpty()) {
-            return Firebase.firestore.collection(Collections.users)
-                .orderBy("name", Query.Direction.ASCENDING)
-        }
+    private fun usersQuery(): Query {
         return Firebase.firestore.collection(Collections.users)
             .orderBy("name", Query.Direction.ASCENDING)
-            .whereNotIn(FieldPath.documentId(), project.members) //NOTE: can not handle lists of size greater than 30
     }
 }

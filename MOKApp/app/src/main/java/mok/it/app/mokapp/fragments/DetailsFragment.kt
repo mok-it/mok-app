@@ -147,7 +147,7 @@ class DetailsFragment : Fragment() {
 
     private fun initLayout() {
         members_overlay_button.setOnClickListener {
-            if (viewModel.members.value?.isNotEmpty() != false && ::badgeModel.isInitialized) {
+            if (viewModel.members.value?.isNotEmpty() == true && ::badgeModel.isInitialized) {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToBadgeMembersDialogFragment(
                         viewModel.members.value!!,

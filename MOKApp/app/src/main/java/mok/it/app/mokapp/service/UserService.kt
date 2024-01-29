@@ -11,6 +11,7 @@ import mok.it.app.mokapp.model.Project
 import java.util.concurrent.CountDownLatch
 
 object UserService : IUserService {
+    const val userDocNotFound = "User document not found"
     override fun addBadges(
         userId: String,
         badgeId: String,
@@ -36,7 +37,7 @@ object UserService : IUserService {
                         onFailure.invoke(e)
                     }
             } else {
-                onFailure.invoke(Exception("User document not found"))
+                onFailure.invoke(Exception(userDocNotFound))
             }
         }
             .addOnFailureListener { e ->
@@ -63,7 +64,7 @@ object UserService : IUserService {
 
                 onComplete.invoke(sum)
             } else {
-                onFailure.invoke(Exception("User document not found"))
+                onFailure.invoke(Exception(userDocNotFound))
             }
         }
             .addOnFailureListener { e ->
@@ -86,7 +87,7 @@ object UserService : IUserService {
 
                 onComplete.invoke(projectBadges)
             } else {
-                onFailure.invoke(Exception("User document not found"))
+                onFailure.invoke(Exception(userDocNotFound))
             }
         }
             .addOnFailureListener { e ->

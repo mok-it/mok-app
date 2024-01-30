@@ -11,6 +11,7 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.service.UserService
 import java.util.Calendar
 import java.util.Date
 
@@ -101,7 +102,7 @@ class EditBadgeFragment : CreateBadgeFragment() {
             .update(editedBadge as Map<String, Any>)
             .addOnSuccessListener {
                 Log.d(TAG, "DocumentSnapshot edited with ID: ${args.badge.id}")
-                //TODO: make sure no user has more badges than the new value of the project
+                UserService.capProjectBadges(args.badge.id)
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error editing document", e)

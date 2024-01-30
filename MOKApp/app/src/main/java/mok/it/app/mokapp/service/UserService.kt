@@ -1,14 +1,12 @@
 package mok.it.app.mokapp.service
 
-import android.util.Log
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
-import java.util.concurrent.CountDownLatch
+import mok.it.app.mokapp.model.User
+import kotlin.math.min
 
 object UserService : IUserService {
     const val userDocNotFound = "User document not found"
@@ -204,6 +202,31 @@ object UserService : IUserService {
             }
     }
 
+
+    public fun capProjectBadges(projectId: String) {
+        val db = Firebase.firestore
+
+        db.collection(Collections.badges).document(projectId).get()
+            .addOnSuccessListener { projectSnapshot ->
+                val project = projectSnapshot.toObject(Project::class.java)
+                if (project != null) {
+                    for (userId in project.members) {
+                        db.collection("users").document(userId).get()
+                            .addOnSuccessListener { userSnapshot ->
+                                val user = userSnapshot.toObject(User::class.java)
+                                if (user != null) {
+                                    val projectBadgeValue = user.projectBadges[projectId]
+                                    if (projectBadgeValue != null) {
+                                        user.projectBadges[projectId] =
+                                            min(projectBadgeValue, project.value)
+                                        db.collection("users").document(userId).set(user)
+                                    }
+                                }
+                            }
+                    }
+                }
+            }
+    }
 
     private fun isProjectInCategory(projectId: String, category: String, onComplete: (Boolean) -> Unit) {
         val projectDocumentRef = Firebase.firestore.collection(Collections.badges)

@@ -260,37 +260,6 @@ class DetailsFragment : Fragment() {
         }
     }
 
-    fun minimizeProjectBadgesValue(project: Project) {
-        //for all users in the project, calculate their badge value using th eprojects badge value and the
-        for (user in project.members) {
-            user.projectBadges[project.id] = min(user.projectBadges[project.id], project.value)
-        }
-    }
-
-    fun minimizeProjectBadgesValue(projectId: String) {
-        val db = Firebase.firestore
-
-        db.collection("projects").document(projectId).get()
-            .addOnSuccessListener { projectSnapshot ->
-                val project = projectSnapshot.toObject(Project::class.java)
-                if (project != null) {
-                    for (userId in project.members) {
-                        db.collection("users").document(userId).get()
-                            .addOnSuccessListener { userSnapshot ->
-                                val user = userSnapshot.toObject(User::class.java)
-                                if (user != null) {
-                                    val projectBadgeValue = user.projectBadges[projectId]
-                                    if (projectBadgeValue != null) {
-                                        user.projectBadges[projectId] =
-                                            min(projectBadgeValue, project.value)
-                                        db.collection("users").document(userId).set(user)
-                                    }
-                                }
-                            }
-                    }
-                }
-            }
-    }
 
 
     /**

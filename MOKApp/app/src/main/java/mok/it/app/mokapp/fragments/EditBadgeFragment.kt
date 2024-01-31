@@ -85,17 +85,12 @@ class EditBadgeFragment : CreateBadgeFragment() {
         val deadline = Date(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
         val editedBadge = hashMapOf(
             "category" to binding.badgeMcs.text.toString(),
-            //"created" to Date(), //TODO: why was this here??
-            //"creator" to userModel.documentId, //TODO: why was this here??
             "deadline" to deadline,
             "description" to binding.badgeDescription.text.toString(),
             "editors" to selectedEditors,
-            //"icon" to getString(R.string.under_construction_badge_icon), //TODO: update icon if a new one was selected, otherwise leave it untouched!
             "name" to binding.badgeName.text.toString(),
-            //"overall_progress" to 0, //TODO: why was this here??
             "value" to badgeValue,
-            //"mandatory" to false //TODO: why was this here??
-
+            //TODO: update icon if a new one was selected, otherwise leave it untouched!
         )
         firestore.collection(Collections.badges)
             .document(args.badge.id)

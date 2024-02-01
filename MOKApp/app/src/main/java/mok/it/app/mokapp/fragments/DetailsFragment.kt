@@ -61,7 +61,6 @@ import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
 import java.text.SimpleDateFormat
-import kotlin.math.min
 
 class DetailsFragment : Fragment() {
 
@@ -255,7 +254,6 @@ class DetailsFragment : Fragment() {
             }
         }
     }
-
 
 
     /**

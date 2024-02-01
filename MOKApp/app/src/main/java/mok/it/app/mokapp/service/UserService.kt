@@ -165,7 +165,7 @@ object UserService : IUserService {
             .addOnSuccessListener { querySnapshot ->
                 for (document in querySnapshot.documents) {
                     val project = document.toObject(Project::class.java)
-                    if (project != null){
+                    if (project != null) {
                         projectsList.add(project)
                     }
                 }
@@ -175,12 +175,14 @@ object UserService : IUserService {
                             val userDocument = userTask.result
 
                             if (userDocument != null && userDocument.exists()) {
-                                val projectBadges = userDocument.data?.get("projectBadges") as? Map<String, Int>
+                                val projectBadges =
+                                    userDocument.data?.get("projectBadges") as? Map<String, Int>
 
                                 if (projectBadges != null) {
                                     val projectsInCategory = projectBadges
                                         .filterKeys { projectId ->
-                                            val projectInList = projectsList.find { it.id == projectId }
+                                            val projectInList =
+                                                projectsList.find { it.id == projectId }
                                             projectInList?.category == category
                                         }
                                     val sum = projectsInCategory.values.sum()
@@ -202,33 +204,33 @@ object UserService : IUserService {
             }
     }
 
-
-    public fun capProjectBadges(projectId: String) {
+    fun capProjectBadges(projectId: String) {
         val db = Firebase.firestore
 
         db.collection(Collections.badges).document(projectId).get()
             .addOnSuccessListener { projectSnapshot ->
                 val project = projectSnapshot.toObject(Project::class.java)
-                if (project != null) {
-                    for (userId in project.members) {
-                        db.collection("users").document(userId).get()
-                            .addOnSuccessListener { userSnapshot ->
-                                val user = userSnapshot.toObject(User::class.java)
-                                if (user != null) {
-                                    val projectBadgeValue = user.projectBadges[projectId]
-                                    if (projectBadgeValue != null) {
-                                        user.projectBadges[projectId] =
-                                            min(projectBadgeValue, project.value)
-                                        db.collection("users").document(userId).set(user)
-                                    }
-                                }
+
+                project?.members?.forEach { userId ->
+                    db.collection(Collections.users).document(userId).get()
+                        .addOnSuccessListener { userSnapshot ->
+                            val user = userSnapshot.toObject(User::class.java)
+
+                            user?.projectBadges?.get(projectId)?.let { projectBadgeValue ->
+                                user.projectBadges[projectId] =
+                                    min(projectBadgeValue, project.value)
+                                db.collection(Collections.users).document(userId).set(user)
                             }
-                    }
+                        }
                 }
             }
     }
 
-    private fun isProjectInCategory(projectId: String, category: String, onComplete: (Boolean) -> Unit) {
+    private fun isProjectInCategory(
+        projectId: String,
+        category: String,
+        onComplete: (Boolean) -> Unit
+    ) {
         val projectDocumentRef = Firebase.firestore.collection(Collections.badges)
             .document(projectId)
 

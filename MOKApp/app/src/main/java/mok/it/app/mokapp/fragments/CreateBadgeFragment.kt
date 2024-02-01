@@ -1,5 +1,6 @@
 package mok.it.app.mokapp.fragments
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
@@ -15,6 +16,7 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import kotlinx.android.synthetic.main.fragment_create_badge.datePicker
 import kotlinx.android.synthetic.main.fragment_create_badge.tvBadgeValue
 import mok.it.app.mokapp.R
@@ -84,8 +86,7 @@ open class CreateBadgeFragment : DialogFragment() {
         binding.btnDecreaseValue.setOnClickListener {
             if (badgeValue > 1) {
                 tvBadgeValue.text = (--badgeValue).toString()
-            }
-            else {
+            } else {
                 toast(R.string.value_at_least_one)
             }
         }
@@ -120,17 +121,19 @@ open class CreateBadgeFragment : DialogFragment() {
         }
 
         // The user has unsaved changes, thus warning them before closing the dialog
-
-        AlertDialog.Builder(context)
-            .setCancelable(false)
-            .setMessage(R.string.unsaved_changes)
-            .setPositiveButton(
-                R.string.discard
-            ) { _, _ -> findNavController().navigateUp() }
-            .setNegativeButton(R.string.edit, null)
-            .create()
-            .show()
-
+        (context as Activity).let {
+            MaterialDialog.Builder(it)
+                .setTitle(it.getString(R.string.unsaved_changes))
+                .setNegativeButton(it.getString(R.string.discard)) { dialogInterface, _ ->
+                    findNavController().navigateUp()
+                    dialogInterface.dismiss()
+                }
+                .setPositiveButton(it.getString(R.string.edit)) { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                }
+                .build()
+                .show()
+        }
     }
 
     /**

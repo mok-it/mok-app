@@ -9,7 +9,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import mok.it.app.mokapp.databinding.FragmentBadgeMembersDialogBinding
-import mok.it.app.mokapp.dialog.BadgeAcceptMemberDialogFragment.Companion.acceptDialogResultKey
 import mok.it.app.mokapp.fragments.viewmodels.DetailsFragmentViewModel
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.MembersAdapter
@@ -35,14 +34,6 @@ class BadgeMembersDialogFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         setFullScreen()
         initRecyclerView()
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(
-            acceptDialogResultKey
-        )
-            ?.observe(
-                viewLifecycleOwner
-            ) { userId ->
-                viewModel.completed(userId, args.badge)
-            }
         viewModel.setMembers(args.users)
     }
 

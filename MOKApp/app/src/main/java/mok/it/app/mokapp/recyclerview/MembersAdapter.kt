@@ -12,7 +12,6 @@ import kotlinx.android.synthetic.main.card_member.view.imageView
 import kotlinx.android.synthetic.main.card_member.view.textView
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.dialog.BadgeMembersDialogFragment
-import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.User
 
 
@@ -44,7 +43,7 @@ class MembersAdapter(
             .apply(RequestOptions.bitmapTransform(RoundedCorners(26)))
             .into(viewHolder.itemView.imageView)
 
-//        //opening the person's profile if someone clicks on the card
+        //opening the person's profile if someone clicks on the card
         viewHolder.itemView.setOnClickListener {
             badgeMembersDialogFragment.navigateToMemberFragment(user)
         }

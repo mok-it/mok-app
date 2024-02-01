@@ -1,5 +1,6 @@
 package mok.it.app.mokapp.fragments
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -16,6 +17,7 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
+import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import kotlinx.android.synthetic.main.card_reward.view.achievedText
 import kotlinx.android.synthetic.main.card_reward.view.requestButton
 import kotlinx.android.synthetic.main.card_reward.view.rewardName
@@ -31,7 +33,7 @@ import mok.it.app.mokapp.recyclerview.RewardViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import java.util.Date
 
-class RewardsFragment : Fragment(), RewardAcceptDialogFragment.RewardAcceptListener {
+class RewardsFragment : Fragment() {
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
 
     override fun onCreateView(
@@ -127,11 +129,22 @@ class RewardsFragment : Fragment(), RewardAcceptDialogFragment.RewardAcceptListe
     }
 
     private fun requestReward(reward: Reward) {
-        val dialog = RewardAcceptDialogFragment(this, reward)
-        dialog.show(parentFragmentManager, "NoticeDialogFragment")
+        (activity as Activity).let {
+            MaterialDialog.Builder(it)
+                .setTitle("Biztosan kéred a jutalmat?")
+                .setMessage("${reward.price} pont kerül majd levonásra tőled.")
+                .setPositiveButton(
+                    it.getString(R.string.ok), R.drawable.ic_check
+                ) { _, _ -> rewardAccepted(reward) }
+                .setNegativeButton(
+                    "Mégsem", R.drawable.ic_close_24
+                ) { dialogInterface, _ -> dialogInterface.dismiss() }
+                .build()
+                .show()
+        }
     }
 
-    override fun rewardAccepted(reward: Reward) {
+    private fun rewardAccepted(reward: Reward) {
         val request = hashMapOf(
             "user" to userModel.documentId,
             "reward" to reward.documentId,

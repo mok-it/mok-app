@@ -6,7 +6,6 @@ import com.google.firebase.firestore.PropertyName
 import kotlinx.android.parcel.Parcelize
 import mok.it.app.mokapp.model.Category.Companion.toCategory
 
-//
 /**
  * The user object that is stored in the Firestore database.
  * The fields of the class should exactly match the fields in Firestore DB.

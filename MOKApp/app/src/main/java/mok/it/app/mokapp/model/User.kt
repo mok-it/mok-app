@@ -2,6 +2,7 @@ package mok.it.app.mokapp.model
 
 import android.os.Parcelable
 import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
 import kotlinx.android.parcel.Parcelize
 import mok.it.app.mokapp.model.Category.Companion.toCategory
@@ -21,6 +22,7 @@ data class User(
     val admin: Boolean = false,
     @Deprecated("Use categoryList instead")
     val categories: List<String> = ArrayList(),
+    @Exclude
     var categoryList: MutableList<Category> = ArrayList(),
     val collectedBadges: List<String> = ArrayList(),
     val email: String = "",
@@ -31,7 +33,7 @@ data class User(
     val photoURL: String = "",
     val phoneNumber: String = "",
     val requestedRewards: List<String> = ArrayList(),
-    val points: Int = 0,
+    val badges: Int = 0,
     val fcmTokens: List<String> = ArrayList(),
     val nickname: String = "",
     val projectBadges: MutableMap<String, Int> = HashMap()

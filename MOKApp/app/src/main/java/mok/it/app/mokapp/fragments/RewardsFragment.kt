@@ -64,7 +64,7 @@ class RewardsFragment : Fragment() {
     }
 
     private fun updateUI() {
-        pointsText.text = getString(R.string.my_points, userModel.points)
+        pointsText.text = getString(R.string.my_points, userModel.badges)
         initializeAdapter()
     }
 
@@ -89,7 +89,7 @@ class RewardsFragment : Fragment() {
                     loadImage(ivImg, model.icon)
                     holder.itemView.rewardName.text = model.name
                     holder.itemView.rewardPrice.text = model.price.toString()
-                    if (userModel.points >= model.price) {
+                    if (userModel.badges >= model.price) {
                         holder.itemView.requestButton.isEnabled = true
                     }
                     if (userModel.requestedRewards.contains(model.documentId)) {

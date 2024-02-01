@@ -9,5 +9,5 @@ object Collections {
     const val commentsRelativePath = "comments"
 
     //var badges = "badges${Config.getSeason()}"
-    var badges = "badges2024"
+    var badges = "projects2024"
 }

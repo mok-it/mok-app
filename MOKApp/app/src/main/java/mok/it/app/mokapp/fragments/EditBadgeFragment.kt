@@ -8,7 +8,6 @@ import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_create_badge.datePicker
 import kotlinx.android.synthetic.main.fragment_create_badge.tvBadgeValue
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.service.UserService

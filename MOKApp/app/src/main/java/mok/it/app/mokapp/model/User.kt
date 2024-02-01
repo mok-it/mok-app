@@ -6,14 +6,22 @@ import com.google.firebase.firestore.PropertyName
 import kotlinx.android.parcel.Parcelize
 import mok.it.app.mokapp.model.Category.Companion.toCategory
 
-//the fields of the class should exactly match the fields in Firestore DB
+//
+/**
+ * The user object that is stored in the Firestore database.
+ * The fields of the class should exactly match the fields in Firestore DB.
+ *
+ * @param categories Can't be marked private, but do not use it, use [categoryList] instead.
+ */
+@Suppress("DEPRECATION")
 @Parcelize
 data class User(
     @DocumentId
     val documentId: String = "",
 
     val admin: Boolean = false,
-    val categories: List<String> = ArrayList(), // can't mark it private, but don't use it
+    @Deprecated("Use categoryList instead")
+    val categories: List<String> = ArrayList(),
     var categoryList: MutableList<Category> = ArrayList(),
     val collectedBadges: List<String> = ArrayList(),
     val email: String = "",

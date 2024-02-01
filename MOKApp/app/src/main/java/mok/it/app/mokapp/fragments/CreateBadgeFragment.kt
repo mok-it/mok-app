@@ -16,6 +16,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import kotlinx.android.synthetic.main.fragment_create_badge.datePicker
+import kotlinx.android.synthetic.main.fragment_create_badge.tvBadgeValue
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.FragmentCreateBadgeBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
@@ -50,6 +51,7 @@ open class CreateBadgeFragment : DialogFragment() {
 
     private val isNameRequired = true
     private val isDescriptionRequired = true
+    protected var badgeValue = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -77,6 +79,19 @@ open class CreateBadgeFragment : DialogFragment() {
 
         binding.editorSelect.setOnClickListener {
             getUsers()
+        }
+
+        binding.btnDecreaseValue.setOnClickListener {
+            if (badgeValue > 1) {
+                tvBadgeValue.text = (--badgeValue).toString()
+            }
+            else {
+                toast(R.string.value_at_least_one)
+            }
+        }
+
+        binding.btnIncreaseValue.setOnClickListener {
+            tvBadgeValue.text = (++badgeValue).toString()
         }
     }
 
@@ -130,6 +145,7 @@ open class CreateBadgeFragment : DialogFragment() {
         val deadline = Date(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
         Log.d("Create date", deadline.toString())
         Log.d("Create editors", selectedEditors.toString())
+        Log.d("Create value", binding.tvBadgeValue.text.toString())
 
         val newBadge = hashMapOf(
             "category" to binding.badgeMcs.text.toString(),
@@ -141,7 +157,7 @@ open class CreateBadgeFragment : DialogFragment() {
             "icon" to "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef",
             "name" to binding.badgeName.text.toString(),
             "overall_progress" to 0,
-            "value" to 1,
+            "value" to badgeValue,
             "mandatory" to false
 
         )

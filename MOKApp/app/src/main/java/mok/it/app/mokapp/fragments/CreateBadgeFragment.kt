@@ -124,10 +124,13 @@ open class CreateBadgeFragment : DialogFragment() {
         (context as Activity).let {
             MaterialDialog.Builder(it)
                 .setTitle(it.getString(R.string.unsaved_changes))
-                .setPositiveButton(it.getString(R.string.discard)) { _, _ ->
+                .setNegativeButton(it.getString(R.string.discard)) { dialogInterface, _ ->
                     findNavController().navigateUp()
+                    dialogInterface.dismiss()
                 }
-                .setNegativeButton(it.getString(R.string.edit)) { _, _ -> }
+                .setPositiveButton(it.getString(R.string.edit)) { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                }
                 .build()
                 .show()
         }

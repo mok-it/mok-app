@@ -135,7 +135,10 @@ class RewardsFragment : Fragment() {
                 .setMessage("${reward.price} pont kerül majd levonásra tőled.")
                 .setPositiveButton(
                     it.getString(R.string.ok), R.drawable.ic_check
-                ) { _, _ -> rewardAccepted(reward) }
+                ) { dialogInterface, _ ->
+                    rewardAccepted(reward)
+                    dialogInterface.dismiss()
+                }
                 .setNegativeButton(
                     "Mégsem", R.drawable.ic_close_24
                 ) { dialogInterface, _ -> dialogInterface.dismiss() }

@@ -42,8 +42,9 @@ class DetailsFragmentViewModel : ViewModel() {
             }
     }
 
-    fun getMembers(members: List<String>?) {
-        members?.forEach {
+    fun getMembers(memberIds: List<String>?) {
+        _members.value = arrayOf()
+        memberIds?.forEach {
             val docRef = Firebase.firestore.collection(Collections.users).document(it)
             docRef.get()
                 .addOnSuccessListener { document ->

@@ -1,16 +1,15 @@
 package mok.it.app.mokapp.service
 
-import android.util.Log
-import com.google.android.gms.tasks.Tasks
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
-import java.util.concurrent.CountDownLatch
+import mok.it.app.mokapp.model.User
+import kotlin.math.min
 
 object UserService : IUserService {
+    const val userDocNotFound = "User document not found"
     override fun addBadges(
         userId: String,
         badgeId: String,
@@ -36,7 +35,7 @@ object UserService : IUserService {
                         onFailure.invoke(e)
                     }
             } else {
-                onFailure.invoke(Exception("User document not found"))
+                onFailure.invoke(Exception(userDocNotFound))
             }
         }
             .addOnFailureListener { e ->
@@ -63,7 +62,7 @@ object UserService : IUserService {
 
                 onComplete.invoke(sum)
             } else {
-                onFailure.invoke(Exception("User document not found"))
+                onFailure.invoke(Exception(userDocNotFound))
             }
         }
             .addOnFailureListener { e ->
@@ -86,7 +85,7 @@ object UserService : IUserService {
 
                 onComplete.invoke(projectBadges)
             } else {
-                onFailure.invoke(Exception("User document not found"))
+                onFailure.invoke(Exception(userDocNotFound))
             }
         }
             .addOnFailureListener { e ->
@@ -166,7 +165,7 @@ object UserService : IUserService {
             .addOnSuccessListener { querySnapshot ->
                 for (document in querySnapshot.documents) {
                     val project = document.toObject(Project::class.java)
-                    if (project != null){
+                    if (project != null) {
                         projectsList.add(project)
                     }
                 }
@@ -176,12 +175,14 @@ object UserService : IUserService {
                             val userDocument = userTask.result
 
                             if (userDocument != null && userDocument.exists()) {
-                                val projectBadges = userDocument.data?.get("projectBadges") as? Map<String, Int>
+                                val projectBadges =
+                                    userDocument.data?.get("projectBadges") as? Map<String, Int>
 
                                 if (projectBadges != null) {
                                     val projectsInCategory = projectBadges
                                         .filterKeys { projectId ->
-                                            val projectInList = projectsList.find { it.id == projectId }
+                                            val projectInList =
+                                                projectsList.find { it.id == projectId }
                                             projectInList?.category == category
                                         }
                                     val sum = projectsInCategory.values.sum()
@@ -203,8 +204,33 @@ object UserService : IUserService {
             }
     }
 
+    fun capProjectBadges(projectId: String) {
+        val db = Firebase.firestore
 
-    private fun isProjectInCategory(projectId: String, category: String, onComplete: (Boolean) -> Unit) {
+        db.collection(Collections.badges).document(projectId).get()
+            .addOnSuccessListener { projectSnapshot ->
+                val project = projectSnapshot.toObject(Project::class.java)
+
+                project?.members?.forEach { userId ->
+                    db.collection(Collections.users).document(userId).get()
+                        .addOnSuccessListener { userSnapshot ->
+                            val user = userSnapshot.toObject(User::class.java)
+
+                            user?.projectBadges?.get(projectId)?.let { projectBadgeValue ->
+                                user.projectBadges[projectId] =
+                                    min(projectBadgeValue, project.value)
+                                db.collection(Collections.users).document(userId).set(user)
+                            }
+                        }
+                }
+            }
+    }
+
+    private fun isProjectInCategory(
+        projectId: String,
+        category: String,
+        onComplete: (Boolean) -> Unit
+    ) {
         val projectDocumentRef = Firebase.firestore.collection(Collections.badges)
             .document(projectId)
 

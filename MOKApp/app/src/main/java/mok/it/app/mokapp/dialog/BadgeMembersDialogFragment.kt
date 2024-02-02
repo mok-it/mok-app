@@ -9,7 +9,6 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import mok.it.app.mokapp.databinding.FragmentBadgeMembersDialogBinding
-import mok.it.app.mokapp.dialog.BadgeAcceptMemberDialogFragment.Companion.acceptDialogResultKey
 import mok.it.app.mokapp.fragments.viewmodels.DetailsFragmentViewModel
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.MembersAdapter
@@ -35,19 +34,11 @@ class BadgeMembersDialogFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         setFullScreen()
         initRecyclerView()
-        findNavController().currentBackStackEntry?.savedStateHandle?.getLiveData<String>(
-            acceptDialogResultKey
-        )
-            ?.observe(
-                viewLifecycleOwner
-            ) { userId ->
-                viewModel.completed(userId, args.badge)
-            }
         viewModel.setMembers(args.users)
     }
 
     private fun initRecyclerView() {
-        binding.recyclerView.adapter = MembersAdapter(args.users, args.canEdit, this)
+        binding.recyclerView.adapter = MembersAdapter(args.users, this)
         binding.recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)
     }
@@ -60,17 +51,8 @@ class BadgeMembersDialogFragment : DialogFragment() {
         findNavController().navigate(action)
     }
 
-    fun navigateToBadgeAcceptMemberDialogFragment(user: User) {
-        val action =
-            BadgeMembersDialogFragmentDirections.actionBadgeMembersDialogFragmentToBadgeAcceptMemberDialogFragment(
-                user
-            )
-        findNavController().navigate(action)
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
     }
-
 }

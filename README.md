@@ -1,5 +1,9 @@
 # MÖK App
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mok-it_mok-app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mok-it_mok-app)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=mok-it_mok-app&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=mok-it_mok-app)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=mok-it_mok-app&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=mok-it_mok-app)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=mok-it_mok-app&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=mok-it_mok-app)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=mok-it_mok-app&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=mok-it_mok-app)
 
 ## Disztributálás
 

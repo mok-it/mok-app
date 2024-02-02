@@ -35,9 +35,10 @@ import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import mok.it.app.mokapp.service.UserService
 
 class AddParticipantsFragment : DialogFragment() {
-    companion object{
+    companion object {
         val TAG = "AddParticipantsDialogFragment"
     }
+
     private val args: AddParticipantsFragmentArgs by navArgs()
     private lateinit var project: Project
     private var selectedUsers: MutableList<String> = mutableListOf()
@@ -70,17 +71,25 @@ class AddParticipantsFragment : DialogFragment() {
     private fun initLayout() {
         btnAddParticipants.setOnClickListener {
             if (selectedUsers.isEmpty()) {
-                Toast.makeText(context, "Előbb válassz résztvevőket a listából!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    context,
+                    "Előbb válassz résztvevőket a listából!",
+                    Toast.LENGTH_SHORT
+                ).show()
                 return@setOnClickListener
             }
-            UserService.joinUsersToProject( project.id, selectedUsers, {
+            UserService.joinUsersToProject(project.id, selectedUsers, {
                 Log.i(TAG, "Adding ${selectedUsers.size} users to project ${project.id}")
                 Toast.makeText(context, "Résztvevők hozzáadva!", Toast.LENGTH_SHORT).show()
                 findNavController().popBackStack()
 
-                }, {
-                    Toast.makeText(context, "A résztvevők hozzáadása sikertelen, kérlek próbáld újra később.", Toast.LENGTH_SHORT).show()
-                }
+            }, {
+                Toast.makeText(
+                    context,
+                    "A résztvevők hozzáadása sikertelen, kérlek próbáld újra később.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
             )
         }
     }
@@ -123,8 +132,7 @@ class AddParticipantsFragment : DialogFragment() {
                 cbSelect.setOnCheckedChangeListener { _, enabled ->
                     if (enabled) {
                         selectedUsers.add(user.documentId)
-                    }
-                    else {
+                    } else {
                         selectedUsers.remove(user.documentId)
                     }
                 }
@@ -135,6 +143,9 @@ class AddParticipantsFragment : DialogFragment() {
     private fun nonParticipantsQuery(): Query {
         return Firebase.firestore.collection(Collections.users)
             .orderBy("__name__", Query.Direction.ASCENDING)
-            .whereNotIn(FieldPath.documentId(), project.members) //NOTE: can not handle lists of size greater than 30
+            .whereNotIn(
+                FieldPath.documentId(),
+                project.members
+            ) //NOTE: can not handle lists of size greater than 30
     }
 }

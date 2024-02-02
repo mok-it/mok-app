@@ -255,6 +255,7 @@ class DetailsFragment : Fragment() {
         }
     }
 
+
     /**
      * We adjust the extra member counter's text size based on the length of it
      */

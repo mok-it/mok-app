@@ -172,9 +172,6 @@
         android:name="mok.it.app.mokapp.fragments.AboutFragment"
         android:label="@string/about"
         tools:layout="@layout/fragment_about" />
-    <dialog
-        android:id="@+id/rewardAcceptDialogFragment"
-        android:name="mok.it.app.mokapp.fragments.RewardAcceptDialogFragment" />
     <fragment
         android:id="@+id/adminPanelFragment"
         android:name="mok.it.app.mokapp.fragments.AdminPanelFragment"

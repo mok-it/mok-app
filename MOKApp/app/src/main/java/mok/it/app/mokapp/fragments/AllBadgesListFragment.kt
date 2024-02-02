@@ -290,10 +290,10 @@ class AllBadgesListFragment :
     }
 
     private fun setAddBadgeButtonVisibility() {
-        if (!userModel.isCreator && !userModel.admin) {
-            addBadgeButton.visibility = View.INVISIBLE
-        } else {
+        if (userModel.isCreator || userModel.admin) {
             addBadgeButton.visibility = View.VISIBLE
+        } else {
+            addBadgeButton.visibility = View.INVISIBLE
         }
     }
 }

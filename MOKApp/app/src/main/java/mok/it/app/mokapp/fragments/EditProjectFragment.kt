@@ -6,10 +6,11 @@ import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import kotlinx.android.synthetic.main.fragment_create_badge.datePicker
+import kotlinx.android.synthetic.main.fragment_create_badge.tvBadgeValue
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.service.UserService
 import java.util.Calendar
 import java.util.Date
 
@@ -35,7 +36,9 @@ class EditProjectFragment : CreateProjectFragment() {
             cal[Calendar.MONTH],
             cal[Calendar.DAY_OF_MONTH]
         )
-        binding.textViewTitle.text = getString(R.string.edit_project)
+        badgeValue = args.badge.value
+        tvBadgeValue.text = badgeValue.toString()
+        binding.textViewTitle.text = getString(R.string.edit_badge_text)
         binding.createButton.text = getString(R.string.edit_text)
 
         selectedEditors = args.badge.editors.toMutableList()
@@ -81,22 +84,19 @@ class EditProjectFragment : CreateProjectFragment() {
         val deadline = Date(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
         val editedBadge = hashMapOf(
             "category" to binding.badgeMcs.text.toString(),
-            "created" to Date(),
-            "creator" to userModel.documentId,
             "deadline" to deadline,
             "description" to binding.badgeDescription.text.toString(),
             "editors" to selectedEditors,
-            "icon" to getString(R.string.under_construction_project_icon),
             "name" to binding.badgeName.text.toString(),
-            "overall_progress" to 0,
-            "mandatory" to false
-
+            "value" to badgeValue,
+            //TODO: update icon if a new one was selected, otherwise leave it untouched!
         )
         firestore.collection(Collections.badges)
             .document(args.badge.id)
             .update(editedBadge as Map<String, Any>)
             .addOnSuccessListener {
                 Log.d(TAG, "DocumentSnapshot edited with ID: ${args.badge.id}")
+                UserService.capProjectBadges(args.badge.id)
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error editing document", e)

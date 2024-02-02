@@ -1,5 +1,6 @@
 package mok.it.app.mokapp.fragments
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
@@ -15,7 +16,9 @@ import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import kotlinx.android.synthetic.main.fragment_create_badge.datePicker
+import kotlinx.android.synthetic.main.fragment_create_badge.tvBadgeValue
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.FragmentCreateBadgeBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
@@ -50,6 +53,7 @@ open class CreateProjectFragment : DialogFragment() {
 
     private val isNameRequired = true
     private val isDescriptionRequired = true
+    protected var badgeValue = 1
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -78,6 +82,18 @@ open class CreateProjectFragment : DialogFragment() {
         binding.editorSelect.setOnClickListener {
             getUsers()
         }
+
+        binding.btnDecreaseValue.setOnClickListener {
+            if (badgeValue > 1) {
+                tvBadgeValue.text = (--badgeValue).toString()
+            } else {
+                toast(R.string.value_at_least_one)
+            }
+        }
+
+        binding.btnIncreaseValue.setOnClickListener {
+            tvBadgeValue.text = (++badgeValue).toString()
+        }
     }
 
     override fun onStart() {
@@ -105,17 +121,19 @@ open class CreateProjectFragment : DialogFragment() {
         }
 
         // The user has unsaved changes, thus warning them before closing the dialog
-
-        AlertDialog.Builder(context)
-            .setCancelable(false)
-            .setMessage(R.string.unsaved_changes)
-            .setPositiveButton(
-                R.string.discard
-            ) { _, _ -> findNavController().navigateUp() }
-            .setNegativeButton(R.string.edit, null)
-            .create()
-            .show()
-
+        (context as Activity).let {
+            MaterialDialog.Builder(it)
+                .setTitle(it.getString(R.string.unsaved_changes))
+                .setNegativeButton(it.getString(R.string.discard)) { dialogInterface, _ ->
+                    findNavController().navigateUp()
+                    dialogInterface.dismiss()
+                }
+                .setPositiveButton(it.getString(R.string.edit)) { dialogInterface, _ ->
+                    dialogInterface.dismiss()
+                }
+                .build()
+                .show()
+        }
     }
 
     /**
@@ -130,6 +148,7 @@ open class CreateProjectFragment : DialogFragment() {
         val deadline = Date(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
         Log.d("Create date", deadline.toString())
         Log.d("Create editors", selectedEditors.toString())
+        Log.d("Create value", binding.tvBadgeValue.text.toString())
 
         val newBadge = hashMapOf(
             "category" to binding.badgeMcs.text.toString(),
@@ -141,7 +160,7 @@ open class CreateProjectFragment : DialogFragment() {
             "icon" to "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef",
             "name" to binding.badgeName.text.toString(),
             "overall_progress" to 0,
-            "value" to 1,
+            "value" to badgeValue,
             "mandatory" to false
 
         )

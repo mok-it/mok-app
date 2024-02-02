@@ -177,7 +177,7 @@ class AllBadgesListFragment :
                 val tvBadgeValue: TextView = holder.itemView.projectBadgeValueTextView
 
                 tvName.text =
-                    getString(R.string.badgeName, model.name, model.categoryEnum)
+                    getString(R.string.projectName, model.name, model.categoryEnum)
                 tvDesc.text = model.description
                 tvMandatory.isVisible = model.mandatory
                 tvBadgeValue.text = model.value.toString()

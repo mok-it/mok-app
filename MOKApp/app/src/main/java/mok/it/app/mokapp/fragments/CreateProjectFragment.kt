@@ -33,9 +33,9 @@ import java.util.Date
  */
 
 @Suppress("DEPRECATION")
-open class CreateBadgeFragment : DialogFragment() {
+open class CreateProjectFragment : DialogFragment() {
 
-    private val args: CreateBadgeFragmentArgs by navArgs()
+    private val args: CreateProjectFragmentArgs by navArgs()
 
     val binding get() = _binding!!
     private var _binding: FragmentCreateBadgeBinding? = null

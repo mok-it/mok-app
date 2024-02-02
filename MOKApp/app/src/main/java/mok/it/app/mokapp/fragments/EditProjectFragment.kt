@@ -14,9 +14,9 @@ import java.util.Calendar
 import java.util.Date
 
 @Suppress("DEPRECATION")
-class EditBadgeFragment : CreateBadgeFragment() {
+class EditProjectFragment : CreateProjectFragment() {
 
-    private val args: EditBadgeFragmentArgs by navArgs()
+    private val args: EditProjectFragmentArgs by navArgs()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -35,7 +35,7 @@ class EditBadgeFragment : CreateBadgeFragment() {
             cal[Calendar.MONTH],
             cal[Calendar.DAY_OF_MONTH]
         )
-        binding.textViewTitle.text = getString(R.string.edit_badge_text)
+        binding.textViewTitle.text = getString(R.string.edit_project)
         binding.createButton.text = getString(R.string.edit_text)
 
         selectedEditors = args.badge.editors.toMutableList()
@@ -86,7 +86,7 @@ class EditBadgeFragment : CreateBadgeFragment() {
             "deadline" to deadline,
             "description" to binding.badgeDescription.text.toString(),
             "editors" to selectedEditors,
-            "icon" to getString(R.string.under_construction_badge_icon),
+            "icon" to getString(R.string.under_construction_project_icon),
             "name" to binding.badgeName.text.toString(),
             "overall_progress" to 0,
             "mandatory" to false

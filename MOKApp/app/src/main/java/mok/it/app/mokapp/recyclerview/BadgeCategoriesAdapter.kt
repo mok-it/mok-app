@@ -30,7 +30,7 @@ class BadgeCategoriesAdapter(
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val catNameTv: TextView = viewHolder.itemView.findViewById(R.id.badge_category_name)
+        val catNameTv: TextView = viewHolder.itemView.findViewById(R.id.project_category_name)
         val catEmptyTv: TextView = viewHolder.itemView.findViewById(R.id.no_collected_badge)
         val collectedBadgesRV: RecyclerView =
             viewHolder.itemView.findViewById(R.id.collected_badges)

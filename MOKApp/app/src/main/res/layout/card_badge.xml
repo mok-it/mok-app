@@ -22,7 +22,7 @@
             android:id="@+id/projectIcon"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:contentDescription="@string/icon_of_badge"
+            android:contentDescription="@string/icon_of_project_description"
             android:scaleType="fitCenter"
             card_view:layout_constraintStart_toStartOf="parent"
             card_view:layout_constraintTop_toTopOf="parent"

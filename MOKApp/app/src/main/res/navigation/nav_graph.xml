@@ -136,7 +136,7 @@
         app:destination="@id/memberFragment" />
     <dialog
         android:id="@+id/createBadgeFragment"
-        android:name="mok.it.app.mokapp.fragments.CreateBadgeFragment"
+        android:name="mok.it.app.mokapp.fragments.CreateProjectFragment"
         android:label="CreateBadgeFragment"
         tools:layout="@layout/fragment_create_badge">
         <argument
@@ -145,7 +145,7 @@
     </dialog>
     <dialog
         android:id="@+id/editBadgeFragment"
-        android:name="mok.it.app.mokapp.fragments.EditBadgeFragment"
+        android:name="mok.it.app.mokapp.fragments.EditProjectFragment"
         android:label="EditBadgeFragment"
         tools:layout="@layout/fragment_create_badge">
         <argument
@@ -153,22 +153,10 @@
             app:argType="mok.it.app.mokapp.model.Project" />
     </dialog>
     <dialog
-        android:id="@+id/badgeAcceptMemberDialogFragment"
-        android:name="mok.it.app.mokapp.dialog.BadgeAcceptMemberDialogFragment"
-        android:label="BadgeAcceptMemberDialogFragment"
-        tools:layout="@layout/fragment_badge_accept_member_dialog">
-        <argument
-            android:name="user"
-            app:argType="mok.it.app.mokapp.model.User" />
-    </dialog>
-    <dialog
         android:id="@+id/badgeMembersDialogFragment"
         android:name="mok.it.app.mokapp.dialog.BadgeMembersDialogFragment"
         android:label="BadgeMembersDialogFragment"
         tools:layout="@layout/fragment_badge_members_dialog">
-        <action
-            android:id="@+id/action_badgeMembersDialogFragment_to_badgeAcceptMemberDialogFragment"
-            app:destination="@id/badgeAcceptMemberDialogFragment" />
         <argument
             android:name="users"
             app:argType="mok.it.app.mokapp.model.User[]" />

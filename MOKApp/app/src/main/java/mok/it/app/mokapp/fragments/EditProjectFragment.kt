@@ -38,7 +38,7 @@ class EditProjectFragment : CreateProjectFragment() {
         )
         badgeValue = args.badge.value
         tvBadgeValue.text = badgeValue.toString()
-        binding.textViewTitle.text = getString(R.string.edit_badge_text)
+        binding.textViewTitle.text = getString(R.string.edit_project)
         binding.createButton.text = getString(R.string.edit_text)
 
         selectedEditors = args.badge.editors.toMutableList()

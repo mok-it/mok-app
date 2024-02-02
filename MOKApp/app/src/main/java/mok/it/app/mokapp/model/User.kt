@@ -2,18 +2,27 @@ package mok.it.app.mokapp.model
 
 import android.os.Parcelable
 import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
 import kotlinx.android.parcel.Parcelize
 import mok.it.app.mokapp.model.Category.Companion.toCategory
 
-//the fields of the class should exactly match the fields in Firestore DB
+/**
+ * The user object that is stored in the Firestore database.
+ * The fields of the class should exactly match the fields in Firestore DB.
+ *
+ * @param categories Can't be marked private, but do not use it, use [categoryList] instead.
+ */
+@Suppress("DEPRECATION")
 @Parcelize
 data class User(
     @DocumentId
     val documentId: String = "",
 
     val admin: Boolean = false,
-    val categories: List<String> = ArrayList(), // can't mark it private, but don't use it
+    @Deprecated("Use categoryList instead")
+    val categories: List<String> = ArrayList(),
+    @Exclude
     var categoryList: MutableList<Category> = ArrayList(),
     val collectedBadges: List<String> = ArrayList(),
     val email: String = "",
@@ -24,10 +33,10 @@ data class User(
     val photoURL: String = "",
     val phoneNumber: String = "",
     val requestedRewards: List<String> = ArrayList(),
-    val points: Int = 0,
+    val badges: Int = 0,
     val fcmTokens: List<String> = ArrayList(),
     val nickname: String = "",
-    val projectBadges: Map<String, Int> = HashMap<String, Int>()
+    val projectBadges: MutableMap<String, Int> = HashMap()
 ) : Parcelable {
     fun generateCategories() {
         categoryList = categories.map { it.toCategory() }.toMutableList()

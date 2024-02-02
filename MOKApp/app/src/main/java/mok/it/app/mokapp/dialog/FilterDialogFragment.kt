@@ -7,8 +7,12 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.android.synthetic.main.fragment_badge_accept_member_dialog.view.*
-import kotlinx.android.synthetic.main.fragment_filter_dialog.*
+import kotlinx.android.synthetic.main.fragment_filter_dialog.switchAchieved
+import kotlinx.android.synthetic.main.fragment_filter_dialog.switchEdited
+import kotlinx.android.synthetic.main.fragment_filter_dialog.switchJoined
+import kotlinx.android.synthetic.main.fragment_filter_dialog.switchMandatory
+import kotlinx.android.synthetic.main.fragment_filter_dialog.view.CancelButton
+import kotlinx.android.synthetic.main.fragment_filter_dialog.view.OkButton
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Filter
 

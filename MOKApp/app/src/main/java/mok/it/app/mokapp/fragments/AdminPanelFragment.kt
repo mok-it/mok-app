@@ -44,6 +44,7 @@ class AdminPanelFragment : Fragment() {
     companion object {
         const val TAG = "AdminPanelFragment"
     }
+
     //TODO: using args.project.id to get the project because it should be updated. Could pass id only
     private val args: AdminPanelFragmentArgs by navArgs()
     private lateinit var project: Project
@@ -85,9 +86,12 @@ class AdminPanelFragment : Fragment() {
 
 
     private fun participantsQuery(): Query {
-            return Firebase.firestore.collection(Collections.users)
-                .orderBy("name", Query.Direction.ASCENDING)
-                .whereIn(FieldPath.documentId(), project.members) //NOTE: can not handle lists of size greater than 30
+        return Firebase.firestore.collection(Collections.users)
+            .orderBy("name", Query.Direction.ASCENDING)
+            .whereIn(
+                FieldPath.documentId(),
+                project.members
+            ) //NOTE: can not handle lists of size greater than 30
     }
     private fun getAdapter(): FirestoreRecyclerAdapter<User, ProjectViewHolder>? {
         if (project.members.isEmpty()) {
@@ -130,24 +134,32 @@ class AdminPanelFragment : Fragment() {
                 slBadge.addOnChangeListener { _, value, _ ->
                     UserService.addBadges(user.documentId, project.id, value.roundToInt(),
                         {
-                            Log.i("AdinPanelFragment", "Badge count of user ${user.documentId} on project ${project.id} was set to $value")
+                            Log.i(
+                                "AdinPanelFragment",
+                                "Badge count of user ${user.documentId} on project ${project.id} was set to $value"
+                            )
                             userBadges[user.documentId] = value.roundToInt()
-                    },
+                        },
                         {
                             slBadge.setValues(userBadges[user.documentId]?.toFloat() ?: 0f)
-                            Log.e(TAG, "Could not set badge count " +
-                                    "on project ${project.id} for user ${user.documentId}")
-                            Toast.makeText(context,
+                            Log.e(
+                                TAG, "Could not set badge count " +
+                                        "on project ${project.id} for user ${user.documentId}"
+                            )
+                            Toast.makeText(
+                                context,
                                 "Mancsok módosítása sikertelen." +
                                         " Kérlek ellenőrizd a kapcsolatot" +
                                         " vagy próbáld újra később.",
-                                Toast.LENGTH_LONG)
+                                Toast.LENGTH_LONG
+                            )
                                 .show()
                         })
                 }
             }
         }
     }
+
     private fun initLayout() {
         addParticipant.setOnClickListener {
             findNavController().navigate(
@@ -160,7 +172,8 @@ class AdminPanelFragment : Fragment() {
     private fun initUserBadges() {
         UserService.getProjectUsersAndBadges(
             args.project.id,
-            {userBadges = it.toMutableMap()
+            {
+                userBadges = it.toMutableMap()
                 getProjectData()
             },
             {}

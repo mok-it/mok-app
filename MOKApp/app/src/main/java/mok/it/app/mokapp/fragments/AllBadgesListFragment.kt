@@ -2,6 +2,7 @@ package mok.it.app.mokapp.fragments
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -215,8 +216,11 @@ class AllBadgesListFragment :
                     loadImage(ivImg, model.icon, callback)
                 }
 
-                if (userModel.collectedBadges.contains(model.id)) {
+                if (userModel.projectBadges.contains(model.id)) {
                     holder.itemView.setBackgroundResource(R.drawable.gradient1)
+                }
+                else {
+                    holder.itemView.setBackgroundColor(Color.WHITE)
                 }
 
                 holder.itemView.setOnClickListener {

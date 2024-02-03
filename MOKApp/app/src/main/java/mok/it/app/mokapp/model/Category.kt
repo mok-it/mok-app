@@ -57,5 +57,12 @@ enum class Category {
 
     companion object {
         fun String.toCategory() = Category.valueOf(this.replace(" ", "").unaccent().uppercase())
+        fun toList(): ArrayList<String> {
+            val categoryList = ArrayList<String>()
+            Category.values().forEach {
+                categoryList.add(it.toString())
+            }
+            return categoryList
+        }
     }
 }

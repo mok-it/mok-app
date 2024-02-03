@@ -13,7 +13,7 @@ import mok.it.app.mokapp.model.Project
 
 class BadgeCategoriesAdapter(
     private val categoryNames: List<String>,
-    private val collectedBadges: List<List<Project>>,
+    private val collectedBadges: List<List<Pair<Project, Int>>>,
     private val listener: BadgesAdapter.BadgeClickedListener
 ) :
 

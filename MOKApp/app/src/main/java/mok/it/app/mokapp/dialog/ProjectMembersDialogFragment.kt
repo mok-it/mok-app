@@ -8,25 +8,25 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import mok.it.app.mokapp.databinding.FragmentBadgeMembersDialogBinding
+import mok.it.app.mokapp.databinding.FragmentProjectMembersDialogBinding
 import mok.it.app.mokapp.fragments.viewmodels.DetailsFragmentViewModel
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.MembersAdapter
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import mok.it.app.mokapp.utility.Utility.setFullScreen
 
-class BadgeMembersDialogFragment : DialogFragment() {
-    private val args: BadgeMembersDialogFragmentArgs by navArgs()
+class ProjectMembersDialogFragment : DialogFragment() {
+    private val args: ProjectMembersDialogFragmentArgs by navArgs()
 
     private val binding get() = _binding!!
-    private var _binding: FragmentBadgeMembersDialogBinding? = null
+    private var _binding: FragmentProjectMembersDialogBinding? = null
 
     private val viewModel: DetailsFragmentViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentBadgeMembersDialogBinding.inflate(inflater, container, false)
+        _binding = FragmentProjectMembersDialogBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -45,7 +45,7 @@ class BadgeMembersDialogFragment : DialogFragment() {
 
     fun navigateToMemberFragment(user: User) {
         val action =
-            BadgeMembersDialogFragmentDirections.actionGlobalMemberFragment(
+            ProjectMembersDialogFragmentDirections.actionGlobalMemberFragment(
                 user
             )
         findNavController().navigate(action)

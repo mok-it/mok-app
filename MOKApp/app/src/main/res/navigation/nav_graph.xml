@@ -154,9 +154,9 @@
     </dialog>
     <dialog
         android:id="@+id/badgeMembersDialogFragment"
-        android:name="mok.it.app.mokapp.dialog.BadgeMembersDialogFragment"
+        android:name="mok.it.app.mokapp.dialog.ProjectMembersDialogFragment"
         android:label="BadgeMembersDialogFragment"
-        tools:layout="@layout/fragment_badge_members_dialog">
+        tools:layout="@layout/fragment_project_members_dialog">
         <argument
             android:name="users"
             app:argType="mok.it.app.mokapp.model.User[]" />

@@ -38,7 +38,6 @@ class MainActivity : AppCompatActivity() {
 
     val firestore = Firebase.firestore
     private lateinit var navController: NavController
-    private val mcsArray = arrayOf("IT", "Pedagógia", "Feladatsor", "Kreatív", "Grafika")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

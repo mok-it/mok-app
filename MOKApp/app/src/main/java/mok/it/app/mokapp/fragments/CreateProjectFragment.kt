@@ -164,7 +164,7 @@ open class CreateProjectFragment : DialogFragment() {
             "mandatory" to false
 
         )
-        firestore.collection(Collections.badges)
+        firestore.collection(Collections.projects)
             .add(newBadge)
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")

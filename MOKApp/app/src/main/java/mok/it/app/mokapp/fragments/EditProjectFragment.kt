@@ -36,12 +36,12 @@ class EditProjectFragment : CreateProjectFragment() {
             cal[Calendar.MONTH],
             cal[Calendar.DAY_OF_MONTH]
         )
-        badgeValue = args.badge.value
+        badgeValue = args.badge.maxBadges
         tvBadgeValue.text = badgeValue.toString()
         binding.textViewTitle.text = getString(R.string.edit_project)
         binding.createButton.text = getString(R.string.edit_text)
 
-        selectedEditors = args.badge.editors.toMutableList()
+        selectedEditors = args.badge.leaders.toMutableList()
     }
 
     override fun getUsers() {
@@ -56,7 +56,7 @@ class EditProjectFragment : CreateProjectFragment() {
                     }
                     names = Array(users.size) { i -> users[i].name }
                     checkedNames = BooleanArray(users.size) { i ->
-                        args.badge.editors.contains(users[i].documentId)
+                        args.badge.leaders.contains(users[i].documentId)
                     }
                     super.initEditorsDialog()
                 }
@@ -91,7 +91,7 @@ class EditProjectFragment : CreateProjectFragment() {
             "value" to badgeValue,
             //TODO: update icon if a new one was selected, otherwise leave it untouched!
         )
-        firestore.collection(Collections.badges)
+        firestore.collection(Collections.projects)
             .document(args.badge.id)
             .update(editedBadge as Map<String, Any>)
             .addOnSuccessListener {

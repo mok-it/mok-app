@@ -40,7 +40,7 @@ class MyBadgesFragment :
         collectedBadges = ArrayList()
         initRecyclerView()
         badges?.forEach {
-            val docRef = Firebase.firestore.collection(Collections.badges).document(it)
+            val docRef = Firebase.firestore.collection(Collections.projects).document(it)
             docRef.get()
                 .addOnSuccessListener { document ->
                     if (document != null) {

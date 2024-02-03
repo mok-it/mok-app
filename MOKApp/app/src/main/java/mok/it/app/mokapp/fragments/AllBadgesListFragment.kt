@@ -180,7 +180,7 @@ class AllBadgesListFragment :
                     getString(R.string.projectName, model.name, model.categoryEnum)
                 tvDesc.text = model.description
                 tvMandatory.isVisible = model.mandatory
-                tvBadgeValue.text = model.value.toString()
+                tvBadgeValue.text = model.maxBadges.toString()
 
                 val iconFileName = getIconFileName(model.icon)
                 val iconFile = File(context?.filesDir, iconFileName)
@@ -269,7 +269,7 @@ class AllBadgesListFragment :
     private fun getFilteredQuery(): Query {
         //itt szűrünk kategóriákra
         var query =
-            Firebase.firestore.collection(Collections.badges)
+            Firebase.firestore.collection(Collections.projects)
                 .orderBy("created", Query.Direction.DESCENDING)
         if (filter.mandatory) {
             query = query.whereEqualTo("mandatory", true)

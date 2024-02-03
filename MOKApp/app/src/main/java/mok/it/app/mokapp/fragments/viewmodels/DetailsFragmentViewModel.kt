@@ -28,7 +28,7 @@ class DetailsFragmentViewModel : ViewModel() {
     }
 
     private fun getMemberIds(badgeId: String) {
-        val docRef = Firebase.firestore.collection(Collections.badges).document(badgeId)
+        val docRef = Firebase.firestore.collection(Collections.projects).document(badgeId)
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.data != null) {
@@ -71,7 +71,7 @@ class DetailsFragmentViewModel : ViewModel() {
 
         userRef.update("collectedBadges", FieldValue.arrayUnion(badge.id))
 
-        Firebase.firestore.collection(Collections.badges).document(badge.id)
+        Firebase.firestore.collection(Collections.projects).document(badge.id)
             .update("members", FieldValue.arrayRemove(userId))
             .addOnCompleteListener {
                 getMemberIds(badge.id)

@@ -13,12 +13,12 @@
             android:id="@+id/action_detailsFragment_to_commentsFragment"
             app:destination="@id/commentsFragment" />
         <argument
-            android:name="badgeId"
+            android:name="projectId"
             app:argType="string" />
         <deepLink
             android:id="@+id/badge_deeplink"
             android:autoVerify="true"
-            app:uri="mokegyesulet.hu/app/badges/{badgeId}" />
+            app:uri="mokegyesulet.hu/app/badges/{projectId}" />
         <action
             android:id="@+id/action_detailsFragment_to_editBadgeFragment"
             app:destination="@id/editBadgeFragment" />

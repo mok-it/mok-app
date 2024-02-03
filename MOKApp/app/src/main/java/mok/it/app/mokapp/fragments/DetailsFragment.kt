@@ -76,7 +76,7 @@ class DetailsFragment : Fragment() {
     //TODO refactor this to make proper use of the viewModel
     private val viewModel: DetailsFragmentViewModel by viewModels()
 
-    private lateinit var badgeModel: Project
+    private lateinit var project: Project
 
     lateinit var model: Project
 
@@ -123,9 +123,9 @@ class DetailsFragment : Fragment() {
                             //this should match the deeplink in the nav_graph. ikr it's ugly
                             putExtra(
                                 Intent.EXTRA_TEXT,
-                                "mokegyesulet.hu/app/badges/${args.badgeId}"
+                                "mokegyesulet.hu/app/badges/${args.projectId}"
                             )
-                            putExtra(Intent.EXTRA_TITLE, badgeModel.name)
+                            putExtra(Intent.EXTRA_TITLE, project.name)
                             type = "text/plain"
                         }
                         val shareIntent = Intent.createChooser(sendIntent, null)
@@ -147,12 +147,12 @@ class DetailsFragment : Fragment() {
 
     private fun initLayout() {
         members_overlay_button.setOnClickListener {
-            if (viewModel.members.value?.isNotEmpty() == true && ::badgeModel.isInitialized) {
+            if (viewModel.members.value?.isNotEmpty() == true && ::project.isInitialized) {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToBadgeMembersDialogFragment(
                         viewModel.members.value!!,
                         userIsEditor,
-                        badgeModel
+                        project
                     )
                 )
             }
@@ -164,36 +164,36 @@ class DetailsFragment : Fragment() {
         join_button.visibility = View.GONE
         badgeComments.setOnClickListener {
             val action =
-                DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.badgeId)
+                DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.projectId)
             findNavController().navigate(action)
         }
-        Firebase.firestore.collection(Collections.badges).document(args.badgeId).get()
+        Firebase.firestore.collection(Collections.projects).document(args.projectId).get()
             .addOnSuccessListener { document ->
-                badgeModel = document.toObject(Project::class.java)!!
-                badgeName.text = badgeModel.name
+                project = document.toObject(Project::class.java)!!
+                badgeName.text = project.name
                 categoryName.text =
-                    getString(R.string.specific_category, badgeModel.category)
-                badgeValueTextView.text = getString(R.string.specific_value, badgeModel.value)
-                badgeDescription.text = badgeModel.description
+                    getString(R.string.specific_category, project.category)
+                badgeValueTextView.text = getString(R.string.specific_value, project.maxBadges)
+                badgeDescription.text = project.description
 
                 Firebase.firestore.collection(Collections.users)
-                    .document(badgeModel.creator)
+                    .document(project.creator)
                     .get().addOnSuccessListener { creatorDoc ->
                         if (creatorDoc?.get("name") != null) {
                             badgeCreator.text = creatorDoc["name"] as String //TODO NPE itt is
                         }
                         val formatter = getDateInstance()
                         badgeDeadline.text =
-                            formatter.format(badgeModel.created)
+                            formatter.format(project.created)
 
-                        val iconFileName = getIconFileName(badgeModel.icon)
+                        val iconFileName = getIconFileName(project.icon)
                         val iconFile = File(context?.filesDir, iconFileName)
                         if (iconFile.exists()) {
                             Log.i(TAG, "loading badge icon " + iconFile.path)
                             val bitmap: Bitmap = BitmapFactory.decodeFile(iconFile.path)
                             avatar_imagebutton.setImageBitmap(bitmap)
                         } else {
-                            Log.i(TAG, "downloading badge icon " + badgeModel.icon)
+                            Log.i(TAG, "downloading badge icon " + project.icon)
                             val callback = object : Callback {
                                 override fun onSuccess() {
                                     // save image
@@ -214,10 +214,10 @@ class DetailsFragment : Fragment() {
                                     Log.e(TAG, e.toString())
                                 }
                             }
-                            Picasso.get().load(badgeModel.icon).into(avatar_imagebutton, callback)
+                            Picasso.get().load(project.icon).into(avatar_imagebutton, callback)
                         }
 
-                        val editors = badgeModel.editors
+                        val editors = project.leaders
                         if (editors.contains(userModel.documentId)) {
                             userIsEditor = true
                         }
@@ -230,12 +230,13 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initEditButton() {
-        if (badgeModel.creator == userModel.documentId || userIsEditor) {
+//        if (badgeModel.creator == userModel.documentId || userIsEditor) {
+        if(true) { //TODO delete!!
             editButton.visibility = View.VISIBLE
             editButton.setOnClickListener {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToEditBadgeFragment(
-                        badgeModel
+                        project
                     )
                 )
             }
@@ -243,12 +244,13 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initAdminButton() {
-        if (badgeModel.creator == userModel.documentId || userIsEditor) {
+//        if (badgeModel.creator == userModel.documentId || userIsEditor) {
+        if(true) { //TODO delete!!
             rewardButton.visibility = View.VISIBLE
             rewardButton.setOnClickListener {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToAdminPanelFragment(
-                        badgeModel
+                        project
                     )
                 )
             }
@@ -278,13 +280,13 @@ class DetailsFragment : Fragment() {
     }
 
     private fun join() {
-        if (userModel.joinedBadges.contains(args.badgeId)) {
+        if (userModel.joinedBadges.contains(args.projectId)) {
             val userRef =
                 Firebase.firestore.collection(Collections.users).document(currentUser!!.uid)
-            userRef.update("joinedBadges", FieldValue.arrayRemove(args.badgeId))
+            userRef.update("joinedBadges", FieldValue.arrayRemove(args.projectId))
 
             val badgeRef =
-                Firebase.firestore.collection(Collections.badges).document(args.badgeId)
+                Firebase.firestore.collection(Collections.projects).document(args.projectId)
             badgeRef.update("members", FieldValue.arrayRemove(currentUser?.uid))
                 .addOnCompleteListener {
                     Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT).show()
@@ -294,10 +296,10 @@ class DetailsFragment : Fragment() {
         } else {
             val userRef =
                 Firebase.firestore.collection(Collections.users).document(currentUser!!.uid)
-            userRef.update("joinedBadges", FieldValue.arrayUnion(args.badgeId))
+            userRef.update("joinedBadges", FieldValue.arrayUnion(args.projectId))
 
             val badgeRef =
-                Firebase.firestore.collection(Collections.badges).document(args.badgeId)
+                Firebase.firestore.collection(Collections.projects).document(args.projectId)
             badgeRef.update("members", FieldValue.arrayUnion(currentUser?.uid))
                 .addOnCompleteListener {
                     Toast.makeText(context, "Sikeresen csatlakoztál!", Toast.LENGTH_SHORT).show()
@@ -308,15 +310,15 @@ class DetailsFragment : Fragment() {
 
         MyFirebaseMessagingService.sendNotificationToUsersById(
             "Csatlakoztak egy mancshoz",
-            "${userModel.name} csatlakozott a(z) \"${badgeModel.name}\" nevű mancshoz!",
-            listOf(badgeModel.creator + badgeModel.editors)
+            "${userModel.name} csatlakozott a(z) \"${project.name}\" nevű mancshoz!",
+            listOf(project.creator + project.leaders)
         )
     }
 
     private lateinit var memberComments: ArrayList<Comment>
 
     private fun getMemberIds() {
-        val docRef = Firebase.firestore.collection(Collections.badges).document(args.badgeId)
+        val docRef = Firebase.firestore.collection(Collections.projects).document(args.projectId)
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.data != null) {
@@ -334,7 +336,7 @@ class DetailsFragment : Fragment() {
     fun getCommentIds() {
         memberComments = ArrayList()
         val collectionRef =
-            Firebase.firestore.collection(Collections.badges).document(args.badgeId)
+            Firebase.firestore.collection(Collections.projects).document(args.projectId)
                 .collection(Collections.commentsRelativePath)
         collectionRef.get()
             .addOnSuccessListener { collection ->
@@ -397,14 +399,14 @@ class DetailsFragment : Fragment() {
     private fun changeVisibilities() {
         join_button.visibility = View.VISIBLE
         when {
-            userModel.collectedBadges.contains(badgeModel.id) -> join_button.visibility = View.GONE
-            userModel.joinedBadges.contains(badgeModel.id) -> join_button.text =
+            userModel.collectedBadges.contains(project.id) -> join_button.visibility = View.GONE
+            userModel.joinedBadges.contains(project.id) -> join_button.text =
                 getString(R.string.leave)
 
             else -> join_button.text = getString(R.string.join)
         }
 
-        if (badgeModel.editors.contains(userModel.documentId)) {
+        if (project.leaders.contains(userModel.documentId)) {
             userIsEditor = true
         }
     }

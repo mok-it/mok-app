@@ -109,15 +109,15 @@ class AdminPanelFragment : Fragment() {
                 val slBadge: RangeSlider = holder.itemView.badgeSlider
                 tvName.text = user.name
                 Picasso.get().load(user.photoURL).into(ivImg)
-                tvMaxBadge.text = project.value.toString()
+                tvMaxBadge.text = project.maxBadges.toString()
                 slBadge.valueFrom = 0f
-                slBadge.valueTo = project.value.toFloat()
+                slBadge.valueTo = project.maxBadges.toFloat()
                 slBadge.bottom = 0
-                slBadge.top = project.value
+                slBadge.top = project.maxBadges
                 slBadge.stepSize = 1f
                 slBadge.setValues(userBadges[user.documentId]?.toFloat() ?: 0f)
                 tvMinBadge.text = "0"
-                tvMaxBadge.text = project.value.toString()
+                tvMaxBadge.text = project.maxBadges.toString()
                 slBadge.setLabelFormatter { value -> value.toString() }
                 slBadge.addOnChangeListener { _, value, _ ->
                     UserService.addBadges(user.documentId, project.id, value.roundToInt(),
@@ -169,7 +169,7 @@ class AdminPanelFragment : Fragment() {
     }
 
     private fun getProjectData() {
-        Firebase.firestore.collection(Collections.badges).document(args.project.id).get()
+        Firebase.firestore.collection(Collections.projects).document(args.project.id).get()
             .addOnSuccessListener { document ->
                 if (document != null && document.data != null) {
                     project = document.toObject(Project::class.java)!!

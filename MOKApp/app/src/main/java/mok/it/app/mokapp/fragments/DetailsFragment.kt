@@ -309,7 +309,7 @@ class DetailsFragment : Fragment() {
         }
 
         MyFirebaseMessagingService.sendNotificationToUsersById(
-            "Csatlakoztak egy mancshoz",
+            "Csatlakoztak egy projekthez",
             "${userModel.name} csatlakozott a(z) \"${project.name}\" nevű mancshoz!",
             listOf(project.creator + project.leaders)
         )

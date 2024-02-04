@@ -256,7 +256,7 @@ class AllProjectsListFragment :
         }
         setAddProjectButtonVisibility()
         projectSwipeRefresh.setOnRefreshListener {
-            // a lehúzás csak az usert tölti újra, a mancsok maguktól frissülnek
+            // a lehúzás csak az usert tölti újra, a projektek maguktól frissülnek
             adapter = getAdapter()
             recyclerView.adapter = adapter
             refreshCurrentUserAndUserModel(

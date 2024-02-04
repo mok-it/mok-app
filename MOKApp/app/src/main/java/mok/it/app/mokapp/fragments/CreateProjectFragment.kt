@@ -180,7 +180,7 @@ open class CreateProjectFragment : DialogFragment() {
      * Called if the Create button is pressed in the dialog.
      * @return whether the dialog should be closed
      */
-    private fun onCreateBadge(): Boolean {
+    private fun onCreateProject(): Boolean {
         if (!isComplete(true)) {
             return false
         }
@@ -188,8 +188,8 @@ open class CreateProjectFragment : DialogFragment() {
         val success = commitNewBadgeToDatabase()
 
         MyFirebaseMessagingService.sendNotificationToUsers(
-            "Új mancs lett létrehozva",
-            "${userModel.name} egy új mancsot hozott létre az alábbi névvel: ${binding.projectName.text}",
+            "Új projekt lett létrehozva",
+            "${userModel.name} egy új projektet hozott létre az alábbi névvel: ${binding.projectName.text}",
             users.filterNot { it.documentId == userModel.documentId }
         )
 
@@ -202,10 +202,10 @@ open class CreateProjectFragment : DialogFragment() {
     }
 
     /**
-     * Called if the user wants to create the badge.
+     * Called if the user wants to create a project.
      */
     protected open fun onCreateBadgePressed() {
-        val shouldCloseDialog = onCreateBadge()
+        val shouldCloseDialog = onCreateProject()
 
         if (shouldCloseDialog) {
             findNavController().navigateUp()
@@ -302,6 +302,6 @@ open class CreateProjectFragment : DialogFragment() {
     }
 
     companion object {
-        const val TAG = "CreateBadgeFragment"
+        const val TAG = "CreateProjectFragment"
     }
 }

@@ -115,5 +115,6 @@
     <string name="collectedBadgesSummary">Összes mancs: %1$d</string>
     <string name="badge_value">Mancsérték</string>
     <string name="value_at_least_one">A projektnek legalább egy mancsot kell érnie!</string>
+    <string name="achievements">Acsik</string>
 
 </resources>

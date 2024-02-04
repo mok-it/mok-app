@@ -67,6 +67,9 @@
         <action
             android:id="@+id/action_allBadgesListFragment_to_createBadgeFragment"
             app:destination="@id/createBadgeFragment" />
+        <action
+            android:id="@+id/action_allBadgesListFragment_to_achievementsFragment"
+            app:destination="@id/achievementsFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -192,4 +195,8 @@
             android:name="projectId"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/achievementsFragment"
+        android:name="mok.it.app.mokapp.fragments.AchievementsFragment"
+        android:label="AchievementsFragment" />
 </navigation>

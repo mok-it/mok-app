@@ -2,7 +2,7 @@
 <androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/badgeSwipeRefresh"
+    android:id="@+id/projectSwipeRefresh"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="?colorOnBackground">
@@ -23,23 +23,23 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical">
 
-                <include layout="@layout/card_badge_shimmer" />
+                <include layout="@layout/card_project_shimmer" />
 
-                <include layout="@layout/card_badge_shimmer" />
+                <include layout="@layout/card_project_shimmer" />
 
-                <include layout="@layout/card_badge_shimmer" />
+                <include layout="@layout/card_project_shimmer" />
 
-                <include layout="@layout/card_badge_shimmer" />
+                <include layout="@layout/card_project_shimmer" />
 
-                <include layout="@layout/card_badge_shimmer" />
+                <include layout="@layout/card_project_shimmer" />
 
-                <include layout="@layout/card_badge_shimmer" />
+                <include layout="@layout/card_project_shimmer" />
 
-                <include layout="@layout/card_badge_shimmer" />
+                <include layout="@layout/card_project_shimmer" />
 
-                <include layout="@layout/card_badge_shimmer" />
+                <include layout="@layout/card_project_shimmer" />
 
-                <include layout="@layout/card_badge_shimmer" />
+                <include layout="@layout/card_project_shimmer" />
 
             </LinearLayout>
         </com.facebook.shimmer.ShimmerFrameLayout>
@@ -51,10 +51,10 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:itemCount="5"
-            tools:listitem="@layout/card_badge" />
+            tools:listitem="@layout/card_project" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/addBadgeButton"
+            android:id="@+id/addProjectButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"

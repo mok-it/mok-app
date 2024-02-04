@@ -95,7 +95,7 @@ class LoginFragment : Fragment() {
     private fun navigateAuthUser() {
         refreshCurrentUserAndUserModel(requireContext())
         {
-            findNavController().navigate(R.id.action_loginFragment_to_allBadgesListFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_allProjectsListFragment)
         }
     }
 }

@@ -58,7 +58,7 @@
                 android:layout_marginHorizontal="16dp"
                 android:layout_marginTop="2dp"
                 android:fontFamily="sans-serif"
-                android:text="@string/badge_name"
+                android:text="@string/project_name"
                 android:textSize="16sp"
                 android:textStyle="bold"
                 card_view:layout_constraintEnd_toStartOf="@+id/mandatoryTextView"

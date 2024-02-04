@@ -55,7 +55,7 @@ class MainActivity : AppCompatActivity() {
 
         //Ha a listfragment-re navigálunk, töltődjön újra a fejléc (regisztráció után ez tölti be)
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.allBadgesListFragment && currentUser != null) refreshCurrentUserAndUserModel(
+            if (destination.id == R.id.allProjectsListFragment && currentUser != null) refreshCurrentUserAndUserModel(
                 this
             ) {
                 loadApp()

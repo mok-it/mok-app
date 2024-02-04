@@ -30,11 +30,11 @@ import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.fragment_details.avatar_imagebutton
-import kotlinx.android.synthetic.main.fragment_details.badgeComments
-import kotlinx.android.synthetic.main.fragment_details.badgeCreator
-import kotlinx.android.synthetic.main.fragment_details.badgeDeadline
-import kotlinx.android.synthetic.main.fragment_details.badgeDescription
-import kotlinx.android.synthetic.main.fragment_details.badgeName
+import kotlinx.android.synthetic.main.fragment_details.projectComments
+import kotlinx.android.synthetic.main.fragment_details.projectCreator
+import kotlinx.android.synthetic.main.fragment_details.projectDeadline
+import kotlinx.android.synthetic.main.fragment_details.projectCreateDescription
+import kotlinx.android.synthetic.main.fragment_details.projectName
 import kotlinx.android.synthetic.main.fragment_details.badgeValueTextView
 import kotlinx.android.synthetic.main.fragment_details.categoryName
 import kotlinx.android.synthetic.main.fragment_details.editButton
@@ -149,7 +149,7 @@ class DetailsFragment : Fragment() {
         members_overlay_button.setOnClickListener {
             if (viewModel.members.value?.isNotEmpty() == true && ::project.isInitialized) {
                 findNavController().navigate(
-                    DetailsFragmentDirections.actionDetailsFragmentToBadgeMembersDialogFragment(
+                    DetailsFragmentDirections.actionDetailsFragmentToProjectMembersDialogFragment(
                         viewModel.members.value!!,
                         userIsEditor,
                         project
@@ -162,7 +162,7 @@ class DetailsFragment : Fragment() {
             refreshCurrentUserAndUserModel(requireContext())
         }
         join_button.visibility = View.GONE
-        badgeComments.setOnClickListener {
+        projectComments.setOnClickListener {
             val action =
                 DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.projectId)
             findNavController().navigate(action)
@@ -170,20 +170,20 @@ class DetailsFragment : Fragment() {
         Firebase.firestore.collection(Collections.projects).document(args.projectId).get()
             .addOnSuccessListener { document ->
                 project = document.toObject(Project::class.java)!!
-                badgeName.text = project.name
+                projectName.text = project.name
                 categoryName.text =
                     getString(R.string.specific_category, project.category)
                 badgeValueTextView.text = getString(R.string.specific_value, project.maxBadges)
-                badgeDescription.text = project.description
+                projectCreateDescription.text = project.description
 
                 Firebase.firestore.collection(Collections.users)
                     .document(project.creator)
                     .get().addOnSuccessListener { creatorDoc ->
                         if (creatorDoc?.get("name") != null) {
-                            badgeCreator.text = creatorDoc["name"] as String //TODO NPE itt is
+                            projectCreator.text = creatorDoc["name"] as String //TODO NPE itt is
                         }
                         val formatter = getDateInstance()
-                        badgeDeadline.text =
+                        projectDeadline.text =
                             formatter.format(project.created)
 
                         val iconFileName = getIconFileName(project.icon)
@@ -235,7 +235,7 @@ class DetailsFragment : Fragment() {
             editButton.visibility = View.VISIBLE
             editButton.setOnClickListener {
                 findNavController().navigate(
-                    DetailsFragmentDirections.actionDetailsFragmentToEditBadgeFragment(
+                    DetailsFragmentDirections.actionDetailsFragmentToEditProjectFragment(
                         project
                     )
                 )
@@ -361,7 +361,7 @@ class DetailsFragment : Fragment() {
                                 val user = document.toObject(User::class.java)!!
                                 sender = user.name
                             }
-                            badgeComments.text = getString(
+                            projectComments.text = getString(
                                 R.string.newest_comment_text,
                                 timeString,
                                 sender,

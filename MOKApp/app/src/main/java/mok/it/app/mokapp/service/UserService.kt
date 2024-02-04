@@ -132,7 +132,7 @@ object UserService : IUserService {
     ) {
         val batch = Firebase.firestore.batch()
         val projectDocumentRef = Firebase.firestore
-            .collection(Collections.badges).document(projectId)
+            .collection(Collections.projects).document(projectId)
 
         for (userId in userIds) {
             val userDocumentRef = Firebase.firestore.collection(Collections.users).document(userId)
@@ -160,7 +160,7 @@ object UserService : IUserService {
         val userDocumentRef = Firebase.firestore.collection(Collections.users)
             .document(userId)
 
-        val projectsCollectionRef = Firebase.firestore.collection(Collections.badges)
+        val projectsCollectionRef = Firebase.firestore.collection(Collections.projects)
         projectsCollectionRef.get()
             .addOnSuccessListener { querySnapshot ->
                 for (document in querySnapshot.documents) {
@@ -207,7 +207,7 @@ object UserService : IUserService {
     fun capProjectBadges(projectId: String) {
         val db = Firebase.firestore
 
-        db.collection(Collections.badges).document(projectId).get()
+        db.collection(Collections.projects).document(projectId).get()
             .addOnSuccessListener { projectSnapshot ->
                 val project = projectSnapshot.toObject(Project::class.java)
 
@@ -218,7 +218,7 @@ object UserService : IUserService {
 
                             user?.projectBadges?.get(projectId)?.let { projectBadgeValue ->
                                 user.projectBadges[projectId] =
-                                    min(projectBadgeValue, project.value)
+                                    min(projectBadgeValue, project.maxBadges)
                                 db.collection(Collections.users).document(userId).set(user)
                             }
                         }
@@ -231,7 +231,7 @@ object UserService : IUserService {
         category: String,
         onComplete: (Boolean) -> Unit
     ) {
-        val projectDocumentRef = Firebase.firestore.collection(Collections.badges)
+        val projectDocumentRef = Firebase.firestore.collection(Collections.projects)
             .document(projectId)
 
         projectDocumentRef.get()

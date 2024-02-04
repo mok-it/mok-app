@@ -13,16 +13,16 @@ import mok.it.app.mokapp.databinding.FragmentMyBadgesBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
-import mok.it.app.mokapp.recyclerview.BadgeCategoriesAdapter
-import mok.it.app.mokapp.recyclerview.BadgesAdapter
+import mok.it.app.mokapp.recyclerview.ProjectCategoriesAdapter
+import mok.it.app.mokapp.recyclerview.ProjectsAdapter
 
 
 class MyBadgesFragment :
-    Fragment(), BadgesAdapter.BadgeClickedListener {
+    Fragment(), ProjectsAdapter.ProjectClickedListener {
     private val binding get() = _binding!!
     private var _binding: FragmentMyBadgesBinding? = null
 
-    private lateinit var collectedBadges: ArrayList<Project>
+    private lateinit var completedProjects: ArrayList<Project>
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -33,20 +33,20 @@ class MyBadgesFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        getBadges(userModel.collectedBadges)
+        getProjects(userModel.collectedBadges)
     }
 
-    private fun getBadges(badges: List<String>?) {
-        collectedBadges = ArrayList()
+    private fun getProjects(projectIds: List<String>?) {
+        completedProjects = ArrayList()
         initRecyclerView()
-        badges?.forEach {
-            val docRef = Firebase.firestore.collection(Collections.badges).document(it)
+        projectIds?.forEach {
+            val docRef = Firebase.firestore.collection(Collections.projects).document(it)
             docRef.get()
                 .addOnSuccessListener { document ->
                     if (document != null) {
                         val badge = document.toObject(Project::class.java)!!
-                        collectedBadges.add(badge)
-                        if (badges.size == collectedBadges.size) {
+                        completedProjects.add(badge)
+                        if (projectIds.size == completedProjects.size) {
                             initRecyclerView()
                         }
                     }
@@ -55,29 +55,29 @@ class MyBadgesFragment :
     }
 
     private fun initRecyclerView() {
-        val categoryBadges: ArrayList<ArrayList<Project>> = ArrayList()
+        val categoryProjects: ArrayList<ArrayList<Project>> = ArrayList()
 
         for (c in 0 until userModel.categoryList.size) {
-            categoryBadges.add(ArrayList())
-            for (badge in collectedBadges) {
-                if (badge.categoryEnum == userModel.categoryList[c]) {
-                    categoryBadges[c].add(badge)
+            categoryProjects.add(ArrayList())
+            for (project in completedProjects) {
+                if (project.categoryEnum == userModel.categoryList[c]) {
+                    categoryProjects[c].add(project)
                 }
             }
         }
-        binding.recyclerView.adapter = BadgeCategoriesAdapter(
+        binding.recyclerView.adapter = ProjectCategoriesAdapter(
             userModel.categoryList.map { it.toString() },
-            categoryBadges,
+            categoryProjects,
             this
         )
         binding.recyclerView.layoutManager =
             LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
     }
 
-    override fun onBadgeClicked(badgeId: String) {
+    override fun onProjectClicked(projectId: String) {
         findNavController().navigate(
             MyBadgesFragmentDirections.actionMyBadgesFragmentToDetailsFragment(
-                badgeId
+                projectId
             )
         )
     }

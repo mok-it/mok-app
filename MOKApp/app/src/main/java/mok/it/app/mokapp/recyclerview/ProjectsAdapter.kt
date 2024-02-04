@@ -11,11 +11,11 @@ import com.squareup.picasso.Picasso
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Project
 
-class BadgesAdapter(
+class ProjectsAdapter(
     private val dataSet: List<Project>,
-    private val listener: BadgeClickedListener
+    private val listener: ProjectClickedListener
 ) :
-    RecyclerView.Adapter<BadgesAdapter.ViewHolder>() {
+    RecyclerView.Adapter<ProjectsAdapter.ViewHolder>() {
 
     var context: Context? = null
 
@@ -23,19 +23,19 @@ class BadgesAdapter(
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.card_my_badge, viewGroup, false)
+            .inflate(R.layout.card_my_project, viewGroup, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val model = dataSet[position]
         val ivImg: ImageView = viewHolder.itemView.findViewById(R.id.imageView)
-        val tvBadgeName: TextView = viewHolder.itemView.findViewById(R.id.badgeName)
+        val tvBadgeName: TextView = viewHolder.itemView.findViewById(R.id.projectName)
         loadImage(ivImg, model.icon)
         tvBadgeName.text = model.name
 
         viewHolder.itemView.setOnClickListener {
-            listener.onBadgeClicked(model.id)
+            listener.onProjectClicked(model.id)
         }
     }
 
@@ -57,7 +57,7 @@ class BadgesAdapter(
         }
     }
 
-    fun interface BadgeClickedListener {
-        fun onBadgeClicked(badgeId: String)
+    fun interface ProjectClickedListener {
+        fun onProjectClicked(projectId: String)
     }
 }

@@ -64,7 +64,7 @@ class RewardsFragment : Fragment() {
     }
 
     private fun updateUI() {
-        pointsText.text = getString(R.string.my_points, userModel.badges)
+        pointsText.text = getString(R.string.my_badges_count, userModel.badges)
         initializeAdapter()
     }
 

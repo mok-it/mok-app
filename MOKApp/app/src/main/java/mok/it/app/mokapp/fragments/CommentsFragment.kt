@@ -54,7 +54,7 @@ class CommentsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val query =
-            Firebase.firestore.collection(Collections.projects).document(args.badgeId)
+            Firebase.firestore.collection(Collections.projects).document(args.projectId)
                 .collection(Collections.commentsRelativePath)
                 .orderBy("time", Query.Direction.DESCENDING)
         val options =
@@ -118,7 +118,7 @@ class CommentsFragment : Fragment() {
                     FirebaseAuth.getInstance().currentUser!!.uid
                 )
 
-                Firebase.firestore.collection(Collections.projects).document(args.badgeId)
+                Firebase.firestore.collection(Collections.projects).document(args.projectId)
                     .collection(Collections.commentsRelativePath)
                     .add(comment).addOnSuccessListener { documentReference ->
                         Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")

@@ -230,8 +230,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initEditButton() {
-//        if (badgeModel.creator == userModel.documentId || userIsEditor) {
-        if(true) { //TODO delete!!
+        if (project.creator == userModel.documentId || userIsEditor) {
             editButton.visibility = View.VISIBLE
             editButton.setOnClickListener {
                 findNavController().navigate(
@@ -244,8 +243,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initAdminButton() {
-//        if (badgeModel.creator == userModel.documentId || userIsEditor) {
-        if(true) { //TODO delete!!
+        if (project.creator == userModel.documentId || userIsEditor) {
             rewardButton.visibility = View.VISIBLE
             rewardButton.setOnClickListener {
                 findNavController().navigate(

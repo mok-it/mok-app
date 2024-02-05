@@ -49,7 +49,7 @@
             android:paddingTop="4dp"
             android:textSize="14sp"
             android:textStyle="normal"
-            tools:text="@string/example_email_address" />
+            tools:text="@string/placeholder_email_address" />
 
         <TextView
             android:id="@+id/phone_number"

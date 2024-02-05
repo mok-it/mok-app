@@ -16,7 +16,7 @@
         android:padding="12dp">
 
         <TextView
-            android:id="@+id/badge_category_name"
+            android:id="@+id/project_category_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/category"
@@ -25,22 +25,22 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/no_collected_badge"
+            android:id="@+id/no_completed_projects"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/no_collected_badge_text"
+            android:text="@string/no_completed_projects_text"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/badge_category_name"
+            app:layout_constraintTop_toBottomOf="@+id/project_category_name"
             android:layout_marginTop="5dp"
             />
 
         <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/collected_badges"
+            android:id="@+id/completed_projects"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/badge_category_name"
+            app:layout_constraintTop_toBottomOf="@+id/project_category_name"
             app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginTop="5dp"
             />

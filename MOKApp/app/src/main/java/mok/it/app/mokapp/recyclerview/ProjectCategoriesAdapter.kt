@@ -11,13 +11,13 @@ import androidx.recyclerview.widget.RecyclerView
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Project
 
-class BadgeCategoriesAdapter(
+class ProjectCategoriesAdapter(
     private val categoryNames: List<String>,
     private val collectedBadges: List<List<Project>>,
-    private val listener: BadgesAdapter.BadgeClickedListener
+    private val listener: ProjectsAdapter.ProjectClickedListener
 ) :
 
-    RecyclerView.Adapter<BadgeCategoriesAdapter.ViewHolder>() {
+    RecyclerView.Adapter<ProjectCategoriesAdapter.ViewHolder>() {
 
     var context: Context? = null
 
@@ -25,15 +25,15 @@ class BadgeCategoriesAdapter(
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
         val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.card_badge_category, viewGroup, false)
+            .inflate(R.layout.card_project_category, viewGroup, false)
         return ViewHolder(view)
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val catNameTv: TextView = viewHolder.itemView.findViewById(R.id.badge_category_name)
-        val catEmptyTv: TextView = viewHolder.itemView.findViewById(R.id.no_collected_badge)
+        val catNameTv: TextView = viewHolder.itemView.findViewById(R.id.project_category_name)
+        val catEmptyTv: TextView = viewHolder.itemView.findViewById(R.id.no_completed_projects)
         val collectedBadgesRV: RecyclerView =
-            viewHolder.itemView.findViewById(R.id.collected_badges)
+            viewHolder.itemView.findViewById(R.id.completed_projects)
 
         catNameTv.text = categoryNames[position]
 
@@ -43,7 +43,7 @@ class BadgeCategoriesAdapter(
         } else {
             catEmptyTv.visibility = View.GONE
             collectedBadgesRV.visibility = View.VISIBLE
-            collectedBadgesRV.adapter = BadgesAdapter(collectedBadges[position], listener)
+            collectedBadgesRV.adapter = ProjectsAdapter(collectedBadges[position], listener)
             collectedBadgesRV.layoutManager =
                 GridLayoutManager(this.context, 2, LinearLayoutManager.VERTICAL, false)
         }

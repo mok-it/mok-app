@@ -14,7 +14,7 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.fragment_all_badges_list.recyclerView
+import kotlinx.android.synthetic.main.fragment_all_projects_list.recyclerView
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.recyclerview.LinkViewHolder

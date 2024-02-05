@@ -11,13 +11,13 @@ import com.bumptech.glide.request.RequestOptions
 import kotlinx.android.synthetic.main.card_member.view.imageView
 import kotlinx.android.synthetic.main.card_member.view.textView
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.dialog.BadgeMembersDialogFragment
+import mok.it.app.mokapp.dialog.ProjectMembersDialogFragment
 import mok.it.app.mokapp.model.User
 
 
 class MembersAdapter(
     private val userArray: Array<User>,
-    private val badgeMembersDialogFragment: BadgeMembersDialogFragment
+    private val projectMembersDialogFragment: ProjectMembersDialogFragment
 ) :
     RecyclerView.Adapter<MembersAdapter.ViewHolder>() {
 
@@ -45,7 +45,7 @@ class MembersAdapter(
 
         //opening the person's profile if someone clicks on the card
         viewHolder.itemView.setOnClickListener {
-            badgeMembersDialogFragment.navigateToMemberFragment(user)
+            projectMembersDialogFragment.navigateToMemberFragment(user)
         }
     }
 

@@ -29,16 +29,16 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.card_badge.view.mandatoryTextView
-import kotlinx.android.synthetic.main.card_badge.view.projectBadgeValueTextView
-import kotlinx.android.synthetic.main.card_badge.view.projectDescription
-import kotlinx.android.synthetic.main.card_badge.view.projectIcon
-import kotlinx.android.synthetic.main.card_badge.view.projectName
-import kotlinx.android.synthetic.main.fragment_all_badges_list.addBadgeButton
-import kotlinx.android.synthetic.main.fragment_all_badges_list.badgeSwipeRefresh
-import kotlinx.android.synthetic.main.fragment_all_badges_list.recyclerView
-import kotlinx.android.synthetic.main.fragment_all_badges_list.shimmerFrameLayout
-import kotlinx.android.synthetic.main.fragment_all_badges_list.view.addBadgeButton
+import kotlinx.android.synthetic.main.card_project.view.mandatoryTextView
+import kotlinx.android.synthetic.main.card_project.view.projectBadgeValueTextView
+import kotlinx.android.synthetic.main.card_project.view.projectDescription
+import kotlinx.android.synthetic.main.card_project.view.projectIcon
+import kotlinx.android.synthetic.main.card_project.view.projectName
+import kotlinx.android.synthetic.main.fragment_all_projects_list.addProjectButton
+import kotlinx.android.synthetic.main.fragment_all_projects_list.projectSwipeRefresh
+import kotlinx.android.synthetic.main.fragment_all_projects_list.recyclerView
+import kotlinx.android.synthetic.main.fragment_all_projects_list.shimmerFrameLayout
+import kotlinx.android.synthetic.main.fragment_all_projects_list.view.addProjectButton
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.dialog.FilterDialogFragment.Companion.filterResultKey
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
@@ -55,19 +55,19 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 
-private const val TAG = "AllBadgesListFragment"
+private const val TAG = "AllProjectsListFragment"
 
-class AllBadgesListFragment :
+class AllProjectsListFragment :
     Fragment() {
 
-    private val args: AllBadgesListFragmentArgs by navArgs()
+    private val args: AllProjectsListFragmentArgs by navArgs()
     private lateinit var filter: Filter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_all_badges_list, container, false)
+        return inflater.inflate(R.layout.fragment_all_projects_list, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,7 +99,7 @@ class AllBadgesListFragment :
                 return when (menuItem.itemId) {
                     R.id.filter -> {
                         findNavController().navigate(
-                            AllBadgesListFragmentDirections.actionAllBadgesListFragmentToFilterDialogFragment(
+                            AllProjectsListFragmentDirections.actionAllProjectsListFragmentToFilterDialogFragment(
                                 filter
                             )
                         )
@@ -160,8 +160,8 @@ class AllBadgesListFragment :
                 .setLifecycleOwner(this).build()
         return object : FirestoreRecyclerAdapter<Project, ProjectViewHolder>(options) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
-                val view = LayoutInflater.from(this@AllBadgesListFragment.context)
-                    .inflate(R.layout.card_badge, parent, false)
+                val view = LayoutInflater.from(this@AllProjectsListFragment.context)
+                    .inflate(R.layout.card_project, parent, false)
                 return ProjectViewHolder(view)
             }
 
@@ -177,10 +177,10 @@ class AllBadgesListFragment :
                 val tvBadgeValue: TextView = holder.itemView.projectBadgeValueTextView
 
                 tvName.text =
-                    getString(R.string.badgeName, model.name, model.categoryEnum)
+                    getString(R.string.projectName, model.name, model.categoryEnum)
                 tvDesc.text = model.description
                 tvMandatory.isVisible = model.mandatory
-                tvBadgeValue.text = model.value.toString()
+                tvBadgeValue.text = model.maxBadges.toString()
 
                 val iconFileName = getIconFileName(model.icon)
                 val iconFile = File(context?.filesDir, iconFileName)
@@ -221,7 +221,7 @@ class AllBadgesListFragment :
 
                 holder.itemView.setOnClickListener {
                     val action =
-                        AllBadgesListFragmentDirections.actionAllBadgesListFragmentToDetailsFragment(
+                        AllProjectsListFragmentDirections.actionAllProjectsListFragmentToDetailsFragment(
                             model.id
                         )
                     findNavController().navigate(action)
@@ -245,31 +245,31 @@ class AllBadgesListFragment :
 
         recyclerView.adapter = adapter
         recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
-        recyclerView.addBadgeButton
+        recyclerView.addProjectButton
 
-        addBadgeButton.setOnClickListener {
+        addProjectButton.setOnClickListener {
             findNavController().navigate(
-                AllBadgesListFragmentDirections.actionAllBadgesListFragmentToCreateBadgeFragment(
+                AllProjectsListFragmentDirections.actionAllProjectsListFragmentToCreateProjectFragment(
                     args.category
                 )
             )
         }
-        setAddBadgeButtonVisibility()
-        badgeSwipeRefresh.setOnRefreshListener {
-            // a lehúzás csak az usert tölti újra, a mancsok maguktól frissülnek
+        setAddProjectButtonVisibility()
+        projectSwipeRefresh.setOnRefreshListener {
+            // a lehúzás csak az usert tölti újra, a projektek maguktól frissülnek
             adapter = getAdapter()
             recyclerView.adapter = adapter
             refreshCurrentUserAndUserModel(
                 this.requireContext()
-            ) { setAddBadgeButtonVisibility() }
-            badgeSwipeRefresh.isRefreshing = false
+            ) { setAddProjectButtonVisibility() }
+            projectSwipeRefresh.isRefreshing = false
         }
     }
 
     private fun getFilteredQuery(): Query {
         //itt szűrünk kategóriákra
         var query =
-            Firebase.firestore.collection(Collections.badges)
+            Firebase.firestore.collection(Collections.projects)
                 .orderBy("created", Query.Direction.DESCENDING)
         if (filter.mandatory) {
             query = query.whereEqualTo("mandatory", true)
@@ -289,11 +289,11 @@ class AllBadgesListFragment :
         return query
     }
 
-    private fun setAddBadgeButtonVisibility() {
+    private fun setAddProjectButtonVisibility() {
         if (userModel.isCreator || userModel.admin) {
-            addBadgeButton.visibility = View.VISIBLE
+            addProjectButton.visibility = View.VISIBLE
         } else {
-            addBadgeButton.visibility = View.INVISIBLE
+            addProjectButton.visibility = View.INVISIBLE
         }
     }
 }

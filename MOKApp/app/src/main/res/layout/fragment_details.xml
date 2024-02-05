@@ -31,7 +31,7 @@
                     android:layout_width="100dp"
                     android:layout_height="100dp"
                     android:layout_gravity="center"
-                    android:contentDescription="@string/badge_icon"
+                    android:contentDescription="@string/project_icon"
                     tools:ignore="SpeakableTextPresentCheck,ImageContrastCheck"
                     tools:src="@android:drawable/ic_menu_myplaces" />
 
@@ -41,14 +41,14 @@
                     android:orientation="vertical">
 
                     <TextView
-                        android:id="@+id/badgeName"
+                        android:id="@+id/projectName"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_weight="3"
                         android:gravity="center"
                         android:minHeight="10pt"
                         android:textSize="24sp"
-                        tools:text="@string/badge_name"
+                        tools:text="@string/project_name"
                         tools:textStyle="bold" />
 
                     <TextView
@@ -80,26 +80,26 @@
                 android:layout_weight="3">
 
                 <TextView
-                    android:id="@+id/badgeCreator"
+                    android:id="@+id/projectCreator"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textAlignment="center"
                     app:layout_constraintBottom_toBottomOf="parent"
-                    app:layout_constraintEnd_toStartOf="@+id/badgeDeadline"
+                    app:layout_constraintEnd_toStartOf="@+id/projectDeadline"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    tools:text="@string/badge_creator" />
+                    tools:text="@string/project_creator" />
 
                 <TextView
-                    android:id="@+id/badgeDeadline"
+                    android:id="@+id/projectDeadline"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:textAlignment="center"
                     app:layout_constraintEnd_toStartOf="@+id/editButton"
-                    app:layout_constraintStart_toEndOf="@+id/badgeCreator"
-                    app:layout_constraintTop_toTopOf="@+id/badgeCreator"
+                    app:layout_constraintStart_toEndOf="@+id/projectCreator"
+                    app:layout_constraintTop_toTopOf="@+id/projectCreator"
                     tools:text="@string/deadline" />
 
                 <ImageView
@@ -110,8 +110,8 @@
                     android:src="@drawable/ic_settings"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/badgeDeadline"
-                    app:layout_constraintTop_toTopOf="@+id/badgeCreator"
+                    app:layout_constraintStart_toEndOf="@+id/projectDeadline"
+                    app:layout_constraintTop_toTopOf="@+id/projectCreator"
                     app:tint="@color/blue"
                     tools:visibility="visible" />
 
@@ -124,8 +124,8 @@
                     android:src="@drawable/ic_star"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
-                    app:layout_constraintStart_toEndOf="@+id/badgeDeadline"
-                    app:layout_constraintTop_toBottomOf="@+id/badgeCreator"
+                    app:layout_constraintStart_toEndOf="@+id/projectDeadline"
+                    app:layout_constraintTop_toBottomOf="@+id/projectCreator"
                     app:tint="@color/blue"
                     tools:visibility="visible" />
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -162,7 +162,7 @@
                     android:textStyle="bold" />
 
                 <TextView
-                    android:id="@+id/badgeDescription"
+                    android:id="@+id/projectCreateDescription"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -260,7 +260,7 @@
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/badgeComments"
+                android:id="@+id/projectComments"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:padding="5pt"

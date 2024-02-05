@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import mok.it.app.mokapp.model.Achievement
 
 class AchievementsFragment : Fragment() {
     override fun onCreateView(
@@ -21,8 +22,6 @@ class AchievementsFragment : Fragment() {
         savedInstanceState: Bundle?
     ) : View {
         super.onCreateView(inflater, container, savedInstanceState)
-        Log.e("asdf", "creating view ACSIK")
-
         return ComposeView(requireContext()).apply {
             setContent {
                 Default()
@@ -35,6 +34,11 @@ class AchievementsFragment : Fragment() {
         Card {
             Text("Hello, World!")
         }
+    }
+
+    @Composable
+    fun AchievementCard(achievement: Achievement) {
+
     }
 
     @Preview

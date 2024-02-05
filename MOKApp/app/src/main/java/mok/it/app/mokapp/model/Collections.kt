@@ -7,6 +7,7 @@ object Collections {
     const val rewards = "/rewards"
     const val users = "/users"
     const val commentsRelativePath = "comments"
+    const val achievements = "/achievementsTest"
 
     //var badges = "badges${Config.getSeason()}"
     var badges = "projects2024"

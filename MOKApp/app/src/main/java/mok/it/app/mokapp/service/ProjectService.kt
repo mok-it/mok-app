@@ -12,7 +12,7 @@ object ProjectService : IProjectService{
         onComplete: (List<Project>) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        val projectsCollectionRef = Firebase.firestore.collection(Collections.badges)
+        val projectsCollectionRef = Firebase.firestore.collection(Collections.projects)
 
         projectsCollectionRef.whereIn(FieldPath.documentId(), projectIds)
             .get()

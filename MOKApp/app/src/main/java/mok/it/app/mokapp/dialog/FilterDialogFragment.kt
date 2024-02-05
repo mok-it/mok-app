@@ -7,6 +7,9 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
+import kotlinx.android.synthetic.main.fragment_filter_dialog.*
+import kotlinx.android.synthetic.main.fragment_filter_dialog.view.CancelButton
+import kotlinx.android.synthetic.main.fragment_filter_dialog.view.OkButton
 import kotlinx.android.synthetic.main.fragment_filter_dialog.switchAchieved
 import kotlinx.android.synthetic.main.fragment_filter_dialog.switchEdited
 import kotlinx.android.synthetic.main.fragment_filter_dialog.switchJoined

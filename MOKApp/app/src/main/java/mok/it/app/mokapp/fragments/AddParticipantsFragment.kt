@@ -55,7 +55,7 @@ class AddParticipantsFragment : DialogFragment() {
         if (FirebaseUserObject.currentUser == null) {
             findNavController().navigate(R.id.action_global_loginFragment)
         } else {
-            Firebase.firestore.collection(Collections.badges).document(args.projectId).get()
+            Firebase.firestore.collection(Collections.projects).document(args.projectId).get()
                 .addOnSuccessListener { document ->
                     if (document != null && document.data != null) {
                         project = document.toObject(Project::class.java)!!

@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.card_reward.view.rewardName
 import kotlinx.android.synthetic.main.card_reward.view.rewardPrice
 import kotlinx.android.synthetic.main.fragment_rewards.pointsText
 import kotlinx.android.synthetic.main.fragment_rewards.recyclerView
+import kotlinx.android.synthetic.main.fragment_rewards.spentPointsText
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
@@ -32,6 +33,7 @@ import mok.it.app.mokapp.model.Reward
 import mok.it.app.mokapp.recyclerview.RewardViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import java.util.Date
+import kotlin.math.absoluteValue
 
 class RewardsFragment : Fragment() {
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
@@ -65,6 +67,7 @@ class RewardsFragment : Fragment() {
 
     private fun updateUI() {
         pointsText.text = getString(R.string.my_badges_count, userModel.projectBadges.values.sum())
+        spentPointsText.text = getString(R.string.my_spent_badges_count, userModel.points)
         initializeAdapter()
     }
 
@@ -89,7 +92,7 @@ class RewardsFragment : Fragment() {
                     loadImage(ivImg, model.icon)
                     holder.itemView.rewardName.text = model.name
                     holder.itemView.rewardPrice.text = model.price.toString()
-                    if (userModel.projectBadges.values.sum() >= model.price) {
+                    if (userModel.projectBadges.values.sum() - userModel.points.absoluteValue >= model.price) {
                         holder.itemView.requestButton.isEnabled = true
                     }
                     if (userModel.requestedRewards.contains(model.documentId)) {

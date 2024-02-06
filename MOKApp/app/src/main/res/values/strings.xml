@@ -81,6 +81,7 @@
     <string name="request">Kérem!</string>
     <string name="achieved">Megszerezve</string>
     <string name="my_badges_count">Mancsaim: %1$d</string>
+    <string name="my_spent_badges_count">Elköltött: %1$d</string>
     <string name="icon_of_project_description">projekt ikonja</string>
     <string name="icon_of_loading_project">projekt ikonja (betöltés)</string>
     <string name="image_of_comment_author_description">a komment írójának képe</string>

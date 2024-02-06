@@ -28,6 +28,12 @@ interface IUserService {
         onComplete: () -> Unit,
         onFailure: (Exception) -> Unit
     )
+     fun removeUserFromProject(
+        projectId: String,
+        userId: String,
+        onComplete: () -> Unit,
+        onFailure: (Exception) -> Unit
+    )
 
     fun getBadgeSumForUserInCategory(
         userId: String,

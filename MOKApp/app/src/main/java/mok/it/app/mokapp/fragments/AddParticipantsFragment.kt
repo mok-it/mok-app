@@ -35,7 +35,7 @@ import mok.it.app.mokapp.service.UserService
 
 class AddParticipantsFragment : DialogFragment() {
     companion object {
-        val TAG = "AddParticipantsDialogFragment"
+        val TAG = "AddParticipantsFragment"
     }
 
     private val args: AddParticipantsFragmentArgs by navArgs()
@@ -77,6 +77,7 @@ class AddParticipantsFragment : DialogFragment() {
                 ).show()
                 return@setOnClickListener
             }
+            btnAddParticipants.isEnabled = false
             UserService.joinUsersToProject(project.id, selectedUsers, {
                 Log.i(TAG, "Adding ${selectedUsers.size} users to project ${project.id}")
                 Toast.makeText(context, "Résztvevők hozzáadva!", Toast.LENGTH_SHORT).show()
@@ -88,6 +89,7 @@ class AddParticipantsFragment : DialogFragment() {
                     "A résztvevők hozzáadása sikertelen, kérlek próbáld újra később.",
                     Toast.LENGTH_SHORT
                 ).show()
+                btnAddParticipants.isEnabled = true
             }
             )
         }

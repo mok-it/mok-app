@@ -24,7 +24,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
@@ -56,6 +55,7 @@ import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.service.UserService
 import mok.it.app.mokapp.utility.Utility.getIconFileName
 import java.io.File
 import java.io.FileOutputStream
@@ -278,32 +278,43 @@ class DetailsFragment : Fragment() {
     }
 
     private fun join() {
+        join_button.isEnabled = false
         if (userModel.joinedBadges.contains(args.projectId)) {
-            val userRef =
-                Firebase.firestore.collection(Collections.users).document(currentUser!!.uid)
-            userRef.update("joinedBadges", FieldValue.arrayRemove(args.projectId))
-
-            val badgeRef =
-                Firebase.firestore.collection(Collections.projects).document(args.projectId)
-            badgeRef.update("members", FieldValue.arrayRemove(currentUser?.uid))
-                .addOnCompleteListener {
+            UserService.removeUserFromProject(
+                args.projectId,
+                userModel.documentId,
+                {
+                    Log.i(TAG, "Removing ${userModel.documentId} from project ${args.projectId}")
                     Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT).show()
+                    refreshCurrentUserAndUserModel(requireContext())
                     getMemberIds()
-                    changeVisibilities()
+                },
+                {
+                    Toast.makeText(
+                        context,
+                        "A lecsatlakozás sikertelen, kérlek próbáld újra később.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
+            )
         } else {
-            val userRef =
-                Firebase.firestore.collection(Collections.users).document(currentUser!!.uid)
-            userRef.update("joinedBadges", FieldValue.arrayUnion(args.projectId))
-
-            val badgeRef =
-                Firebase.firestore.collection(Collections.projects).document(args.projectId)
-            badgeRef.update("members", FieldValue.arrayUnion(currentUser?.uid))
-                .addOnCompleteListener {
+            UserService.joinUsersToProject(
+                args.projectId,
+                listOf(userModel.documentId),
+                {
+                    Log.i(TAG, "Adding ${userModel.documentId} to project ${args.projectId}")
                     Toast.makeText(context, "Sikeresen csatlakoztál!", Toast.LENGTH_SHORT).show()
+                    refreshCurrentUserAndUserModel(requireContext())
                     getMemberIds()
-                    changeVisibilities()
+                },
+                {
+                    Toast.makeText(
+                        context,
+                        "A csatlakozás sikertelen, kérlek próbáld újra később.",
+                        Toast.LENGTH_SHORT
+                    ).show()
                 }
+            )
         }
 
         MyFirebaseMessagingService.sendNotificationToUsersById(
@@ -324,8 +335,12 @@ class DetailsFragment : Fragment() {
                     model = document.toObject(Project::class.java)!!
                     viewModel.getMembers(model.members)
                     Log.d(TAG, "Model data: $model")
+                    changeVisibilities()
+                    join_button.isEnabled = true
                 } else {
                     Log.d(TAG, "No such document or data is null")
+                    changeVisibilities()
+                    join_button.isEnabled = true
                 }
             }
     }

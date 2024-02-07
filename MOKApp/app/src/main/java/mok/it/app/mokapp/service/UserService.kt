@@ -168,15 +168,9 @@ object UserService : IUserService {
                 val projectBadges =
                     documentSnapshot.data?.get("projectBadges") as? Map<String, Long> ?: mapOf()
 
-                if (projectBadges[projectId] == 0L) {
-                    batch.update(userDocumentRef, "projectBadges.$projectId", FieldValue.delete())
-                    Log.d("UserService", "Project badges remove from user")
-                }
-                else {
-
-                    Log.d("UserService", "Project badge will not be removed from user, " +
-                            "because it is not 0: ${projectBadges[projectId]}")
-                }
+                batch.update(userDocumentRef, "projectBadges.$projectId", FieldValue.delete())
+                Log.d("UserService", "Project badges remove from user")
+                
                 batch.update(userDocumentRef, "joinedBadges", FieldValue.arrayRemove(projectId))
                 batch.update(projectDocumentRef, "members", FieldValue.arrayRemove(userId))
 

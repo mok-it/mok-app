@@ -2,8 +2,10 @@ package mok.it.app.mokapp.fragments
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -62,11 +64,17 @@ class AllProjectsListFragment :
 
     private val args: AllProjectsListFragmentArgs by navArgs()
     private lateinit var filter: Filter
-
+    private var defaultBackgroundColor: Int = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        // Get the system's default background color
+        // Get the system's default background color
+        val typedValue = TypedValue()
+        requireContext().theme.resolveAttribute(android.R.attr.windowBackground, typedValue, true)
+        defaultBackgroundColor = typedValue.data
+
         return inflater.inflate(R.layout.fragment_all_projects_list, container, false)
     }
 
@@ -215,8 +223,11 @@ class AllProjectsListFragment :
                     loadImage(ivImg, model.icon, callback)
                 }
 
-                if (userModel.collectedBadges.contains(model.id)) {
+                if (userModel.projectBadges.contains(model.id)) {
                     holder.itemView.setBackgroundResource(R.drawable.gradient1)
+                }
+                else {
+                    holder.itemView.setBackgroundColor(defaultBackgroundColor)
                 }
 
                 holder.itemView.setOnClickListener {

@@ -12,7 +12,7 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Project
 
 class ProjectsAdapter(
-    private val dataSet: List<Project>,
+    private val dataSet: List<Pair<Project, Int>>,
     private val listener: ProjectClickedListener
 ) :
     RecyclerView.Adapter<ProjectsAdapter.ViewHolder>() {
@@ -28,14 +28,16 @@ class ProjectsAdapter(
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val model = dataSet[position]
+        val projectValuePair = dataSet[position]
         val ivImg: ImageView = viewHolder.itemView.findViewById(R.id.imageView)
         val tvBadgeName: TextView = viewHolder.itemView.findViewById(R.id.projectName)
-        loadImage(ivImg, model.icon)
-        tvBadgeName.text = model.name
+        val tvCollectedBadgeCount: TextView = viewHolder.itemView.findViewById((R.id.collectedBadgeCount))
+        loadImage(ivImg, projectValuePair.first.icon)
+        tvBadgeName.text = projectValuePair.first.name
+        tvCollectedBadgeCount.text = projectValuePair.second.toString()
 
         viewHolder.itemView.setOnClickListener {
-            listener.onProjectClicked(model.id)
+            listener.onProjectClicked(projectValuePair.first.id)
         }
     }
 

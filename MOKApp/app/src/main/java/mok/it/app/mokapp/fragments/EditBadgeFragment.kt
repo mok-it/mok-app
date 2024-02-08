@@ -5,8 +5,6 @@ import android.util.Log
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.android.synthetic.main.fragment_create_badge.datePicker
-import kotlinx.android.synthetic.main.fragment_create_badge.tvBadgeValue
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
@@ -31,13 +29,13 @@ class EditBadgeFragment : CreateBadgeFragment() {
         //binding.badgeMcs.setSelection(Category.values().indexOf(args.badge.categoryEnum))
         val cal: Calendar = Calendar.getInstance()
         cal.time = args.badge.deadline
-        datePicker.updateDate(
+        binding.datePicker.updateDate(
             cal[Calendar.YEAR],
             cal[Calendar.MONTH],
             cal[Calendar.DAY_OF_MONTH]
         )
         badgeValue = args.badge.value
-        tvBadgeValue.text = badgeValue.toString()
+        binding.tvBadgeValue.text = badgeValue.toString()
         binding.textViewTitle.text = getString(R.string.edit_badge_text)
         binding.createButton.text = getString(R.string.edit_text)
 
@@ -81,7 +79,7 @@ class EditBadgeFragment : CreateBadgeFragment() {
     }
 
     private fun commitEditedBadgeToDatabase(): Boolean {
-        val deadline = Date(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
+        val deadline = Date(binding.datePicker.year - 1900, binding.datePicker.month, binding.datePicker.dayOfMonth)
         val editedBadge = hashMapOf(
             "category" to binding.badgeMcs.text.toString(),
             "deadline" to deadline,

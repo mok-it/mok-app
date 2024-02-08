@@ -16,8 +16,7 @@ import mok.it.app.mokapp.model.Category
 
 class MemberFragment : Fragment() {
 
-    private val binding get() = _binding!!
-    private var _binding: FragmentMemberBinding? = null
+    private lateinit var binding: FragmentMemberBinding
     private val args: MemberFragmentArgs by navArgs()
     private val viewModel: MemberViewModel by viewModels()
 
@@ -25,7 +24,7 @@ class MemberFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMemberBinding.inflate(inflater, container, false)
+        binding = FragmentMemberBinding.inflate(inflater, container, false)
         loadDataIntoControls()
         return binding.root
     }
@@ -44,8 +43,8 @@ class MemberFragment : Fragment() {
     private fun loadBadgeCounts() {
         var sumOfBadges = 0
         var numberOfAllProjects = 0
-        for (category in Category.values()) {
-            Log.d("MANCSAIM", Category.values().toString())
+        for (category in Category.entries) {
+            Log.d("MANCSAIM", Category.entries.toTypedArray().toString())
             viewModel.getUserBadgeCountByCategory(args.user, category)
                 .observe(viewLifecycleOwner) { badgeData ->
                     if (badgeData.finishedProjectBadgeSum != 0){
@@ -65,10 +64,5 @@ class MemberFragment : Fragment() {
         }
 
 
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
     }
 }

@@ -17,8 +17,6 @@ import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dev.shreyaspatil.MaterialDialog.MaterialDialog
-import kotlinx.android.synthetic.main.fragment_create_badge.datePicker
-import kotlinx.android.synthetic.main.fragment_create_badge.tvBadgeValue
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.FragmentCreateBadgeBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
@@ -40,8 +38,7 @@ open class CreateBadgeFragment : DialogFragment() {
 
     private val args: CreateBadgeFragmentArgs by navArgs()
 
-    val binding get() = _binding!!
-    private var _binding: FragmentCreateBadgeBinding? = null
+    protected lateinit var binding: FragmentCreateBadgeBinding
 
     var users: ArrayList<User> = ArrayList()
     val userCollectionPath: String = "/users"
@@ -59,13 +56,15 @@ open class CreateBadgeFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentCreateBadgeBinding.inflate(inflater, container, false)
+        binding = FragmentCreateBadgeBinding.inflate(inflater, container, false)
         initializeDropdown()
         return binding.root
     }
 
     private fun initializeDropdown() {
-        val adapter = ArrayAdapter(requireContext(), R.layout.mcs_dropdown_item, Category.values())
+        val adapter = ArrayAdapter(requireContext(), R.layout.mcs_dropdown_item,
+            Category.entries.toTypedArray()
+        )
         binding.badgeMcs.setAdapter(adapter)
     }
 
@@ -85,14 +84,14 @@ open class CreateBadgeFragment : DialogFragment() {
 
         binding.btnDecreaseValue.setOnClickListener {
             if (badgeValue > 1) {
-                tvBadgeValue.text = (--badgeValue).toString()
+                binding.tvBadgeValue.text = (--badgeValue).toString()
             } else {
                 toast(R.string.value_at_least_one)
             }
         }
 
         binding.btnIncreaseValue.setOnClickListener {
-            tvBadgeValue.text = (++badgeValue).toString()
+            binding.tvBadgeValue.text = (++badgeValue).toString()
         }
     }
 
@@ -145,7 +144,7 @@ open class CreateBadgeFragment : DialogFragment() {
         Log.d("Create desc", binding.badgeDescription.text.toString())
         Log.d("Create creator", userModel.documentId)
         Log.d("Create category", args.category.toString())
-        val deadline = Date(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
+        val deadline = Date(binding.datePicker.year - 1900, binding.datePicker.month, binding.datePicker.dayOfMonth)
         Log.d("Create date", deadline.toString())
         Log.d("Create editors", selectedEditors.toString())
         Log.d("Create value", binding.tvBadgeValue.text.toString())
@@ -298,7 +297,7 @@ open class CreateBadgeFragment : DialogFragment() {
 
     override fun onDestroy() {
         super.onDestroy()
-        _binding = null
+//        _binding = null
     }
 
     companion object {

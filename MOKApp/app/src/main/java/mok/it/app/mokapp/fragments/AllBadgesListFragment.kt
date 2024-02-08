@@ -29,17 +29,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.card_badge.view.mandatoryTextView
-import kotlinx.android.synthetic.main.card_badge.view.projectBadgeValueTextView
-import kotlinx.android.synthetic.main.card_badge.view.projectDescription
-import kotlinx.android.synthetic.main.card_badge.view.projectIcon
-import kotlinx.android.synthetic.main.card_badge.view.projectName
-import kotlinx.android.synthetic.main.fragment_all_badges_list.addBadgeButton
-import kotlinx.android.synthetic.main.fragment_all_badges_list.badgeSwipeRefresh
-import kotlinx.android.synthetic.main.fragment_all_badges_list.recyclerView
-import kotlinx.android.synthetic.main.fragment_all_badges_list.shimmerFrameLayout
-import kotlinx.android.synthetic.main.fragment_all_badges_list.view.addBadgeButton
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.CardBadgeBinding
+import mok.it.app.mokapp.databinding.FragmentAllBadgesListBinding
 import mok.it.app.mokapp.dialog.FilterDialogFragment.Companion.filterResultKey
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
@@ -62,12 +54,14 @@ class AllBadgesListFragment :
 
     private val args: AllBadgesListFragmentArgs by navArgs()
     private lateinit var filter: Filter
+    private lateinit var binding: FragmentAllBadgesListBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_all_badges_list, container, false)
+    ): View {
+        binding = FragmentAllBadgesListBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -159,22 +153,20 @@ class AllBadgesListFragment :
             FirestoreRecyclerOptions.Builder<Project>().setQuery(query, Project::class.java)
                 .setLifecycleOwner(this).build()
         return object : FirestoreRecyclerAdapter<Project, ProjectViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
-                val view = LayoutInflater.from(this@AllBadgesListFragment.context)
-                    .inflate(R.layout.card_badge, parent, false)
-                return ProjectViewHolder(view)
-            }
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ProjectViewHolder (
+                CardBadgeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
 
             override fun onBindViewHolder(
                 holder: ProjectViewHolder,
                 position: Int,
                 model: Project
             ) {
-                val tvName: TextView = holder.itemView.projectName
-                val tvDesc: TextView = holder.itemView.projectDescription
-                val ivImg: ImageView = holder.itemView.projectIcon
-                val tvMandatory: TextView = holder.itemView.mandatoryTextView
-                val tvBadgeValue: TextView = holder.itemView.projectBadgeValueTextView
+                val tvName: TextView = holder.binding.projectName
+                val tvDesc: TextView = holder.binding.projectDescription
+                val ivImg: ImageView = holder.binding.projectIcon
+                val tvMandatory: TextView = holder.binding.mandatoryTextView
+                val tvBadgeValue: TextView = holder.binding.projectBadgeValueTextView
 
                 tvName.text =
                     getString(R.string.badgeName, model.name, model.categoryEnum)
@@ -233,9 +225,9 @@ class AllBadgesListFragment :
     }
 
     private fun stopShimmer() {
-        shimmerFrameLayout.hideShimmer()
-        shimmerFrameLayout.stopShimmer()
-        shimmerFrameLayout.visibility = View.GONE
+        binding.shimmerFrameLayout.hideShimmer()
+        binding.shimmerFrameLayout.stopShimmer()
+        binding.shimmerFrameLayout.visibility = View.GONE
     }
 
     private fun initRecyclerView() {
@@ -243,11 +235,11 @@ class AllBadgesListFragment :
         adapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
-        recyclerView.addBadgeButton
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
+        binding.addBadgeButton
 
-        addBadgeButton.setOnClickListener {
+        binding.addBadgeButton.setOnClickListener {
             findNavController().navigate(
                 AllBadgesListFragmentDirections.actionAllBadgesListFragmentToCreateBadgeFragment(
                     args.category
@@ -255,14 +247,14 @@ class AllBadgesListFragment :
             )
         }
         setAddBadgeButtonVisibility()
-        badgeSwipeRefresh.setOnRefreshListener {
+        binding.badgeSwipeRefresh.setOnRefreshListener {
             // a lehúzás csak az usert tölti újra, a mancsok maguktól frissülnek
             adapter = getAdapter()
-            recyclerView.adapter = adapter
+            binding.recyclerView.adapter = adapter
             refreshCurrentUserAndUserModel(
                 this.requireContext()
             ) { setAddBadgeButtonVisibility() }
-            badgeSwipeRefresh.isRefreshing = false
+            binding.badgeSwipeRefresh.isRefreshing = false
         }
     }
 
@@ -291,9 +283,9 @@ class AllBadgesListFragment :
 
     private fun setAddBadgeButtonVisibility() {
         if (userModel.isCreator || userModel.admin) {
-            addBadgeButton.visibility = View.VISIBLE
+            binding.addBadgeButton.visibility = View.VISIBLE
         } else {
-            addBadgeButton.visibility = View.INVISIBLE
+            binding.addBadgeButton.visibility = View.INVISIBLE
         }
     }
 }

@@ -1,7 +1,6 @@
 package mok.it.app.mokapp.model
 
 import com.google.firebase.firestore.DocumentId
-import kotlinx.android.parcel.Parcelize
 
 data class Achievement(
     @DocumentId

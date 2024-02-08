@@ -18,13 +18,9 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import dev.shreyaspatil.MaterialDialog.MaterialDialog
-import kotlinx.android.synthetic.main.card_reward.view.achievedText
-import kotlinx.android.synthetic.main.card_reward.view.requestButton
-import kotlinx.android.synthetic.main.card_reward.view.rewardName
-import kotlinx.android.synthetic.main.card_reward.view.rewardPrice
-import kotlinx.android.synthetic.main.fragment_rewards.pointsText
-import kotlinx.android.synthetic.main.fragment_rewards.recyclerView
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.CardRewardBinding
+import mok.it.app.mokapp.databinding.FragmentRewardsBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Collections
@@ -35,12 +31,15 @@ import java.util.Date
 
 class RewardsFragment : Fragment() {
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
+    private lateinit var _binding: FragmentRewardsBinding
+    private val binding get() = _binding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_rewards, container, false)
+    ): View {
+        _binding = FragmentRewardsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -64,7 +63,7 @@ class RewardsFragment : Fragment() {
     }
 
     private fun updateUI() {
-        pointsText.text = getString(R.string.my_points, userModel.badges)
+        binding.pointsText.text = getString(R.string.my_points, userModel.badges)
         initializeAdapter()
     }
 
@@ -80,31 +79,30 @@ class RewardsFragment : Fragment() {
         adapter =
             object : FirestoreRecyclerAdapter<Reward?, RewardViewHolder?>(options) {
                 var context: Context? = null
+
+                override fun onCreateViewHolder(parent: ViewGroup, i: Int) = RewardViewHolder (
+                    CardRewardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                )
+
                 override fun onBindViewHolder(
                     holder: RewardViewHolder,
                     position: Int,
                     model: Reward
                 ) {
-                    val ivImg: ImageView = holder.itemView.findViewById(R.id.rewardImage)
+                    val ivImg: ImageView = holder.binding.rewardImage
                     loadImage(ivImg, model.icon)
-                    holder.itemView.rewardName.text = model.name
-                    holder.itemView.rewardPrice.text = model.price.toString()
+                    holder.binding.rewardName.text = model.name
+                    holder.binding.rewardPrice.text = model.price.toString()
                     if (userModel.badges >= model.price) {
-                        holder.itemView.requestButton.isEnabled = true
+                        holder.binding.requestButton.isEnabled = true
                     }
                     if (userModel.requestedRewards.contains(model.documentId)) {
-                        holder.itemView.requestButton.visibility = View.GONE
-                        holder.itemView.achievedText.visibility = View.VISIBLE
+                        holder.binding.requestButton.visibility = View.GONE
+                        holder.binding.achievedText.visibility = View.VISIBLE
                     }
-                    holder.itemView.requestButton.setOnClickListener {
+                    holder.binding.requestButton.setOnClickListener {
                         requestReward(model)
                     }
-                }
-
-                override fun onCreateViewHolder(group: ViewGroup, i: Int): RewardViewHolder {
-                    val view: View = LayoutInflater.from(group.context)
-                        .inflate(R.layout.card_reward, group, false)
-                    return RewardViewHolder(view)
                 }
 
                 override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -123,8 +121,8 @@ class RewardsFragment : Fragment() {
                     }
                 }
             }
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager =
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)
     }
 

@@ -20,18 +20,15 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.card_project_participant.view.badgeSlider
-import kotlinx.android.synthetic.main.card_project_participant.view.maximumBadgeValue
-import kotlinx.android.synthetic.main.card_project_participant.view.minimumBadgeValue
-import kotlinx.android.synthetic.main.card_project_participant.view.participantName
-import kotlinx.android.synthetic.main.card_project_participant.view.participantPicture
-import kotlinx.android.synthetic.main.fragment_admin_panel.addParticipant
-import kotlinx.android.synthetic.main.fragment_admin_panel.participants
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.CardProjectParticipantBinding
+import mok.it.app.mokapp.databinding.FragmentAdminPanelBinding
+import mok.it.app.mokapp.databinding.FragmentAllBadgesListBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.recyclerview.ProjectParticipantViewHolder
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import mok.it.app.mokapp.service.UserService
@@ -46,13 +43,16 @@ class AdminPanelFragment : Fragment() {
     private val args: AdminPanelFragmentArgs by navArgs()
     private lateinit var project: Project
     private lateinit var userBadges: MutableMap<String, Int>
+    private lateinit var _binding: FragmentAdminPanelBinding
 
+    private val binding get() = _binding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_admin_panel, container, false)
+    ): View {
+        _binding = FragmentAdminPanelBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -69,8 +69,8 @@ class AdminPanelFragment : Fragment() {
         adapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
-        participants.adapter = adapter
-        participants.layoutManager = WrapContentLinearLayoutManager(context)
+        binding.participants.adapter = adapter
+        binding.participants.layoutManager = WrapContentLinearLayoutManager(context)
 
     }
 
@@ -84,29 +84,26 @@ class AdminPanelFragment : Fragment() {
             ) //NOTE: can not handle lists of size greater than 30
     }
 
-    private fun getAdapter(): FirestoreRecyclerAdapter<User, ProjectViewHolder> {
+    private fun getAdapter(): FirestoreRecyclerAdapter<User, ProjectParticipantViewHolder> {
         val query = participantsQuery()
         val options =
             FirestoreRecyclerOptions.Builder<User>().setQuery(query, User::class.java)
                 .setLifecycleOwner(this).build()
-        return object : FirestoreRecyclerAdapter<User, ProjectViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
-                val view = LayoutInflater.from(this@AdminPanelFragment.context)
-                    .inflate(R.layout.card_project_participant, parent, false)
-
-                return ProjectViewHolder(view)
-            }
+        return object : FirestoreRecyclerAdapter<User, ProjectParticipantViewHolder>(options) {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ProjectParticipantViewHolder (
+                CardProjectParticipantBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
 
             override fun onBindViewHolder(
-                holder: ProjectViewHolder,
+                holder: ProjectParticipantViewHolder,
                 position: Int,
                 user: User
             ) {
-                val tvName: TextView = holder.itemView.participantName
-                val tvMaxBadge: TextView = holder.itemView.maximumBadgeValue
-                val tvMinBadge: TextView = holder.itemView.minimumBadgeValue
-                val ivImg: ImageView = holder.itemView.participantPicture
-                val slBadge: RangeSlider = holder.itemView.badgeSlider
+                val tvName: TextView = holder.binding.participantName
+                val tvMaxBadge: TextView = holder.binding.maximumBadgeValue
+                val tvMinBadge: TextView = holder.binding.minimumBadgeValue
+                val ivImg: ImageView = holder.binding.participantPicture
+                val slBadge: RangeSlider = holder.binding.badgeSlider
                 tvName.text = user.name
                 Picasso.get().load(user.photoURL).into(ivImg)
                 tvMaxBadge.text = project.value.toString()
@@ -149,7 +146,7 @@ class AdminPanelFragment : Fragment() {
     }
 
     private fun initLayout() {
-        addParticipant.setOnClickListener {
+        binding.addParticipant.setOnClickListener {
             findNavController().navigate(
                 AdminPanelFragmentDirections
                     .actionAdminPanelFragmentToAddParticipantsDialogFragment(args.project.id)

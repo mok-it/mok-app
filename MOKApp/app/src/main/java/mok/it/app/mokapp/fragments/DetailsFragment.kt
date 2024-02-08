@@ -29,24 +29,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_details.avatar_imagebutton
-import kotlinx.android.synthetic.main.fragment_details.badgeComments
-import kotlinx.android.synthetic.main.fragment_details.badgeCreator
-import kotlinx.android.synthetic.main.fragment_details.badgeDeadline
-import kotlinx.android.synthetic.main.fragment_details.badgeDescription
-import kotlinx.android.synthetic.main.fragment_details.badgeName
-import kotlinx.android.synthetic.main.fragment_details.badgeValueTextView
-import kotlinx.android.synthetic.main.fragment_details.categoryName
-import kotlinx.android.synthetic.main.fragment_details.editButton
-import kotlinx.android.synthetic.main.fragment_details.join_button
-import kotlinx.android.synthetic.main.fragment_details.member1
-import kotlinx.android.synthetic.main.fragment_details.member2
-import kotlinx.android.synthetic.main.fragment_details.member3
-import kotlinx.android.synthetic.main.fragment_details.members_left
-import kotlinx.android.synthetic.main.fragment_details.members_left_number
-import kotlinx.android.synthetic.main.fragment_details.members_overlay_button
-import kotlinx.android.synthetic.main.fragment_details.rewardButton
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.FragmentDetailsBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
@@ -81,12 +65,15 @@ class DetailsFragment : Fragment() {
     lateinit var model: Project
 
     private var userIsEditor: Boolean = false
+    private lateinit var _binding: FragmentDetailsBinding
+    private val binding get() = _binding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_details, container, false)
+        _binding = FragmentDetailsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -146,7 +133,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initLayout() {
-        members_overlay_button.setOnClickListener {
+        binding.membersOverlayButton.setOnClickListener {
             if (viewModel.members.value?.isNotEmpty() == true && ::badgeModel.isInitialized) {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToBadgeMembersDialogFragment(
@@ -157,12 +144,12 @@ class DetailsFragment : Fragment() {
                 )
             }
         }
-        join_button.setOnClickListener {
+        binding.joinButton.setOnClickListener {
             join()
             refreshCurrentUserAndUserModel(requireContext())
         }
-        join_button.visibility = View.GONE
-        badgeComments.setOnClickListener {
+        binding.joinButton.visibility = View.GONE
+        binding.badgeComments.setOnClickListener {
             val action =
                 DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.badgeId)
             findNavController().navigate(action)
@@ -170,20 +157,20 @@ class DetailsFragment : Fragment() {
         Firebase.firestore.collection(Collections.badges).document(args.badgeId).get()
             .addOnSuccessListener { document ->
                 badgeModel = document.toObject(Project::class.java)!!
-                badgeName.text = badgeModel.name
-                categoryName.text =
-                    getString(R.string.specific_category, badgeModel.category)
-                badgeValueTextView.text = getString(R.string.specific_value, badgeModel.value)
-                badgeDescription.text = badgeModel.description
+                binding.badgeName.text = badgeModel.name
+                binding.categoryName.text =
+                    getString(R.string.specific_category, badgeModel.categoryEnum)
+                binding.badgeValueTextView.text = getString(R.string.specific_value, badgeModel.value)
+                binding.badgeDescription.text = badgeModel.description
 
                 Firebase.firestore.collection(Collections.users)
                     .document(badgeModel.creator)
                     .get().addOnSuccessListener { creatorDoc ->
                         if (creatorDoc?.get("name") != null) {
-                            badgeCreator.text = creatorDoc["name"] as String //TODO NPE itt is
+                            binding.badgeCreator.text = creatorDoc["name"] as String //TODO NPE itt is
                         }
                         val formatter = getDateInstance()
-                        badgeDeadline.text =
+                        binding.badgeDeadline.text =
                             formatter.format(badgeModel.created)
 
                         val iconFileName = getIconFileName(badgeModel.icon)
@@ -191,14 +178,14 @@ class DetailsFragment : Fragment() {
                         if (iconFile.exists()) {
                             Log.i(TAG, "loading badge icon " + iconFile.path)
                             val bitmap: Bitmap = BitmapFactory.decodeFile(iconFile.path)
-                            avatar_imagebutton.setImageBitmap(bitmap)
+                            binding.avatarImagebutton.setImageBitmap(bitmap)
                         } else {
                             Log.i(TAG, "downloading badge icon " + badgeModel.icon)
                             val callback = object : Callback {
                                 override fun onSuccess() {
                                     // save image
                                     Log.i(TAG, "saving badge icon " + iconFile.path)
-                                    val bitmap: Bitmap = avatar_imagebutton.drawable.toBitmap()
+                                    val bitmap: Bitmap = binding.avatarImagebutton.drawable.toBitmap()
                                     val fos: FileOutputStream?
                                     try {
                                         fos = FileOutputStream(iconFile)
@@ -214,7 +201,7 @@ class DetailsFragment : Fragment() {
                                     Log.e(TAG, e.toString())
                                 }
                             }
-                            Picasso.get().load(badgeModel.icon).into(avatar_imagebutton, callback)
+                            Picasso.get().load(badgeModel.icon).into(binding.avatarImagebutton, callback)
                         }
 
                         val editors = badgeModel.editors
@@ -231,8 +218,8 @@ class DetailsFragment : Fragment() {
 
     private fun initEditButton() {
         if (badgeModel.creator == userModel.documentId || userIsEditor) {
-            editButton.visibility = View.VISIBLE
-            editButton.setOnClickListener {
+            binding.editButton.visibility = View.VISIBLE
+            binding.editButton.setOnClickListener {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToEditBadgeFragment(
                         badgeModel
@@ -244,8 +231,8 @@ class DetailsFragment : Fragment() {
 
     private fun initAdminButton() {
         if (badgeModel.creator == userModel.documentId || userIsEditor) {
-            rewardButton.visibility = View.VISIBLE
-            rewardButton.setOnClickListener {
+            binding.rewardButton.visibility = View.VISIBLE
+            binding.rewardButton.setOnClickListener {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToAdminPanelFragment(
                         badgeModel
@@ -272,8 +259,8 @@ class DetailsFragment : Fragment() {
 
         Log.d(TAG, "textSizeSP = $textSizeSP")
 
-        members_left_number.text = getString(R.string.extra_members, numOfExtraMembers)
-        members_left_number.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSP)
+        binding.membersLeftNumber.text = getString(R.string.extra_members, numOfExtraMembers)
+        binding.membersLeftNumber.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSP)
 
     }
 
@@ -359,7 +346,7 @@ class DetailsFragment : Fragment() {
                                 val user = document.toObject(User::class.java)!!
                                 sender = user.name
                             }
-                            badgeComments.text = getString(
+                            binding.badgeComments.text = getString(
                                 R.string.newest_comment_text,
                                 timeString,
                                 sender,
@@ -373,10 +360,10 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initMembers() {
-        members_left.isVisible = false //TODO sometimes throws an NPE (members_left is null)
-        members_left_number.isVisible = false
+        binding.membersLeft.isVisible = false //TODO sometimes throws an NPE (members_left is null)
+        binding.membersLeftNumber.isVisible = false
 
-        val members = listOf(member1, member2, member3)
+        val members = listOf(binding.member1, binding.member2, binding.member3)
 
         for (i in 0 until 3) {
             if (viewModel.members.value!!.size > i) {
@@ -389,19 +376,19 @@ class DetailsFragment : Fragment() {
 
         if (viewModel.members.value!!.size >= 4) {
             initExtraMemberCounter(viewModel.members.value!!.size - 3)
-            members_left.isVisible = true
-            members_left_number.isVisible = true
+            binding.membersLeft.isVisible = true
+            binding.membersLeftNumber.isVisible = true
         }
     }
 
     private fun changeVisibilities() {
-        join_button.visibility = View.VISIBLE
+        binding.joinButton.visibility = View.VISIBLE
         when {
-            userModel.collectedBadges.contains(badgeModel.id) -> join_button.visibility = View.GONE
-            userModel.joinedBadges.contains(badgeModel.id) -> join_button.text =
+            userModel.collectedBadges.contains(badgeModel.id) -> binding.joinButton.visibility = View.GONE
+            userModel.joinedBadges.contains(badgeModel.id) -> binding.joinButton.text =
                 getString(R.string.leave)
 
-            else -> join_button.text = getString(R.string.join)
+            else -> binding.joinButton.text = getString(R.string.join)
         }
 
         if (badgeModel.editors.contains(userModel.documentId)) {

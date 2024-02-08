@@ -1,6 +1,6 @@
 package mok.it.app.mokapp.recyclerview
 
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import mok.it.app.mokapp.databinding.CardLinkBinding
 
-class LinkViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
+class LinkViewHolder(val binding: CardLinkBinding) : RecyclerView.ViewHolder(binding.root)

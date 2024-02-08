@@ -1,8 +1,11 @@
 package mok.it.app.mokapp.activity
 
 import android.os.Bundle
+import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -19,14 +22,9 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.activity_main.drawer_layout
-import kotlinx.android.synthetic.main.activity_main.nav_view
-import kotlinx.android.synthetic.main.activity_main.toolbar
-import kotlinx.android.synthetic.main.nav_header.emailText
-import kotlinx.android.synthetic.main.nav_header.image
-import kotlinx.android.synthetic.main.nav_header.nameText
-import kotlinx.android.synthetic.main.nav_header.refreshButton
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.ActivityMainBinding
+import mok.it.app.mokapp.databinding.NavHeaderBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 
@@ -39,10 +37,20 @@ class MainActivity : AppCompatActivity() {
     val firestore = Firebase.firestore
     private lateinit var navController: NavController
     private val mcsArray = arrayOf("IT", "Pedagógia", "Feladatsor", "Kreatív", "Grafika")
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var navHeaderBinding: NavHeaderBinding
+    private val backDrawerCallback = object: OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        }
+    }
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        navHeaderBinding = NavHeaderBinding.inflate(layoutInflater)
+        setContentView(binding.root)
         setupNavigation()
+        setupBackPressed()
     }
 
     private fun setupNavigation() {
@@ -50,7 +58,7 @@ class MainActivity : AppCompatActivity() {
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         setSupportActionBar(findViewById(R.id.toolbar))
-        val appBarConfiguration = AppBarConfiguration(navController.graph, drawer_layout)
+        val appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
         findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
 
@@ -67,14 +75,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setNavigationItemSelected(navController: NavController) {
-        nav_view.setNavigationItemSelectedListener {
+        binding.navView.setNavigationItemSelectedListener {
             NavigationUI.onNavDestinationSelected(it, navController)
             when (it.itemId) {
                 R.id.nav_logout -> {
                     logout()
                 }
             }
-            drawer_layout.closeDrawer(GravityCompat.START)
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
     }
@@ -82,18 +90,23 @@ class MainActivity : AppCompatActivity() {
     private fun removeBackArrowFromLoginFragment(navController: NavController) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.loginFragment) {
-                toolbar.navigationIcon = null
+                binding.toolbar.navigationIcon = null
             }
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
+    private fun setupBackPressed() {
+        onBackPressedDispatcher.addCallback(this, backDrawerCallback)
+        binding.drawerLayout.addDrawerListener(object : DrawerListener{
+            override fun onDrawerOpened(drawerView: View) {
+                backDrawerCallback.isEnabled = true
+            }
+            override fun onDrawerClosed(drawerView: View) {
+                backDrawerCallback.isEnabled = false
+            }
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
+            override fun onDrawerStateChanged(newState: Int) {}
+        })
     }
 
     override fun onResume() {
@@ -109,15 +122,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setHeader() {
-        nameText.text = currentUser?.displayName
-        emailText.text = currentUser?.email
-        refreshButton.setOnClickListener {
+        navHeaderBinding.nameText.text = currentUser?.displayName
+        navHeaderBinding.emailText.text = currentUser?.email
+        navHeaderBinding.refreshButton.setOnClickListener {
             refreshCurrentUserAndUserModel(this) { loadApp() }
         }
         val requestOptions =
             RequestOptions().apply(RequestOptions().transform(CenterCrop(), RoundedCorners(26)))
         Glide.with(this).load(currentUser?.photoUrl).apply(requestOptions.override(250, 250))
-            .into(image)
+            .into(navHeaderBinding.image)
     }
 
     private fun setMenuVisibility() {
@@ -127,7 +140,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return NavigationUI.navigateUp(navController, drawer_layout)
+        return NavigationUI.navigateUp(navController, binding.drawerLayout)
     }
 
     // Declare the launcher at the top of your Activity/Fragment:

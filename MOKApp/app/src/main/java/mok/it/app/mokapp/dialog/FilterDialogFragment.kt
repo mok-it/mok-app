@@ -7,13 +7,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.android.synthetic.main.fragment_filter_dialog.switchAchieved
-import kotlinx.android.synthetic.main.fragment_filter_dialog.switchEdited
-import kotlinx.android.synthetic.main.fragment_filter_dialog.switchJoined
-import kotlinx.android.synthetic.main.fragment_filter_dialog.switchMandatory
-import kotlinx.android.synthetic.main.fragment_filter_dialog.view.CancelButton
-import kotlinx.android.synthetic.main.fragment_filter_dialog.view.OkButton
-import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.FragmentFilterDialogBinding
 import mok.it.app.mokapp.model.Filter
 
 class FilterDialogFragment : DialogFragment() {
@@ -23,13 +17,14 @@ class FilterDialogFragment : DialogFragment() {
 
     private val args: FilterDialogFragmentArgs by navArgs()
     private var filter: Filter = Filter()
+    private lateinit var binding: FragmentFilterDialogBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_filter_dialog, container, false)
-        rootView.OkButton.setOnClickListener {
+    ): View {
+        binding = FragmentFilterDialogBinding.inflate(inflater, container, false)
+        binding.OkButton.setOnClickListener {
             setFilter()
             findNavController().previousBackStackEntry?.savedStateHandle?.set(
                 filterResultKey,
@@ -37,25 +32,25 @@ class FilterDialogFragment : DialogFragment() {
             )
             dismiss()
         }
-        rootView.CancelButton.setOnClickListener {
+        binding.CancelButton.setOnClickListener {
             dismiss()
         }
-        return rootView
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         filter = args.filter ?: Filter()
-        switchAchieved.isChecked = filter.achieved
-        switchMandatory.isChecked = filter.mandatory
-        switchJoined.isChecked = filter.joined
-        switchEdited.isChecked = filter.edited
+        binding.switchAchieved.isChecked = filter.achieved
+        binding.switchMandatory.isChecked = filter.mandatory
+        binding.switchJoined.isChecked = filter.joined
+        binding.switchEdited.isChecked = filter.edited
     }
 
     private fun setFilter() {
-        filter.achieved = switchAchieved.isChecked
-        filter.mandatory = switchMandatory.isChecked
-        filter.joined = switchJoined.isChecked
-        filter.edited = switchEdited.isChecked
+        filter.achieved = binding.switchAchieved.isChecked
+        filter.mandatory = binding.switchMandatory.isChecked
+        filter.joined = binding.switchJoined.isChecked
+        filter.edited = binding.switchEdited.isChecked
     }
 }

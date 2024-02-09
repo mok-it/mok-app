@@ -65,9 +65,6 @@
             android:id="@+id/action_allProjectsListFragment_to_filterDialogFragment"
             app:destination="@id/filterDialogFragment" />
         <action
-            android:id="@+id/action_allBadgesListFragment_to_achievementsFragment"
-            app:destination="@id/achievementsFragment" />
-        <action
             android:id="@+id/action_allProjectsListFragment_to_createProjectFragment"
             app:destination="@id/createProjectFragment" />
     </fragment>
@@ -195,8 +192,4 @@
             android:name="projectId"
             app:argType="string" />
     </fragment>
-    <fragment
-        android:id="@+id/achievementsFragment"
-        android:name="mok.it.app.mokapp.fragments.AchievementsFragment"
-        android:label="AchievementsFragment" />
 </navigation>

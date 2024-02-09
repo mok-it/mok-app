@@ -17,10 +17,6 @@
             android:icon="@drawable/ic_star"
             android:title="@string/rewards" />
         <item
-            android:id="@+id/achievementsFragment"
-            android:icon="@drawable/ic_check"
-            android:title="@string/achievements" />
-        <item
             android:id="@+id/adminFragment"
             android:icon="@drawable/ic_admin"
             android:title="@string/admin"

@@ -18,7 +18,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.databinding.FragmentCreateBadgeBinding
+import mok.it.app.mokapp.databinding.FragmentCreateProjectBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
 import mok.it.app.mokapp.model.Category
@@ -28,17 +28,17 @@ import java.util.Date
 
 
 /**
- * When the 'Add' button is pressed in the badge list, a dialog opens up, prompting data
- * for a new badge. After all required fields are complete, the user can upload this new
- * badge to the server.
+ * When the 'Add' button is pressed in the project list, a dialog opens up, prompting data
+ * for a new project. After all required fields are complete, the user can upload this new
+ * project to the server.
  */
 
 @Suppress("DEPRECATION")
-open class CreateBadgeFragment : DialogFragment() {
+open class CreateProjectFragment : DialogFragment() {
 
-    private val args: CreateBadgeFragmentArgs by navArgs()
+    private val args: CreateProjectFragmentArgs by navArgs()
 
-    protected lateinit var binding: FragmentCreateBadgeBinding
+    protected lateinit var binding: FragmentCreateProjectBinding
 
     var users: ArrayList<User> = ArrayList()
     val userCollectionPath: String = "/users"
@@ -56,7 +56,7 @@ open class CreateBadgeFragment : DialogFragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentCreateBadgeBinding.inflate(inflater, container, false)
+        binding = FragmentCreateProjectBinding.inflate(inflater, container, false)
         initializeDropdown()
         return binding.root
     }
@@ -65,7 +65,7 @@ open class CreateBadgeFragment : DialogFragment() {
         val adapter = ArrayAdapter(requireContext(), R.layout.mcs_dropdown_item,
             Category.entries.toTypedArray()
         )
-        binding.badgeMcs.setAdapter(adapter)
+        binding.projectTerulet.setAdapter(adapter)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -140,8 +140,8 @@ open class CreateBadgeFragment : DialogFragment() {
      *  @return true if successful
      */
     private fun commitNewBadgeToDatabase(): Boolean {
-        Log.d("Create name", binding.badgeName.text.toString())
-        Log.d("Create desc", binding.badgeDescription.text.toString())
+        Log.d("Create name", binding.projectName.text.toString())
+        Log.d("Create desc", binding.projectDescription.text.toString())
         Log.d("Create creator", userModel.documentId)
         Log.d("Create category", args.category.toString())
         val deadline = Date(binding.datePicker.year - 1900, binding.datePicker.month, binding.datePicker.dayOfMonth)
@@ -150,20 +150,20 @@ open class CreateBadgeFragment : DialogFragment() {
         Log.d("Create value", binding.tvBadgeValue.text.toString())
 
         val newBadge = hashMapOf(
-            "category" to binding.badgeMcs.text.toString(),
+            "category" to binding.projectTerulet.text.toString(),
             "created" to Date(),
             "creator" to userModel.documentId,
             "deadline" to deadline,
-            "description" to binding.badgeDescription.text.toString(),
+            "description" to binding.projectDescription.text.toString(),
             "editors" to selectedEditors,
             "icon" to "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef",
-            "name" to binding.badgeName.text.toString(),
+            "name" to binding.projectName.text.toString(),
             "overall_progress" to 0,
             "value" to badgeValue,
             "mandatory" to false
 
         )
-        firestore.collection(Collections.badges)
+        firestore.collection(Collections.projects)
             .add(newBadge)
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
@@ -179,7 +179,7 @@ open class CreateBadgeFragment : DialogFragment() {
      * Called if the Create button is pressed in the dialog.
      * @return whether the dialog should be closed
      */
-    private fun onCreateBadge(): Boolean {
+    private fun onCreateProject(): Boolean {
         if (!isComplete(true)) {
             return false
         }
@@ -187,8 +187,8 @@ open class CreateBadgeFragment : DialogFragment() {
         val success = commitNewBadgeToDatabase()
 
         MyFirebaseMessagingService.sendNotificationToUsers(
-            "Új mancs lett létrehozva",
-            "${userModel.name} egy új mancsot hozott létre az alábbi névvel: ${binding.badgeName.text}",
+            "Új projekt lett létrehozva",
+            "${userModel.name} egy új projektet hozott létre az alábbi névvel: ${binding.projectName.text}",
             users.filterNot { it.documentId == userModel.documentId }
         )
 
@@ -201,10 +201,10 @@ open class CreateBadgeFragment : DialogFragment() {
     }
 
     /**
-     * Called if the user wants to create the badge.
+     * Called if the user wants to create a project.
      */
     protected open fun onCreateBadgePressed() {
-        val shouldCloseDialog = onCreateBadge()
+        val shouldCloseDialog = onCreateProject()
 
         if (shouldCloseDialog) {
             findNavController().navigateUp()
@@ -216,8 +216,8 @@ open class CreateBadgeFragment : DialogFragment() {
      */
     private fun isBlank() = when {
 
-        !binding.badgeName.text.isNullOrBlank() -> false
-        !binding.badgeDescription.text.isNullOrBlank() -> false
+        !binding.projectName.text.isNullOrBlank() -> false
+        !binding.projectDescription.text.isNullOrBlank() -> false
 
         else -> true
     }
@@ -226,13 +226,13 @@ open class CreateBadgeFragment : DialogFragment() {
      * @return if all required fields are complete. If something is missing, can warn the user.
      */
     private fun isComplete(showWarning: Boolean): Boolean = when {
-        isNameRequired && binding.badgeName.text.isNullOrBlank() -> {
-            if (showWarning) snackbar(R.string.badge_name_is_required)
+        isNameRequired && binding.projectName.text.isNullOrBlank() -> {
+            if (showWarning) snackbar(R.string.project_name_is_required)
             false
         }
 
-        isDescriptionRequired && binding.badgeDescription.text.isNullOrBlank() -> {
-            if (showWarning) snackbar(R.string.badge_description_is_required)
+        isDescriptionRequired && binding.projectDescription.text.isNullOrBlank() -> {
+            if (showWarning) snackbar(R.string.project_description_is_required)
             false
         }
 
@@ -301,6 +301,6 @@ open class CreateBadgeFragment : DialogFragment() {
     }
 
     companion object {
-        const val TAG = "CreateBadgeFragment"
+        const val TAG = "CreateProjectFragment"
     }
 }

@@ -27,11 +27,11 @@ import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.PhoneBookViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import mok.it.app.mokapp.utility.Utility
 
 
 class PhoneBookFragment : Fragment() {
-    private val binding get() = _binding!!
-    private var _binding: FragmentPhoneListBinding? = null
+    private lateinit var binding: FragmentPhoneListBinding
 
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
 
@@ -39,7 +39,7 @@ class PhoneBookFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPhoneListBinding.inflate(inflater, container, false)
+        binding = FragmentPhoneListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -74,7 +74,7 @@ class PhoneBookFragment : Fragment() {
 
         adapter =
             object : FirestoreRecyclerAdapter<User?, PhoneBookViewHolder?>(options) {
-                var context: Context? = null
+                lateinit var context: Context
 
                 override fun onCreateViewHolder(parent: ViewGroup, i: Int) = PhoneBookViewHolder (
                     CardPhonebookItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -86,7 +86,7 @@ class PhoneBookFragment : Fragment() {
                     model: User
                 ) {
                     val ivImg: ImageView = holder.binding.contactImage
-                    loadImage(ivImg, model.photoURL)
+                    Utility.loadImage(ivImg, model.photoURL, context)
                     holder.binding.contactName.text = model.name
                     holder.binding.phoneNumber.text =
                         model.phoneNumber.ifEmpty { getString(R.string.no_phone_number) }
@@ -104,7 +104,7 @@ class PhoneBookFragment : Fragment() {
                         if (isTelephonyEnabled() && model.phoneNumber.isNotEmpty()) {
                             val intent = Intent(Intent.ACTION_DIAL)
                             intent.data = Uri.parse("tel:${model.phoneNumber}}")
-                            this.context?.let { it2 ->
+                            this.context.let { it2 ->
                                 ContextCompat.startActivity(
                                     it2,
                                     intent,
@@ -120,7 +120,7 @@ class PhoneBookFragment : Fragment() {
                         else // ...if not, it copies the number to the clipboard
                         {
                             val clipboard =
-                                this.context?.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                                this.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
                             val clip = android.content.ClipData.newPlainText(
                                 "label",
                                 model.phoneNumber
@@ -133,17 +133,6 @@ class PhoneBookFragment : Fragment() {
                 override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
                     super.onAttachedToRecyclerView(recyclerView)
                     context = recyclerView.context
-                }
-
-                fun loadImage(imageView: ImageView, imageURL: String): Boolean {
-                    return try {
-                        Picasso.get().apply {
-                            load(imageURL).into(imageView)
-                        }
-                        true
-                    } catch (e: Exception) {
-                        false
-                    }
                 }
             }
     }

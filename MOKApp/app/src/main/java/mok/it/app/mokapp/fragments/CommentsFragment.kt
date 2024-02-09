@@ -10,7 +10,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
-import android.widget.ImageView
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -21,8 +20,6 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.squareup.picasso.Picasso
-import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.CardCommentBinding
 import mok.it.app.mokapp.databinding.FragmentCommentsBinding
 import mok.it.app.mokapp.model.Collections
@@ -30,6 +27,7 @@ import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.CommentViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import mok.it.app.mokapp.utility.Utility.loadImage
 
 class CommentsFragment : Fragment() {
     companion object {
@@ -51,7 +49,7 @@ class CommentsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val query =
-            Firebase.firestore.collection(Collections.projects).document(args.badgeId)
+            Firebase.firestore.collection(Collections.projects).document(args.projectId)
                 .collection(Collections.commentsRelativePath)
                 .orderBy("time", Query.Direction.DESCENDING)
         val options =
@@ -88,9 +86,7 @@ class CommentsFragment : Fragment() {
                                 val user: User? = document.toObject(User::class.java)
 
                                 tvSender.text = user?.name
-                                tryLoadingImage(
-                                    ivImg, user?.photoURL ?: getString(R.string.url_no_image)
-                                )
+                                loadImage(ivImg, user?.photoURL, requireContext())
 
                                 user?.let {
 //                                    holder.itemView.comment_card.setOnClickListener {
@@ -118,7 +114,7 @@ class CommentsFragment : Fragment() {
                     FirebaseAuth.getInstance().currentUser!!.uid
                 )
 
-                Firebase.firestore.collection(Collections.projects).document(args.badgeId)
+                Firebase.firestore.collection(Collections.projects).document(args.projectId)
                     .collection(Collections.commentsRelativePath)
                     .add(comment).addOnSuccessListener { documentReference ->
                         Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
@@ -150,18 +146,5 @@ class CommentsFragment : Fragment() {
         val inputMethodManager =
             getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
-    }
-
-    private fun tryLoadingImage(imageView: ImageView, imageURL: String): Boolean {
-        return try {
-            Picasso.get().apply {
-                load(imageURL).into(imageView)
-            }
-            true
-        } catch (e: Exception) {
-            Log.w(TAG, "Image not found: $imageURL")
-            Log.w(TAG, "Picasso message: " + e.message)
-            false
-        }
     }
 }

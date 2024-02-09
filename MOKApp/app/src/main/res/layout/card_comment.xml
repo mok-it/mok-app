@@ -28,7 +28,7 @@
             android:layout_marginStart="4dp"
             android:layout_marginTop="4dp"
             android:layout_marginBottom="4dp"
-            android:contentDescription="@string/image_of_writer_of_the_comment"
+            android:contentDescription="@string/image_of_comment_author_description"
             android:scaleType="fitCenter"
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintStart_toStartOf="parent"

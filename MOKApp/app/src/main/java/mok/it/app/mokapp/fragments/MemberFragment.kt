@@ -50,7 +50,7 @@ class MemberFragment : Fragment() {
                     if (badgeData.finishedProjectBadgeSum != 0){
                         val badgeTextView = TextView(context)
                         badgeTextView.text = getString(
-                            R.string.badge_count,
+                            R.string.project_count,
                             category.toString(),
                             badgeData.finishedProjectBadgeSum
                         )

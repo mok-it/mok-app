@@ -8,13 +8,13 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import mok.it.app.mokapp.databinding.CardMemberBinding
-import mok.it.app.mokapp.dialog.BadgeMembersDialogFragment
+import mok.it.app.mokapp.dialog.ProjectMembersDialogFragment
 import mok.it.app.mokapp.model.User
 
 
 class MembersAdapter(
     private val userArray: Array<User>,
-    private val badgeMembersDialogFragment: BadgeMembersDialogFragment
+    private val projectMembersDialogFragment: ProjectMembersDialogFragment
 ) :
     RecyclerView.Adapter<MemberViewHolder>() {
 
@@ -38,7 +38,7 @@ class MembersAdapter(
 
         //opening the person's profile if someone clicks on the card
         holder.itemView.setOnClickListener {
-            badgeMembersDialogFragment.navigateToMemberFragment(user)
+            projectMembersDialogFragment.navigateToMemberFragment(user)
         }
     }
 

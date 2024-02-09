@@ -1,9 +1,15 @@
 package mok.it.app.mokapp.utility
 
+import android.content.Context
 import android.content.res.Resources
 import android.graphics.Rect
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.fragment.app.DialogFragment
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import com.squareup.picasso.Callback
+import com.squareup.picasso.Picasso
+import mok.it.app.mokapp.R
 import java.text.Normalizer
 
 /**
@@ -45,5 +51,65 @@ object Utility {
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
+    }
+
+    /**
+     * Tries to load the image provided into the given view. If that did not
+     * succeed, it tries to load the default 'broken' image. If that also
+     * fails, leaves the image empty and logs an error message.
+     */
+    fun <T> loadImage(
+        imageView: ImageView,
+        imageURLOrDrawable: T?,
+        context: Context,
+        callback: Callback? = null
+    ) {
+        if (tryLoadingImage(imageView, imageURLOrDrawable, context, callback)) return
+        if (tryLoadingImage(
+                imageView,
+                R.drawable.no_image_icon,
+                context,
+                callback
+            )
+        ) return
+    }
+
+    /**
+     * Tries to load an image into the given image view. If for some reason
+     * the provided URL does not point to a valid image file, false is returned.
+     *
+     * @return true if the function succeeded, false if failed
+     */
+    private fun <T> tryLoadingImage(
+        imageView: ImageView,
+        imageURLOrDrawable: T?,
+        context: Context,
+        callback: Callback? = null
+    ): Boolean {
+        val circularProgressDrawable = CircularProgressDrawable(context).apply {
+            strokeWidth = 5f
+            centerRadius = 30f
+            start()
+        }
+
+        imageView.setImageDrawable(circularProgressDrawable)
+        return try {
+            Picasso.get().apply {
+                when (imageURLOrDrawable) {
+                    is String -> load(imageURLOrDrawable)
+                    is Int -> load(imageURLOrDrawable)
+                    else -> throw IllegalArgumentException("Unsupported type of imageURLOrDrawable")
+                }
+                    .placeholder(circularProgressDrawable)  //TODO doesn't work with glide, doesn't work with picasso either, anyone any ideas?
+                    .apply {
+                        if (callback != null) this.into(imageView, callback) else this.into(
+                            imageView
+                        )
+                    }
+            }
+            true
+        } catch (e: Exception) {
+            false
+        }
     }
 }

@@ -36,7 +36,6 @@ class MainActivity : AppCompatActivity() {
 
     val firestore = Firebase.firestore
     private lateinit var navController: NavController
-    private val mcsArray = arrayOf("IT", "Pedagógia", "Feladatsor", "Kreatív", "Grafika")
     private lateinit var binding: ActivityMainBinding
     private lateinit var navHeaderBinding: NavHeaderBinding
     private val backDrawerCallback = object: OnBackPressedCallback(false) {
@@ -64,7 +63,7 @@ class MainActivity : AppCompatActivity() {
 
         //Ha a listfragment-re navigálunk, töltődjön újra a fejléc (regisztráció után ez tölti be)
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.allBadgesListFragment && currentUser != null) refreshCurrentUserAndUserModel(
+            if (destination.id == R.id.allProjectsListFragment && currentUser != null) refreshCurrentUserAndUserModel(
                 this
             ) {
                 loadApp()

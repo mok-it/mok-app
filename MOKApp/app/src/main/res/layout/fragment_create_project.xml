@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         app:layout_constrainedHeight="true"
         app:layout_constraintHeight_max="0dp"
-        tools:context=".fragments.CreateBadgeFragment">
+        tools:context=".fragments.CreateProjectFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/linearLayout2"
@@ -41,7 +41,7 @@
                 android:id="@+id/textViewTitle"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:text="@string/new_badge"
+                android:text="@string/new_project"
                 android:textAlignment="center"
                 android:textSize="19sp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -70,7 +70,7 @@
                 android:showDividers="middle|end">
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/badgeNameInputLayout"
+                    android:id="@+id/projectNameInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:divider="@drawable/empty_divider"
@@ -78,22 +78,22 @@
                     app:boxCornerRadiusTopStart="@dimen/design_corner_radius">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/badge_name"
+                        android:id="@+id/project_name"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="@string/badge_name"
+                        android:hint="@string/project_name"
                         android:singleLine="true"
                         android:textSize="14sp" />
 
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
-                    android:id="@+id/badgeDescriptionInputLayout"
+                    android:id="@+id/projectDescriptionInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
                     <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/badge_description"
+                        android:id="@+id/project_description"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="@string/description"
@@ -109,17 +109,17 @@
                     android:layout_height="wrap_content"
                     app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@+id/badgeDescription">
+                    app:layout_constraintTop_toBottomOf="@+id/projectCreateDescription">
 
                     <AutoCompleteTextView
-                        android:id="@+id/badge_mcs"
+                        android:id="@+id/project_terulet"
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
                         android:layout_weight="1"
                         android:cursorVisible="false"
                         android:focusable="false"
                         android:focusableInTouchMode="false"
-                        android:hint="@string/choose_mcs"
+                        android:hint="@string/choose_terulet"
                         android:inputType="none" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -206,8 +206,8 @@
 
                         <ImageView
                             android:id="@+id/imageView"
-                            android:layout_width="@dimen/badge_list_image_size"
-                            android:layout_height="@dimen/badge_list_image_size"
+                            android:layout_width="@dimen/project_list_image_size"
+                            android:layout_height="@dimen/project_list_image_size"
                             android:layout_marginTop="8dp"
                             android:layout_marginEnd="8dp"
                             android:layout_marginBottom="8dp"

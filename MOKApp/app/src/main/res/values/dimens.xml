@@ -3,7 +3,7 @@
     <dimen name="project_card_description_text">14sp</dimen>
     <dimen name="design_corner_radius">8dp</dimen>
     <dimen name="text_margin">16dp</dimen>
-    <dimen name="badge_list_image_size">80dp</dimen>
+    <dimen name="project_list_image_size">80dp</dimen>
 
     <dimen name="profile_circle_icon_size">25dp</dimen>
     <dimen name="profile_circle_icon_overlap">-10dp</dimen>

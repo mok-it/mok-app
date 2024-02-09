@@ -1,5 +1,6 @@
 package mok.it.app.mokapp.service
 
+import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -132,18 +133,56 @@ object UserService : IUserService {
     ) {
         val batch = Firebase.firestore.batch()
         val projectDocumentRef = Firebase.firestore
-            .collection(Collections.badges).document(projectId)
+            .collection(Collections.projects).document(projectId)
 
         for (userId in userIds) {
             val userDocumentRef = Firebase.firestore.collection(Collections.users).document(userId)
             batch.update(userDocumentRef, "joinedBadges", FieldValue.arrayUnion(projectId))
             batch.update(projectDocumentRef, "members", FieldValue.arrayUnion(userId))
+            batch.update(userDocumentRef, "projectBadges.$projectId", 0)
         }
 
         batch.commit()
             .addOnSuccessListener {
                 onComplete.invoke()
             }
+            .addOnFailureListener { e ->
+                onFailure.invoke(e)
+            }
+    }
+
+    override fun removeUserFromProject(
+        projectId: String,
+        userId: String,
+        onComplete: () -> Unit,
+        onFailure: (Exception) -> Unit
+    ) {
+        val batch = Firebase.firestore.batch()
+        val projectDocumentRef = Firebase.firestore
+            .collection(Collections.projects).document(projectId)
+
+        val userDocumentRef = Firebase.firestore.collection(Collections.users).document(userId)
+
+        userDocumentRef.get().addOnSuccessListener { documentSnapshot ->
+            if (documentSnapshot.exists()) {
+                val projectBadges =
+                    documentSnapshot.data?.get("projectBadges") as? Map<String, Long> ?: mapOf()
+
+                batch.update(userDocumentRef, "projectBadges.$projectId", FieldValue.delete())
+                Log.d("UserService", "Project badges remove from user")
+                
+                batch.update(userDocumentRef, "joinedBadges", FieldValue.arrayRemove(projectId))
+                batch.update(projectDocumentRef, "members", FieldValue.arrayRemove(userId))
+
+                batch.commit()
+                    .addOnSuccessListener {
+                        onComplete.invoke()
+                    }
+                    .addOnFailureListener { e ->
+                        onFailure.invoke(e)
+                    }
+            }
+        }
             .addOnFailureListener { e ->
                 onFailure.invoke(e)
             }
@@ -160,7 +199,7 @@ object UserService : IUserService {
         val userDocumentRef = Firebase.firestore.collection(Collections.users)
             .document(userId)
 
-        val projectsCollectionRef = Firebase.firestore.collection(Collections.badges)
+        val projectsCollectionRef = Firebase.firestore.collection(Collections.projects)
         projectsCollectionRef.get()
             .addOnSuccessListener { querySnapshot ->
                 for (document in querySnapshot.documents) {
@@ -207,7 +246,7 @@ object UserService : IUserService {
     fun capProjectBadges(projectId: String) {
         val db = Firebase.firestore
 
-        db.collection(Collections.badges).document(projectId).get()
+        db.collection(Collections.projects).document(projectId).get()
             .addOnSuccessListener { projectSnapshot ->
                 val project = projectSnapshot.toObject(Project::class.java)
 
@@ -218,7 +257,7 @@ object UserService : IUserService {
 
                             user?.projectBadges?.get(projectId)?.let { projectBadgeValue ->
                                 user.projectBadges[projectId] =
-                                    min(projectBadgeValue, project.value)
+                                    min(projectBadgeValue, project.maxBadges)
                                 db.collection(Collections.users).document(userId).set(user)
                             }
                         }
@@ -231,7 +270,7 @@ object UserService : IUserService {
         category: String,
         onComplete: (Boolean) -> Unit
     ) {
-        val projectDocumentRef = Firebase.firestore.collection(Collections.badges)
+        val projectDocumentRef = Firebase.firestore.collection(Collections.projects)
             .document(projectId)
 
         projectDocumentRef.get()

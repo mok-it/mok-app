@@ -23,7 +23,6 @@ import com.squareup.picasso.Picasso
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.CardProjectParticipantBinding
 import mok.it.app.mokapp.databinding.FragmentAdminPanelBinding
-import mok.it.app.mokapp.databinding.FragmentAllBadgesListBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
@@ -43,15 +42,13 @@ class AdminPanelFragment : Fragment() {
     private val args: AdminPanelFragmentArgs by navArgs()
     private lateinit var project: Project
     private lateinit var userBadges: MutableMap<String, Int>
-    private lateinit var _binding: FragmentAdminPanelBinding
-
-    private val binding get() = _binding
+    private lateinit var binding: FragmentAdminPanelBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentAdminPanelBinding.inflate(inflater, container, false)
+        binding = FragmentAdminPanelBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -66,6 +63,13 @@ class AdminPanelFragment : Fragment() {
 
     private fun initRecyclerView() {
         val adapter = getAdapter()
+        if (adapter == null) {
+            binding.adminParticipantsEmpty.root.visibility = View.VISIBLE
+            binding.participant.visibility = View.GONE
+            binding.badgeReward.visibility = View.GONE
+            binding.participants.visibility = View.GONE
+            return
+        }
         adapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
@@ -84,7 +88,10 @@ class AdminPanelFragment : Fragment() {
             ) //NOTE: can not handle lists of size greater than 30
     }
 
-    private fun getAdapter(): FirestoreRecyclerAdapter<User, ProjectParticipantViewHolder> {
+    private fun getAdapter(): FirestoreRecyclerAdapter<User, ProjectParticipantViewHolder>? {
+        if (project.members.isEmpty()) {
+            return null
+        }
         val query = participantsQuery()
         val options =
             FirestoreRecyclerOptions.Builder<User>().setQuery(query, User::class.java)
@@ -106,15 +113,15 @@ class AdminPanelFragment : Fragment() {
                 val slBadge: RangeSlider = holder.binding.badgeSlider
                 tvName.text = user.name
                 Picasso.get().load(user.photoURL).into(ivImg)
-                tvMaxBadge.text = project.value.toString()
+                tvMaxBadge.text = project.maxBadges.toString()
                 slBadge.valueFrom = 0f
-                slBadge.valueTo = project.value.toFloat()
+                slBadge.valueTo = project.maxBadges.toFloat()
                 slBadge.bottom = 0
-                slBadge.top = project.value
+                slBadge.top = project.maxBadges
                 slBadge.stepSize = 1f
                 slBadge.setValues(userBadges[user.documentId]?.toFloat() ?: 0f)
                 tvMinBadge.text = "0"
-                tvMaxBadge.text = project.value.toString()
+                tvMaxBadge.text = project.maxBadges.toString()
                 slBadge.setLabelFormatter { value -> value.toString() }
                 slBadge.addOnChangeListener { _, value, _ ->
                     UserService.addBadges(user.documentId, project.id, value.roundToInt(),
@@ -166,7 +173,7 @@ class AdminPanelFragment : Fragment() {
     }
 
     private fun getProjectData() {
-        Firebase.firestore.collection(Collections.badges).document(args.project.id).get()
+        Firebase.firestore.collection(Collections.projects).document(args.project.id).get()
             .addOnSuccessListener { document ->
                 if (document != null && document.data != null) {
                     project = document.toObject(Project::class.java)!!
@@ -176,5 +183,3 @@ class AdminPanelFragment : Fragment() {
             }
     }
 }
-
-

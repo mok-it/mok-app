@@ -2,8 +2,10 @@ package mok.it.app.mokapp.fragments
 
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Color
 import android.os.Bundle
 import android.util.Log
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -30,8 +32,8 @@ import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.databinding.CardBadgeBinding
-import mok.it.app.mokapp.databinding.FragmentAllBadgesListBinding
+import mok.it.app.mokapp.databinding.CardProjectBinding
+import mok.it.app.mokapp.databinding.FragmentAllProjectsListBinding
 import mok.it.app.mokapp.dialog.FilterDialogFragment.Companion.filterResultKey
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
@@ -47,20 +49,24 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 
-private const val TAG = "AllBadgesListFragment"
+private const val TAG = "AllProjectsListFragment"
 
-class AllBadgesListFragment :
+class AllProjectsListFragment :
     Fragment() {
 
-    private val args: AllBadgesListFragmentArgs by navArgs()
+    private val args: AllProjectsListFragmentArgs by navArgs()
     private lateinit var filter: Filter
-    private lateinit var binding: FragmentAllBadgesListBinding
+    private lateinit var binding: FragmentAllProjectsListBinding
 
+    private var defaultBackgroundColor: Int = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentAllBadgesListBinding.inflate(inflater, container, false)
+        binding = FragmentAllProjectsListBinding.inflate(inflater, container, false)
+        val typedValue = TypedValue()
+        requireContext().theme.resolveAttribute(android.R.attr.windowBackground, typedValue, true)
+        defaultBackgroundColor = typedValue.data
         return binding.root
     }
 
@@ -93,7 +99,7 @@ class AllBadgesListFragment :
                 return when (menuItem.itemId) {
                     R.id.filter -> {
                         findNavController().navigate(
-                            AllBadgesListFragmentDirections.actionAllBadgesListFragmentToFilterDialogFragment(
+                            AllProjectsListFragmentDirections.actionAllProjectsListFragmentToFilterDialogFragment(
                                 filter
                             )
                         )
@@ -123,7 +129,6 @@ class AllBadgesListFragment :
      */
     private fun loadImage(imageView: ImageView, imageURL: String, callback: Callback) {
         if (tryLoadingImage(imageView, imageURL, callback)) return
-        if (tryLoadingImage(imageView, getString(R.string.url_no_image), callback)) return
     }
 
     /**
@@ -154,7 +159,7 @@ class AllBadgesListFragment :
                 .setLifecycleOwner(this).build()
         return object : FirestoreRecyclerAdapter<Project, ProjectViewHolder>(options) {
             override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ProjectViewHolder (
-                CardBadgeBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                CardProjectBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
 
             override fun onBindViewHolder(
@@ -169,10 +174,10 @@ class AllBadgesListFragment :
                 val tvBadgeValue: TextView = holder.binding.projectBadgeValueTextView
 
                 tvName.text =
-                    getString(R.string.badgeName, model.name, model.categoryEnum)
+                    getString(R.string.projectName, model.name, model.categoryEnum)
                 tvDesc.text = model.description
                 tvMandatory.isVisible = model.mandatory
-                tvBadgeValue.text = model.value.toString()
+                tvBadgeValue.text = model.maxBadges.toString()
 
                 val iconFileName = getIconFileName(model.icon)
                 val iconFile = File(context?.filesDir, iconFileName)
@@ -207,13 +212,16 @@ class AllBadgesListFragment :
                     loadImage(ivImg, model.icon, callback)
                 }
 
-                if (userModel.collectedBadges.contains(model.id)) {
+                if (userModel.projectBadges.contains(model.id)) {
                     holder.itemView.setBackgroundResource(R.drawable.gradient1)
+                }
+                else {
+                    holder.itemView.setBackgroundColor(defaultBackgroundColor)
                 }
 
                 holder.itemView.setOnClickListener {
                     val action =
-                        AllBadgesListFragmentDirections.actionAllBadgesListFragmentToDetailsFragment(
+                        AllProjectsListFragmentDirections.actionAllProjectsListFragmentToDetailsFragment(
                             model.id
                         )
                     findNavController().navigate(action)
@@ -237,31 +245,31 @@ class AllBadgesListFragment :
 
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
-        binding.addBadgeButton
+        binding.addProjectButton
 
-        binding.addBadgeButton.setOnClickListener {
+        binding.addProjectButton.setOnClickListener {
             findNavController().navigate(
-                AllBadgesListFragmentDirections.actionAllBadgesListFragmentToCreateBadgeFragment(
+                AllProjectsListFragmentDirections.actionAllProjectsListFragmentToCreateProjectFragment(
                     args.category
                 )
             )
         }
-        setAddBadgeButtonVisibility()
-        binding.badgeSwipeRefresh.setOnRefreshListener {
+        setAddProjectButtonVisibility()
+        binding.projectSwipeRefresh.setOnRefreshListener {
             // a lehúzás csak az usert tölti újra, a mancsok maguktól frissülnek
             adapter = getAdapter()
             binding.recyclerView.adapter = adapter
             refreshCurrentUserAndUserModel(
                 this.requireContext()
-            ) { setAddBadgeButtonVisibility() }
-            binding.badgeSwipeRefresh.isRefreshing = false
+            ) { setAddProjectButtonVisibility() }
+            binding.projectSwipeRefresh.isRefreshing = false
         }
     }
 
     private fun getFilteredQuery(): Query {
         //itt szűrünk kategóriákra
         var query =
-            Firebase.firestore.collection(Collections.badges)
+            Firebase.firestore.collection(Collections.projects)
                 .orderBy("created", Query.Direction.DESCENDING)
         if (filter.mandatory) {
             query = query.whereEqualTo("mandatory", true)
@@ -281,11 +289,11 @@ class AllBadgesListFragment :
         return query
     }
 
-    private fun setAddBadgeButtonVisibility() {
+    private fun setAddProjectButtonVisibility() {
         if (userModel.isCreator || userModel.admin) {
-            binding.addBadgeButton.visibility = View.VISIBLE
+            binding.addProjectButton.visibility = View.VISIBLE
         } else {
-            binding.addBadgeButton.visibility = View.INVISIBLE
+            binding.addProjectButton.visibility = View.INVISIBLE
         }
     }
 }

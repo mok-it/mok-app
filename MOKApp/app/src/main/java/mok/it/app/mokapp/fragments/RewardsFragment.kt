@@ -27,7 +27,9 @@ import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Reward
 import mok.it.app.mokapp.recyclerview.RewardViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import mok.it.app.mokapp.utility.Utility
 import java.util.Date
+import kotlin.math.absoluteValue
 
 class RewardsFragment : Fragment() {
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
@@ -63,7 +65,8 @@ class RewardsFragment : Fragment() {
     }
 
     private fun updateUI() {
-        binding.pointsText.text = getString(R.string.my_points, userModel.badges)
+        binding.pointsText.text = getString(R.string.my_badges_count, userModel.projectBadges.values.sum())
+        binding.spentPointsText.text = getString(R.string.my_spent_badges_count, userModel.points)
         initializeAdapter()
     }
 
@@ -90,10 +93,10 @@ class RewardsFragment : Fragment() {
                     model: Reward
                 ) {
                     val ivImg: ImageView = holder.binding.rewardImage
-                    loadImage(ivImg, model.icon)
+                    Utility.loadImage(ivImg, model.icon, requireContext())
                     holder.binding.rewardName.text = model.name
                     holder.binding.rewardPrice.text = model.price.toString()
-                    if (userModel.badges >= model.price) {
+                    if (userModel.projectBadges.values.sum() - userModel.points.absoluteValue >= model.price) {
                         holder.binding.requestButton.isEnabled = true
                     }
                     if (userModel.requestedRewards.contains(model.documentId)) {

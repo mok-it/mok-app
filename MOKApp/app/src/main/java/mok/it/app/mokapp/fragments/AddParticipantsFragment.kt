@@ -15,7 +15,6 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -34,7 +33,7 @@ import mok.it.app.mokapp.service.UserService
 
 class AddParticipantsFragment : DialogFragment() {
     companion object {
-        val TAG = "AddParticipantsDialogFragment"
+        val TAG = "AddParticipantsFragment"
     }
 
     private val args: AddParticipantsFragmentArgs by navArgs()
@@ -55,7 +54,7 @@ class AddParticipantsFragment : DialogFragment() {
         if (FirebaseUserObject.currentUser == null) {
             findNavController().navigate(R.id.action_global_loginFragment)
         } else {
-            Firebase.firestore.collection(Collections.badges).document(args.projectId).get()
+            Firebase.firestore.collection(Collections.projects).document(args.projectId).get()
                 .addOnSuccessListener { document ->
                     if (document != null && document.data != null) {
                         project = document.toObject(Project::class.java)!!
@@ -78,6 +77,7 @@ class AddParticipantsFragment : DialogFragment() {
                 ).show()
                 return@setOnClickListener
             }
+            binding.btnAddParticipants.isEnabled = false
             UserService.joinUsersToProject(project.id, selectedUsers, {
                 Log.i(TAG, "Adding ${selectedUsers.size} users to project ${project.id}")
                 Toast.makeText(context, "Résztvevők hozzáadva!", Toast.LENGTH_SHORT).show()
@@ -89,6 +89,7 @@ class AddParticipantsFragment : DialogFragment() {
                     "A résztvevők hozzáadása sikertelen, kérlek próbáld újra később.",
                     Toast.LENGTH_SHORT
                 ).show()
+                binding.btnAddParticipants.isEnabled = true
             }
             )
         }
@@ -104,7 +105,7 @@ class AddParticipantsFragment : DialogFragment() {
     }
 
     private fun getAdapter(): FirestoreRecyclerAdapter<User, SelectMemberViewHolder> {
-        val query = nonParticipantsQuery()
+        val query = usersQuery()
         val options =
             FirestoreRecyclerOptions.Builder<User>().setQuery(query, User::class.java)
                 .setLifecycleOwner(this).build()
@@ -124,24 +125,28 @@ class AddParticipantsFragment : DialogFragment() {
                 tvName.text = user.name
                 Picasso.get().load(user.photoURL).into(ivImg)
                 cbSelect.setOnCheckedChangeListener(null)
-                cbSelect.isChecked = selectedUsers.contains(user.documentId)
-                cbSelect.setOnCheckedChangeListener { _, enabled ->
-                    if (enabled) {
-                        selectedUsers.add(user.documentId)
-                    } else {
-                        selectedUsers.remove(user.documentId)
-                    }
+                if (user.joinedBadges.contains(project.id)) {
+                    cbSelect.isEnabled = false
+                    cbSelect.isChecked = true
+                }
+                else {
+                    cbSelect.isEnabled = true
+                    cbSelect.isChecked = selectedUsers.contains(user.documentId)
+                    cbSelect.setOnCheckedChangeListener { _, enabled ->
+                        if (enabled) {
+                            selectedUsers.add(user.documentId)
+                        }
+                        else {
+                            selectedUsers.remove(user.documentId)
+                        }
+                }
                 }
             }
         }
     }
 
-    private fun nonParticipantsQuery(): Query {
+    private fun usersQuery(): Query {
         return Firebase.firestore.collection(Collections.users)
-            .orderBy("__name__", Query.Direction.ASCENDING)
-            .whereNotIn(
-                FieldPath.documentId(),
-                project.members
-            ) //NOTE: can not handle lists of size greater than 30
+            .orderBy("name", Query.Direction.ASCENDING)
     }
 }

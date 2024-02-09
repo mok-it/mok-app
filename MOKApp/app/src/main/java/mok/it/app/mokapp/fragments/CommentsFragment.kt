@@ -72,10 +72,6 @@ class CommentsFragment : Fragment() {
                     val tvTimestamp = holder.binding.commentTimestamp
                     val tvText = holder.binding.commentText
                     val ivImg = holder.binding.commentIcon
-//                    val tvSender = holder.itemView.comment_sender
-//                    val tvTimestamp = holder.itemView.comment_timestamp
-//                    val tvText = holder.itemView.comment_text
-//                    val ivImg = holder.itemView.comment_icon
                     tvSender.text = model.uid
                     tvTimestamp.text = formatter.format(model.time.toDate())
                     tvText.text = model.text

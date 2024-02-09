@@ -103,8 +103,12 @@ class MainActivity : AppCompatActivity() {
             override fun onDrawerClosed(drawerView: View) {
                 backDrawerCallback.isEnabled = false
             }
-            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {}
-            override fun onDrawerStateChanged(newState: Int) {}
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                //Must be overridden but not used
+            }
+            override fun onDrawerStateChanged(newState: Int) {
+                //Must be overridden but not used
+            }
         })
     }
 

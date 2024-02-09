@@ -14,6 +14,9 @@ object ProjectService : IProjectService{
     ) {
         val projectsCollectionRef = Firebase.firestore.collection(Collections.projects)
 
+        if (projectIds.isEmpty()){
+            return
+        }
         projectsCollectionRef.whereIn(FieldPath.documentId(), projectIds)
             .get()
             .addOnSuccessListener { querySnapshot ->

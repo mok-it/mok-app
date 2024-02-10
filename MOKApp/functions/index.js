@@ -1,8 +1,6 @@
 /*eslint-disable no-eval*/
-const FieldValue = require("@google-cloud/firestore");
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
-const { _refWithOptions } = require("firebase-functions/v1/database");
 const { log } = require("firebase-functions/logger");
 const axios = require("axios");
 admin.initializeApp();
@@ -56,47 +54,6 @@ async function GetMokMember(email) {
     return null;
   }
 }
-
-// Ha törlünk egy usert, a neki megfelelő dokumentum is törlődik a users collectionból
-// Kérdés, hogy élesben kell-e ez nekünk, mert így véletlen törlésnél elvesznek az adatok
-exports.deleteUser = functions.auth.user().onDelete((user) => {
-  const user_to_delete = db.collection("users").where("id", "==", user.uid);
-  user_to_delete.get().then(function (querySnapshot) {
-    querySnapshot.forEach(function (doc) {
-      doc.ref.delete();
-      log("user deleted", user.email, user.uid);
-    });
-  });
-  return null;
-});
-
-exports.uploadNewBadge = functions.https.onRequest((req, res) => {
-  //adatok:
-  //(ld. lent) minden mező, ami benne van a projects collection documentumaiban
-  // + owner
-  //ebből kötelező: name, description, deadline, creator
-  //a többi opcionális
-  const defaultIcon =
-    "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef";
-  db.collection("projects").add({
-    name: req.body.name,
-    description: req.body.description,
-    deadline: new Date(
-      req.body.deadline.year,
-      req.body.deadline.month,
-      req.body.deadline.day
-    ),
-    created: admin.firestore.Timestamp.now(),
-    overall_progress: 0,
-    icon: req.body.hasOwnProperty("icon") ? req.body.icon : defaultIcon,
-    creator: req.body.creator,
-    owner: req.body.hasOwnProperty("owner") ? req.body.owner : req.body.creator,
-    editors: req.body.editors ? req.body.editors : [],
-    members: req.body.members ? req.body.members : [],
-    tasks: req.body.tasks ? req.body.tasks : [],
-  });
-  res.status(200).send('{"success":true}');
-});
 
 exports.updatePointsOnBadgeCollectionChange = functions.firestore
   .document("users/{userId}")

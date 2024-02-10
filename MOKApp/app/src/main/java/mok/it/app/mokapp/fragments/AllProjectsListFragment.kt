@@ -29,7 +29,6 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.CardProjectBinding
 import mok.it.app.mokapp.databinding.FragmentAllProjectsListBinding
@@ -128,7 +127,7 @@ class AllProjectsListFragment :
             FirestoreRecyclerOptions.Builder<Project>().setQuery(query, Project::class.java)
                 .setLifecycleOwner(this).build()
         return object : FirestoreRecyclerAdapter<Project, ProjectViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ProjectViewHolder (
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ProjectViewHolder(
                 CardProjectBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
 
@@ -185,8 +184,7 @@ class AllProjectsListFragment :
 
                 if (userModel.projectBadges.contains(model.id)) {
                     holder.itemView.setBackgroundResource(R.drawable.gradient1)
-                }
-                else {
+                } else {
                     holder.itemView.setBackgroundColor(defaultBackgroundColor)
                 }
 

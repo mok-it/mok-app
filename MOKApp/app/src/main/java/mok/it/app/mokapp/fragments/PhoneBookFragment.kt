@@ -19,12 +19,8 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.card_phonebook_item.view.call_button
-import kotlinx.android.synthetic.main.card_phonebook_item.view.contact_image
-import kotlinx.android.synthetic.main.card_phonebook_item.view.contact_item
-import kotlinx.android.synthetic.main.card_phonebook_item.view.contact_name
-import kotlinx.android.synthetic.main.card_phonebook_item.view.phone_number
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.CardPhonebookItemBinding
 import mok.it.app.mokapp.databinding.FragmentPhoneListBinding
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
@@ -34,8 +30,7 @@ import mok.it.app.mokapp.utility.Utility
 
 
 class PhoneBookFragment : Fragment() {
-    private val binding get() = _binding!!
-    private var _binding: FragmentPhoneListBinding? = null
+    private lateinit var binding: FragmentPhoneListBinding
 
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
 
@@ -43,7 +38,7 @@ class PhoneBookFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPhoneListBinding.inflate(inflater, container, false)
+        binding = FragmentPhoneListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -79,17 +74,23 @@ class PhoneBookFragment : Fragment() {
         adapter =
             object : FirestoreRecyclerAdapter<User?, PhoneBookViewHolder?>(options) {
                 lateinit var context: Context
+
+                override fun onCreateViewHolder(parent: ViewGroup, i: Int) = PhoneBookViewHolder (
+                    CardPhonebookItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                )
+
                 override fun onBindViewHolder(
                     holder: PhoneBookViewHolder,
                     position: Int,
                     model: User
                 ) {
-                    Utility.loadImage(holder.itemView.contact_image, model.photoURL, context)
-                    holder.itemView.contact_name.text = model.name
-                    holder.itemView.phone_number.text =
+                    val ivImg: ImageView = holder.binding.contactImage
+                    Utility.loadImage(ivImg, model.photoURL, context)
+                    holder.binding.contactName.text = model.name
+                    holder.binding.phoneNumber.text =
                         model.phoneNumber.ifEmpty { getString(R.string.no_phone_number) }
 
-                    holder.itemView.contact_item.setOnClickListener {
+                    holder.binding.contactItem.setOnClickListener {
                         findNavController().navigate(
                             PhoneBookFragmentDirections.actionGlobalMemberFragment(
                                 model
@@ -97,7 +98,7 @@ class PhoneBookFragment : Fragment() {
                         )
                     }
 
-                    holder.itemView.call_button.setOnClickListener {
+                    holder.binding.callButton.setOnClickListener {
                         // if the device is capable of making phone calls, the button opens the dialer
                         if (isTelephonyEnabled() && model.phoneNumber.isNotEmpty()) {
                             val intent = Intent(Intent.ACTION_DIAL)
@@ -126,18 +127,6 @@ class PhoneBookFragment : Fragment() {
                             clipboard.setPrimaryClip(clip)
                         }
                     }
-                }
-
-                private fun dataIsLoaded(): Boolean {
-                    return binding.recyclerView.findViewHolderForAdapterPosition(0)?.itemView?.findViewById<ImageView>(
-                        R.id.contact_image
-                    )?.drawable != null
-                }
-
-                override fun onCreateViewHolder(group: ViewGroup, i: Int): PhoneBookViewHolder {
-                    val view: View = LayoutInflater.from(group.context)
-                        .inflate(R.layout.card_phonebook_item, group, false)
-                    return PhoneBookViewHolder(view)
                 }
 
                 override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {

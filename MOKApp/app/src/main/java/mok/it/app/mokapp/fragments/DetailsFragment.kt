@@ -28,24 +28,8 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.fragment_details.avatar_imagebutton
-import kotlinx.android.synthetic.main.fragment_details.projectComments
-import kotlinx.android.synthetic.main.fragment_details.projectCreator
-import kotlinx.android.synthetic.main.fragment_details.projectDeadline
-import kotlinx.android.synthetic.main.fragment_details.projectCreateDescription
-import kotlinx.android.synthetic.main.fragment_details.projectName
-import kotlinx.android.synthetic.main.fragment_details.badgeValueTextView
-import kotlinx.android.synthetic.main.fragment_details.categoryName
-import kotlinx.android.synthetic.main.fragment_details.editButton
-import kotlinx.android.synthetic.main.fragment_details.join_button
-import kotlinx.android.synthetic.main.fragment_details.member1
-import kotlinx.android.synthetic.main.fragment_details.member2
-import kotlinx.android.synthetic.main.fragment_details.member3
-import kotlinx.android.synthetic.main.fragment_details.members_left
-import kotlinx.android.synthetic.main.fragment_details.members_left_number
-import kotlinx.android.synthetic.main.fragment_details.members_overlay_button
-import kotlinx.android.synthetic.main.fragment_details.rewardButton
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.FragmentDetailsBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
@@ -81,12 +65,15 @@ class DetailsFragment : Fragment() {
     lateinit var model: Project
 
     private var userIsEditor: Boolean = false
+    private lateinit var _binding: FragmentDetailsBinding
+    private val binding get() = _binding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        return inflater.inflate(R.layout.fragment_details, container, false)
+        _binding = FragmentDetailsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -146,7 +133,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initLayout() {
-        members_overlay_button.setOnClickListener {
+        binding.membersOverlayButton.setOnClickListener {
             if (viewModel.members.value?.isNotEmpty() == true && ::project.isInitialized) {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToProjectMembersDialogFragment(
@@ -157,12 +144,12 @@ class DetailsFragment : Fragment() {
                 )
             }
         }
-        join_button.setOnClickListener {
+        binding.joinButton.setOnClickListener {
             join()
             refreshCurrentUserAndUserModel(requireContext())
         }
-        join_button.visibility = View.GONE
-        projectComments.setOnClickListener {
+        binding.joinButton.visibility = View.GONE
+        binding.projectComments.setOnClickListener {
             val action =
                 DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.projectId)
             findNavController().navigate(action)
@@ -170,35 +157,34 @@ class DetailsFragment : Fragment() {
         Firebase.firestore.collection(Collections.projects).document(args.projectId).get()
             .addOnSuccessListener { document ->
                 project = document.toObject(Project::class.java)!!
-                projectName.text = project.name
-                categoryName.text =
-                    getString(R.string.specific_category, project.category)
-                badgeValueTextView.text = getString(R.string.specific_value, project.maxBadges)
-                projectCreateDescription.text = project.description
+                binding.projectName.text = project.name
+                binding.categoryName.text =
+                    getString(R.string.specific_category, project.categoryEnum)
+                binding.badgeValueTextView.text = getString(R.string.specific_value, project.maxBadges)
+                binding.projectCreateDescription.text = project.description
 
                 Firebase.firestore.collection(Collections.users)
                     .document(project.creator)
                     .get().addOnSuccessListener { creatorDoc ->
                         if (creatorDoc?.get("name") != null) {
-                            projectCreator.text = creatorDoc["name"] as String //TODO NPE itt is
+                            binding.projectCreator.text = creatorDoc["name"] as String //TODO NPE itt is
                         }
                         val formatter = getDateInstance()
-                        projectDeadline.text =
+                        binding.projectDeadline.text =
                             formatter.format(project.created)
-
                         val iconFileName = getIconFileName(project.icon)
                         val iconFile = File(context?.filesDir, iconFileName)
                         if (iconFile.exists()) {
                             Log.i(TAG, "loading badge icon " + iconFile.path)
                             val bitmap: Bitmap = BitmapFactory.decodeFile(iconFile.path)
-                            avatar_imagebutton.setImageBitmap(bitmap)
+                            binding.avatarImagebutton.setImageBitmap(bitmap)
                         } else {
                             Log.i(TAG, "downloading badge icon " + project.icon)
                             val callback = object : Callback {
                                 override fun onSuccess() {
                                     // save image
                                     Log.i(TAG, "saving badge icon " + iconFile.path)
-                                    val bitmap: Bitmap = avatar_imagebutton.drawable.toBitmap()
+                                    val bitmap: Bitmap = binding.avatarImagebutton.drawable.toBitmap()
                                     val fos: FileOutputStream?
                                     try {
                                         fos = FileOutputStream(iconFile)
@@ -214,7 +200,7 @@ class DetailsFragment : Fragment() {
                                     Log.e(TAG, e.toString())
                                 }
                             }
-                            Picasso.get().load(project.icon).into(avatar_imagebutton, callback)
+                            Picasso.get().load(project.icon).into(binding.avatarImagebutton, callback)
                         }
 
                         val editors = project.leaders
@@ -231,8 +217,8 @@ class DetailsFragment : Fragment() {
 
     private fun initEditButton() {
         if (userModel.isCreator || userModel.admin || project.creator == userModel.documentId || userIsEditor) {
-            editButton.visibility = View.VISIBLE
-            editButton.setOnClickListener {
+            binding.editButton.visibility = View.VISIBLE
+            binding.editButton.setOnClickListener {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToEditProjectFragment(
                         project
@@ -244,8 +230,8 @@ class DetailsFragment : Fragment() {
 
     private fun initAdminButton() {
         if (userModel.isCreator || userModel.admin || project.creator == userModel.documentId || userIsEditor) {
-            rewardButton.visibility = View.VISIBLE
-            rewardButton.setOnClickListener {
+            binding.rewardButton.visibility = View.VISIBLE
+            binding.rewardButton.setOnClickListener {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToAdminPanelFragment(
                         project
@@ -272,13 +258,13 @@ class DetailsFragment : Fragment() {
 
         Log.d(TAG, "textSizeSP = $textSizeSP")
 
-        members_left_number.text = getString(R.string.extra_members, numOfExtraMembers)
-        members_left_number.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSP)
+        binding.membersLeftNumber.text = getString(R.string.extra_members, numOfExtraMembers)
+        binding.membersLeftNumber.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSP)
 
     }
 
     private fun join() {
-        join_button.isEnabled = false
+        binding.joinButton.isEnabled = false
         if (userModel.joinedBadges.contains(args.projectId)) {
             UserService.removeUserFromProject(
                 args.projectId,
@@ -336,11 +322,11 @@ class DetailsFragment : Fragment() {
                     viewModel.getMembers(model.members)
                     Log.d(TAG, "Model data: $model")
                     changeVisibilities()
-                    join_button.isEnabled = true
+                    binding.joinButton.isEnabled = true
                 } else {
                     Log.d(TAG, "No such document or data is null")
                     changeVisibilities()
-                    join_button.isEnabled = true
+                    binding.joinButton.isEnabled = true
                 }
             }
     }
@@ -374,7 +360,7 @@ class DetailsFragment : Fragment() {
                                 val user = document.toObject(User::class.java)!!
                                 sender = user.name
                             }
-                            projectComments.text = getString(
+                            binding.projectComments.text = getString(
                                 R.string.newest_comment_text,
                                 timeString,
                                 sender,
@@ -388,10 +374,10 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initMembers() {
-        members_left.isVisible = false //TODO sometimes throws an NPE (members_left is null)
-        members_left_number.isVisible = false
+        binding.membersLeft.isVisible = false //TODO sometimes throws an NPE (members_left is null)
+        binding.membersLeftNumber.isVisible = false
 
-        val members = listOf(member1, member2, member3)
+        val members = listOf(binding.member1, binding.member2, binding.member3)
 
         for (i in 0 until 3) {
             if (viewModel.members.value!!.size > i) {
@@ -404,19 +390,19 @@ class DetailsFragment : Fragment() {
 
         if (viewModel.members.value!!.size >= 4) {
             initExtraMemberCounter(viewModel.members.value!!.size - 3)
-            members_left.isVisible = true
-            members_left_number.isVisible = true
+            binding.membersLeft.isVisible = true
+            binding.membersLeftNumber.isVisible = true
         }
     }
 
     private fun changeVisibilities() {
-        join_button.visibility = View.VISIBLE
+        binding.joinButton.visibility = View.VISIBLE
         when {
-            userModel.collectedBadges.contains(project.id) -> join_button.visibility = View.GONE
-            userModel.joinedBadges.contains(project.id) -> join_button.text =
+            userModel.collectedBadges.contains(project.id) -> binding.joinButton.visibility = View.GONE
+            userModel.joinedBadges.contains(project.id) -> binding.joinButton.text =
                 getString(R.string.leave)
 
-            else -> join_button.text = getString(R.string.join)
+            else -> binding.joinButton.text = getString(R.string.join)
         }
 
         if (project.leaders.contains(userModel.documentId)) {

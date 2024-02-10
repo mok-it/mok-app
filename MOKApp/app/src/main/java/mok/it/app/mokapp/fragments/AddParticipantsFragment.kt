@@ -19,17 +19,15 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.card_select_member.view.memberName
-import kotlinx.android.synthetic.main.card_select_member.view.memberPicture
-import kotlinx.android.synthetic.main.card_select_member.view.memberSelect
-import kotlinx.android.synthetic.main.fragment_add_participants.btnAddParticipants
-import kotlinx.android.synthetic.main.fragment_add_participants.nonParticipantsList
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.CardSelectMemberBinding
+import mok.it.app.mokapp.databinding.FragmentAddParticipantsBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
+import mok.it.app.mokapp.recyclerview.SelectMemberViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import mok.it.app.mokapp.service.UserService
 
@@ -41,12 +39,14 @@ class AddParticipantsFragment : DialogFragment() {
     private val args: AddParticipantsFragmentArgs by navArgs()
     private lateinit var project: Project
     private var selectedUsers: MutableList<String> = mutableListOf()
+    private lateinit var binding: FragmentAddParticipantsBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_add_participants, container, false)
+    ): View {
+        binding = FragmentAddParticipantsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -68,7 +68,7 @@ class AddParticipantsFragment : DialogFragment() {
     }
 
     private fun initLayout() {
-        btnAddParticipants.setOnClickListener {
+        binding.btnAddParticipants.setOnClickListener {
             if (selectedUsers.isEmpty()) {
                 Toast.makeText(
                     context,
@@ -77,7 +77,7 @@ class AddParticipantsFragment : DialogFragment() {
                 ).show()
                 return@setOnClickListener
             }
-            btnAddParticipants.isEnabled = false
+            binding.btnAddParticipants.isEnabled = false
             UserService.joinUsersToProject(project.id, selectedUsers, {
                 Log.i(TAG, "Adding ${selectedUsers.size} users to project ${project.id}")
                 Toast.makeText(context, "Résztvevők hozzáadva!", Toast.LENGTH_SHORT).show()
@@ -89,7 +89,7 @@ class AddParticipantsFragment : DialogFragment() {
                     "A résztvevők hozzáadása sikertelen, kérlek próbáld újra később.",
                     Toast.LENGTH_SHORT
                 ).show()
-                btnAddParticipants.isEnabled = true
+                binding.btnAddParticipants.isEnabled = true
             }
             )
         }
@@ -100,31 +100,28 @@ class AddParticipantsFragment : DialogFragment() {
         adapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
-        nonParticipantsList.adapter = adapter
-        nonParticipantsList.layoutManager = WrapContentLinearLayoutManager(context)
+        binding.nonParticipantsList.adapter = adapter
+        binding.nonParticipantsList.layoutManager = WrapContentLinearLayoutManager(context)
     }
 
-    private fun getAdapter(): FirestoreRecyclerAdapter<User, ProjectViewHolder> {
+    private fun getAdapter(): FirestoreRecyclerAdapter<User, SelectMemberViewHolder> {
         val query = usersQuery()
         val options =
             FirestoreRecyclerOptions.Builder<User>().setQuery(query, User::class.java)
                 .setLifecycleOwner(this).build()
-        return object : FirestoreRecyclerAdapter<User, ProjectViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
-                val view = LayoutInflater.from(this@AddParticipantsFragment.context)
-                    .inflate(R.layout.card_select_member, parent, false)
-
-                return ProjectViewHolder(view)
-            }
+        return object : FirestoreRecyclerAdapter<User, SelectMemberViewHolder>(options) {
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = SelectMemberViewHolder(
+                        CardSelectMemberBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                    )
 
             override fun onBindViewHolder(
-                holder: ProjectViewHolder,
+                holder: SelectMemberViewHolder,
                 position: Int,
                 user: User
             ) {
-                val tvName: TextView = holder.itemView.memberName
-                val ivImg: ImageView = holder.itemView.memberPicture
-                val cbSelect: CheckBox = holder.itemView.memberSelect
+                val tvName: TextView = holder.binding.memberName
+                val ivImg: ImageView = holder.binding.memberPicture
+                val cbSelect: CheckBox = holder.binding.memberSelect
                 tvName.text = user.name
                 Picasso.get().load(user.photoURL).into(ivImg)
                 cbSelect.setOnCheckedChangeListener(null)

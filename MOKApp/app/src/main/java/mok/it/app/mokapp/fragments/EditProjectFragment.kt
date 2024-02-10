@@ -5,8 +5,6 @@ import android.util.Log
 import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import kotlinx.android.synthetic.main.fragment_create_project.datePicker
-import kotlinx.android.synthetic.main.fragment_create_project.tvBadgeValue
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
@@ -31,13 +29,13 @@ class EditProjectFragment : CreateProjectFragment() {
         //binding.badgeMcs.setSelection(Category.values().indexOf(args.project.categoryEnum))
         val cal: Calendar = Calendar.getInstance()
         cal.time = args.project.deadline
-        datePicker.updateDate(
+        binding.datePicker.updateDate(
             cal[Calendar.YEAR],
             cal[Calendar.MONTH],
             cal[Calendar.DAY_OF_MONTH]
         )
         badgeValue = args.project.maxBadges
-        tvBadgeValue.text = badgeValue.toString()
+        binding.tvBadgeValue.text = badgeValue.toString()
         binding.textViewTitle.text = getString(R.string.edit_project)
         binding.createButton.text = getString(R.string.edit_text)
 
@@ -81,7 +79,7 @@ class EditProjectFragment : CreateProjectFragment() {
     }
 
     private fun commitEditedBadgeToDatabase(): Boolean {
-        val deadline = Date(datePicker.year - 1900, datePicker.month, datePicker.dayOfMonth)
+        val deadline = Date(binding.datePicker.year - 1900, binding.datePicker.month, binding.datePicker.dayOfMonth)
         val editedBadge = hashMapOf(
             "category" to binding.projectTerulet.text.toString(),
             "deadline" to deadline,

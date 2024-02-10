@@ -1,6 +1,6 @@
 package mok.it.app.mokapp.recyclerview
 
-import android.view.View
 import androidx.recyclerview.widget.RecyclerView
+import mok.it.app.mokapp.databinding.CardRewardBinding
 
-class RewardViewHolder (itemView: View) : RecyclerView.ViewHolder(itemView)
+class RewardViewHolder (val binding: CardRewardBinding) : RecyclerView.ViewHolder(binding.root)

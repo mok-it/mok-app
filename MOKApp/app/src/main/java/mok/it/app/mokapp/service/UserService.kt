@@ -165,8 +165,6 @@ object UserService : IUserService {
 
         userDocumentRef.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
-                val projectBadges =
-                    documentSnapshot.data?.get("projectBadges") as? Map<String, Long> ?: mapOf()
 
                 batch.update(userDocumentRef, "projectBadges.$projectId", FieldValue.delete())
                 Log.d("UserService", "Project badges remove from user")
@@ -222,7 +220,7 @@ object UserService : IUserService {
                                         .filterKeys { projectId ->
                                             val projectInList =
                                                 projectsList.find { it.id == projectId }
-                                            projectInList?.category == category
+                                            projectInList?.categoryEnum?.name == category
                                         }
                                     val sum = projectsInCategory.values.sum()
                                     onComplete.invoke(sum)

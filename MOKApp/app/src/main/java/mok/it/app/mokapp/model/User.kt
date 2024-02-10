@@ -4,7 +4,7 @@ import android.os.Parcelable
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
-import kotlinx.android.parcel.Parcelize
+import kotlinx.parcelize.Parcelize
 import mok.it.app.mokapp.model.Category.Companion.toCategory
 
 /**

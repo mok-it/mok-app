@@ -29,17 +29,9 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
-import kotlinx.android.synthetic.main.card_project.view.mandatoryTextView
-import kotlinx.android.synthetic.main.card_project.view.projectBadgeValueTextView
-import kotlinx.android.synthetic.main.card_project.view.projectDescription
-import kotlinx.android.synthetic.main.card_project.view.projectIcon
-import kotlinx.android.synthetic.main.card_project.view.projectName
-import kotlinx.android.synthetic.main.fragment_all_projects_list.addProjectButton
-import kotlinx.android.synthetic.main.fragment_all_projects_list.projectSwipeRefresh
-import kotlinx.android.synthetic.main.fragment_all_projects_list.recyclerView
-import kotlinx.android.synthetic.main.fragment_all_projects_list.shimmerFrameLayout
-import kotlinx.android.synthetic.main.fragment_all_projects_list.view.addProjectButton
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.CardProjectBinding
+import mok.it.app.mokapp.databinding.FragmentAllProjectsListBinding
 import mok.it.app.mokapp.dialog.FilterDialogFragment.Companion.filterResultKey
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
@@ -63,18 +55,18 @@ class AllProjectsListFragment :
 
     private val args: AllProjectsListFragmentArgs by navArgs()
     private lateinit var filter: Filter
+    private lateinit var binding: FragmentAllProjectsListBinding
+
     private var defaultBackgroundColor: Int = 0
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Get the system's default background color
-        // Get the system's default background color
+    ): View {
+        binding = FragmentAllProjectsListBinding.inflate(inflater, container, false)
         val typedValue = TypedValue()
         requireContext().theme.resolveAttribute(android.R.attr.windowBackground, typedValue, true)
         defaultBackgroundColor = typedValue.data
-
-        return inflater.inflate(R.layout.fragment_all_projects_list, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -135,22 +127,20 @@ class AllProjectsListFragment :
             FirestoreRecyclerOptions.Builder<Project>().setQuery(query, Project::class.java)
                 .setLifecycleOwner(this).build()
         return object : FirestoreRecyclerAdapter<Project, ProjectViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ProjectViewHolder {
-                val view = LayoutInflater.from(this@AllProjectsListFragment.context)
-                    .inflate(R.layout.card_project, parent, false)
-                return ProjectViewHolder(view)
-            }
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ProjectViewHolder(
+                CardProjectBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
 
             override fun onBindViewHolder(
                 holder: ProjectViewHolder,
                 position: Int,
                 model: Project
             ) {
-                val tvName: TextView = holder.itemView.projectName
-                val tvDesc: TextView = holder.itemView.projectDescription
-                val ivImg: ImageView = holder.itemView.projectIcon
-                val tvMandatory: TextView = holder.itemView.mandatoryTextView
-                val tvBadgeValue: TextView = holder.itemView.projectBadgeValueTextView
+                val tvName: TextView = holder.binding.projectName
+                val tvDesc: TextView = holder.binding.projectDescription
+                val ivImg: ImageView = holder.binding.projectIcon
+                val tvMandatory: TextView = holder.binding.mandatoryTextView
+                val tvBadgeValue: TextView = holder.binding.projectBadgeValueTextView
 
                 tvName.text =
                     getString(R.string.projectName, model.name, model.categoryEnum)
@@ -194,8 +184,7 @@ class AllProjectsListFragment :
 
                 if (userModel.projectBadges.contains(model.id)) {
                     holder.itemView.setBackgroundResource(R.drawable.gradient1)
-                }
-                else {
+                } else {
                     holder.itemView.setBackgroundColor(defaultBackgroundColor)
                 }
 
@@ -213,9 +202,9 @@ class AllProjectsListFragment :
     }
 
     private fun stopShimmer() {
-        shimmerFrameLayout.hideShimmer()
-        shimmerFrameLayout.stopShimmer()
-        shimmerFrameLayout.visibility = View.GONE
+        binding.shimmerFrameLayout.hideShimmer()
+        binding.shimmerFrameLayout.stopShimmer()
+        binding.shimmerFrameLayout.visibility = View.GONE
     }
 
     private fun initRecyclerView() {
@@ -223,11 +212,11 @@ class AllProjectsListFragment :
         adapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
-        recyclerView.addProjectButton
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
+        binding.addProjectButton
 
-        addProjectButton.setOnClickListener {
+        binding.addProjectButton.setOnClickListener {
             findNavController().navigate(
                 AllProjectsListFragmentDirections.actionAllProjectsListFragmentToCreateProjectFragment(
                     args.category
@@ -235,14 +224,14 @@ class AllProjectsListFragment :
             )
         }
         setAddProjectButtonVisibility()
-        projectSwipeRefresh.setOnRefreshListener {
-            // a lehúzás csak az usert tölti újra, a projektek maguktól frissülnek
+        binding.projectSwipeRefresh.setOnRefreshListener {
+            // a lehúzás csak az usert tölti újra, a mancsok maguktól frissülnek
             adapter = getAdapter()
-            recyclerView.adapter = adapter
+            binding.recyclerView.adapter = adapter
             refreshCurrentUserAndUserModel(
                 this.requireContext()
             ) { setAddProjectButtonVisibility() }
-            projectSwipeRefresh.isRefreshing = false
+            binding.projectSwipeRefresh.isRefreshing = false
         }
     }
 
@@ -272,9 +261,9 @@ class AllProjectsListFragment :
 
     private fun setAddProjectButtonVisibility() {
         if (userModel.isCreator || userModel.admin) {
-            addProjectButton.visibility = View.VISIBLE
+            binding.addProjectButton.visibility = View.VISIBLE
         } else {
-            addProjectButton.visibility = View.INVISIBLE
+            binding.addProjectButton.visibility = View.INVISIBLE
         }
     }
 }

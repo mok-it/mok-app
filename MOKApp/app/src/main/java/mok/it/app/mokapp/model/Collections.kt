@@ -8,6 +8,5 @@ object Collections {
     const val commentsRelativePath = "comments"
     const val achievements = "/achievementsTest"
 
-    //var projects = "projects${Config.getSeason()}"
-    var projects = "projects2024"
+    lateinit var projects: String
 }

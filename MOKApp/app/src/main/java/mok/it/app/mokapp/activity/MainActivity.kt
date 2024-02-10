@@ -18,7 +18,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -38,11 +37,12 @@ class MainActivity : AppCompatActivity() {
     private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
     private lateinit var navHeaderBinding: NavHeaderBinding
-    private val backDrawerCallback = object: OnBackPressedCallback(false) {
+    private val backDrawerCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
@@ -96,16 +96,19 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupBackPressed() {
         onBackPressedDispatcher.addCallback(this, backDrawerCallback)
-        binding.drawerLayout.addDrawerListener(object : DrawerListener{
+        binding.drawerLayout.addDrawerListener(object : DrawerListener {
             override fun onDrawerOpened(drawerView: View) {
                 backDrawerCallback.isEnabled = true
             }
+
             override fun onDrawerClosed(drawerView: View) {
                 backDrawerCallback.isEnabled = false
             }
+
             override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
                 //Must be overridden but not used
             }
+
             override fun onDrawerStateChanged(newState: Int) {
                 //Must be overridden but not used
             }

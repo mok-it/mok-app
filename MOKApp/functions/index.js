@@ -4,28 +4,58 @@ const functions = require("firebase-functions");
 const admin = require("firebase-admin");
 const { _refWithOptions } = require("firebase-functions/v1/database");
 const { log } = require("firebase-functions/logger");
+const axios = require("axios");
 admin.initializeApp();
 
 const db = admin.firestore();
-
 // User létrehozásánál a userc collectionban létrehozzuk a neki megfelelő documentet a szükséges attribútumokkal
+// Ez csak akkor fut le, ha a user emailjet validalni tudjuk, hogy egy mokoshoz tartozik
 exports.createUser = functions.auth.user().onCreate((user) => {
-  log("user created", user.email, user.uid);
-  db.collection("users")
-    .doc(user.uid)
-    .set({
-      email: user.email,
-      name: user.displayName,
-      isCreator: false,
-      admin: false,
-      photoURL: user.photoURL,
-      joinedBadges: [],
-      collectedBadges: [],
-      categories: ["Univerzális"],
-      phoneNumber: user.phoneNumber ? user.phoneNumber : "",
-    });
-  return null;
+  // Check if the user's email matches your desired criteria.
+  GetMokMember(email).then((result) => {
+    if (result && /MOK/.test(result.mok_status)) {
+      // Email is valid, create the user.
+      log("user created", user.email, user.uid);
+      db.collection("users")
+        .doc(user.uid)
+        .set({
+          email: user.email,
+          name: user.displayName,
+          isCreator: false,
+          admin: false,
+          photoURL: user.photoURL,
+          joinedBadges: [],
+          collectedBadges: [],
+          categories: ["Univerzális"],
+          phoneNumber: result.phone ? result.phone : "",
+        });
+    } else {
+      // Email is not valid, delete the user.
+      return admin.auth().deleteUser(user.uid);
+    }
+  });
 });
+
+async function GetMokMember(email) {
+  try {
+    const apiUrl = "https://nevezes.medvematek.hu/api/MOKAuthenticate/";
+    const requestBody = { email: email };
+
+    const response = await axios.post(apiUrl, requestBody);
+
+    if (response.status === 200) {
+      return response.data;
+    } else {
+      // Handle the case when the API request is not successful (e.g., it's not a 200 response).
+      log("API request failed, response code is not 200:", response.statusText);
+      return null;
+    }
+  } catch (error) {
+    // Handle any other errors that may occur during the request.
+    log("An error occurred:", error.message);
+    return null;
+  }
+}
 
 // Ha törlünk egy usert, a neki megfelelő dokumentum is törlődik a users collectionból
 // Kérdés, hogy élesben kell-e ez nekünk, mert így véletlen törlésnél elvesznek az adatok

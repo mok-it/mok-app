@@ -1,6 +1,7 @@
 package mok.it.app.mokapp.fragments
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -28,6 +29,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
+import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.FragmentDetailsBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
@@ -71,7 +73,7 @@ class DetailsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
@@ -144,11 +146,11 @@ class DetailsFragment : Fragment() {
                 )
             }
         }
-        binding.joinButton.setOnClickListener {
-            join()
+        binding.joinOrLeaveProjectButton.setOnClickListener {
+            joinOrLeaveButtonPressed()
             refreshCurrentUserAndUserModel(requireContext())
         }
-        binding.joinButton.visibility = View.GONE
+        binding.joinOrLeaveProjectButton.visibility = View.GONE
         binding.projectComments.setOnClickListener {
             val action =
                 DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.projectId)
@@ -160,14 +162,16 @@ class DetailsFragment : Fragment() {
                 binding.projectName.text = project.name
                 binding.categoryName.text =
                     getString(R.string.specific_category, project.categoryEnum)
-                binding.badgeValueTextView.text = getString(R.string.specific_value, project.maxBadges)
+                binding.badgeValueTextView.text =
+                    getString(R.string.specific_value, project.maxBadges)
                 binding.projectCreateDescription.text = project.description
 
                 Firebase.firestore.collection(Collections.users)
                     .document(project.creator)
                     .get().addOnSuccessListener { creatorDoc ->
                         if (creatorDoc?.get("name") != null) {
-                            binding.projectCreator.text = creatorDoc["name"] as String //TODO NPE itt is
+                            binding.projectCreator.text =
+                                creatorDoc["name"] as String //TODO NPE itt is
                         }
                         val formatter = getDateInstance()
                         binding.projectDeadline.text =
@@ -184,7 +188,8 @@ class DetailsFragment : Fragment() {
                                 override fun onSuccess() {
                                     // save image
                                     Log.i(TAG, "saving badge icon " + iconFile.path)
-                                    val bitmap: Bitmap = binding.avatarImagebutton.drawable.toBitmap()
+                                    val bitmap: Bitmap =
+                                        binding.avatarImagebutton.drawable.toBitmap()
                                     val fos: FileOutputStream?
                                     try {
                                         fos = FileOutputStream(iconFile)
@@ -200,7 +205,8 @@ class DetailsFragment : Fragment() {
                                     Log.e(TAG, e.toString())
                                 }
                             }
-                            Picasso.get().load(project.icon).into(binding.avatarImagebutton, callback)
+                            Picasso.get().load(project.icon)
+                                .into(binding.avatarImagebutton, callback)
                         }
 
                         val editors = project.leaders
@@ -263,50 +269,96 @@ class DetailsFragment : Fragment() {
 
     }
 
-    private fun join() {
-        binding.joinButton.isEnabled = false
-        if (userModel.joinedBadges.contains(args.projectId)) {
-            UserService.removeUserFromProject(
-                args.projectId,
-                userModel.documentId,
-                {
-                    Log.i(TAG, "Removing ${userModel.documentId} from project ${args.projectId}")
-                    Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT).show()
-                    refreshCurrentUserAndUserModel(requireContext())
-                    getMemberIds()
-                },
-                {
-                    Toast.makeText(
-                        context,
-                        "A lecsatlakozás sikertelen, kérlek próbáld újra később.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            )
-        } else {
-            UserService.joinUsersToProject(
-                args.projectId,
-                listOf(userModel.documentId),
-                {
-                    Log.i(TAG, "Adding ${userModel.documentId} to project ${args.projectId}")
-                    Toast.makeText(context, "Sikeresen csatlakoztál!", Toast.LENGTH_SHORT).show()
-                    refreshCurrentUserAndUserModel(requireContext())
-                    getMemberIds()
-                },
-                {
-                    Toast.makeText(
-                        context,
-                        "A csatlakozás sikertelen, kérlek próbáld újra később.",
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            )
+    private fun joinOrLeaveButtonPressed() {
+        if (userModel.joinedBadges.contains(args.projectId)) { //dialog to leave project
+            (context as Activity).let {
+                MaterialDialog.Builder(it)
+                    .setTitle(it.getString(R.string.leave_project))
+                    .setMessage(it.getString(R.string.leave_project_message))
+                    .setPositiveButton(it.getString(R.string.yes)) { dialogInterface, _ ->
+                        leaveProject()
+                        dialogInterface.dismiss()
+                    }
+                    .setNegativeButton(it.getString(R.string.cancel)) { dialogInterface, _ ->
+                        dialogInterface.dismiss()
+                    }
+                    .build()
+                    .show()
+            }
+        } else { // dialog to join project
+            (context as Activity).let {
+                MaterialDialog.Builder(it)
+                    .setTitle(it.getString(R.string.join_project))
+                    .setMessage(it.getString(R.string.join_project_message, project.name))
+                    .setPositiveButton(it.getString(R.string.yes)) { dialogInterface, _ ->
+                        joinProject()
+                        dialogInterface.dismiss()
+                    }
+                    .setNegativeButton(it.getString(R.string.cancel)) { dialogInterface, _ ->
+                        dialogInterface.dismiss()
+                    }
+                    .build()
+                    .show()
+            }
         }
+    }
+
+    private fun joinProject() {
+        UserService.joinUsersToProject(
+            args.projectId,
+            listOf(userModel.documentId),
+            {
+                Log.i(
+                    TAG,
+                    "Adding ${userModel.documentId} to project ${args.projectId}"
+                )
+                Toast.makeText(
+                    context,
+                    "Sikeresen csatlakoztál!",
+                    Toast.LENGTH_SHORT
+                ).show()
+                refreshCurrentUserAndUserModel(requireContext())
+                getMemberIds()
+                changeVisibilities()
+            },
+            {
+                Toast.makeText(
+                    context,
+                    "A csatlakozás sikertelen, kérlek próbáld újra később.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        )
 
         MyFirebaseMessagingService.sendNotificationToUsersById(
             "Csatlakoztak egy projekthez",
             "${userModel.name} csatlakozott a(z) \"${project.name}\" nevű mancshoz!",
             listOf(project.creator + project.leaders)
+        )
+    }
+
+    private fun leaveProject() {
+        UserService.removeUserFromProject(
+            args.projectId,
+            userModel.documentId,
+            {
+                Log.i(
+                    TAG,
+                    "Removing ${userModel.documentId} from project ${args.projectId}"
+                )
+                Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT)
+                    .show()
+                refreshCurrentUserAndUserModel(requireContext())
+                getMemberIds()
+                changeVisibilities()
+            },
+            {
+                Toast.makeText(
+                    context,
+                    "A lecsatlakozás sikertelen, kérlek próbáld újra később.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
         )
     }
 
@@ -322,11 +374,11 @@ class DetailsFragment : Fragment() {
                     viewModel.getMembers(model.members)
                     Log.d(TAG, "Model data: $model")
                     changeVisibilities()
-                    binding.joinButton.isEnabled = true
+                    binding.joinOrLeaveProjectButton.isEnabled = true
                 } else {
                     Log.d(TAG, "No such document or data is null")
                     changeVisibilities()
-                    binding.joinButton.isEnabled = true
+                    binding.joinOrLeaveProjectButton.isEnabled = true
                 }
             }
     }
@@ -396,13 +448,15 @@ class DetailsFragment : Fragment() {
     }
 
     private fun changeVisibilities() {
-        binding.joinButton.visibility = View.VISIBLE
+        binding.joinOrLeaveProjectButton.visibility = View.VISIBLE
         when {
-            userModel.collectedBadges.contains(project.id) -> binding.joinButton.visibility = View.GONE
-            userModel.joinedBadges.contains(project.id) -> binding.joinButton.text =
+            userModel.collectedBadges.contains(project.id) -> binding.joinOrLeaveProjectButton.visibility =
+                View.GONE
+
+            userModel.joinedBadges.contains(project.id) -> binding.joinOrLeaveProjectButton.text =
                 getString(R.string.leave)
 
-            else -> binding.joinButton.text = getString(R.string.join)
+            else -> binding.joinOrLeaveProjectButton.text = getString(R.string.join)
         }
 
         if (project.leaders.contains(userModel.documentId)) {

@@ -119,8 +119,8 @@
                     android:id="@+id/rewardButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:contentDescription="@string/rewards"
                     android:layout_marginTop="8dp"
+                    android:contentDescription="@string/rewards"
                     android:src="@drawable/ic_star"
                     android:visibility="gone"
                     app:layout_constraintEnd_toEndOf="parent"
@@ -278,7 +278,7 @@
                 android:layout_height="match_parent">
 
                 <Button
-                    android:id="@+id/join_button"
+                    android:id="@+id/join_or_leave_project_button"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"

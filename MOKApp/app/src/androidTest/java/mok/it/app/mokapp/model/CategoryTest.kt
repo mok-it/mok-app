@@ -1,32 +1,17 @@
 package mok.it.app.mokapp.model
 
+import mok.it.app.mokapp.utility.Utility.unaccent
 import org.junit.Assert
 import org.junit.Test
 import java.util.Locale
 
 class CategoryTest {
 
-    fun replaceHungarianCharsToEnglishUpperCase(word: String): String {
-        val retVal = StringBuilder()
-        for (character in word.toCharArray()) {
-            // Ellenőrizzük, hogy a karakter ékezetes-e.
-            when (character) {
-                'Ö', 'Ő', 'Ó' -> retVal.append('O')
-                'Ü', 'Ű', 'Ú' -> retVal.append('U')
-                'É' -> retVal.append('E')
-                'Á' -> retVal.append('A')
-                'Í' -> retVal.append('I')
-                else -> retVal.append(character)
-            }
-        }
-        return retVal.toString()
-    }
-
     @Test
     fun testUniversalis() {
         val upperCaseWithoutSpace =
             Category.UNIVERZALIS.toString().uppercase(Locale.getDefault()).replace(" ", "")
-        val result = replaceHungarianCharsToEnglishUpperCase(upperCaseWithoutSpace)
+        val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("UNIVERZALIS", result)
     }
 
@@ -34,7 +19,7 @@ class CategoryTest {
     fun testSzervezetFejlesztes() {
         val upperCaseWithoutSpace =
             Category.SZERVEZETFEJLESZTES.toString().uppercase(Locale.getDefault()).replace(" ", "")
-        val result = replaceHungarianCharsToEnglishUpperCase(upperCaseWithoutSpace)
+        val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("SZERVEZETFEJLESZTES", result)
     }
 
@@ -42,7 +27,7 @@ class CategoryTest {
     fun testFeladatsor() {
         val upperCaseWithoutSpace =
             Category.FELADATSOR.toString().uppercase(Locale.getDefault()).replace(" ", "")
-        val result = replaceHungarianCharsToEnglishUpperCase(upperCaseWithoutSpace)
+        val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("FELADATSOR", result)
     }
 
@@ -50,7 +35,7 @@ class CategoryTest {
     fun testMediaEsDIV() {
         val upperCaseWithoutSpace =
             Category.MEDIAESDIY.toString().uppercase(Locale.getDefault()).replace(" ", "")
-        val result = replaceHungarianCharsToEnglishUpperCase(upperCaseWithoutSpace)
+        val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("MEDIAESDIY", result)
     }
 
@@ -59,7 +44,7 @@ class CategoryTest {
         val upperCaseWithoutSpace =
             Category.TABORIPROGRAMESELOKESZITES.toString().uppercase(Locale.getDefault())
                 .replace(" ", "")
-        val result = replaceHungarianCharsToEnglishUpperCase(upperCaseWithoutSpace)
+        val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("TABORIPROGRAMESELOKESZITES", result)
     }
 
@@ -67,7 +52,7 @@ class CategoryTest {
     fun testIT() {
         val upperCaseWithoutSpace =
             Category.IT.toString().uppercase(Locale.getDefault()).replace(" ", "")
-        val result = replaceHungarianCharsToEnglishUpperCase(upperCaseWithoutSpace)
+        val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("IT", result)
     }
 
@@ -75,7 +60,7 @@ class CategoryTest {
     fun testPedagogia() {
         val upperCaseWithoutSpace =
             Category.PEDAGOGIA.toString().uppercase(Locale.getDefault()).replace(" ", "")
-        val result = replaceHungarianCharsToEnglishUpperCase(upperCaseWithoutSpace)
+        val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("PEDAGOGIA", result)
     }
 
@@ -84,7 +69,7 @@ class CategoryTest {
         val upperCaseWithoutSpace =
             Category.NYARITABORIELOKESZITES.toString().uppercase(Locale.getDefault())
                 .replace(" ", "")
-        val result = replaceHungarianCharsToEnglishUpperCase(upperCaseWithoutSpace)
+        val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("NYARITABORIELOKESZITES", result)
     }
 
@@ -93,7 +78,7 @@ class CategoryTest {
         val upperCaseWithoutSpace =
             Category.EVKOZITABORIELOKESZITES.toString().uppercase(Locale.getDefault())
                 .replace(" ", "")
-        val result = replaceHungarianCharsToEnglishUpperCase(upperCaseWithoutSpace)
+        val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("EVKOZITABORIELOKESZITES", result)
     }
 }

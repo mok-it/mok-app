@@ -8,7 +8,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.CardProjectCategoryBinding
 import mok.it.app.mokapp.model.Project
 
 class ProjectCategoriesAdapter(
@@ -17,23 +17,21 @@ class ProjectCategoriesAdapter(
     private val listener: ProjectsAdapter.ProjectClickedListener
 ) :
 
-    RecyclerView.Adapter<ProjectCategoriesAdapter.ViewHolder>() {
+    RecyclerView.Adapter<ProjectCategoryViewHolder>() {
 
     var context: Context? = null
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
+    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int) =
+        ProjectCategoryViewHolder (
+        CardProjectCategoryBinding
+            .inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
+        )
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.card_project_category, viewGroup, false)
-        return ViewHolder(view)
-    }
-
-    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val catNameTv: TextView = viewHolder.itemView.findViewById(R.id.project_category_name)
-        val catEmptyTv: TextView = viewHolder.itemView.findViewById(R.id.no_completed_projects)
+    override fun onBindViewHolder(holder: ProjectCategoryViewHolder, position: Int) {
+        val catNameTv: TextView = holder.binding.projectCategoryName
+        val catEmptyTv: TextView = holder.binding.noCompletedProjects
         val collectedBadgesRV: RecyclerView =
-            viewHolder.itemView.findViewById(R.id.completed_projects)
+            holder.binding.completedProjects
 
         catNameTv.text = categoryNames[position]
 

@@ -9,29 +9,26 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.squareup.picasso.Picasso
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.CardMyProjectBinding
 import mok.it.app.mokapp.model.Project
 
 class ProjectsAdapter(
     private val dataSet: List<Pair<Project, Int>>,
     private val listener: ProjectClickedListener
 ) :
-    RecyclerView.Adapter<ProjectsAdapter.ViewHolder>() {
+    RecyclerView.Adapter<MyProjectViewHolder>() {
 
     var context: Context? = null
 
-    class ViewHolder(view: View) : RecyclerView.ViewHolder(view)
+    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int) = MyProjectViewHolder(
+         CardMyProjectBinding.inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
+    )
 
-    override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(viewGroup.context)
-            .inflate(R.layout.card_my_project, viewGroup, false)
-        return ViewHolder(view)
-    }
-
-    override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
+    override fun onBindViewHolder(viewHolder: MyProjectViewHolder, position: Int) {
         val projectValuePair = dataSet[position]
-        val ivImg: ImageView = viewHolder.itemView.findViewById(R.id.imageView)
-        val tvBadgeName: TextView = viewHolder.itemView.findViewById(R.id.projectName)
-        val tvCollectedBadgeCount: TextView = viewHolder.itemView.findViewById((R.id.collectedBadgeCount))
+        val ivImg: ImageView = viewHolder.binding.imageView
+        val tvBadgeName: TextView = viewHolder.binding.projectName
+        val tvCollectedBadgeCount: TextView = viewHolder.binding.collectedBadgeCount
         loadImage(ivImg, projectValuePair.first.icon)
         tvBadgeName.text = projectValuePair.first.name
         tvCollectedBadgeCount.text = projectValuePair.second.toString()

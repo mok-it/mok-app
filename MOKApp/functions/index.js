@@ -10,7 +10,7 @@ const db = admin.firestore();
 // Ez csak akkor fut le, ha a user emailjet validalni tudjuk, hogy egy mokoshoz tartozik
 exports.createUser = functions.auth.user().onCreate((user) => {
   // Check if the user's email matches your desired criteria.
-  GetMokMember(email).then((result) => {
+  GetMokMember(user.email).then((result) => {
     if (result && /MOK/.test(result.mok_status)) {
       // Email is valid, create the user.
       log("user created", user.email, user.uid);

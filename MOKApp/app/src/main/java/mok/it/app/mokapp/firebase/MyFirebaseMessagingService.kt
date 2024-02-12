@@ -28,7 +28,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             require(adresseeUserIdList.size <= 10)
             { "too many users to send notification to (the limit is 10)" }
 
-            Firebase.firestore.collection(Collections.users)
+            Firebase.firestore.collection(Collections.USERS)
                 .whereIn(FieldPath.documentId(), adresseeUserIdList)
                 .get().addOnSuccessListener { documents ->
                     val addresseeUserList = ArrayList<User>()
@@ -50,7 +50,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             return
             TODO("doesn't work correctly yet, npe")
             adresseeUserList.toHashSet().forEach { addresseeUser ->
-                Firebase.firestore.collection(Collections.users).document(addresseeUser.documentId)
+                Firebase.firestore.collection(Collections.USERS).document(addresseeUser.documentId)
                     .get().addOnSuccessListener { document ->
                         val fcmToken = document["FCMtokens"] as List<*>
                         Log.d(TAG, "fcmtoken: ${fcmToken[0]}")
@@ -97,7 +97,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         Log.d(TAG, "Refreshed token: $token")
         currentUser?.apply {
-            Firebase.firestore.collection(Collections.users).document(this.uid)
+            Firebase.firestore.collection(Collections.USERS).document(this.uid)
                 .update("FCMtokens", token)
                 .addOnSuccessListener {
                     Log.d(TAG, "onNewToken: token uploaded to firestore")

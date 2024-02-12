@@ -41,7 +41,6 @@ import mok.it.app.mokapp.model.Filter
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
-import mok.it.app.mokapp.utility.Config
 import mok.it.app.mokapp.utility.Utility.getIconFileName
 import mok.it.app.mokapp.utility.Utility.loadImage
 import java.io.File
@@ -209,39 +208,37 @@ class AllProjectsListFragment :
     }
 
     private fun initRecyclerView() {
-        Config.setSeason {
-            var adapter = getAdapter()
-            adapter.stateRestorationPolicy =
-                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+        var adapter = getAdapter()
+        adapter.stateRestorationPolicy =
+            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
 
-            binding.recyclerView.adapter = adapter
-            binding.recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
-            binding.addProjectButton
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
+        binding.addProjectButton
 
-            binding.addProjectButton.setOnClickListener {
-                findNavController().navigate(
-                    AllProjectsListFragmentDirections.actionAllProjectsListFragmentToCreateProjectFragment(
-                        args.category
-                    )
+        binding.addProjectButton.setOnClickListener {
+            findNavController().navigate(
+                AllProjectsListFragmentDirections.actionAllProjectsListFragmentToCreateProjectFragment(
+                    args.category
                 )
-            }
-            setAddProjectButtonVisibility()
-            binding.projectSwipeRefresh.setOnRefreshListener {
-                // a lehúzás csak az usert tölti újra, a mancsok maguktól frissülnek
-                adapter = getAdapter()
-                binding.recyclerView.adapter = adapter
-                refreshCurrentUserAndUserModel(
-                    this.requireContext()
-                ) { setAddProjectButtonVisibility() }
-                binding.projectSwipeRefresh.isRefreshing = false
-            }
+            )
+        }
+        setAddProjectButtonVisibility()
+        binding.projectSwipeRefresh.setOnRefreshListener {
+            // a lehúzás csak az usert tölti újra, a mancsok maguktól frissülnek
+            adapter = getAdapter()
+            binding.recyclerView.adapter = adapter
+            refreshCurrentUserAndUserModel(
+                this.requireContext()
+            ) { setAddProjectButtonVisibility() }
+            binding.projectSwipeRefresh.isRefreshing = false
         }
     }
 
     private fun getFilteredQuery(): Query {
         //itt szűrünk kategóriákra
         var query =
-            Firebase.firestore.collection(Collections.projects)
+            Firebase.firestore.collection(Collections.PROJECTS)
                 .orderBy("category", Query.Direction.ASCENDING)
                 .orderBy("name", Query.Direction.ASCENDING)
         if (filter.mandatory) {

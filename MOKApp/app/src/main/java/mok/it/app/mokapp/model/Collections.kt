@@ -1,12 +1,15 @@
 package mok.it.app.mokapp.model
 
-object Collections {
-    const val links = "/links"
-    const val rewardrequests = "/rewardrequests2024"
-    const val rewards = "/rewards"
-    const val users = "/users"
-    const val commentsRelativePath = "comments"
-    const val achievements = "/achievementsTest"
+import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.remoteConfig
 
-    lateinit var projects: String
+object Collections {
+    const val LINKS = "/links"
+    const val REWARDS = "/rewards"
+    const val USERS = "/users"
+    const val COMMENTS = "/comments"
+    const val ACHIEVMENTS = "/achievementsTest"
+
+    val REWARDREQUESTS = "/rewardrequests" + Firebase.remoteConfig.getString("season")
+    val PROJECTS: String = "projects" + Firebase.remoteConfig.getString("season")
 }

@@ -18,7 +18,7 @@ object UserService : IUserService {
         onComplete: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        val userDocumentRef = Firebase.firestore.collection(Collections.users)
+        val userDocumentRef = Firebase.firestore.collection(Collections.USERS)
             .document(userId)
 
         userDocumentRef.get().addOnSuccessListener { documentSnapshot ->
@@ -49,7 +49,7 @@ object UserService : IUserService {
         onComplete: (Int) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        val userDocumentRef = Firebase.firestore.collection(Collections.users)
+        val userDocumentRef = Firebase.firestore.collection(Collections.USERS)
             .document(userId)
 
         userDocumentRef.get().addOnSuccessListener { documentSnapshot ->
@@ -76,7 +76,7 @@ object UserService : IUserService {
         onComplete: (Map<String, Int>) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        val userDocumentRef = Firebase.firestore.collection(Collections.users)
+        val userDocumentRef = Firebase.firestore.collection(Collections.USERS)
             .document(userId)
 
         userDocumentRef.get().addOnSuccessListener { documentSnapshot ->
@@ -99,7 +99,7 @@ object UserService : IUserService {
         onComplete: (Map<String, Int>) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        val usersCollectionRef = Firebase.firestore.collection(Collections.users)
+        val usersCollectionRef = Firebase.firestore.collection(Collections.USERS)
 
         usersCollectionRef.whereGreaterThan("projectBadges.$projectId", 0)
             .get()
@@ -133,10 +133,10 @@ object UserService : IUserService {
     ) {
         val batch = Firebase.firestore.batch()
         val projectDocumentRef = Firebase.firestore
-            .collection(Collections.projects).document(projectId)
+            .collection(Collections.PROJECTS).document(projectId)
 
         for (userId in userIds) {
-            val userDocumentRef = Firebase.firestore.collection(Collections.users).document(userId)
+            val userDocumentRef = Firebase.firestore.collection(Collections.USERS).document(userId)
             batch.update(userDocumentRef, "joinedBadges", FieldValue.arrayUnion(projectId))
             batch.update(projectDocumentRef, "members", FieldValue.arrayUnion(userId))
             batch.update(userDocumentRef, "projectBadges.$projectId", 0)
@@ -159,16 +159,16 @@ object UserService : IUserService {
     ) {
         val batch = Firebase.firestore.batch()
         val projectDocumentRef = Firebase.firestore
-            .collection(Collections.projects).document(projectId)
+            .collection(Collections.PROJECTS).document(projectId)
 
-        val userDocumentRef = Firebase.firestore.collection(Collections.users).document(userId)
+        val userDocumentRef = Firebase.firestore.collection(Collections.USERS).document(userId)
 
         userDocumentRef.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
 
                 batch.update(userDocumentRef, "projectBadges.$projectId", FieldValue.delete())
                 Log.d("UserService", "Project badges remove from user")
-                
+
                 batch.update(userDocumentRef, "joinedBadges", FieldValue.arrayRemove(projectId))
                 batch.update(projectDocumentRef, "members", FieldValue.arrayRemove(userId))
 
@@ -194,10 +194,10 @@ object UserService : IUserService {
     ) {
         val projectsList = mutableListOf<Project>()
 
-        val userDocumentRef = Firebase.firestore.collection(Collections.users)
+        val userDocumentRef = Firebase.firestore.collection(Collections.USERS)
             .document(userId)
 
-        val projectsCollectionRef = Firebase.firestore.collection(Collections.projects)
+        val projectsCollectionRef = Firebase.firestore.collection(Collections.PROJECTS)
         projectsCollectionRef.get()
             .addOnSuccessListener { querySnapshot ->
                 for (document in querySnapshot.documents) {
@@ -244,19 +244,19 @@ object UserService : IUserService {
     fun capProjectBadges(projectId: String) {
         val db = Firebase.firestore
 
-        db.collection(Collections.projects).document(projectId).get()
+        db.collection(Collections.PROJECTS).document(projectId).get()
             .addOnSuccessListener { projectSnapshot ->
                 val project = projectSnapshot.toObject(Project::class.java)
 
                 project?.members?.forEach { userId ->
-                    db.collection(Collections.users).document(userId).get()
+                    db.collection(Collections.USERS).document(userId).get()
                         .addOnSuccessListener { userSnapshot ->
                             val user = userSnapshot.toObject(User::class.java)
 
                             user?.projectBadges?.get(projectId)?.let { projectBadgeValue ->
                                 user.projectBadges[projectId] =
                                     min(projectBadgeValue, project.maxBadges)
-                                db.collection(Collections.users).document(userId).set(user)
+                                db.collection(Collections.USERS).document(userId).set(user)
                             }
                         }
                 }
@@ -268,7 +268,7 @@ object UserService : IUserService {
         category: String,
         onComplete: (Boolean) -> Unit
     ) {
-        val projectDocumentRef = Firebase.firestore.collection(Collections.projects)
+        val projectDocumentRef = Firebase.firestore.collection(Collections.PROJECTS)
             .document(projectId)
 
         projectDocumentRef.get()

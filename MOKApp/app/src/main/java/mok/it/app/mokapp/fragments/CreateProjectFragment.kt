@@ -62,7 +62,8 @@ open class CreateProjectFragment : DialogFragment() {
     }
 
     private fun initializeDropdown() {
-        val adapter = ArrayAdapter(requireContext(), R.layout.mcs_dropdown_item,
+        val adapter = ArrayAdapter(
+            requireContext(), R.layout.mcs_dropdown_item,
             Category.entries.toTypedArray()
         )
         binding.projectTerulet.setAdapter(adapter)
@@ -144,7 +145,11 @@ open class CreateProjectFragment : DialogFragment() {
         Log.d("Create desc", binding.projectDescription.text.toString())
         Log.d("Create creator", userModel.documentId)
         Log.d("Create category", args.category.toString())
-        val deadline = Date(binding.datePicker.year - 1900, binding.datePicker.month, binding.datePicker.dayOfMonth)
+        val deadline = Date(
+            binding.datePicker.year - 1900,
+            binding.datePicker.month,
+            binding.datePicker.dayOfMonth
+        )
         Log.d("Create date", deadline.toString())
         Log.d("Create editors", selectedEditors.toString())
         Log.d("Create value", binding.tvBadgeValue.text.toString())
@@ -163,7 +168,7 @@ open class CreateProjectFragment : DialogFragment() {
             "mandatory" to false
 
         )
-        firestore.collection(Collections.projects)
+        firestore.collection(Collections.PROJECTS)
             .add(newBadge)
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
@@ -293,11 +298,6 @@ open class CreateProjectFragment : DialogFragment() {
             }
             .create()
             .show()
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-//        _binding = null
     }
 
     companion object {

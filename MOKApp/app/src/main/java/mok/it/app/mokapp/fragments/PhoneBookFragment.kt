@@ -66,7 +66,7 @@ class PhoneBookFragment : Fragment() {
     private fun initializeAdapter() {
         val options: FirestoreRecyclerOptions<User?> = FirestoreRecyclerOptions.Builder<User>()
             .setQuery(
-                Firebase.firestore.collection(Collections.users).orderBy("name"),
+                Firebase.firestore.collection(Collections.USERS).orderBy("name"),
                 User::class.java
             )
             .build()
@@ -75,8 +75,12 @@ class PhoneBookFragment : Fragment() {
             object : FirestoreRecyclerAdapter<User?, PhoneBookViewHolder?>(options) {
                 lateinit var context: Context
 
-                override fun onCreateViewHolder(parent: ViewGroup, i: Int) = PhoneBookViewHolder (
-                    CardPhonebookItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                override fun onCreateViewHolder(parent: ViewGroup, i: Int) = PhoneBookViewHolder(
+                    CardPhonebookItemBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
                 )
 
                 override fun onBindViewHolder(

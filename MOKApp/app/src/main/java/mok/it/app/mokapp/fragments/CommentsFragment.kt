@@ -49,8 +49,8 @@ class CommentsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val query =
-            Firebase.firestore.collection(Collections.projects).document(args.projectId)
-                .collection(Collections.commentsRelativePath)
+            Firebase.firestore.collection(Collections.PROJECTS).document(args.projectId)
+                .collection(Collections.COMMENTS)
                 .orderBy("time", Query.Direction.DESCENDING)
         val options =
             FirestoreRecyclerOptions.Builder<Comment>()
@@ -61,8 +61,8 @@ class CommentsFragment : Fragment() {
                 override fun onCreateViewHolder(
                     parent: ViewGroup,
                     viewType: Int
-                ) = CommentViewHolder (
-                   CardCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ) = CommentViewHolder(
+                    CardCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 )
 
                 override fun onBindViewHolder(
@@ -76,7 +76,7 @@ class CommentsFragment : Fragment() {
                     tvTimestamp.text = formatter.format(model.time.toDate())
                     tvText.text = model.text
 
-                    Firebase.firestore.collection(Collections.users).document(model.uid).get()
+                    Firebase.firestore.collection(Collections.USERS).document(model.uid).get()
                         .addOnSuccessListener { document ->
                             if (document != null) {
                                 val user: User? = document.toObject(User::class.java)
@@ -104,14 +104,14 @@ class CommentsFragment : Fragment() {
         binding.sendCommentFab.setOnClickListener {
             if (binding.commentEditText.text.toString() != "") {
                 val comment = Comment(
-                    Collections.commentsRelativePath,
+                    Collections.COMMENTS,
                     binding.commentEditText.text.toString(),
                     Timestamp.now(),
                     FirebaseAuth.getInstance().currentUser!!.uid
                 )
 
-                Firebase.firestore.collection(Collections.projects).document(args.projectId)
-                    .collection(Collections.commentsRelativePath)
+                Firebase.firestore.collection(Collections.PROJECTS).document(args.projectId)
+                    .collection(Collections.COMMENTS)
                     .add(comment).addOnSuccessListener { documentReference ->
                         Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
                     }.addOnFailureListener { e ->

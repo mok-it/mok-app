@@ -65,7 +65,8 @@ class RewardsFragment : Fragment() {
     }
 
     private fun updateUI() {
-        binding.pointsText.text = getString(R.string.my_badges_count, userModel.projectBadges.values.sum())
+        binding.pointsText.text =
+            getString(R.string.my_badges_count, userModel.projectBadges.values.sum())
         binding.spentPointsText.text = getString(R.string.my_spent_badges_count, userModel.points)
         initializeAdapter()
     }
@@ -73,7 +74,7 @@ class RewardsFragment : Fragment() {
     private fun initializeAdapter() {
         val options: FirestoreRecyclerOptions<Reward?> = FirestoreRecyclerOptions.Builder<Reward>()
             .setQuery(
-                Firebase.firestore.collection(Collections.rewards)
+                Firebase.firestore.collection(Collections.REWARDS)
                     .orderBy("price", Query.Direction.ASCENDING),
                 Reward::class.java
             )
@@ -83,7 +84,7 @@ class RewardsFragment : Fragment() {
             object : FirestoreRecyclerAdapter<Reward?, RewardViewHolder?>(options) {
                 var context: Context? = null
 
-                override fun onCreateViewHolder(parent: ViewGroup, i: Int) = RewardViewHolder (
+                override fun onCreateViewHolder(parent: ViewGroup, i: Int) = RewardViewHolder(
                     CardRewardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 )
 
@@ -156,7 +157,7 @@ class RewardsFragment : Fragment() {
             "created" to Date()
         )
         Firebase.firestore.runTransaction {
-            Firebase.firestore.collection(Collections.rewardrequests).add(request)
+            Firebase.firestore.collection(Collections.REWARDREQUESTS).add(request)
                 .addOnSuccessListener { documentRef ->
                     Log.d("Reward", "DocumentSnapshot written with ID: ${documentRef.id}")
                 }
@@ -165,7 +166,7 @@ class RewardsFragment : Fragment() {
                 }
 
             val userRef =
-                Firebase.firestore.collection(Collections.users).document(userModel.documentId)
+                Firebase.firestore.collection(Collections.USERS).document(userModel.documentId)
             userRef.update(
                 "requestedRewards", FieldValue.arrayUnion(reward.documentId),
                 "points", FieldValue.increment(-1 * reward.price.toDouble())

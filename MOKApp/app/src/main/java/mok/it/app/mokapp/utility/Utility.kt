@@ -22,11 +22,13 @@ object Utility {
         return "\\p{InCombiningDiacriticalMarks}+".toRegex().replace(temp, "")
     }
 
+    /**
+     * Create an icon file name from the URL by removing all non-alphanumeric characters
+     * @param iconURL the URL of the icon
+     * @return the file name of the icon
+     */
     fun getIconFileName(iconURL: String): String {
-        val re = Regex("[^A-Za-z\\d ]")
-        val alphanum = re.replace(iconURL, "")
-
-        return "$alphanum.png"
+        return iconURL.filter { it.isLetterOrDigit() || it.isWhitespace() } + ".png"
     }
 
     /**

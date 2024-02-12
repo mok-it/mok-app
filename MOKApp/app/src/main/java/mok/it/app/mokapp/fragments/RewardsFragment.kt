@@ -104,7 +104,6 @@ class RewardsFragment : Fragment() {
                         model.quantity > 0
                     ) {
                         holder.binding.requestButton.isEnabled = true
-                        holder.binding.rewardItem.isEnabled
                     }
                     
                     if (userModel.requestedRewards.contains(model.documentId)) {

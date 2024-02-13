@@ -65,7 +65,8 @@ class RewardsFragment : Fragment() {
     }
 
     private fun updateUI() {
-        binding.pointsText.text = getString(R.string.my_badges_count, userModel.projectBadges.values.sum())
+        binding.pointsText.text =
+            getString(R.string.my_badges_count, userModel.projectBadges.values.sum())
         binding.spentPointsText.text = getString(R.string.my_spent_badges_count, userModel.points)
         initializeAdapter()
     }
@@ -83,7 +84,7 @@ class RewardsFragment : Fragment() {
             object : FirestoreRecyclerAdapter<Reward?, RewardViewHolder?>(options) {
                 var context: Context? = null
 
-                override fun onCreateViewHolder(parent: ViewGroup, i: Int) = RewardViewHolder (
+                override fun onCreateViewHolder(parent: ViewGroup, i: Int) = RewardViewHolder(
                     CardRewardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 )
 
@@ -92,11 +93,16 @@ class RewardsFragment : Fragment() {
                     position: Int,
                     model: Reward
                 ) {
-                    val ivImg: ImageView = holder.binding.rewardImage
-                    Utility.loadImage(ivImg, model.icon, requireContext())
+                    Utility.loadImage(holder.binding.rewardImage, model.icon, requireContext())
                     holder.binding.rewardName.text = model.name
                     holder.binding.rewardPrice.text = model.price.toString()
-                    if (userModel.projectBadges.values.sum() - userModel.points.absoluteValue >= model.price) {
+                    holder.binding.rewardQuantityLeft.text =
+                        getString(R.string.quantity, model.quantity)
+
+                    // if the user has enough badges AND there is still some of the reward available:
+                    if (userModel.projectBadges.values.sum() - userModel.points.absoluteValue >= model.price &&
+                        model.quantity > 0
+                    ) {
                         holder.binding.requestButton.isEnabled = true
                     }
 
@@ -138,7 +144,7 @@ class RewardsFragment : Fragment() {
                 .setPositiveButton(
                     it.getString(R.string.ok), R.drawable.ic_check
                 ) { dialogInterface, _ ->
-                    rewardAccepted(reward)
+                    rewardRequestAccepted(reward)
                     dialogInterface.dismiss()
                 }
                 .setNegativeButton(
@@ -149,7 +155,7 @@ class RewardsFragment : Fragment() {
         }
     }
 
-    private fun rewardAccepted(reward: Reward) {
+    private fun rewardRequestAccepted(reward: Reward) {
         val request = hashMapOf(
             "user" to userModel.documentId,
             "reward" to reward.documentId,
@@ -157,6 +163,13 @@ class RewardsFragment : Fragment() {
             "created" to Date()
         )
         Firebase.firestore.runTransaction {
+            // substract 1 from the quantity of the reward
+            val rewardRef =
+                Firebase.firestore.collection(Collections.rewards).document(reward.documentId)
+            val newQuantity = reward.quantity - 1
+            rewardRef.update("quantity", newQuantity)
+
+
             Firebase.firestore.collection(Collections.rewardrequests).add(request)
                 .addOnSuccessListener { documentRef ->
                     Log.d("Reward", "DocumentSnapshot written with ID: ${documentRef.id}")

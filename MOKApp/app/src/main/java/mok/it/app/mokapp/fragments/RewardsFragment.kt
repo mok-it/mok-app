@@ -105,7 +105,7 @@ class RewardsFragment : Fragment() {
                     ) {
                         holder.binding.requestButton.isEnabled = true
                     }
-                    
+
                     if (userModel.requestedRewards.contains(model.documentId)) {
                         holder.binding.requestButton.visibility = View.GONE
                         holder.binding.achievedText.visibility = View.VISIBLE
@@ -140,7 +140,7 @@ class RewardsFragment : Fragment() {
         (activity as Activity).let {
             MaterialDialog.Builder(it)
                 .setTitle("Biztosan kéred a jutalmat?")
-                .setMessage("${reward.price} pont kerül majd levonásra tőled.")
+                .setMessage("${reward.price} mancs kerül majd levonásra tőled.")
                 .setPositiveButton(
                     it.getString(R.string.ok), R.drawable.ic_check
                 ) { dialogInterface, _ ->

@@ -1,5 +1,6 @@
 package mok.it.app.mokapp.fragments
 
+import android.app.Activity
 import android.content.Context
 import android.os.Bundle
 import android.util.Log
@@ -16,29 +17,31 @@ import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.card_reward.view.achievedText
-import kotlinx.android.synthetic.main.card_reward.view.requestButton
-import kotlinx.android.synthetic.main.card_reward.view.rewardName
-import kotlinx.android.synthetic.main.card_reward.view.rewardPrice
-import kotlinx.android.synthetic.main.fragment_rewards.pointsText
-import kotlinx.android.synthetic.main.fragment_rewards.recyclerView
+import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.CardRewardBinding
+import mok.it.app.mokapp.databinding.FragmentRewardsBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Reward
 import mok.it.app.mokapp.recyclerview.RewardViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import mok.it.app.mokapp.utility.Utility
 import java.util.Date
+import kotlin.math.absoluteValue
 
-class RewardsFragment : Fragment(), RewardAcceptDialogFragment.RewardAcceptListener {
+class RewardsFragment : Fragment() {
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
+    private lateinit var _binding: FragmentRewardsBinding
+    private val binding get() = _binding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_rewards, container, false)
+    ): View {
+        _binding = FragmentRewardsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onDestroyView() {
@@ -62,7 +65,9 @@ class RewardsFragment : Fragment(), RewardAcceptDialogFragment.RewardAcceptListe
     }
 
     private fun updateUI() {
-        pointsText.text = getString(R.string.my_points, userModel.points)
+        binding.pointsText.text =
+            getString(R.string.my_badges_count, userModel.projectBadges.values.sum())
+        binding.spentPointsText.text = getString(R.string.my_spent_badges_count, userModel.points)
         initializeAdapter()
     }
 
@@ -78,31 +83,36 @@ class RewardsFragment : Fragment(), RewardAcceptDialogFragment.RewardAcceptListe
         adapter =
             object : FirestoreRecyclerAdapter<Reward?, RewardViewHolder?>(options) {
                 var context: Context? = null
+
+                override fun onCreateViewHolder(parent: ViewGroup, i: Int) = RewardViewHolder(
+                    CardRewardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                )
+
                 override fun onBindViewHolder(
                     holder: RewardViewHolder,
                     position: Int,
                     model: Reward
                 ) {
-                    val ivImg: ImageView = holder.itemView.findViewById(R.id.rewardImage)
-                    loadImage(ivImg, model.icon)
-                    holder.itemView.rewardName.text = model.name
-                    holder.itemView.rewardPrice.text = model.price.toString()
-                    if (userModel.points >= model.price) {
-                        holder.itemView.requestButton.isEnabled = true
+                    Utility.loadImage(holder.binding.rewardImage, model.icon, requireContext())
+                    holder.binding.rewardName.text = model.name
+                    holder.binding.rewardPrice.text = model.price.toString()
+                    holder.binding.rewardQuantityLeft.text =
+                        getString(R.string.quantity, model.quantity)
+
+                    // if the user has enough badges AND there is still some of the reward available:
+                    if (userModel.projectBadges.values.sum() - userModel.points.absoluteValue >= model.price &&
+                        model.quantity > 0
+                    ) {
+                        holder.binding.requestButton.isEnabled = true
                     }
+
                     if (userModel.requestedRewards.contains(model.documentId)) {
-                        holder.itemView.requestButton.visibility = View.GONE
-                        holder.itemView.achievedText.visibility = View.VISIBLE
+                        holder.binding.requestButton.visibility = View.GONE
+                        holder.binding.achievedText.visibility = View.VISIBLE
                     }
-                    holder.itemView.requestButton.setOnClickListener {
+                    holder.binding.requestButton.setOnClickListener {
                         requestReward(model)
                     }
-                }
-
-                override fun onCreateViewHolder(group: ViewGroup, i: Int): RewardViewHolder {
-                    val view: View = LayoutInflater.from(group.context)
-                        .inflate(R.layout.card_reward, group, false)
-                    return RewardViewHolder(view)
                 }
 
                 override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
@@ -121,17 +131,31 @@ class RewardsFragment : Fragment(), RewardAcceptDialogFragment.RewardAcceptListe
                     }
                 }
             }
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager =
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager =
             WrapContentLinearLayoutManager(this.context)
     }
 
     private fun requestReward(reward: Reward) {
-        val dialog = RewardAcceptDialogFragment(this, reward)
-        dialog.show(parentFragmentManager, "NoticeDialogFragment")
+        (activity as Activity).let {
+            MaterialDialog.Builder(it)
+                .setTitle("Biztosan kéred a jutalmat?")
+                .setMessage("${reward.price} mancs kerül majd levonásra tőled.")
+                .setPositiveButton(
+                    it.getString(R.string.ok), R.drawable.ic_check
+                ) { dialogInterface, _ ->
+                    rewardRequestAccepted(reward)
+                    dialogInterface.dismiss()
+                }
+                .setNegativeButton(
+                    "Mégsem", R.drawable.ic_close_24
+                ) { dialogInterface, _ -> dialogInterface.dismiss() }
+                .build()
+                .show()
+        }
     }
 
-    override fun rewardAccepted(reward: Reward) {
+    private fun rewardRequestAccepted(reward: Reward) {
         val request = hashMapOf(
             "user" to userModel.documentId,
             "reward" to reward.documentId,
@@ -139,6 +163,13 @@ class RewardsFragment : Fragment(), RewardAcceptDialogFragment.RewardAcceptListe
             "created" to Date()
         )
         Firebase.firestore.runTransaction {
+            // substract 1 from the quantity of the reward
+            val rewardRef =
+                Firebase.firestore.collection(Collections.rewards).document(reward.documentId)
+            val newQuantity = reward.quantity - 1
+            rewardRef.update("quantity", newQuantity)
+
+
             Firebase.firestore.collection(Collections.rewardrequests).add(request)
                 .addOnSuccessListener { documentRef ->
                     Log.d("Reward", "DocumentSnapshot written with ID: ${documentRef.id}")

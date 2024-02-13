@@ -1,9 +1,11 @@
 package mok.it.app.mokapp.fragments
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.TextView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
@@ -14,8 +16,7 @@ import mok.it.app.mokapp.model.Category
 
 class MemberFragment : Fragment() {
 
-    private val binding get() = _binding!!
-    private var _binding: FragmentMemberBinding? = null
+    private lateinit var binding: FragmentMemberBinding
     private val args: MemberFragmentArgs by navArgs()
     private val viewModel: MemberViewModel by viewModels()
 
@@ -23,7 +24,7 @@ class MemberFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentMemberBinding.inflate(inflater, container, false)
+        binding = FragmentMemberBinding.inflate(inflater, container, false)
         loadDataIntoControls()
         return binding.root
     }
@@ -37,53 +38,31 @@ class MemberFragment : Fragment() {
         viewModel.loadImage(binding.profilePicture, args.user.photoURL)
 
         loadBadgeCounts()
-        loadMutualBadges()
-    }
-
-    private fun loadMutualBadges() {
-        //TODO implement feature
     }
 
     private fun loadBadgeCounts() {
-        viewModel.getUserBadgeCountByCategory(args.user, Category.UNIVERZALIS)
-            .observe(viewLifecycleOwner) {
-                binding.badgeCountUniversal.text =
-                    getString(R.string.badge_count, Category.UNIVERZALIS, it)
-            }
-        viewModel.getUserBadgeCountByCategory(args.user, Category.SZERVEZETFEJLESZTES)
-            .observe(viewLifecycleOwner) {
-                binding.badgeCountSzervezetfejlesztes.text =
-                    getString(R.string.badge_count, Category.SZERVEZETFEJLESZTES, it)
-            }
-        viewModel.getUserBadgeCountByCategory(args.user, Category.FELADATSOR)
-            .observe(viewLifecycleOwner) {
-                binding.badgeCountFeladatsor.text =
-                    getString(R.string.badge_count, Category.FELADATSOR, it)
-            }
-        viewModel.getUserBadgeCountByCategory(args.user, Category.PEDAGOGIA)
-            .observe(viewLifecycleOwner) {
-                binding.badgeCountPedagogia.text =
-                    getString(R.string.badge_count, Category.PEDAGOGIA, it)
-            }
-        viewModel.getUserBadgeCountByCategory(args.user, Category.MEDIAESDIY)
-            .observe(viewLifecycleOwner) {
-                binding.badgeCountMedia.text =
-                    getString(R.string.badge_count, Category.MEDIAESDIY, it)
-            }
-        viewModel.getUserBadgeCountByCategory(args.user, Category.IT)
-            .observe(viewLifecycleOwner) {
-                binding.badgeCountIt.text =
-                    getString(R.string.badge_count, Category.IT, it)
-            }
-        viewModel.getUserBadgeCountByCategory(args.user, Category.TABORIPROGRAMESELOKESZITES)
-            .observe(viewLifecycleOwner) {
-                binding.badgeCountTaboriprogram.text =
-                    getString(R.string.badge_count, Category.TABORIPROGRAMESELOKESZITES, it)
-            }
-    }
+        var sumOfBadges = 0
+        var numberOfAllProjects = 0
+        for (category in Category.entries) {
+            Log.d("MANCSAIM", Category.entries.toTypedArray().toString())
+            viewModel.getUserBadgeCountByCategory(args.user, category)
+                .observe(viewLifecycleOwner) { badgeData ->
+                    if (badgeData.finishedProjectBadgeSum != 0){
+                        val badgeTextView = TextView(context)
+                        badgeTextView.text = getString(
+                            R.string.project_count,
+                            category.toString(),
+                            badgeData.finishedProjectBadgeSum
+                        )
+                        sumOfBadges += badgeData.finishedProjectBadgeSum
+                        numberOfAllProjects += badgeData.finishedProjectCount
+                        binding.badgeContainer.addView(badgeTextView)
+                    }
+                    binding.collectedBadgesSummary.text =
+                        getString(R.string.collectedBadgesSummary, sumOfBadges)
+                }
+        }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        _binding = null
+
     }
 }

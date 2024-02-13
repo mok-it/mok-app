@@ -49,7 +49,7 @@
             android:paddingTop="4dp"
             android:textSize="14sp"
             android:textStyle="normal"
-            tools:text="@string/example_email_address" />
+            tools:text="@string/placeholder_email_address" />
 
         <TextView
             android:id="@+id/phone_number"
@@ -60,68 +60,22 @@
             android:textStyle="normal"
             tools:text="@tools:sample/us_phones" />
 
-        <TextView
-            android:id="@+id/badge_count_universal"
+        <LinearLayout
+            android:id="@+id/badgeContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:text="10" />
+            android:orientation="vertical"
+            android:paddingTop="8dp">
 
-        <TextView
-            android:id="@+id/badge_count_szervezetfejlesztes"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:text="10" />
-
-        <TextView
-            android:id="@+id/badge_count_it"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:text="3" />
-
-        <TextView
-            android:id="@+id/badge_count_pedagogia"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:text="2" />
-
-        <TextView
-            android:id="@+id/badge_count_feladatsor"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:text="0" />
-
-        <TextView
-            android:id="@+id/badge_count_taboriprogram"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:text="0" />
-
-        <TextView
-            android:id="@+id/badge_count_media"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:paddingTop="8dp"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:text="0" />
+            <TextView
+                android:id="@+id/collected_badges_summary"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                tools:text="Összesen: 10 projekt (24 mancs)" />
+        </LinearLayout>
 
         <!--        <TextView-->
         <!--            android:id="@+id/mutual_badges"-->

@@ -3,28 +3,31 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/allBadgesListFragment">
+    app:startDestination="@id/allProjectsListFragment">
     <fragment
         android:id="@+id/detailsFragment"
         android:name="mok.it.app.mokapp.fragments.DetailsFragment"
-        android:label="Mancs adatai"
+        android:label="Projekt adatai"
         tools:layout="@layout/fragment_details">
         <action
             android:id="@+id/action_detailsFragment_to_commentsFragment"
             app:destination="@id/commentsFragment" />
         <argument
-            android:name="badgeId"
+            android:name="projectId"
             app:argType="string" />
         <deepLink
             android:id="@+id/badge_deeplink"
             android:autoVerify="true"
-            app:uri="mokegyesulet.hu/app/badges/{badgeId}" />
+            app:uri="mokegyesulet.hu/app/badges/{projectId}" />
         <action
-            android:id="@+id/action_detailsFragment_to_editBadgeFragment"
-            app:destination="@id/editBadgeFragment" />
+            android:id="@+id/action_detailsFragment_to_editProjectFragment"
+            app:destination="@id/editProjectFragment" />
         <action
-            android:id="@+id/action_detailsFragment_to_badgeMembersDialogFragment"
-            app:destination="@id/badgeMembersDialogFragment" />
+            android:id="@+id/action_detailsFragment_to_projectMembersDialogFragment"
+            app:destination="@id/projectMembersDialogFragment" />
+        <action
+            android:id="@+id/action_detailsFragment_to_adminPanelFragment"
+            app:destination="@id/adminPanelFragment" />
     </fragment>
     <fragment
         android:id="@+id/commentsFragment"
@@ -32,26 +35,26 @@
         android:label="Kommentek"
         tools:layout="@layout/fragment_comments">
         <argument
-            android:name="badgeId"
+            android:name="projectId"
             app:argType="string" />
     </fragment>
     <fragment
-        android:id="@+id/allBadgesListFragment"
-        android:name="mok.it.app.mokapp.fragments.AllBadgesListFragment"
-        android:label="Az összes Mancs"
-        tools:layout="@layout/fragment_all_badges_list">
+        android:id="@+id/allProjectsListFragment"
+        android:name="mok.it.app.mokapp.fragments.AllProjectsListFragment"
+        android:label="Az összes Projekt"
+        tools:layout="@layout/fragment_all_projects_list">
         <action
-            android:id="@+id/action_allBadgesListFragment_to_detailsFragment"
+            android:id="@+id/action_allProjectsListFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />
         <action
-            android:id="@+id/action_allBadgesListFragment_to_myBadgesFragment"
+            android:id="@+id/action_allProjectsListFragment_to_myBadgesFragment"
             app:destination="@id/myBadgesFragment" />
         <argument
             android:name="category"
             android:defaultValue="UNIVERZALIS"
             app:argType="mok.it.app.mokapp.model.Category" />
         <action
-            android:id="@+id/action_allBadgesListFragment_to_linksFragment"
+            android:id="@+id/action_allProjectsListFragment_to_linksFragment"
             app:destination="@id/linksFragment" />
         <argument
             android:name="filter"
@@ -59,11 +62,11 @@
             app:argType="mok.it.app.mokapp.model.Filter"
             app:nullable="true" />
         <action
-            android:id="@+id/action_allBadgesListFragment_to_filterDialogFragment"
+            android:id="@+id/action_allProjectsListFragment_to_filterDialogFragment"
             app:destination="@id/filterDialogFragment" />
         <action
-            android:id="@+id/action_allBadgesListFragment_to_createBadgeFragment"
-            app:destination="@id/createBadgeFragment" />
+            android:id="@+id/action_allProjectsListFragment_to_createProjectFragment"
+            app:destination="@id/createProjectFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -71,8 +74,8 @@
         android:label="Bejelentkezés"
         tools:layout="@layout/fragment_login">
         <action
-            android:id="@+id/action_loginFragment_to_allBadgesListFragment"
-            app:destination="@id/allBadgesListFragment"
+            android:id="@+id/action_loginFragment_to_allProjectsListFragment"
+            app:destination="@id/allProjectsListFragment"
             app:launchSingleTop="true" />
     </fragment>
     <fragment
@@ -95,11 +98,6 @@
         android:name="mok.it.app.mokapp.fragments.RewardsFragment"
         android:label="Jutalmak"
         tools:layout="@layout/fragment_rewards" />
-    <fragment
-        android:id="@+id/adminFragment"
-        android:name="mok.it.app.mokapp.fragments.AdminFragment"
-        android:label="Admin oldal"
-        tools:layout="@layout/fragment_admin" />
     <fragment
         android:id="@+id/phoneBookFragment"
         android:name="mok.it.app.mokapp.fragments.PhoneBookFragment"
@@ -137,40 +135,28 @@
         android:id="@+id/action_global_memberFragment"
         app:destination="@id/memberFragment" />
     <dialog
-        android:id="@+id/createBadgeFragment"
-        android:name="mok.it.app.mokapp.fragments.CreateBadgeFragment"
-        android:label="CreateBadgeFragment"
-        tools:layout="@layout/fragment_create_badge">
+        android:id="@+id/createProjectFragment"
+        android:name="mok.it.app.mokapp.fragments.CreateProjectFragment"
+        android:label="CreateProjectFragment"
+        tools:layout="@layout/fragment_create_project">
         <argument
             android:name="category"
             app:argType="mok.it.app.mokapp.model.Category" />
     </dialog>
     <dialog
-        android:id="@+id/editBadgeFragment"
-        android:name="mok.it.app.mokapp.fragments.EditBadgeFragment"
-        android:label="EditBadgeFragment"
-        tools:layout="@layout/fragment_create_badge">
+        android:id="@+id/editProjectFragment"
+        android:name="mok.it.app.mokapp.fragments.EditProjectFragment"
+        android:label="EditProjectFragment"
+        tools:layout="@layout/fragment_create_project">
         <argument
-            android:name="badge"
+            android:name="project"
             app:argType="mok.it.app.mokapp.model.Project" />
     </dialog>
     <dialog
-        android:id="@+id/badgeAcceptMemberDialogFragment"
-        android:name="mok.it.app.mokapp.dialog.BadgeAcceptMemberDialogFragment"
-        android:label="BadgeAcceptMemberDialogFragment"
-        tools:layout="@layout/fragment_badge_accept_member_dialog">
-        <argument
-            android:name="user"
-            app:argType="mok.it.app.mokapp.model.User" />
-    </dialog>
-    <dialog
-        android:id="@+id/badgeMembersDialogFragment"
-        android:name="mok.it.app.mokapp.dialog.BadgeMembersDialogFragment"
-        android:label="BadgeMembersDialogFragment"
-        tools:layout="@layout/fragment_badge_members_dialog">
-        <action
-            android:id="@+id/action_badgeMembersDialogFragment_to_badgeAcceptMemberDialogFragment"
-            app:destination="@id/badgeAcceptMemberDialogFragment" />
+        android:id="@+id/projectMembersDialogFragment"
+        android:name="mok.it.app.mokapp.dialog.ProjectMembersDialogFragment"
+        android:label="ProjectMembersDialogFragment"
+        tools:layout="@layout/fragment_project_members_dialog">
         <argument
             android:name="users"
             app:argType="mok.it.app.mokapp.model.User[]" />
@@ -178,7 +164,7 @@
             android:name="canEdit"
             app:argType="boolean" />
         <argument
-            android:name="badge"
+            android:name="project"
             app:argType="mok.it.app.mokapp.model.Project" />
     </dialog>
     <fragment
@@ -186,7 +172,24 @@
         android:name="mok.it.app.mokapp.fragments.AboutFragment"
         android:label="@string/about"
         tools:layout="@layout/fragment_about" />
-    <dialog
-        android:id="@+id/rewardAcceptDialogFragment"
-        android:name="mok.it.app.mokapp.fragments.RewardAcceptDialogFragment" />
+    <fragment
+        android:id="@+id/adminPanelFragment"
+        android:name="mok.it.app.mokapp.fragments.AdminPanelFragment"
+        android:label="Adminisztráció"
+        tools:layout="@layout/fragment_admin_panel">
+        <argument
+            android:name="project"
+            app:argType="mok.it.app.mokapp.model.Project" />
+        <action
+            android:id="@+id/action_adminPanelFragment_to_addParticipantsDialogFragment"
+            app:destination="@id/addParticipantsDialogFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/addParticipantsDialogFragment"
+        android:name="mok.it.app.mokapp.fragments.AddParticipantsFragment"
+        android:label="Résztvevők felvétele">
+        <argument
+            android:name="projectId"
+            app:argType="string" />
+    </fragment>
 </navigation>

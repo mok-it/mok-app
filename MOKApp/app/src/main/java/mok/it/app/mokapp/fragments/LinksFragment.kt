@@ -14,18 +14,21 @@ import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.fragment_all_badges_list.recyclerView
-import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.CardLinkBinding
+import mok.it.app.mokapp.databinding.FragmentLinksBinding
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.recyclerview.LinkViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 
 class LinksFragment : Fragment() {
+    private lateinit var _binding: FragmentLinksBinding
+    private val binding get() = _binding
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_links, container, false)
+    ): View {
+        _binding = FragmentLinksBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -37,8 +40,8 @@ class LinksFragment : Fragment() {
         val adapter = getAdapter()
         adapter.stateRestorationPolicy =
             RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-        recyclerView.adapter = adapter
-        recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
+        binding.recyclerView.adapter = adapter
+        binding.recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
     }
 
     private fun getAdapter(): FirestoreRecyclerAdapter<mok.it.app.mokapp.model.Link, LinkViewHolder> {
@@ -51,20 +54,18 @@ class LinksFragment : Fragment() {
                 .setLifecycleOwner(this).build()
         return object :
             FirestoreRecyclerAdapter<mok.it.app.mokapp.model.Link, LinkViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): LinkViewHolder {
-                val view = LayoutInflater.from(this@LinksFragment.context)
-                    .inflate(R.layout.card_link, parent, false)
-                return LinkViewHolder(view)
-            }
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = LinkViewHolder (
+                CardLinkBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            )
 
             override fun onBindViewHolder(
                 holder: LinkViewHolder,
                 position: Int,
                 model: mok.it.app.mokapp.model.Link
             ) {
-                val tvName: TextView = holder.itemView.findViewById(R.id.linkName)
+                val tvName: TextView = holder.binding.linkName
                 tvName.text = model.title
-                holder.itemView.setOnClickListener {
+                binding.root.setOnClickListener {
                     openLink(model.url)
                 }
             }

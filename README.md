@@ -1,5 +1,22 @@
 # MÖK App
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mok-it_mok-app&metric=alert_status)](https://sonarcloud.io/summary/new_code?id=mok-it_mok-app)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=mok-it_mok-app&metric=security_rating)](https://sonarcloud.io/summary/new_code?id=mok-it_mok-app)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=mok-it_mok-app&metric=sqale_rating)](https://sonarcloud.io/summary/new_code?id=mok-it_mok-app)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=mok-it_mok-app&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=mok-it_mok-app)
+[![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=mok-it_mok-app&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=mok-it_mok-app)
+
+
+## Mental Model
+ 
+- Mancs = badge. Mancsnak mondjuk a Mökön belül, de a kódban badge-et használunk (mert a hunglish kód csúnya).
+- A mancs csak egy szám lényegében.
+- A projektekre jelentkeznek az emberek. Minden projekt rendelkezik egy N maximum mancsértékkel. Minden projekt teljesítésekor a résztvevők [0-N] mancsot kapnak. Az app kezdőoldalán látszó dolgok is projektek. Különleges esetben lehet N-nél is többet kapni.
+- (Minden userhez a projektjeit tároljuk, azon belül azt, hogy azokért hány mancsot kapott. )
+- A mancsokból ajándékokat lehet venni.
+- Van mindenkinek egy mancsegyenlege, amit az adott szezonban  megszerzett, és egy olyan, amit még nem használt fel. Ez utóbbira lehet elköltetlen/felhasználatlan mancsok számaként hivatkozni.
+- A mancsok resetelődnek évente, amit nem költ valaki el az egyikben, az attól még nem lesz elkölthető a következőben.
+- Vannak kritikus/zöld és nem kritikus/kék projektek. A kritikus projektekre zöld mancs jár, a nem kritikusakra pedig kék.
+- Külön követelmény van arra, hogy egy időszakban mennyi zöld mancsot kell szerezni, és arra, hogy mennyi mancsot kell szerezni összesen (zöld+kék). Mindkét fajta mancs ugyanúgy elkölthető jutalmakra, ilyen téren nincs köztük különbség.
 
 ## Disztributálás
 

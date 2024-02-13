@@ -1,9 +1,11 @@
 package mok.it.app.mokapp.activity
 
 import android.os.Bundle
-import androidx.activity.result.contract.ActivityResultContracts
+import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.navigation.NavController
 import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
@@ -16,18 +18,12 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
-import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import kotlinx.android.synthetic.main.activity_main.drawer_layout
-import kotlinx.android.synthetic.main.activity_main.nav_view
-import kotlinx.android.synthetic.main.activity_main.toolbar
-import kotlinx.android.synthetic.main.nav_header.emailText
-import kotlinx.android.synthetic.main.nav_header.image
-import kotlinx.android.synthetic.main.nav_header.nameText
-import kotlinx.android.synthetic.main.nav_header.refreshButton
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.ActivityMainBinding
+import mok.it.app.mokapp.databinding.NavHeaderBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 
@@ -39,25 +35,35 @@ class MainActivity : AppCompatActivity() {
 
     val firestore = Firebase.firestore
     private lateinit var navController: NavController
-    private val mcsArray = arrayOf("IT", "Pedagógia", "Feladatsor", "Kreatív", "Grafika")
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var navHeaderBinding: NavHeaderBinding
+    private val backDrawerCallback = object : OnBackPressedCallback(false) {
+        override fun handleOnBackPressed() {
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        navHeaderBinding = NavHeaderBinding.bind(binding.navView.getHeaderView(0))
+        setContentView(binding.root)
         setupNavigation()
+        setupBackPressed()
     }
 
     private fun setupNavigation() {
         val navHostFragment =
             supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
-        setSupportActionBar(findViewById(R.id.toolbar))
-        val appBarConfiguration = AppBarConfiguration(navController.graph, drawer_layout)
+        setSupportActionBar(binding.toolbar)
+        val appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
         setupActionBarWithNavController(navController, appBarConfiguration)
-        findViewById<NavigationView>(R.id.nav_view).setupWithNavController(navController)
+        binding.navView.setupWithNavController(navController)
 
         //Ha a listfragment-re navigálunk, töltődjön újra a fejléc (regisztráció után ez tölti be)
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            if (destination.id == R.id.allBadgesListFragment && currentUser != null) refreshCurrentUserAndUserModel(
+            if (destination.id == R.id.allProjectsListFragment && currentUser != null) refreshCurrentUserAndUserModel(
                 this
             ) {
                 loadApp()
@@ -68,19 +74,14 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setNavigationItemSelected(navController: NavController) {
-        nav_view.setNavigationItemSelectedListener {
+        binding.navView.setNavigationItemSelectedListener {
             NavigationUI.onNavDestinationSelected(it, navController)
-            if (it.title in mcsArray) {
-                //TODO
-                //navigateToBadgesByMCS(it.title.toString())
-            } else {
-                when (it.itemId) {
-                    R.id.nav_logout -> {
-                        logout()
-                    }
+            when (it.itemId) {
+                R.id.nav_logout -> {
+                    logout()
                 }
             }
-            drawer_layout.closeDrawer(GravityCompat.START)
+            binding.drawerLayout.closeDrawer(GravityCompat.START)
             true
         }
     }
@@ -88,18 +89,30 @@ class MainActivity : AppCompatActivity() {
     private fun removeBackArrowFromLoginFragment(navController: NavController) {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.loginFragment) {
-                toolbar.navigationIcon = null
+                binding.toolbar.navigationIcon = null
             }
         }
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        if (drawer_layout.isDrawerOpen(GravityCompat.START)) {
-            drawer_layout.closeDrawer(GravityCompat.START)
-        } else {
-            super.onBackPressed()
-        }
+    private fun setupBackPressed() {
+        onBackPressedDispatcher.addCallback(this, backDrawerCallback)
+        binding.drawerLayout.addDrawerListener(object : DrawerListener {
+            override fun onDrawerOpened(drawerView: View) {
+                backDrawerCallback.isEnabled = true
+            }
+
+            override fun onDrawerClosed(drawerView: View) {
+                backDrawerCallback.isEnabled = false
+            }
+
+            override fun onDrawerSlide(drawerView: View, slideOffset: Float) {
+                //Must be overridden but not used
+            }
+
+            override fun onDrawerStateChanged(newState: Int) {
+                //Must be overridden but not used
+            }
+        })
     }
 
     override fun onResume() {
@@ -115,45 +128,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setHeader() {
-        nameText.text = currentUser?.displayName
-        emailText.text = currentUser?.email
-        refreshButton.setOnClickListener {
+        navHeaderBinding.nameText.text = currentUser?.displayName
+        navHeaderBinding.emailText.text = currentUser?.email
+        navHeaderBinding.refreshButton.setOnClickListener {
             refreshCurrentUserAndUserModel(this) { loadApp() }
         }
         val requestOptions =
             RequestOptions().apply(RequestOptions().transform(CenterCrop(), RoundedCorners(26)))
         Glide.with(this).load(currentUser?.photoUrl).apply(requestOptions.override(250, 250))
-            .into(image)
+            .into(navHeaderBinding.image)
     }
 
     private fun setMenuVisibility() {
-        //TODO admin is empty, we shouldn't show it yet
-        //TODO MCS categories are deprecated, the filter menu will include them
 //        val menu = nav_view.menu
 //        val adm = menu.findItem(R.id.adminFragment)
-//        adm?.isVisible = userModel.admin
+//        adm?.isVisible = userModel.admin //admin is empty, we shouldn't show it yet
     }
 
     override fun onSupportNavigateUp(): Boolean {
-        return NavigationUI.navigateUp(navController, drawer_layout)
+        return NavigationUI.navigateUp(navController, binding.drawerLayout)
     }
-
-//    private fun navigateToBadgesByMCS(category: String) {
-////        val action = AllBadgesListFragmentDirections.actionAllBadgesListFragmentToBadgesByMCSFragment(
-////            category
-////        )
-////        findNavController().navigate(action)
-//    }
 
     // Declare the launcher at the top of your Activity/Fragment:
-    private val requestPermissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestPermission()
-    ) { isGranted: Boolean ->
-        if (!isGranted) {
-            // TODO: Inform user that that your app will not show notifications.
-        }
-    }
-
+//    private val requestPermissionLauncher = registerForActivityResult(
+//        ActivityResultContracts.RequestPermission()
+//    ) { isGranted: Boolean ->
+//        if (!isGranted) {
+//            // TODO: Inform user that that your app will not show notifications.
+//        }
+//    }
 //    private fun askNotificationPermission() {
 //        // This is only necessary for API level >= 33 (TIRAMISU)
 //        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
@@ -184,16 +187,4 @@ class MainActivity : AppCompatActivity() {
             .signOut()
             .addOnSuccessListener { navController.navigate(R.id.action_global_loginFragment) }
     }
-
-//TODO ha változik a profile pic, az új képet elmenteni
-//    private fun updateProfilePic() {
-////        val data = hashMapOf(
-////            "pictureURL" to user.photoUrl,
-////            "uid" to user.uid
-////        )
-////
-////        functions
-////            .getHttpsCallable("userLoggedIn")
-////            .call(data)
-//    }
 }

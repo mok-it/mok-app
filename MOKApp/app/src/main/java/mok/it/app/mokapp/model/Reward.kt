@@ -9,4 +9,5 @@ data class Reward(
     val name: String = "",
     val price: Int = 0,
     val icon: String = "",
+    val quantity: Int = 0
 )

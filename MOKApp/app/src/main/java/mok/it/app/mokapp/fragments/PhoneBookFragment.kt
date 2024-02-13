@@ -19,22 +19,18 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.squareup.picasso.Picasso
-import kotlinx.android.synthetic.main.card_phonebook_item.view.call_button
-import kotlinx.android.synthetic.main.card_phonebook_item.view.contact_item
-import kotlinx.android.synthetic.main.card_phonebook_item.view.contact_name
-import kotlinx.android.synthetic.main.card_phonebook_item.view.phone_number
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.databinding.CardPhonebookItemBinding
 import mok.it.app.mokapp.databinding.FragmentPhoneListBinding
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.PhoneBookViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import mok.it.app.mokapp.utility.Utility
 
 
 class PhoneBookFragment : Fragment() {
-    private val binding get() = _binding!!
-    private var _binding: FragmentPhoneListBinding? = null
+    private lateinit var binding: FragmentPhoneListBinding
 
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
 
@@ -42,7 +38,7 @@ class PhoneBookFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentPhoneListBinding.inflate(inflater, container, false)
+        binding = FragmentPhoneListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -77,19 +73,24 @@ class PhoneBookFragment : Fragment() {
 
         adapter =
             object : FirestoreRecyclerAdapter<User?, PhoneBookViewHolder?>(options) {
-                var context: Context? = null
+                lateinit var context: Context
+
+                override fun onCreateViewHolder(parent: ViewGroup, i: Int) = PhoneBookViewHolder (
+                    CardPhonebookItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                )
+
                 override fun onBindViewHolder(
                     holder: PhoneBookViewHolder,
                     position: Int,
                     model: User
                 ) {
-                    val ivImg: ImageView = holder.itemView.findViewById(R.id.contact_image)
-                    loadImage(ivImg, model.photoURL)
-                    holder.itemView.contact_name.text = model.name
-                    holder.itemView.phone_number.text =
+                    val ivImg: ImageView = holder.binding.contactImage
+                    Utility.loadImage(ivImg, model.photoURL, context)
+                    holder.binding.contactName.text = model.name
+                    holder.binding.phoneNumber.text =
                         model.phoneNumber.ifEmpty { getString(R.string.no_phone_number) }
 
-                    holder.itemView.contact_item.setOnClickListener {
+                    holder.binding.contactItem.setOnClickListener {
                         findNavController().navigate(
                             PhoneBookFragmentDirections.actionGlobalMemberFragment(
                                 model
@@ -97,12 +98,12 @@ class PhoneBookFragment : Fragment() {
                         )
                     }
 
-                    holder.itemView.call_button.setOnClickListener {
+                    holder.binding.callButton.setOnClickListener {
                         // if the device is capable of making phone calls, the button opens the dialer
                         if (isTelephonyEnabled() && model.phoneNumber.isNotEmpty()) {
                             val intent = Intent(Intent.ACTION_DIAL)
                             intent.data = Uri.parse("tel:${model.phoneNumber}}")
-                            this.context?.let { it2 ->
+                            this.context.let { it2 ->
                                 ContextCompat.startActivity(
                                     it2,
                                     intent,
@@ -118,7 +119,7 @@ class PhoneBookFragment : Fragment() {
                         else // ...if not, it copies the number to the clipboard
                         {
                             val clipboard =
-                                this.context?.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                                this.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
                             val clip = android.content.ClipData.newPlainText(
                                 "label",
                                 model.phoneNumber
@@ -126,34 +127,11 @@ class PhoneBookFragment : Fragment() {
                             clipboard.setPrimaryClip(clip)
                         }
                     }
-
-                    /* holder.itemView.sms_button.setOnClickListener {
-                         val intent = Intent(Intent.ACTION_SENDTO)
-                         intent.data = Uri.parse("smsto:0123456789")
-                         this.context?.let { it2 -> ContextCompat.startActivity(it2, intent, null) }
-                     }*/
-                }
-
-                override fun onCreateViewHolder(group: ViewGroup, i: Int): PhoneBookViewHolder {
-                    val view: View = LayoutInflater.from(group.context)
-                        .inflate(R.layout.card_phonebook_item, group, false)
-                    return PhoneBookViewHolder(view)
                 }
 
                 override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
                     super.onAttachedToRecyclerView(recyclerView)
                     context = recyclerView.context
-                }
-
-                fun loadImage(imageView: ImageView, imageURL: String): Boolean {
-                    return try {
-                        Picasso.get().apply {
-                            load(imageURL).into(imageView)
-                        }
-                        true
-                    } catch (e: Exception) {
-                        false
-                    }
                 }
             }
     }

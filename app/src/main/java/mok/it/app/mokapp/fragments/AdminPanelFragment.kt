@@ -30,13 +30,10 @@ import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.ProjectParticipantViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import mok.it.app.mokapp.service.UserService
+import mok.it.app.mokapp.utility.Utility.TAG
 import kotlin.math.roundToInt
 
 class AdminPanelFragment : Fragment() {
-    companion object {
-        const val TAG = "AdminPanelFragment"
-    }
-
     //TODO: using args.project.id to get the project because it should be updated. Could pass id only
     private val args: AdminPanelFragmentArgs by navArgs()
     private lateinit var project: Project
@@ -96,9 +93,14 @@ class AdminPanelFragment : Fragment() {
             FirestoreRecyclerOptions.Builder<User>().setQuery(query, User::class.java)
                 .setLifecycleOwner(this).build()
         return object : FirestoreRecyclerAdapter<User, ProjectParticipantViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ProjectParticipantViewHolder (
-                CardProjectParticipantBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            )
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+                ProjectParticipantViewHolder(
+                    CardProjectParticipantBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
 
             override fun onBindViewHolder(
                 holder: ProjectParticipantViewHolder,

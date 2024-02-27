@@ -9,6 +9,7 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.service.UserService
+import mok.it.app.mokapp.utility.Utility.TAG
 import java.util.Calendar
 import java.util.Date
 
@@ -79,7 +80,11 @@ class EditProjectFragment : CreateProjectFragment() {
     }
 
     private fun commitEditedBadgeToDatabase(): Boolean {
-        val deadline = Date(binding.datePicker.year - 1900, binding.datePicker.month, binding.datePicker.dayOfMonth)
+        val deadline = Date(
+            binding.datePicker.year - 1900,
+            binding.datePicker.month,
+            binding.datePicker.dayOfMonth
+        )
         val editedBadge = hashMapOf(
             "category" to binding.projectTerulet.text.toString(),
             "deadline" to deadline,

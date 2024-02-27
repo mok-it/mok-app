@@ -42,14 +42,12 @@ import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import mok.it.app.mokapp.utility.Config
+import mok.it.app.mokapp.utility.Utility.TAG
 import mok.it.app.mokapp.utility.Utility.getIconFileName
 import mok.it.app.mokapp.utility.Utility.loadImage
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-
-
-private const val TAG = "AllProjectsListFragment"
 
 class AllProjectsListFragment :
     Fragment() {

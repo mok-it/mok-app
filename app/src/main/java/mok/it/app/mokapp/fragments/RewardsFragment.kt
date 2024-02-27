@@ -28,6 +28,7 @@ import mok.it.app.mokapp.model.Reward
 import mok.it.app.mokapp.recyclerview.RewardViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import mok.it.app.mokapp.utility.Utility
+import mok.it.app.mokapp.utility.Utility.TAG
 import java.util.Date
 import kotlin.math.absoluteValue
 
@@ -172,10 +173,10 @@ class RewardsFragment : Fragment() {
 
             Firebase.firestore.collection(Collections.rewardrequests).add(request)
                 .addOnSuccessListener { documentRef ->
-                    Log.d("Reward", "DocumentSnapshot written with ID: ${documentRef.id}")
+                    Log.d(TAG, "DocumentSnapshot written with ID: ${documentRef.id}")
                 }
                 .addOnFailureListener { e ->
-                    Log.w("Reward", "Error adding document", e)
+                    Log.w(TAG, "Error adding document", e)
                 }
 
             val userRef =
@@ -185,7 +186,7 @@ class RewardsFragment : Fragment() {
                 "points", FieldValue.increment(-1 * reward.price.toDouble())
             )
                 .addOnCompleteListener {
-                    Log.d("Reward", "Reward added to requested")
+                    Log.d(TAG, "Reward added to requested")
                 }
         }.addOnSuccessListener {
             context?.let { context ->

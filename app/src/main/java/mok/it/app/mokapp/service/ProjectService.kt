@@ -6,15 +6,15 @@ import com.google.firebase.ktx.Firebase
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 
-object ProjectService : IProjectService{
-    override fun getProjectsByIds(
+object ProjectService {
+    fun getProjectsByIds(
         projectIds: List<String>,
         onComplete: (List<Project>) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
         val projectsCollectionRef = Firebase.firestore.collection(Collections.projects)
 
-        if (projectIds.isEmpty()){
+        if (projectIds.isEmpty()) {
             return
         }
         projectsCollectionRef.whereIn(FieldPath.documentId(), projectIds)

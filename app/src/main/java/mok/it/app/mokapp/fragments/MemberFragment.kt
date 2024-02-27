@@ -13,6 +13,7 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.FragmentMemberBinding
 import mok.it.app.mokapp.fragments.viewmodels.MemberViewModel
 import mok.it.app.mokapp.model.Category
+import mok.it.app.mokapp.utility.Utility.TAG
 
 class MemberFragment : Fragment() {
 
@@ -44,7 +45,7 @@ class MemberFragment : Fragment() {
         var sumOfBadges = 0
         var numberOfAllProjects = 0
         for (category in Category.entries) {
-            Log.d("MANCSAIM", Category.entries.toTypedArray().toString())
+            Log.d(TAG, Category.entries.toTypedArray().toString())
             viewModel.getUserBadgeCountByCategory(args.user, category)
                 .observe(viewLifecycleOwner) { badgeData ->
                     if (badgeData.finishedProjectBadgeSum != 0){

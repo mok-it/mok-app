@@ -29,11 +29,9 @@ import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.SelectMemberViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import mok.it.app.mokapp.service.UserService
+import mok.it.app.mokapp.utility.Utility.TAG
 
 class AddParticipantsFragment : DialogFragment() {
-    companion object {
-        val TAG = "AddParticipantsFragment"
-    }
 
     private val args: AddParticipantsFragmentArgs by navArgs()
     private lateinit var project: Project
@@ -109,9 +107,14 @@ class AddParticipantsFragment : DialogFragment() {
             FirestoreRecyclerOptions.Builder<User>().setQuery(query, User::class.java)
                 .setLifecycleOwner(this).build()
         return object : FirestoreRecyclerAdapter<User, SelectMemberViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = SelectMemberViewHolder(
-                        CardSelectMemberBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+                SelectMemberViewHolder(
+                    CardSelectMemberBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
                     )
+                )
 
             override fun onBindViewHolder(
                 holder: SelectMemberViewHolder,
@@ -127,18 +130,16 @@ class AddParticipantsFragment : DialogFragment() {
                 if (user.joinedBadges.contains(project.id)) {
                     cbSelect.isEnabled = false
                     cbSelect.isChecked = true
-                }
-                else {
+                } else {
                     cbSelect.isEnabled = true
                     cbSelect.isChecked = selectedUsers.contains(user.documentId)
                     cbSelect.setOnCheckedChangeListener { _, enabled ->
                         if (enabled) {
                             selectedUsers.add(user.documentId)
-                        }
-                        else {
+                        } else {
                             selectedUsers.remove(user.documentId)
                         }
-                }
+                    }
                 }
             }
         }

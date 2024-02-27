@@ -14,14 +14,14 @@ import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.ProjectCategoriesAdapter
 import mok.it.app.mokapp.recyclerview.ProjectsAdapter
-import mok.it.app.mokapp.service.IProjectService
+import mok.it.app.mokapp.service.ProjectService
+import mok.it.app.mokapp.utility.Utility.TAG
 
 
 class MyBadgesFragment :
     Fragment(), ProjectsAdapter.ProjectClickedListener {
     private val binding get() = _binding!!
     private var _binding: FragmentMyBadgesBinding? = null
-    private val projectService: IProjectService = mok.it.app.mokapp.service.ProjectService
 
     private var collectedBadges: ArrayList<Pair<Project, Int>> = ArrayList()
     override fun onCreateView(
@@ -34,7 +34,7 @@ class MyBadgesFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        projectService.getProjectsByIds(
+        ProjectService.getProjectsByIds(
             projectIds = userModel.projectBadges.keys.toList(),
             onComplete = { projectsList ->
                 collectedBadges.clear()
@@ -44,7 +44,7 @@ class MyBadgesFragment :
                 initRecyclerView()
             },
             onFailure = { exception ->
-                Log.d("MANCSAIM", exception.toString())
+                Log.d(TAG, exception.toString())
             }
         )
     }

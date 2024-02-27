@@ -5,6 +5,7 @@ import android.util.Log
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.PropertyName
 import kotlinx.parcelize.Parcelize
+import mok.it.app.mokapp.utility.Utility.TAG
 import mok.it.app.mokapp.utility.Utility.unaccent
 import java.util.Date
 
@@ -44,7 +45,7 @@ data class Project(
             return try {
                 Category.valueOf(category.replace(" ", "").uppercase().unaccent())
             } catch (e: Exception) {
-                Log.e("Project", "Category not found: $category")
+                Log.e(TAG, "Category not found: $category")
                 Category.UNIVERZALIS
             }
         }

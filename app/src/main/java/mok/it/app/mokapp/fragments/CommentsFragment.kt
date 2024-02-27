@@ -27,13 +27,10 @@ import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.CommentViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import mok.it.app.mokapp.utility.Utility.TAG
 import mok.it.app.mokapp.utility.Utility.loadImage
 
 class CommentsFragment : Fragment() {
-    companion object {
-        const val TAG = "CommentsFragment"
-    }
-
     val formatter: DateFormat = getDateTimeInstance()
     private val args: DetailsFragmentArgs by navArgs()
     private lateinit var _binding: FragmentCommentsBinding
@@ -61,8 +58,8 @@ class CommentsFragment : Fragment() {
                 override fun onCreateViewHolder(
                     parent: ViewGroup,
                     viewType: Int
-                ) = CommentViewHolder (
-                   CardCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+                ) = CommentViewHolder(
+                    CardCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
                 )
 
                 override fun onBindViewHolder(

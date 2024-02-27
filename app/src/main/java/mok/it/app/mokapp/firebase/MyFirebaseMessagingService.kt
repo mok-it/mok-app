@@ -11,12 +11,12 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.utility.Utility.TAG
 import java.util.Calendar
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     companion object {
-        private const val TAG = "MyFirebaseMsgService"
 
         fun sendNotificationToUsersById(
             title: String,

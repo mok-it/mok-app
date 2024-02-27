@@ -29,9 +29,6 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserMo
 
 
 class MainActivity : AppCompatActivity() {
-    companion object {
-        const val TAG = "MainActivity"
-    }
 
     val firestore = Firebase.firestore
     private lateinit var navController: NavController

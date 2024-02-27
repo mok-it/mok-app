@@ -16,6 +16,11 @@ import java.text.Normalizer
  * Utility class for various functions
  */
 object Utility {
+    val Any.TAG: String
+        get() {
+            val tag = javaClass.simpleName
+            return if (tag.length <= 23) tag else tag.substring(0, 23)
+        }
 
     fun CharSequence.unaccent(): String {
         val temp = Normalizer.normalize(this, Normalizer.Form.NFD)

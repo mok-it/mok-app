@@ -16,12 +16,12 @@ import androidx.navigation.fragment.navArgs
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.Timestamp
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import mok.it.app.mokapp.databinding.CardCommentBinding
 import mok.it.app.mokapp.databinding.FragmentCommentsBinding
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.User
@@ -104,7 +104,8 @@ class CommentsFragment : Fragment() {
                     Collections.commentsRelativePath,
                     binding.commentEditText.text.toString(),
                     Timestamp.now(),
-                    FirebaseAuth.getInstance().currentUser!!.uid
+                    userModel.documentId,
+                    userModel.name,
                 )
 
                 Firebase.firestore.collection(Collections.projects).document(args.projectId)

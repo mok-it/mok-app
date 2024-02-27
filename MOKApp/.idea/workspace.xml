@@ -4,7 +4,27 @@
     <option name="autoReloadType" value="NONE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="3db46e8e-64b0-4bbf-a876-a242646797c9" name="Changes" comment="" />
+    <list default="true" id="3db46e8e-64b0-4bbf-a876-a242646797c9" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../.idea/appInsightsSettings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../.idea/appInsightsSettings.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/activity/MainActivity.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/activity/MainActivity.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/firebase/FirebaseUserObject.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/firebase/FirebaseUserObject.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/firebase/MyFirebaseMessagingService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/firebase/MyFirebaseMessagingService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/AddParticipantsFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/AddParticipantsFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/AdminPanelFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/AdminPanelFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/AllProjectsListFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/AllProjectsListFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/CommentsFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/CommentsFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/CreateProjectFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/CreateProjectFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/DetailsFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/DetailsFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/MyBadgesFragment.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/MyBadgesFragment.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/viewmodels/DetailsFragmentViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/viewmodels/DetailsFragmentViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/viewmodels/MemberViewModel.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/fragments/viewmodels/MemberViewModel.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/recyclerview/MembersAdapter.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/recyclerview/MembersAdapter.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/service/IProjectService.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/service/IUserService.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/service/ProjectService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/service/ProjectService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/service/UserService.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/service/UserService.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/utility/Utility.kt" beforeDir="false" afterPath="$PROJECT_DIR$/../app/src/main/java/mok/it/app/mokapp/utility/Utility.kt" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -25,6 +45,29 @@
   </component>
   <component name="GitToolBoxStore">
     <option name="projectConfigVersion" value="5" />
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="feature/#145_firestore_repository_access" />
+                    <option name="lastUsedInstant" value="1709034213" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="main" />
+                    <option name="lastUsedInstant" value="1709034212" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$/.." />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
   </component>
   <component name="GithubProjectSettings">
     <option name="branchProtectionPatterns">
@@ -50,7 +93,7 @@
     "cf.first.check.clang-format": "false",
     "cidr.known.project.marker": "true",
     "dart.analysis.tool.window.visible": "false",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "feature/#145__firestore__repository__access",
     "ignore.virus.scanning.warn.message": "true",
     "last_opened_file_path": "C:/Users/roiol/source/repos/Android/MOKApp/MOKApp",
     "settings.editor.selected.configurable": "Shelf.Project.Settings",

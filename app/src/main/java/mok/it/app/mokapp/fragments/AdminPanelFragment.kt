@@ -24,6 +24,7 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.CardProjectParticipantBinding
 import mok.it.app.mokapp.databinding.FragmentAdminPanelBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject
+import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
@@ -182,5 +183,15 @@ class AdminPanelFragment : Fragment() {
                     initRecyclerView()
                 }
             }
+    }
+    
+    fun completed(userId: String, project: Project) { //TODO this should be used somewhere
+        UserService.markProjectAsCompletedForUser(project, userId)
+
+        MyFirebaseMessagingService.sendNotificationToUsersById(
+            "Projekt teljesítve!",
+            "A(z) \"${project.name}\" nevű mancsot sikeresen teljesítetted!",
+            listOf(userId)
+        )
     }
 }

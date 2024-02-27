@@ -1,6 +1,5 @@
 package mok.it.app.mokapp.fragments
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
@@ -37,34 +36,26 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserMo
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
 import mok.it.app.mokapp.fragments.viewmodels.DetailsFragmentViewModel
+import mok.it.app.mokapp.fragments.viewmodels.DetailsFragmentViewModelFactory
 import mok.it.app.mokapp.model.Collections
-import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.Project
-import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.service.UserService
+import mok.it.app.mokapp.utility.Utility.TAG
 import mok.it.app.mokapp.utility.Utility.getIconFileName
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.text.SimpleDateFormat
 
 class DetailsFragment : Fragment() {
-
-    companion object {
-        const val TAG = "DetailsFragment"
-    }
-
     //TODO test whether it updates itself when the "members" tab is open
     // if not, use FirestoreRecyclerAdapter instead
 
     private val args: DetailsFragmentArgs by navArgs()
-
-    //TODO refactor this to make proper use of the viewModel
-    private val viewModel: DetailsFragmentViewModel by viewModels()
+    private val viewModel: DetailsFragmentViewModel by viewModels {
+        DetailsFragmentViewModelFactory(args.projectId)
+    }
 
     private lateinit var project: Project
-
-    lateinit var model: Project
 
     private var userIsEditor: Boolean = false
     private lateinit var _binding: FragmentDetailsBinding
@@ -80,13 +71,22 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.mostRecentComment.observe(viewLifecycleOwner) { mostRecentComment ->
+            binding.mostRecentComment.text =
+                getString(
+                    R.string.comment_with_sender,
+                    mostRecentComment.userName,
+                    mostRecentComment.text
+                )
+        }
+
         if (currentUser == null) {
             findNavController().navigate(R.id.action_global_loginFragment)
         } else {
             setupTopMenu()
             refreshCurrentUserAndUserModel(requireContext()) {
-                getMemberIds()
-                getCommentIds()
+                UserService.getMembersForProject(args.projectId)
                 initLayout()
             }
             viewModel.members.observe(viewLifecycleOwner) {
@@ -151,7 +151,7 @@ class DetailsFragment : Fragment() {
             refreshCurrentUserAndUserModel(requireContext())
         }
         binding.joinOrLeaveProjectButton.visibility = View.GONE
-        binding.projectComments.setOnClickListener {
+        binding.mostRecentComment.setOnClickListener {
             val action =
                 DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.projectId)
             findNavController().navigate(action)
@@ -318,7 +318,7 @@ class DetailsFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
                 refreshCurrentUserAndUserModel(requireContext())
-                getMemberIds()
+                UserService.getMembersForProject(args.projectId)
                 changeVisibilities()
             },
             {
@@ -349,7 +349,7 @@ class DetailsFragment : Fragment() {
                 Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT)
                     .show()
                 refreshCurrentUserAndUserModel(requireContext())
-                getMemberIds()
+                UserService.getMembersForProject(args.projectId)
                 changeVisibilities()
             },
             {
@@ -360,69 +360,6 @@ class DetailsFragment : Fragment() {
                 ).show()
             }
         )
-    }
-
-    private lateinit var memberComments: ArrayList<Comment>
-
-    private fun getMemberIds() {
-        val docRef = Firebase.firestore.collection(Collections.projects).document(args.projectId)
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.data != null) {
-                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
-                    model = document.toObject(Project::class.java)!!
-                    viewModel.getMembers(model.members)
-                    Log.d(TAG, "Model data: $model")
-                    changeVisibilities()
-                    binding.joinOrLeaveProjectButton.isEnabled = true
-                } else {
-                    Log.d(TAG, "No such document or data is null")
-                    changeVisibilities()
-                    binding.joinOrLeaveProjectButton.isEnabled = true
-                }
-            }
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    fun getCommentIds() {
-        memberComments = ArrayList()
-        val collectionRef =
-            Firebase.firestore.collection(Collections.projects).document(args.projectId)
-                .collection(Collections.commentsRelativePath)
-        collectionRef.get()
-            .addOnSuccessListener { collection ->
-                if (collection != null && collection.documents.isNotEmpty()) {
-                    for (document in collection.documents) {
-                        val comment = document.toObject(Comment::class.java)!!
-                        memberComments.add(comment)
-                    }
-                    memberComments.sortByDescending { comment: Comment -> comment.time.toDate() }
-
-                    val formatter = SimpleDateFormat("yyyy.MM.dd. hh:mm")
-                    val timeString: String = formatter.format(memberComments[0].time.toDate())
-
-                    // Search user with given uid among the members
-                    var sender = "anonymous"
-                    val docRef =
-                        Firebase.firestore.collection(Collections.users)
-                            .document(memberComments[0].uid)
-                    docRef.get()
-                        .addOnSuccessListener { document ->
-                            if (document != null) {
-                                val user = document.toObject(User::class.java)!!
-                                sender = user.name
-                            }
-                            binding.projectComments.text = getString(
-                                R.string.newest_comment_text,
-                                timeString,
-                                sender,
-                                memberComments[0].text
-                            )
-                        }
-                } else {
-                    Log.d(TAG, "No such collection")
-                }
-            }
     }
 
     private fun initMembers() {

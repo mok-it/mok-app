@@ -118,5 +118,6 @@
     <string name="leave_project_message">Biztos, hogy el akarod hagyni a projektet? Ezzel elveszted minden mancsodat, amit szereztél benne!</string>
     <string name="join_project_message">Biztos, hogy csatlakozni akarsz a %s nevű projekthez?</string>
     <string name="quantity">%d db</string>
+    <string name="comment_with_sender">%1$s: %2$s</string>
 
 </resources>

@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.service
+package mok.it.app.mokapp.firebase.service
 
 import android.util.Log
 import androidx.lifecycle.LiveData

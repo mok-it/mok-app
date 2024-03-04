@@ -6,9 +6,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.squareup.picasso.Picasso
+import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.model.User
-import mok.it.app.mokapp.service.UserService
 import mok.it.app.mokapp.utility.Utility.TAG
 
 class MemberViewModel : ViewModel() {

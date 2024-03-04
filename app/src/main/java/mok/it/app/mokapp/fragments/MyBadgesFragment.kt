@@ -10,11 +10,11 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import mok.it.app.mokapp.databinding.FragmentMyBadgesBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
+import mok.it.app.mokapp.firebase.service.ProjectService
 import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.ProjectCategoriesAdapter
 import mok.it.app.mokapp.recyclerview.ProjectsAdapter
-import mok.it.app.mokapp.service.ProjectService
 import mok.it.app.mokapp.utility.Utility.TAG
 
 

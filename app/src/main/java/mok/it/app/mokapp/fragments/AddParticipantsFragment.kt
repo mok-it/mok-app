@@ -23,12 +23,12 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.CardSelectMemberBinding
 import mok.it.app.mokapp.databinding.FragmentAddParticipantsBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject
+import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.SelectMemberViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
-import mok.it.app.mokapp.service.UserService
 import mok.it.app.mokapp.utility.Utility.TAG
 
 class AddParticipantsFragment : DialogFragment() {

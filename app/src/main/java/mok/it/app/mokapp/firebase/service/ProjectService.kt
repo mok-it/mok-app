@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.service
+package mok.it.app.mokapp.firebase.service
 
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.ktx.firestore
@@ -34,5 +34,17 @@ object ProjectService {
             .addOnFailureListener { exception ->
                 onFailure.invoke(exception)
             }
+    }
+
+    fun getProjectData(projectId: String, onComplete: (Project) -> Unit): Project {
+        lateinit var project: Project
+        Firebase.firestore.collection(Collections.projects).document(projectId).get()
+            .addOnSuccessListener { document ->
+                if (document != null && document.data != null) {
+                    project = document.toObject(Project::class.java)!!
+                    onComplete.invoke(project)
+                }
+            }
+        return project
     }
 }

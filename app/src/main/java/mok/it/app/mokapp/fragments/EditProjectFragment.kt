@@ -6,9 +6,9 @@ import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
-import mok.it.app.mokapp.service.UserService
 import mok.it.app.mokapp.utility.Utility.TAG
 import java.util.Calendar
 import java.util.Date

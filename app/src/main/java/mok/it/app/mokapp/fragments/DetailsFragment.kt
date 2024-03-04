@@ -35,11 +35,11 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
+import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.fragments.viewmodels.DetailsFragmentViewModel
 import mok.it.app.mokapp.fragments.viewmodels.DetailsFragmentViewModelFactory
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
-import mok.it.app.mokapp.service.UserService
 import mok.it.app.mokapp.utility.Utility.TAG
 import mok.it.app.mokapp.utility.Utility.getIconFileName
 import java.io.File

@@ -19,19 +19,20 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.squareup.picasso.Picasso
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.CardProjectParticipantBinding
 import mok.it.app.mokapp.databinding.FragmentAdminPanelBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
+import mok.it.app.mokapp.firebase.service.ProjectService.getProjectData
+import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.ProjectParticipantViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
-import mok.it.app.mokapp.service.UserService
 import mok.it.app.mokapp.utility.Utility.TAG
+import mok.it.app.mokapp.utility.Utility.loadImage
 import kotlin.math.roundToInt
 
 class AdminPanelFragment : Fragment() {
@@ -114,7 +115,7 @@ class AdminPanelFragment : Fragment() {
                 val ivImg: ImageView = holder.binding.participantPicture
                 val slBadge: RangeSlider = holder.binding.badgeSlider
                 tvName.text = user.name
-                Picasso.get().load(user.photoURL).into(ivImg)
+                loadImage(ivImg, user.photoURL, requireContext())
                 tvMaxBadge.text = project.maxBadges.toString()
                 slBadge.valueFrom = 0f
                 slBadge.valueTo = project.maxBadges.toFloat()
@@ -168,23 +169,16 @@ class AdminPanelFragment : Fragment() {
             args.project.id,
             {
                 userBadges = it.toMutableMap()
-                getProjectData()
+                project = getProjectData(args.project.id)
+                {
+                    initLayout()
+                    initRecyclerView()
+                }
             },
             {}
         )
     }
 
-    private fun getProjectData() {
-        Firebase.firestore.collection(Collections.projects).document(args.project.id).get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.data != null) {
-                    project = document.toObject(Project::class.java)!!
-                    initLayout()
-                    initRecyclerView()
-                }
-            }
-    }
-    
     fun completed(userId: String, project: Project) { //TODO this should be used somewhere
         UserService.markProjectAsCompletedForUser(project, userId)
 

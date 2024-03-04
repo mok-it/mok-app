@@ -20,7 +20,7 @@ import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.FragmentCreateProjectBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
-import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
+import mok.it.app.mokapp.firebase.service.CloudMessagingService
 import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
@@ -188,7 +188,7 @@ open class CreateProjectFragment : DialogFragment() {
 
         val success = commitNewProjectToDatabase()
 
-        MyFirebaseMessagingService.sendNotificationToUsers(
+        CloudMessagingService.sendNotificationToUsers(
             "Új projekt lett létrehozva",
             "${userModel.name} egy új projektet hozott létre az alábbi névvel: ${binding.projectName.text}",
             users.filterNot { it.documentId == userModel.documentId }

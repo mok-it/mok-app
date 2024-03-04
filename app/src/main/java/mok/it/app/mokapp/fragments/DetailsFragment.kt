@@ -34,7 +34,7 @@ import mok.it.app.mokapp.databinding.FragmentDetailsBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
-import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
+import mok.it.app.mokapp.firebase.service.CloudMessagingService
 import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.fragments.viewmodels.DetailsFragmentViewModel
 import mok.it.app.mokapp.fragments.viewmodels.DetailsFragmentViewModelFactory
@@ -330,7 +330,7 @@ class DetailsFragment : Fragment() {
             }
         )
 
-        MyFirebaseMessagingService.sendNotificationToUsersById(
+        CloudMessagingService.sendNotificationToUsersById(
             "Csatlakoztak egy projekthez",
             "${userModel.name} csatlakozott a(z) \"${project.name}\" nevű mancshoz!",
             listOf(project.creator + project.leaders)

@@ -37,7 +37,7 @@ object FirebaseUserObject {
     ) {
         val numberOfMaxTries = 100
         Log.d("MOKApp", FirebaseAuth.getInstance().currentUser?.uid.toString())
-        Firebase.firestore.collection(Collections.users)
+        Firebase.firestore.collection(Collections.USERS)
             .document(
                 FirebaseAuth.getInstance().currentUser?.uid
                     ?: throw Exception("FirebaseAuth user is null")

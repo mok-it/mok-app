@@ -21,6 +21,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.remoteconfig.ktx.remoteConfig
+import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.ActivityMainBinding
 import mok.it.app.mokapp.databinding.NavHeaderBinding
@@ -50,6 +52,20 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setupNavigation()
         setupBackPressed()
+
+        getDataFromRemoteConfig()
+    }
+
+
+    /**Get config data from Firebase, e.g. season*/
+    private fun getDataFromRemoteConfig() {
+        val remoteConfig = Firebase.remoteConfig
+        val configSettings = remoteConfigSettings {
+            minimumFetchIntervalInSeconds = 3600
+        }
+        remoteConfig.setConfigSettingsAsync(configSettings)
+        remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
+        remoteConfig.fetchAndActivate()
     }
 
     private fun setupNavigation() {

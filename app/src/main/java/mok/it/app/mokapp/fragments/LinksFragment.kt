@@ -46,7 +46,7 @@ class LinksFragment : Fragment() {
 
     private fun getAdapter(): FirestoreRecyclerAdapter<mok.it.app.mokapp.model.Link, LinkViewHolder> {
         val query =
-            Firebase.firestore.collection(Collections.links)
+            Firebase.firestore.collection(Collections.LINKS)
                 .orderBy("title", Query.Direction.ASCENDING)
         val options =
             FirestoreRecyclerOptions.Builder<mok.it.app.mokapp.model.Link>()
@@ -54,7 +54,7 @@ class LinksFragment : Fragment() {
                 .setLifecycleOwner(this).build()
         return object :
             FirestoreRecyclerAdapter<mok.it.app.mokapp.model.Link, LinkViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = LinkViewHolder (
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = LinkViewHolder(
                 CardLinkBinding.inflate(LayoutInflater.from(parent.context), parent, false)
             )
 

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AppInsightsSettings">
+    <option name="selectedTabId" value="Firebase Crashlytics" />
     <option name="tabSettings">
       <map>
         <entry key="Android Vitals">
@@ -18,6 +19,42 @@
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
               <option name="timeIntervalDays" value="SEVEN_DAYS" />
+              <option name="visibilityType" value="ALL" />
+            </InsightsFilterSettings>
+          </value>
+        </entry>
+        <entry key="Firebase Crashlytics">
+          <value>
+            <InsightsFilterSettings>
+              <option name="connection">
+                <ConnectionSetting>
+                  <option name="appId" value="mok.it.app.mokapp" />
+                  <option name="mobileSdkAppId" value="1:820619458315:android:3235c589800d9518be540e" />
+                  <option name="projectId" value="mokapp-51f86" />
+                  <option name="projectNumber" value="820619458315" />
+                </ConnectionSetting>
+              </option>
+              <option name="signal" value="SIGNAL_UNSPECIFIED" />
+              <option name="timeIntervalDays" value="THIRTY_DAYS" />
+              <option name="versions">
+                <list>
+                  <VersionSetting>
+                    <option name="buildVersion" value="51" />
+                    <option name="displayName" value="4.0.0 (51)" />
+                    <option name="displayVersion" value="4.0.0" />
+                    <option name="tracks">
+                      <list>
+                        <option value="PRODUCTION" />
+                      </list>
+                    </option>
+                  </VersionSetting>
+                  <VersionSetting>
+                    <option name="buildVersion" value="4" />
+                    <option name="displayName" value="4.0.0 (4)" />
+                    <option name="displayVersion" value="4.0.0" />
+                  </VersionSetting>
+                </list>
+              </option>
               <option name="visibilityType" value="ALL" />
             </InsightsFilterSettings>
           </value>

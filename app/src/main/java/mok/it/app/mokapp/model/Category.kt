@@ -29,11 +29,6 @@ enum class Category {
             return "Média és DIY"
         }
     },
-    TABORIPROGRAMESELOKESZITES {
-        override fun toString(): String {
-            return "Tábori program és előkészítés"
-        }
-    },
     IT {
         override fun toString(): String {
             return "IT"

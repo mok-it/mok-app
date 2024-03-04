@@ -28,7 +28,7 @@ class DetailsFragmentViewModel : ViewModel() {
     }
 
     private fun getMemberIds(projectId: String) {
-        val docRef = Firebase.firestore.collection(Collections.projects).document(projectId)
+        val docRef = Firebase.firestore.collection(Collections.PROJECTS).document(projectId)
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.data != null) {
@@ -45,7 +45,7 @@ class DetailsFragmentViewModel : ViewModel() {
     fun getMembers(memberIds: List<String>?) {
         _members.value = arrayOf()
         memberIds?.forEach {
-            val docRef = Firebase.firestore.collection(Collections.users).document(it)
+            val docRef = Firebase.firestore.collection(Collections.USERS).document(it)
             docRef.get()
                 .addOnSuccessListener { document ->
                     if (document != null) {
@@ -63,7 +63,7 @@ class DetailsFragmentViewModel : ViewModel() {
     fun completed(userId: String, project: Project) {
         Log.d(DetailsFragment.TAG, "badge completed with id ${project.name}")
 
-        val userRef = Firebase.firestore.collection(Collections.users).document(userId)
+        val userRef = Firebase.firestore.collection(Collections.USERS).document(userId)
         userRef.update("joinedBadges", FieldValue.arrayRemove(project.id))
             .addOnSuccessListener {
                 Log.d(DetailsFragment.TAG, project.name + " removed from " + userId)
@@ -71,7 +71,7 @@ class DetailsFragmentViewModel : ViewModel() {
 
         userRef.update("collectedBadges", FieldValue.arrayUnion(project.id))
 
-        Firebase.firestore.collection(Collections.projects).document(project.id)
+        Firebase.firestore.collection(Collections.PROJECTS).document(project.id)
             .update("members", FieldValue.arrayRemove(userId))
             .addOnCompleteListener {
                 getMemberIds(project.id)

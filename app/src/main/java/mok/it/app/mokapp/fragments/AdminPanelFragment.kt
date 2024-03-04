@@ -79,7 +79,7 @@ class AdminPanelFragment : Fragment() {
 
 
     private fun participantsQuery(): Query {
-        return Firebase.firestore.collection(Collections.users)
+        return Firebase.firestore.collection(Collections.USERS)
             .orderBy("name", Query.Direction.ASCENDING)
             .whereIn(
                 FieldPath.documentId(),
@@ -96,9 +96,14 @@ class AdminPanelFragment : Fragment() {
             FirestoreRecyclerOptions.Builder<User>().setQuery(query, User::class.java)
                 .setLifecycleOwner(this).build()
         return object : FirestoreRecyclerAdapter<User, ProjectParticipantViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = ProjectParticipantViewHolder (
-                CardProjectParticipantBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            )
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+                ProjectParticipantViewHolder(
+                    CardProjectParticipantBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
+                    )
+                )
 
             override fun onBindViewHolder(
                 holder: ProjectParticipantViewHolder,
@@ -172,7 +177,7 @@ class AdminPanelFragment : Fragment() {
     }
 
     private fun getProjectData() {
-        Firebase.firestore.collection(Collections.projects).document(args.project.id).get()
+        Firebase.firestore.collection(Collections.PROJECTS).document(args.project.id).get()
             .addOnSuccessListener { document ->
                 if (document != null && document.data != null) {
                     project = document.toObject(Project::class.java)!!

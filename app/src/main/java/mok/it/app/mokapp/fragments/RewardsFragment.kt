@@ -74,7 +74,7 @@ class RewardsFragment : Fragment() {
     private fun initializeAdapter() {
         val options: FirestoreRecyclerOptions<Reward?> = FirestoreRecyclerOptions.Builder<Reward>()
             .setQuery(
-                Firebase.firestore.collection(Collections.rewards)
+                Firebase.firestore.collection(Collections.REWARDS)
                     .orderBy("price", Query.Direction.ASCENDING),
                 Reward::class.java
             )
@@ -165,12 +165,12 @@ class RewardsFragment : Fragment() {
         Firebase.firestore.runTransaction {
             // substract 1 from the quantity of the reward
             val rewardRef =
-                Firebase.firestore.collection(Collections.rewards).document(reward.documentId)
+                Firebase.firestore.collection(Collections.REWARDS).document(reward.documentId)
             val newQuantity = reward.quantity - 1
             rewardRef.update("quantity", newQuantity)
 
 
-            Firebase.firestore.collection(Collections.rewardrequests).add(request)
+            Firebase.firestore.collection(Collections.REWARDREQUESTS).add(request)
                 .addOnSuccessListener { documentRef ->
                     Log.d("Reward", "DocumentSnapshot written with ID: ${documentRef.id}")
                 }
@@ -179,7 +179,7 @@ class RewardsFragment : Fragment() {
                 }
 
             val userRef =
-                Firebase.firestore.collection(Collections.users).document(userModel.documentId)
+                Firebase.firestore.collection(Collections.USERS).document(userModel.documentId)
             userRef.update(
                 "requestedRewards", FieldValue.arrayUnion(reward.documentId),
                 "points", FieldValue.increment(-1 * reward.price.toDouble())

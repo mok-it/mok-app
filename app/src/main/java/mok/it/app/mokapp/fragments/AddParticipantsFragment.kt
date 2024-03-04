@@ -53,7 +53,7 @@ class AddParticipantsFragment : DialogFragment() {
         if (FirebaseUserObject.currentUser == null) {
             findNavController().navigate(R.id.action_global_loginFragment)
         } else {
-            Firebase.firestore.collection(Collections.projects).document(args.projectId).get()
+            Firebase.firestore.collection(Collections.PROJECTS).document(args.projectId).get()
                 .addOnSuccessListener { document ->
                     if (document != null && document.data != null) {
                         project = document.toObject(Project::class.java)!!
@@ -109,9 +109,14 @@ class AddParticipantsFragment : DialogFragment() {
             FirestoreRecyclerOptions.Builder<User>().setQuery(query, User::class.java)
                 .setLifecycleOwner(this).build()
         return object : FirestoreRecyclerAdapter<User, SelectMemberViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = SelectMemberViewHolder(
-                        CardSelectMemberBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
+                SelectMemberViewHolder(
+                    CardSelectMemberBinding.inflate(
+                        LayoutInflater.from(parent.context),
+                        parent,
+                        false
                     )
+                )
 
             override fun onBindViewHolder(
                 holder: SelectMemberViewHolder,
@@ -127,25 +132,23 @@ class AddParticipantsFragment : DialogFragment() {
                 if (user.joinedBadges.contains(project.id)) {
                     cbSelect.isEnabled = false
                     cbSelect.isChecked = true
-                }
-                else {
+                } else {
                     cbSelect.isEnabled = true
                     cbSelect.isChecked = selectedUsers.contains(user.documentId)
                     cbSelect.setOnCheckedChangeListener { _, enabled ->
                         if (enabled) {
                             selectedUsers.add(user.documentId)
-                        }
-                        else {
+                        } else {
                             selectedUsers.remove(user.documentId)
                         }
-                }
+                    }
                 }
             }
         }
     }
 
     private fun usersQuery(): Query {
-        return Firebase.firestore.collection(Collections.users)
+        return Firebase.firestore.collection(Collections.USERS)
             .orderBy("name", Query.Direction.ASCENDING)
     }
 }

@@ -79,7 +79,11 @@ class EditProjectFragment : CreateProjectFragment() {
     }
 
     private fun commitEditedBadgeToDatabase(): Boolean {
-        val deadline = Date(binding.datePicker.year - 1900, binding.datePicker.month, binding.datePicker.dayOfMonth)
+        val deadline = Date(
+            binding.datePicker.year - 1900,
+            binding.datePicker.month,
+            binding.datePicker.dayOfMonth
+        )
         val editedBadge = hashMapOf(
             "category" to binding.projectTerulet.text.toString(),
             "deadline" to deadline,
@@ -89,7 +93,7 @@ class EditProjectFragment : CreateProjectFragment() {
             "value" to badgeValue,
             //TODO: update icon if a new one was selected, otherwise leave it untouched!
         )
-        firestore.collection(Collections.projects)
+        firestore.collection(Collections.PROJECTS)
             .document(args.project.id)
             .update(editedBadge as Map<String, Any>)
             .addOnSuccessListener {

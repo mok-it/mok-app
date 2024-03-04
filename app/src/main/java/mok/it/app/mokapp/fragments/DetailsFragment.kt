@@ -156,7 +156,7 @@ class DetailsFragment : Fragment() {
                 DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.projectId)
             findNavController().navigate(action)
         }
-        Firebase.firestore.collection(Collections.projects).document(args.projectId).get()
+        Firebase.firestore.collection(Collections.PROJECTS).document(args.projectId).get()
             .addOnSuccessListener { document ->
                 project = document.toObject(Project::class.java)!!
                 binding.projectName.text = project.name
@@ -166,7 +166,7 @@ class DetailsFragment : Fragment() {
                     getString(R.string.specific_value, project.maxBadges)
                 binding.projectCreateDescription.text = project.description
 
-                Firebase.firestore.collection(Collections.users)
+                Firebase.firestore.collection(Collections.USERS)
                     .document(project.creator)
                     .get().addOnSuccessListener { creatorDoc ->
                         if (creatorDoc?.get("name") != null) {
@@ -365,7 +365,7 @@ class DetailsFragment : Fragment() {
     private lateinit var memberComments: ArrayList<Comment>
 
     private fun getMemberIds() {
-        val docRef = Firebase.firestore.collection(Collections.projects).document(args.projectId)
+        val docRef = Firebase.firestore.collection(Collections.PROJECTS).document(args.projectId)
         docRef.get()
             .addOnSuccessListener { document ->
                 if (document != null && document.data != null) {
@@ -387,8 +387,8 @@ class DetailsFragment : Fragment() {
     fun getCommentIds() {
         memberComments = ArrayList()
         val collectionRef =
-            Firebase.firestore.collection(Collections.projects).document(args.projectId)
-                .collection(Collections.commentsRelativePath)
+            Firebase.firestore.collection(Collections.PROJECTS).document(args.projectId)
+                .collection(Collections.COMMENTS)
         collectionRef.get()
             .addOnSuccessListener { collection ->
                 if (collection != null && collection.documents.isNotEmpty()) {
@@ -404,7 +404,7 @@ class DetailsFragment : Fragment() {
                     // Search user with given uid among the members
                     var sender = "anonymous"
                     val docRef =
-                        Firebase.firestore.collection(Collections.users)
+                        Firebase.firestore.collection(Collections.USERS)
                             .document(memberComments[0].uid)
                     docRef.get()
                         .addOnSuccessListener { document ->

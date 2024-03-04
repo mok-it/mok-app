@@ -36,25 +36,6 @@
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />
               <option name="timeIntervalDays" value="THIRTY_DAYS" />
-              <option name="versions">
-                <list>
-                  <VersionSetting>
-                    <option name="buildVersion" value="51" />
-                    <option name="displayName" value="4.0.0 (51)" />
-                    <option name="displayVersion" value="4.0.0" />
-                    <option name="tracks">
-                      <list>
-                        <option value="PRODUCTION" />
-                      </list>
-                    </option>
-                  </VersionSetting>
-                  <VersionSetting>
-                    <option name="buildVersion" value="4" />
-                    <option name="displayName" value="4.0.0 (4)" />
-                    <option name="displayVersion" value="4.0.0" />
-                  </VersionSetting>
-                </list>
-              </option>
               <option name="visibilityType" value="ALL" />
             </InsightsFilterSettings>
           </value>

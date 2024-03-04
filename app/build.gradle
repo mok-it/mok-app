@@ -16,7 +16,7 @@ android {
         applicationId "mok.it.app.mokapp"
         minSdk 26
         targetSdk 34
-        versionCode 4
+        versionCode 5
         versionName "4.0.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"

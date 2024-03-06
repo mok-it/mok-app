@@ -1,7 +1,6 @@
 package mok.it.app.mokapp.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -24,8 +23,6 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.CardProjectParticipantBinding
 import mok.it.app.mokapp.databinding.FragmentAdminPanelBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject
-import mok.it.app.mokapp.firebase.service.CloudMessagingService
-import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.fragments.viewmodels.AdminPanelViewModel
 import mok.it.app.mokapp.fragments.viewmodels.AdminPanelViewModelFactory
 import mok.it.app.mokapp.model.Collections
@@ -33,7 +30,6 @@ import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.ProjectParticipantViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
-import mok.it.app.mokapp.utility.Utility.TAG
 import mok.it.app.mokapp.utility.Utility.loadImage
 import kotlin.math.roundToInt
 
@@ -134,32 +130,19 @@ class AdminPanelFragment : Fragment() {
                 tvMaxBadge.text = viewModel.project.value!!.maxBadges.toString()
                 slBadge.setLabelFormatter { value -> value.toString() }
                 slBadge.addOnChangeListener { _, value, _ ->
-                    UserService.addBadges(user.documentId,
-                        viewModel.project.value!!.id,
-                        value.roundToInt(),
-                        {
-                            Log.i(
-                                "AdinPanelFragment",
-                                "Badge count of user ${user.documentId} on viewModel.project.value!! ${viewModel.project.value!!.id} was set to $value"
-                            )
-                            viewModel.userBadges.value?.set(user.documentId, value.roundToInt())
-                        },
-                        {
-                            slBadge.setValues(
-                                viewModel.userBadges.value?.get(user.documentId)?.toFloat() ?: 0f
-                            )
-                            Log.e(
-                                TAG, "Could not set badge count " +
-                                        "on project ${viewModel.project.value!!.id} for user ${user.documentId}"
-                            )
-                            Toast.makeText(
-                                context,
-                                "Mancsok módosítása sikertelen. Kérlek, ellenőrizd a kapcsolatot, " +
-                                        " vagy próbáld újra később.",
-                                Toast.LENGTH_LONG
-                            )
-                                .show()
-                        })
+                    viewModel.addBadges(user, value.roundToInt()) {
+                        //on error, reset the slider's value to represent the actual value stored
+                        slBadge.setValues(
+                            viewModel.userBadges.value?.get(user.documentId)?.toFloat() ?: 0f
+                        )
+                        Toast.makeText(
+                            context,
+                            "Mancsok módosítása sikertelen. Kérlek, ellenőrizd a kapcsolatot, " +
+                                    " vagy próbáld újra később.",
+                            Toast.LENGTH_LONG
+                        )
+                            .show()
+                    }
                 }
             }
         }
@@ -175,12 +158,6 @@ class AdminPanelFragment : Fragment() {
     }
 
     fun completed(userId: String, project: Project) { //TODO this should be used somewhere
-        UserService.markProjectAsCompletedForUser(project, userId)
-
-        CloudMessagingService.sendNotificationToUsersById(
-            "Projekt teljesítve!",
-            "A(z) \"${project.name}\" nevű mancsot sikeresen teljesítetted!",
-            listOf(userId)
-        )
+        viewModel.projectCompleted(userId, project)
     }
 }

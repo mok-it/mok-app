@@ -119,5 +119,6 @@
     <string name="join_project_message">Biztos, hogy csatlakozni akarsz a %s nevű projekthez?</string>
     <string name="quantity">%d db</string>
     <string name="comment_with_sender">%1$s: %2$s</string>
+    <string name="administration">Adminisztráció</string>
 
 </resources>

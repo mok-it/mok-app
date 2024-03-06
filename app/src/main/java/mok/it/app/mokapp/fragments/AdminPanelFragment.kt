@@ -9,6 +9,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
@@ -24,8 +25,9 @@ import mok.it.app.mokapp.databinding.CardProjectParticipantBinding
 import mok.it.app.mokapp.databinding.FragmentAdminPanelBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.service.CloudMessagingService
-import mok.it.app.mokapp.firebase.service.ProjectService.getProjectData
 import mok.it.app.mokapp.firebase.service.UserService
+import mok.it.app.mokapp.fragments.viewmodels.AdminPanelViewModel
+import mok.it.app.mokapp.fragments.viewmodels.AdminPanelViewModelFactory
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
@@ -38,9 +40,11 @@ import kotlin.math.roundToInt
 class AdminPanelFragment : Fragment() {
     //TODO: using args.project.id to get the project because it should be updated. Could pass id only
     private val args: AdminPanelFragmentArgs by navArgs()
-    private lateinit var project: Project
-    private lateinit var userBadges: MutableMap<String, Int>
     private lateinit var binding: FragmentAdminPanelBinding
+
+    private val viewModel: AdminPanelViewModel by viewModels {
+        AdminPanelViewModelFactory(args.project.id)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -55,7 +59,10 @@ class AdminPanelFragment : Fragment() {
         if (FirebaseUserObject.currentUser == null) {
             findNavController().navigate(R.id.action_global_loginFragment)
         } else {
-            initUserBadges()
+            viewModel.userBadges.observe(viewLifecycleOwner) {
+                initLayout()
+                initRecyclerView()
+            }
         }
     }
 
@@ -82,12 +89,12 @@ class AdminPanelFragment : Fragment() {
             .orderBy("name", Query.Direction.ASCENDING)
             .whereIn(
                 FieldPath.documentId(),
-                project.members
+                viewModel.project.value!!.members
             ) //NOTE: can not handle lists of size greater than 30
     }
 
     private fun getAdapter(): FirestoreRecyclerAdapter<User, ProjectParticipantViewHolder>? {
-        if (project.members.isEmpty()) {
+        if (viewModel.project.value?.members?.isEmpty() != false) {
             return null
         }
         val query = participantsQuery()
@@ -116,35 +123,38 @@ class AdminPanelFragment : Fragment() {
                 val slBadge: RangeSlider = holder.binding.badgeSlider
                 tvName.text = user.name
                 loadImage(ivImg, user.photoURL, requireContext())
-                tvMaxBadge.text = project.maxBadges.toString()
+                tvMaxBadge.text = viewModel.project.value!!.maxBadges.toString()
                 slBadge.valueFrom = 0f
-                slBadge.valueTo = project.maxBadges.toFloat()
+                slBadge.valueTo = viewModel.project.value!!.maxBadges.toFloat()
                 slBadge.bottom = 0
-                slBadge.top = project.maxBadges
+                slBadge.top = viewModel.project.value!!.maxBadges
                 slBadge.stepSize = 1f
-                slBadge.setValues(userBadges[user.documentId]?.toFloat() ?: 0f)
+                slBadge.setValues(viewModel.userBadges.value?.get(user.documentId)?.toFloat() ?: 0f)
                 tvMinBadge.text = "0"
-                tvMaxBadge.text = project.maxBadges.toString()
+                tvMaxBadge.text = viewModel.project.value!!.maxBadges.toString()
                 slBadge.setLabelFormatter { value -> value.toString() }
                 slBadge.addOnChangeListener { _, value, _ ->
-                    UserService.addBadges(user.documentId, project.id, value.roundToInt(),
+                    UserService.addBadges(user.documentId,
+                        viewModel.project.value!!.id,
+                        value.roundToInt(),
                         {
                             Log.i(
                                 "AdinPanelFragment",
-                                "Badge count of user ${user.documentId} on project ${project.id} was set to $value"
+                                "Badge count of user ${user.documentId} on viewModel.project.value!! ${viewModel.project.value!!.id} was set to $value"
                             )
-                            userBadges[user.documentId] = value.roundToInt()
+                            viewModel.userBadges.value?.set(user.documentId, value.roundToInt())
                         },
                         {
-                            slBadge.setValues(userBadges[user.documentId]?.toFloat() ?: 0f)
+                            slBadge.setValues(
+                                viewModel.userBadges.value?.get(user.documentId)?.toFloat() ?: 0f
+                            )
                             Log.e(
                                 TAG, "Could not set badge count " +
-                                        "on project ${project.id} for user ${user.documentId}"
+                                        "on project ${viewModel.project.value!!.id} for user ${user.documentId}"
                             )
                             Toast.makeText(
                                 context,
-                                "Mancsok módosítása sikertelen." +
-                                        " Kérlek ellenőrizd a kapcsolatot" +
+                                "Mancsok módosítása sikertelen. Kérlek, ellenőrizd a kapcsolatot, " +
                                         " vagy próbáld újra később.",
                                 Toast.LENGTH_LONG
                             )
@@ -162,21 +172,6 @@ class AdminPanelFragment : Fragment() {
                     .actionAdminPanelFragmentToAddParticipantsDialogFragment(args.project.id)
             )
         }
-    }
-
-    private fun initUserBadges() {
-        UserService.getProjectUsersAndBadges(
-            args.project.id,
-            {
-                userBadges = it.toMutableMap()
-                project = getProjectData(args.project.id)
-                {
-                    initLayout()
-                    initRecyclerView()
-                }
-            },
-            {}
-        )
     }
 
     fun completed(userId: String, project: Project) { //TODO this should be used somewhere

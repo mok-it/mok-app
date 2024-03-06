@@ -36,8 +36,8 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserMo
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.service.CloudMessagingService
 import mok.it.app.mokapp.firebase.service.UserService
-import mok.it.app.mokapp.fragments.viewmodels.DetailsFragmentViewModel
-import mok.it.app.mokapp.fragments.viewmodels.DetailsFragmentViewModelFactory
+import mok.it.app.mokapp.fragments.viewmodels.DetailsViewModel
+import mok.it.app.mokapp.fragments.viewmodels.DetailsViewModelFactory
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.utility.Utility.TAG
@@ -47,12 +47,10 @@ import java.io.FileOutputStream
 import java.io.IOException
 
 class DetailsFragment : Fragment() {
-    //TODO test whether it updates itself when the "members" tab is open
-    // if not, use FirestoreRecyclerAdapter instead
 
     private val args: DetailsFragmentArgs by navArgs()
-    private val viewModel: DetailsFragmentViewModel by viewModels {
-        DetailsFragmentViewModelFactory(args.projectId)
+    private val viewModel: DetailsViewModel by viewModels {
+        DetailsViewModelFactory(args.projectId)
     }
 
     private lateinit var project: Project

@@ -1,5 +1,7 @@
 package mok.it.app.mokapp.firebase.service
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -36,13 +38,13 @@ object ProjectService {
             }
     }
 
-    fun getProjectData(projectId: String, onComplete: (Project) -> Unit): Project {
-        lateinit var project: Project
+    fun getProjectData(projectId: String, onComplete: (Project) -> Unit = {}): LiveData<Project> {
+        val project = MutableLiveData<Project>()
         Firebase.firestore.collection(Collections.projects).document(projectId).get()
             .addOnSuccessListener { document ->
                 if (document != null && document.data != null) {
-                    project = document.toObject(Project::class.java)!!
-                    onComplete.invoke(project)
+                    project.value = document.toObject(Project::class.java)!!
+                    onComplete.invoke(project.value!!)
                 }
             }
         return project

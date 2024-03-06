@@ -7,7 +7,7 @@ import androidx.lifecycle.ViewModelProvider
 import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.model.User
 
-class DetailsFragmentViewModel(projectId: String) : ViewModel() {
+class DetailsViewModel(projectId: String) : ViewModel() {
     val members: LiveData<Array<User>> get() = _members
     private val _members: MutableLiveData<Array<User>> by lazy {
         MutableLiveData<Array<User>>()
@@ -24,10 +24,10 @@ class DetailsFragmentViewModel(projectId: String) : ViewModel() {
     }
 }
 
-class DetailsFragmentViewModelFactory(private val projectId: String) : ViewModelProvider.Factory {
+class DetailsViewModelFactory(private val projectId: String) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
-        if (modelClass.isAssignableFrom(DetailsFragmentViewModel::class.java)) {
-            return DetailsFragmentViewModel(projectId) as T
+        if (modelClass.isAssignableFrom(DetailsViewModel::class.java)) {
+            return DetailsViewModel(projectId) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

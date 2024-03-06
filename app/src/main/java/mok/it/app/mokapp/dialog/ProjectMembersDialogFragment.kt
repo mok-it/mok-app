@@ -9,7 +9,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import mok.it.app.mokapp.databinding.FragmentProjectMembersDialogBinding
-import mok.it.app.mokapp.fragments.viewmodels.DetailsFragmentViewModel
+import mok.it.app.mokapp.fragments.viewmodels.DetailsViewModel
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.MembersAdapter
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
@@ -21,7 +21,7 @@ class ProjectMembersDialogFragment : DialogFragment() {
     private val binding get() = _binding!!
     private var _binding: FragmentProjectMembersDialogBinding? = null
 
-    private val viewModel: DetailsFragmentViewModel by viewModels()
+    private val viewModel: DetailsViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?

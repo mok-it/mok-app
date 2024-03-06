@@ -104,9 +104,8 @@ object UserService {
 
     fun getProjectUsersAndBadges(
         projectId: String,
-        onComplete: (Map<String, Int>) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
+    ): LiveData<MutableMap<String, Int>> {
+        val usersAndBadges = MutableLiveData<MutableMap<String, Int>>()
         val usersCollectionRef = Firebase.firestore.collection(Collections.users)
 
         usersCollectionRef.whereGreaterThan("projectBadges.$projectId", 0)
@@ -125,12 +124,12 @@ object UserService {
                         result[document.id] = badgeAmount
                     }
                 }
-
-                onComplete.invoke(result)
+                usersAndBadges.value = result
             }
             .addOnFailureListener { e ->
-                onFailure.invoke(e)
+                Log.d(TAG, e.message.toString())
             }
+        return usersAndBadges
     }
 
     fun joinUsersToProject(

@@ -23,8 +23,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             messageBody: String,
             adresseeUserIdList: List<String>,
         ) {
-            return
-            TODO("haven't been tested yet")
             require(adresseeUserIdList.size <= 10)
             { "too many users to send notification to (the limit is 10)" }
 
@@ -47,8 +45,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             messageBody: String,
             adresseeUserList: List<User>
         ) {
-            return
-            TODO("doesn't work correctly yet, npe")
             adresseeUserList.toHashSet().forEach { addresseeUser ->
                 Firebase.firestore.collection(Collections.USERS).document(addresseeUser.documentId)
                     .get().addOnSuccessListener { document ->

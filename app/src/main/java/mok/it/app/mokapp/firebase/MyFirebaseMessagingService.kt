@@ -23,6 +23,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             messageBody: String,
             adresseeUserIdList: List<String>,
         ) {
+            //TODO remove duplicates from adresseeUserIdList
+
             require(adresseeUserIdList.size <= 10)
             { "too many users to send notification to (the limit is 10)" }
 
@@ -45,27 +47,20 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             messageBody: String,
             adresseeUserList: List<User>
         ) {
-            adresseeUserList.toHashSet().forEach { addresseeUser ->
-                Firebase.firestore.collection(Collections.USERS).document(addresseeUser.documentId)
-                    .get().addOnSuccessListener { document ->
-                        val fcmToken = document["FCMtokens"] as List<*>
-                        Log.d(TAG, "fcmtoken: ${fcmToken[0]}")
-                        Log.d(TAG, "sending notification to ${document["name"]}")
+            adresseeUserList.forEach { addresseeUser ->
+                Log.d(TAG, "fcmtoken: ${addresseeUser.fcmTokens}")
+                Log.d(TAG, "sending notification to ${addresseeUser.name}")
 
-                        FirebaseMessaging.getInstance().send(
-                            RemoteMessage.Builder(fcmToken[0] as String)
-                                .setMessageId(generateMessageId())
-                                .addData("title", title)
-                                .addData("message", messageBody)
-                                .build()
-                        )
-
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.d(TAG, "failed to get user: ", exception)
-                    }
+                FirebaseMessaging.getInstance().send(
+                    RemoteMessage.Builder(addresseeUser.fcmTokens)
+                        .setMessageId(generateMessageId())
+                        .addData("title", title)
+                        .addData("message", messageBody)
+                        .build()
+                )
             }
         }
+
 
         private fun generateMessageId(): String {
             Log.d(TAG, "generateMessageId: ${Calendar.getInstance().time} ${userModel.name}")

@@ -23,6 +23,7 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.CardSelectMemberBinding
 import mok.it.app.mokapp.databinding.FragmentAddParticipantsBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject
+import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
@@ -80,6 +81,11 @@ class AddParticipantsFragment : DialogFragment() {
             UserService.joinUsersToProject(project.id, selectedUsers, {
                 Log.i(TAG, "Adding ${selectedUsers.size} users to project ${project.id}")
                 Toast.makeText(context, "Résztvevők hozzáadva!", Toast.LENGTH_SHORT).show()
+                MyFirebaseMessagingService.sendNotificationToUsersById(
+                    "Új projekt",
+                    "Hozzáadtak a(z) ${project.name} projekthez!",
+                    selectedUsers
+                )
                 findNavController().popBackStack()
 
             }, {

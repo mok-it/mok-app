@@ -18,7 +18,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     companion object {
         private const val TAG = "MyFirebaseMsgService"
 
-        fun sendNotificationToUsers(
+        fun sendNotificationToUsersById(
             title: String,
             messageBody: String,
             adresseeUserIdList: List<String>,

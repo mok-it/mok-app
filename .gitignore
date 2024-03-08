@@ -83,3 +83,5 @@ lint/tmp/
 
 # sonarlint
 .idea/sonarlint
+
+.idea/copilot/chatSessions/

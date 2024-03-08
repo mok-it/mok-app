@@ -1,17 +1,26 @@
 package mok.it.app.mokapp.firebase
 
 import android.util.Log
+import android.widget.Toast
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.service.UserService
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.RequestBody.Companion.toRequestBody
+import okhttp3.Response
+import okio.IOException
 import java.util.Calendar
+
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -49,15 +58,45 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         ) {
             adresseeUserList.distinct().forEach { addresseeUser ->
                 Log.d(TAG, "fcmtoken: ${addresseeUser.fcmToken}")
-                Log.d(TAG, "sending notification to ${addresseeUser.name}")
-
-                FirebaseMessaging.getInstance().send(
-                    RemoteMessage.Builder(addresseeUser.fcmToken)
-                        .setMessageId(generateMessageId())
-                        .addData("title", title)
-                        .addData("message", messageBody)
-                        .build()
+                Log.d(
+                    TAG,
+                    "sending notification to ${addresseeUser.name}, FCM token: ${addresseeUser.fcmToken}"
                 )
+
+                val fcmServerKey =
+                    "AAAAvxC7Nws:APA91bGO_wzATxqSbriJRPYYOeHAnI5KwUIkTrZjRGMKCBbqKOzs2AA7dMVkjEwyYoM4GSaje9F4h3maj6XEMvzyp1XQ2GLAy3kx8OBFwSF3Sb8Ra1h9hxKAsILHY9CCTAvYdHxD2VI3"
+                val fcmToken = addresseeUser.fcmToken
+
+                val client = OkHttpClient()
+                val requestBody = """ 
+    {
+      "message": {
+        "token": "$fcmToken",
+        "data": {
+          "title": "Notification Title",
+          "message": "Notification Message Body"
+        }
+      }
+    }
+""".trimIndent().toRequestBody("application/json".toMediaType())
+
+                val request = Request.Builder()
+                    .url("https://fcm.googleapis.com/v1/projects/your-project-id/messages:send")
+                    .header("Authorization", "Bearer $fcmServerKey")
+                    .post(requestBody)
+                    .build()
+
+                client.newCall(request).enqueue(object : Callback {
+                    override fun onFailure(call: Call, e: IOException) {
+                        // Handle error
+                        Log.w(TAG, "onFailure: ${e.message}")
+                    }
+
+                    override fun onResponse(call: Call, response: Response) {
+                        // Handle response
+                        Log.d(TAG, "onResponse: ${response.body?.string()}")
+                    }
+                })
             }
         }
 
@@ -69,14 +108,17 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d(TAG, "From: ${remoteMessage.from}")
-
         // Check if message contains a data payload.
         if (remoteMessage.data.isNotEmpty()) {
             Log.d(TAG, "Message data payload: ${remoteMessage.data}")
-            //TODO handle data payload
+
+            val message = remoteMessage.data["message"]
+            Toast.makeText(this, "$message", Toast.LENGTH_LONG).show()
+        }
+
+        // Check if message contains a notification payload.
+        remoteMessage.notification?.let {
+            Log.d(TAG, "Message Notification Body: ${it.body}")
         }
     }
 

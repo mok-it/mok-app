@@ -18,18 +18,18 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     companion object {
         private const val TAG = "MyFirebaseMsgService"
 
-        fun sendNotificationToUsersById(
+        fun sendNotificationToUsers(
             title: String,
             messageBody: String,
             adresseeUserIdList: List<String>,
         ) {
-            //TODO remove duplicates from adresseeUserIdList
+            val adresseeUserIds = adresseeUserIdList.distinct()
 
-            require(adresseeUserIdList.size <= 10)
+            require(adresseeUserIds.size <= 10)
             { "too many users to send notification to (the limit is 10)" }
 
             Firebase.firestore.collection(Collections.USERS)
-                .whereIn(FieldPath.documentId(), adresseeUserIdList)
+                .whereIn(FieldPath.documentId(), adresseeUserIds)
                 .get().addOnSuccessListener { documents ->
                     val addresseeUserList = ArrayList<User>()
                     for (document in documents) {
@@ -47,7 +47,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             messageBody: String,
             adresseeUserList: List<User>
         ) {
-            adresseeUserList.forEach { addresseeUser ->
+            adresseeUserList.distinct().forEach { addresseeUser ->
                 Log.d(TAG, "fcmtoken: ${addresseeUser.fcmToken}")
                 Log.d(TAG, "sending notification to ${addresseeUser.name}")
 

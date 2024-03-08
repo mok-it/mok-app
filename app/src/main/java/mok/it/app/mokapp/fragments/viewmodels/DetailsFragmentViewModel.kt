@@ -78,7 +78,7 @@ class DetailsFragmentViewModel : ViewModel() {
                 Log.d(DetailsFragment.TAG, "member removed from badge's collection")
             }
 
-        MyFirebaseMessagingService.sendNotificationToUsersById(
+        MyFirebaseMessagingService.sendNotificationToUsers(
             "Projekt teljesítve!",
             "A(z) \"${project.name}\" nevű mancsot sikeresen teljesítetted!",
             listOf(userId)

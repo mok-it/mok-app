@@ -7,10 +7,10 @@ import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.service.UserService
 import java.util.Calendar
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
@@ -48,11 +48,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             adresseeUserList: List<User>
         ) {
             adresseeUserList.forEach { addresseeUser ->
-                Log.d(TAG, "fcmtoken: ${addresseeUser.fcmTokens}")
+                Log.d(TAG, "fcmtoken: ${addresseeUser.fcmToken}")
                 Log.d(TAG, "sending notification to ${addresseeUser.name}")
 
                 FirebaseMessaging.getInstance().send(
-                    RemoteMessage.Builder(addresseeUser.fcmTokens)
+                    RemoteMessage.Builder(addresseeUser.fcmToken)
                         .setMessageId(generateMessageId())
                         .addData("title", title)
                         .addData("message", messageBody)
@@ -86,16 +86,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      * FCM registration token is initially generated so this is where you would retrieve the token.
      */
     override fun onNewToken(token: String) {
-        Log.d(TAG, "Refreshed token: $token")
-        currentUser?.apply {
-            Firebase.firestore.collection(Collections.USERS).document(this.uid)
-                .update("FCMtokens", token)
-                .addOnSuccessListener {
-                    Log.d(TAG, "onNewToken: token uploaded to firestore")
-                }
-                .addOnFailureListener { exception ->
-                    Log.d(TAG, "onNewToken: token upload failed", exception)
-                }
-        }
+        UserService.updateFcmToken(token)
     }
 }

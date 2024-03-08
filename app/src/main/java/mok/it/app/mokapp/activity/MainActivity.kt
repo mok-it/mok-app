@@ -21,13 +21,12 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.remoteconfig.ktx.remoteConfig
-import com.google.firebase.remoteconfig.ktx.remoteConfigSettings
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.ActivityMainBinding
 import mok.it.app.mokapp.databinding.NavHeaderBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
+import mok.it.app.mokapp.service.UserService.uploadFcmTokenIfEmpty
 
 
 class MainActivity : AppCompatActivity() {
@@ -55,7 +54,6 @@ class MainActivity : AppCompatActivity() {
 
         getDataFromRemoteConfig()
     }
-
 
     /**Get config data from Firebase, e.g. season*/
     private fun getDataFromRemoteConfig() {
@@ -141,6 +139,7 @@ class MainActivity : AppCompatActivity() {
     private fun loadApp() {
         setHeader()
         setMenuVisibility()
+        uploadFcmTokenIfEmpty()
     }
 
     private fun setHeader() {

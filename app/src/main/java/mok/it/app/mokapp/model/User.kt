@@ -34,7 +34,7 @@ data class User(
     val phoneNumber: String = "",
     val requestedRewards: List<String> = ArrayList(),
     val badges: Int = 0,
-    val fcmTokens: String = "",
+    val fcmToken: String = "",
     val nickname: String = "",
     val projectBadges: MutableMap<String, Int> = HashMap(),
     val points: Int = 0

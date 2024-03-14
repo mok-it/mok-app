@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.modekkl
+package mok.it.app.mokapp.model
 
 import com.google.firebase.firestore.DocumentId
 import java.util.*

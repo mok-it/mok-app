@@ -1,6 +1,8 @@
 package mok.it.app.mokapp.service
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -11,6 +13,29 @@ import kotlin.math.min
 
 object UserService : IUserService {
     const val userDocNotFound = "User document not found"
+
+    fun getUserById(
+        userId: String
+    ): LiveData<User> {
+        val userDocumentRef = Firebase.firestore.collection(Collections.USERS)
+            .document(userId)
+        val userLiveData = MutableLiveData<User>()
+
+        userDocumentRef.get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val user = documentSnapshot.toObject(User::class.java)
+                    user.apply {
+                        userLiveData.value = this
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("UserService", "Error getting user", e)
+            }
+        return userLiveData
+    }
+
     override fun addBadges(
         userId: String,
         badgeId: String,
@@ -69,6 +94,26 @@ object UserService : IUserService {
             .addOnFailureListener { e ->
                 onFailure.invoke(e)
             }
+    }
+
+    override fun getAllUsers(): LiveData<List<User>> {
+        val users: MutableLiveData<List<User>> = MutableLiveData()
+        val usersCollectionRef = Firebase.firestore.collection(Collections.USERS)
+
+        usersCollectionRef.get()
+            .addOnSuccessListener { querySnapshot ->
+
+                for (document in querySnapshot.documents) {
+                    val user = document.toObject(User::class.java)
+                    if (user != null) {
+                        users.value = users.value?.plus(user) ?: listOf(user)
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("UserService", "Error getting users", e)
+            }
+        return users
     }
 
     override fun getProjectBadges(

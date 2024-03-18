@@ -27,7 +27,7 @@ data class User(
     val collectedBadges: List<String> = ArrayList(),
     val email: String = "",
     val joinedBadges: List<String> = ArrayList(),
-    val name: String = "",
+    override val name: String = "",
     @get:PropertyName("isCreator")
     val isCreator: Boolean = false,
     val photoURL: String = "",
@@ -38,7 +38,7 @@ data class User(
     val nickname: String = "",
     val projectBadges: MutableMap<String, Int> = HashMap(),
     val points: Int = 0
-) : Parcelable {
+) : Parcelable, Searchable {
     fun generateCategories() {
         categoryList = categories.map { it.toCategory() }.toMutableList()
     }

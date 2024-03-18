@@ -1,5 +1,8 @@
 package mok.it.app.mokapp.service
 
+import androidx.lifecycle.LiveData
+import mok.it.app.mokapp.model.User
+
 interface IUserService {
     fun addBadges(
         userId: String,
@@ -28,7 +31,8 @@ interface IUserService {
         onComplete: () -> Unit,
         onFailure: (Exception) -> Unit
     )
-     fun removeUserFromProject(
+
+    fun removeUserFromProject(
         projectId: String,
         userId: String,
         onComplete: () -> Unit,
@@ -41,4 +45,6 @@ interface IUserService {
         onComplete: (Int) -> Unit,
         onFailure: (Exception) -> Unit
     )
+
+    fun getAllUsers(): LiveData<List<User>>
 }

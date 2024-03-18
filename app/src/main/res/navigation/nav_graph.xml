@@ -192,4 +192,8 @@
             android:name="projectId"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/notificationAdminFragment"
+        android:name="mok.it.app.mokapp.fragments.NotificationAdminFragment"
+        android:label="Értesítésküldés" />
 </navigation>

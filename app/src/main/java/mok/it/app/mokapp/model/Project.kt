@@ -30,14 +30,14 @@ data class Project(
     val leaders: List<String> = ArrayList(),
     val icon: String = "",
     val members: List<String> = ArrayList(),
-    val name: String = "",
+    override val name: String = "",
     @get:PropertyName("overall_progress")
     val overallProgress: Int = 0,
     val mandatory: Boolean = false,
     val tasks: List<String> = ArrayList(),
     val comments: List<String> = ArrayList(),
     val maxBadges: Int = 1,
-) : Parcelable {
+) : Parcelable, Searchable {
 
     val categoryEnum: Category
         get() {

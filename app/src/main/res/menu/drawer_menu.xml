@@ -16,13 +16,16 @@
             android:id="@+id/rewardsFragment"
             android:icon="@drawable/ic_star"
             android:title="@string/rewards" />
-        <item
-            android:id="@+id/adminFragment"
-            android:icon="@drawable/ic_admin"
-            android:title="@string/admin"
-            android:visible="false"
-            tools:visible="true" />
     </group>
+
+    <item android:title="@string/admin" android:id="@+id/adminMenuGroup">
+        <menu>
+            <item
+                android:id="@+id/notificationAdminFragment"
+                android:icon="@drawable/ic_admin"
+                android:title="@string/send_notifications" />
+        </menu>
+    </item>
 
     <item android:title="@string/misc">
         <menu>

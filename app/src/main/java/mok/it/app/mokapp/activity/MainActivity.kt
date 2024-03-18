@@ -28,6 +28,7 @@ import mok.it.app.mokapp.databinding.ActivityMainBinding
 import mok.it.app.mokapp.databinding.NavHeaderBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 
 
 class MainActivity : AppCompatActivity() {
@@ -156,9 +157,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setMenuVisibility() {
-//        val menu = nav_view.menu
-//        val adm = menu.findItem(R.id.adminFragment)
-//        adm?.isVisible = userModel.admin //admin is empty, we shouldn't show it yet
+        val adminMenuGroup = binding.navView.menu.findItem(R.id.adminMenuGroup)
+        adminMenuGroup.isVisible = userModel.admin
     }
 
     override fun onSupportNavigateUp(): Boolean {

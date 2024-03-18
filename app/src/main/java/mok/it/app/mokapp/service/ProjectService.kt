@@ -1,5 +1,8 @@
 package mok.it.app.mokapp.service
 
+import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
@@ -34,5 +37,25 @@ object ProjectService : IProjectService {
             .addOnFailureListener { exception ->
                 onFailure.invoke(exception)
             }
+    }
+
+    fun getAllProjects(): LiveData<List<Project>> {
+        val projects: MutableLiveData<List<Project>> = MutableLiveData()
+        val projectsCollectionRef = Firebase.firestore.collection(Collections.PROJECTS)
+
+        projectsCollectionRef.get()
+            .addOnSuccessListener { querySnapshot ->
+
+                for (document in querySnapshot.documents) {
+                    val project = document.toObject(Project::class.java)
+                    if (project != null) {
+                        projects.value = projects.value?.plus(project) ?: listOf(project)
+                    }
+                }
+            }
+            .addOnFailureListener { e ->
+                Log.e("TAG", "Error getting projects", e)
+            }
+        return projects
     }
 }

@@ -321,7 +321,7 @@ object UserService : IUserService {
             .document(FirebaseUserObject.userModel.documentId)
             .update("fcmToken", token)
             .addOnSuccessListener {
-                Log.d(TAG, "onNewToken: token uploaded to firestore")
+                Log.d(TAG, "onNewToken: token uploaded to firestore, new token: $token")
             }
             .addOnFailureListener { exception ->
                 Log.d(TAG, "onNewToken: token upload failed", exception)

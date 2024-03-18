@@ -291,20 +291,27 @@ object UserService : IUserService {
             }
     }
 
-    fun uploadFcmTokenIfEmpty() {
-        if (FirebaseUserObject.currentUser != null && FirebaseUserObject.userModel.fcmToken.isEmpty()) {
-            FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val token = task.result
-                    Log.d(TAG, "FCM token: $token")
+    fun updateFcmTokenIfEmptyOrOutdated() {
+        if (FirebaseUserObject.currentUser == null) {
+            Log.e(TAG, "updateFcmTokenIfEmptyOrOutdated: currentUser is null")
+            return
+        }
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                Log.d(TAG, "FCM token: $token")
+
+                if (token != FirebaseUserObject.userModel.fcmToken
+                ) {
                     updateFcmToken(token)
-                } else {
-                    Log.w(
-                        TAG,
-                        "Fetching FCM registration token failed",
-                        task.exception
-                    )
                 }
+            } else {
+                Log.w(
+                    TAG,
+                    "Fetching FCM registration token failed",
+                    task.exception
+                )
             }
         }
     }

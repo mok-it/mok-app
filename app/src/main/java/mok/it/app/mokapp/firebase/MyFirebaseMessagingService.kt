@@ -10,11 +10,9 @@ import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.service.UserService
-import java.util.Calendar
 
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
@@ -77,11 +75,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
                         }
                     }
             }
-        }
-
-        private fun generateMessageId(): String {
-            Log.d(TAG, "generateMessageId: ${Calendar.getInstance().time} ${userModel.name}")
-            return "${Calendar.getInstance().time} ${userModel.name}"
         }
     }
 

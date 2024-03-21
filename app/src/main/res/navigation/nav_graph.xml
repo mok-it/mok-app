@@ -101,8 +101,7 @@
     <fragment
         android:id="@+id/phoneBookFragment"
         android:name="mok.it.app.mokapp.fragments.PhoneBookFragment"
-        android:label="Telefonkönyv"
-        tools:layout="@layout/fragment_phone_list" />
+        android:label="Telefonkönyv" />
     <fragment
         android:id="@+id/linksFragment"
         android:name="mok.it.app.mokapp.fragments.LinksFragment"

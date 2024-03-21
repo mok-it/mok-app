@@ -90,7 +90,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         //handle the data payload, if there is any
         if (remoteMessage.data.isNotEmpty()) {
             Log.d(TAG, "Message data payload: ${remoteMessage.data}")
-            //TODO handle the data payload, if we want to
+            //this is where we should handle the data payload, if we want to
         }
     }
 

@@ -23,10 +23,6 @@ class MemberViewModel : ViewModel() {
             onComplete = { sum ->
                 badgeData.value = BadgeData(0, sum)
                 Log.d(TAG, sum.toString() + "$category")
-            },
-            onFailure = { exception ->
-                // Handle failure
-                Log.d(TAG, "Failed to retrieve sum of badges: $exception")
             }
         )
         return badgeData

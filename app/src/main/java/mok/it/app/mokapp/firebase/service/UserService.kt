@@ -199,7 +199,6 @@ object UserService {
         userId: String,
         category: String,
         onComplete: (Int) -> Unit,
-        onFailure: (Exception) -> Unit
     ) {
         val projectsList = mutableListOf<Project>()
 
@@ -211,8 +210,8 @@ object UserService {
             .addOnSuccessListener { querySnapshot ->
                 for (document in querySnapshot.documents) {
                     val project = document.toObject(Project::class.java)
-                    if (project != null) {
-                        projectsList.add(project)
+                    project?.apply {
+                        projectsList.add(this)
                     }
                 }
                 userDocumentRef.get()
@@ -234,19 +233,18 @@ object UserService {
                                     val sum = projectsInCategory.values.sum()
                                     onComplete.invoke(sum)
                                 } else {
-                                    onFailure.invoke(Exception("User document does not contain projectBadges"))
+                                    Log.e(TAG, "Project badges not found")
                                 }
                             } else {
-                                onFailure.invoke(Exception("User document not found"))
+                                Log.e(TAG, USERDOCNOTFOUND)
                             }
                         } else {
-                            onFailure.invoke(userTask.exception ?: Exception("Unknown error"))
+                            Log.e(TAG, userTask.exception.toString())
                         }
                     }
-
             }
             .addOnFailureListener { e ->
-                onFailure.invoke(e)
+                Log.d(TAG, e.message.toString())
             }
     }
 

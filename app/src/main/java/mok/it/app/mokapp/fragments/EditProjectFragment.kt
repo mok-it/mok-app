@@ -6,9 +6,7 @@ import android.view.View
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.firebase.service.UserService
-import mok.it.app.mokapp.model.Collections
-import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.firebase.service.ProjectService
 import mok.it.app.mokapp.utility.Utility.TAG
 import java.util.Calendar
 import java.util.Date
@@ -44,22 +42,16 @@ class EditProjectFragment : CreateProjectFragment() {
     }
 
     override fun getUsers() {
-        users = ArrayList()
-        firestore.collection(userCollectionPath)
-            .whereArrayContains("categories", args.project.categoryEnum)
-            .get()
-            .addOnSuccessListener { documents ->
-                if (documents != null) {
-                    for (document in documents) {
-                        users.add(document.toObject(User::class.java))
-                    }
-                    names = Array(users.size) { i -> users[i].name }
-                    checkedNames = BooleanArray(users.size) { i ->
-                        args.project.leaders.contains(users[i].documentId)
-                    }
-                    super.initEditorsDialog()
+        viewModel.allUsers.observe(viewLifecycleOwner) { users ->
+            if (users != null) {
+                this.users = users
+                names = Array(users.size) { i -> users[i].name }
+                checkedNames = BooleanArray(users.size) { i ->
+                    args.project.leaders.contains(users[i].documentId)
                 }
+                initEditorsDialog()
             }
+        }
     }
 
     override fun onCreateBadgePressed() {
@@ -94,16 +86,7 @@ class EditProjectFragment : CreateProjectFragment() {
             "value" to badgeValue,
             //TODO: update icon if a new one was selected, otherwise leave it untouched!
         )
-        firestore.collection(Collections.projects)
-            .document(args.project.id)
-            .update(editedBadge as Map<String, Any>)
-            .addOnSuccessListener {
-                Log.d(TAG, "DocumentSnapshot edited with ID: ${args.project.id}")
-                UserService.capProjectBadges(args.project.id)
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error editing document", e)
-            }
+        ProjectService.updateProject(args.project, editedBadge)
 
         return true
     }

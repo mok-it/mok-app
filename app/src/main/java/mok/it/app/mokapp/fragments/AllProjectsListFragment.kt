@@ -26,8 +26,6 @@ import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.CardProjectBinding
@@ -36,7 +34,7 @@ import mok.it.app.mokapp.dialog.FilterDialogFragment.Companion.filterResultKey
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
-import mok.it.app.mokapp.model.Collections
+import mok.it.app.mokapp.firebase.service.ProjectService.getProjectsQuery
 import mok.it.app.mokapp.model.Filter
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.recyclerview.ProjectViewHolder
@@ -238,10 +236,7 @@ class AllProjectsListFragment :
 
     private fun getFilteredQuery(): Query {
         //itt szűrünk kategóriákra
-        var query =
-            Firebase.firestore.collection(Collections.projects)
-                .orderBy("category", Query.Direction.ASCENDING)
-                .orderBy("name", Query.Direction.ASCENDING)
+        var query = getProjectsQuery()
         if (filter.mandatory) {
             query = query.whereEqualTo("mandatory", true)
         }

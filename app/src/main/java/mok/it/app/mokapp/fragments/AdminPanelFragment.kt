@@ -15,17 +15,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
 import com.google.android.material.slider.RangeSlider
-import com.google.firebase.firestore.FieldPath
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.CardProjectParticipantBinding
 import mok.it.app.mokapp.databinding.FragmentAdminPanelBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.fragments.viewmodels.AdminPanelViewModel
 import mok.it.app.mokapp.fragments.viewmodels.AdminPanelViewModelFactory
-import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.ProjectParticipantViewHolder
@@ -79,21 +74,11 @@ class AdminPanelFragment : Fragment() {
 
     }
 
-
-    private fun participantsQuery(): Query {
-        return Firebase.firestore.collection(Collections.users)
-            .orderBy("name", Query.Direction.ASCENDING)
-            .whereIn(
-                FieldPath.documentId(),
-                viewModel.project.value!!.members
-            ) //NOTE: can not handle lists of size greater than 30
-    }
-
     private fun getAdapter(): FirestoreRecyclerAdapter<User, ProjectParticipantViewHolder>? {
         if (viewModel.project.value?.members?.isEmpty() != false) {
             return null
         }
-        val query = participantsQuery()
+        val query = viewModel.participantsQuery()
         val options =
             FirestoreRecyclerOptions.Builder<User>().setQuery(query, User::class.java)
                 .setLifecycleOwner(this).build()

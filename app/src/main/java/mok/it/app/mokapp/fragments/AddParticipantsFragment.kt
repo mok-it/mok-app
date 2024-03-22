@@ -16,16 +16,13 @@ import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import mok.it.app.mokapp.databinding.CardSelectMemberBinding
 import mok.it.app.mokapp.databinding.FragmentAddParticipantsBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.service.UserService
+import mok.it.app.mokapp.firebase.service.UserService.getUsersQuery
 import mok.it.app.mokapp.fragments.viewmodels.AddParticipantsViewModel
 import mok.it.app.mokapp.fragments.viewmodels.AddParticipantsViewModelFactory
-import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.SelectMemberViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
@@ -83,7 +80,7 @@ class AddParticipantsFragment : DialogFragment() {
                 return@setOnClickListener
             }
             binding.btnAddParticipants.isEnabled = false
-            UserService.joinUsersToProject(
+            UserService.addUsersToProject(
                 viewModel.project.value!!.id,
                 selectedUsers,
                 ::handleUserJoiningSuccess,
@@ -116,7 +113,7 @@ class AddParticipantsFragment : DialogFragment() {
     }
 
     private fun getAdapter(): FirestoreRecyclerAdapter<User, SelectMemberViewHolder> {
-        val query = usersQuery()
+        val query = getUsersQuery()
         val options =
             FirestoreRecyclerOptions.Builder<User>().setQuery(query, User::class.java)
                 .setLifecycleOwner(this).build()
@@ -147,10 +144,5 @@ class AddParticipantsFragment : DialogFragment() {
 
         binding.nonParticipantsList.adapter = adapter
         binding.nonParticipantsList.layoutManager = WrapContentLinearLayoutManager(context)
-    }
-
-    private fun usersQuery(): Query {
-        return Firebase.firestore.collection(Collections.users)
-            .orderBy("name", Query.Direction.ASCENDING)
     }
 }

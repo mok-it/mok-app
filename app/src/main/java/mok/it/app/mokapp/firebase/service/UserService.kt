@@ -3,6 +3,7 @@ package mok.it.app.mokapp.firebase.service
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
@@ -11,6 +12,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.tasks.await
 import mok.it.app.mokapp.model.Collections
+import mok.it.app.mokapp.model.Collections.users
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
@@ -26,7 +28,7 @@ object UserService {
         onComplete: () -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        val userDocumentRef = Firebase.firestore.collection(Collections.users)
+        val userDocumentRef = Firebase.firestore.collection(users)
             .document(userId)
 
         userDocumentRef.get().addOnSuccessListener { documentSnapshot ->
@@ -57,7 +59,7 @@ object UserService {
         onComplete: (Int) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        val userDocumentRef = Firebase.firestore.collection(Collections.users)
+        val userDocumentRef = Firebase.firestore.collection(users)
             .document(userId)
 
         userDocumentRef.get().addOnSuccessListener { documentSnapshot ->
@@ -84,7 +86,7 @@ object UserService {
         onComplete: (Map<String, Int>) -> Unit,
         onFailure: (Exception) -> Unit
     ) {
-        val userDocumentRef = Firebase.firestore.collection(Collections.users)
+        val userDocumentRef = Firebase.firestore.collection(users)
             .document(userId)
 
         userDocumentRef.get().addOnSuccessListener { documentSnapshot ->
@@ -106,7 +108,7 @@ object UserService {
         projectId: String,
     ): LiveData<MutableMap<String, Int>> {
         val usersAndBadges = MutableLiveData<MutableMap<String, Int>>()
-        val usersCollectionRef = Firebase.firestore.collection(Collections.users)
+        val usersCollectionRef = Firebase.firestore.collection(users)
 
         usersCollectionRef.whereGreaterThan("projectBadges.$projectId", 0)
             .get()
@@ -132,7 +134,7 @@ object UserService {
         return usersAndBadges
     }
 
-    fun joinUsersToProject(
+    fun addUsersToProject(
         projectId: String,
         userIds: List<String>,
         onComplete: () -> Unit,
@@ -143,7 +145,7 @@ object UserService {
             .collection(Collections.projects).document(projectId)
 
         for (userId in userIds) {
-            val userDocumentRef = Firebase.firestore.collection(Collections.users).document(userId)
+            val userDocumentRef = Firebase.firestore.collection(users).document(userId)
             batch.update(userDocumentRef, "joinedBadges", FieldValue.arrayUnion(projectId))
             batch.update(projectDocumentRef, "members", FieldValue.arrayUnion(userId))
             batch.update(userDocumentRef, "projectBadges.$projectId", 0)
@@ -168,7 +170,7 @@ object UserService {
         val projectDocumentRef = Firebase.firestore
             .collection(Collections.projects).document(projectId)
 
-        val userDocumentRef = Firebase.firestore.collection(Collections.users).document(userId)
+        val userDocumentRef = Firebase.firestore.collection(users).document(userId)
 
         userDocumentRef.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
@@ -201,7 +203,7 @@ object UserService {
     ) {
         val projectsList = mutableListOf<Project>()
 
-        val userDocumentRef = Firebase.firestore.collection(Collections.users)
+        val userDocumentRef = Firebase.firestore.collection(users)
             .document(userId)
 
         val projectsCollectionRef = Firebase.firestore.collection(Collections.projects)
@@ -256,14 +258,14 @@ object UserService {
                 val project = projectSnapshot.toObject(Project::class.java)
 
                 project?.members?.forEach { userId ->
-                    db.collection(Collections.users).document(userId).get()
+                    db.collection(users).document(userId).get()
                         .addOnSuccessListener { userSnapshot ->
                             val user = userSnapshot.toObject(User::class.java)
 
                             user?.projectBadges?.get(projectId)?.let { projectBadgeValue ->
                                 user.projectBadges[projectId] =
                                     min(projectBadgeValue, project.maxBadges)
-                                db.collection(Collections.users).document(userId).set(user)
+                                db.collection(users).document(userId).set(user)
                             }
                         }
                 }
@@ -308,7 +310,7 @@ object UserService {
                     model.members.map { memberId ->
                         async {
                             val memberDocRef = Firebase.firestore
-                                .collection(Collections.users).document(memberId)
+                                .collection(users).document(memberId)
                             memberDocRef.get().await().toObject(User::class.java)
                         }
                     }.awaitAll().filterNotNull() // Filter out any failed fetches
@@ -345,7 +347,7 @@ object UserService {
      * @param userId: the user who completed the project
      */
     fun markProjectAsCompletedForUser(project: Project, userId: String) {
-        val userRef = Firebase.firestore.collection(Collections.users).document(userId)
+        val userRef = Firebase.firestore.collection(users).document(userId)
         userRef.update("joinedBadges", FieldValue.arrayRemove(project.id))
             .addOnSuccessListener {
                 userRef.update("collectedBadges", FieldValue.arrayUnion(project.id))
@@ -361,4 +363,46 @@ object UserService {
                     }
             }.addOnFailureListener { e -> Log.d(TAG, e.message.toString()) }
     }
+
+    fun getUser(userId: String): LiveData<User> {
+        val user = MutableLiveData<User>()
+        Firebase.firestore.collection(users).document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    user.value = document.toObject(User::class.java)
+                }
+            }
+        return user
+    }
+
+    fun getAllUsers(): LiveData<List<User>> {
+        val usersLiveData = MutableLiveData<List<User>>()
+        Firebase.firestore.collection(users).orderBy("name", Query.Direction.ASCENDING)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val users = mutableListOf<User>()
+                for (document in querySnapshot.documents) {
+                    val user = document.toObject(User::class.java)
+                    if (user != null) {
+                        users.add(user)
+                    }
+                }
+                usersLiveData.value = users
+            }
+        return usersLiveData
+    }
+
+    fun getParticipantsQuery(members: List<String>): Query =
+        Firebase.firestore.collection(users)
+            .orderBy("name", Query.Direction.ASCENDING)
+            .whereIn(
+                FieldPath.documentId(),
+                members
+            ) //NOTE: can not handle lists of size greater than 30
+
+    fun getUsersQuery(): Query =
+        Firebase.firestore.collection(users)
+            .orderBy("name", Query.Direction.ASCENDING)
+
 }

@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.google.firebase.firestore.Query
 import mok.it.app.mokapp.firebase.service.CloudMessagingService
 import mok.it.app.mokapp.firebase.service.ProjectService
 import mok.it.app.mokapp.firebase.service.UserService
@@ -39,6 +40,12 @@ class AdminPanelViewModel(projectId: String) : ViewModel() {
             "Projekt teljesítve!",
             "A(z) \"${project.name}\" nevű mancsot sikeresen teljesítetted!",
             listOf(userId)
+        )
+    }
+
+    fun participantsQuery(): Query {
+        return UserService.getParticipantsQuery(
+            project.value!!.members
         )
     }
 

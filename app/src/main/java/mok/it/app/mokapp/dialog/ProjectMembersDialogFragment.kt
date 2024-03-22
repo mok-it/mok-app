@@ -5,11 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import mok.it.app.mokapp.databinding.FragmentProjectMembersDialogBinding
-import mok.it.app.mokapp.fragments.viewmodels.DetailsViewModel
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.MembersAdapter
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
@@ -20,8 +18,6 @@ class ProjectMembersDialogFragment : DialogFragment() {
 
     private val binding get() = _binding!!
     private var _binding: FragmentProjectMembersDialogBinding? = null
-
-    private val viewModel: DetailsViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -34,7 +30,6 @@ class ProjectMembersDialogFragment : DialogFragment() {
         super.onViewCreated(view, savedInstanceState)
         setFullScreen()
         initRecyclerView()
-        viewModel.setMembers(args.users)
     }
 
     private fun initRecyclerView() {

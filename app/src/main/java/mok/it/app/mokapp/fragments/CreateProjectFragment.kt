@@ -11,18 +11,18 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.FragmentCreateProjectBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.service.CloudMessagingService
+import mok.it.app.mokapp.firebase.service.ProjectService.addProject
+import mok.it.app.mokapp.fragments.viewmodels.CreateProjectViewModel
 import mok.it.app.mokapp.model.Category
-import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.utility.Utility.TAG
 import java.util.Date
@@ -38,15 +38,14 @@ import java.util.Date
 open class CreateProjectFragment : DialogFragment() {
 
     private val args: CreateProjectFragmentArgs by navArgs()
+    val viewModel: CreateProjectViewModel by viewModels()
 
     protected lateinit var binding: FragmentCreateProjectBinding
 
-    var users: ArrayList<User> = ArrayList()
-    val userCollectionPath: String = "/users"
-    val firestore = Firebase.firestore
+    var users: List<User> = listOf()
 
-    lateinit var names: Array<String>
-    lateinit var checkedNames: BooleanArray
+    var names: Array<String> = arrayOf()
+    var checkedNames: BooleanArray = booleanArrayOf()
     var selectedEditors: MutableList<String> = mutableListOf()
 
     private val isNameRequired = true
@@ -151,7 +150,7 @@ open class CreateProjectFragment : DialogFragment() {
 
         Log.d(TAG, "Created a new Project with the following id: " + userModel.documentId)
 
-        val newBadge = hashMapOf(
+        val newProject = hashMapOf(
             "category" to binding.projectTerulet.text.toString(),
             "created" to Date(),
             "creator" to userModel.documentId,
@@ -165,14 +164,8 @@ open class CreateProjectFragment : DialogFragment() {
             "mandatory" to false
 
         )
-        firestore.collection(Collections.projects)
-            .add(newBadge)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
-            }
+
+        addProject(newProject)
 
         return true
     }
@@ -254,23 +247,16 @@ open class CreateProjectFragment : DialogFragment() {
     ).show()
 
     protected open fun getUsers() {
-        users = ArrayList()
-
-        firestore.collection(userCollectionPath)
-            .whereArrayContains("categories", args.category.toString())
-            .orderBy("name")
-            .get()
-            .addOnSuccessListener { documents ->
-                if (documents != null) {
-                    for (document in documents) {
-                        users.add(document.toObject(User::class.java))
-                        Log.d(TAG, users.toString())
-                    }
-                    names = Array(users.size) { i -> users[i].name }
-                    checkedNames = BooleanArray(users.size) { false }
-                    initEditorsDialog()
+        viewModel.allUsers.observe(viewLifecycleOwner) { users ->
+            if (users != null) {
+                this.users = users
+                names = Array(users.size) { i -> users[i].name }
+                checkedNames = BooleanArray(users.size) { i ->
+                    selectedEditors.contains(users[i].documentId)
                 }
+                initEditorsDialog()
             }
+        }
     }
 
     protected fun initEditorsDialog() {
@@ -294,5 +280,4 @@ open class CreateProjectFragment : DialogFragment() {
             .create()
             .show()
     }
-
 }

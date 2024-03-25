@@ -46,6 +46,12 @@ object ProjectService : IProjectService {
     ): LiveData<List<Project>> {
         val projectsLiveData = MutableLiveData<List<Project>>()
 
+        // an empty list would crash the query
+        if (projectIds.isEmpty()) {
+            projectsLiveData.value = emptyList()
+            return projectsLiveData
+        }
+
         Firebase.firestore.collection(Collections.PROJECTS)
             .whereIn(FieldPath.documentId(), projectIds)
             .get()

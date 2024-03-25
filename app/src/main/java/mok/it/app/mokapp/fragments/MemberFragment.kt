@@ -83,7 +83,7 @@ class MemberFragment : Fragment() {
                 modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
             if (mutualProjects.isEmpty()) {
-                Text("Betöltés...")
+                Text("Nincsenek közös projektjeitek :(", modifier = Modifier.padding(16.dp))
             } else {
                 LazyVerticalGrid(
                     columns = GridCells.Fixed(2),

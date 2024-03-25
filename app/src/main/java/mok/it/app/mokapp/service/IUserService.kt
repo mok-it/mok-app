@@ -1,5 +1,7 @@
 package mok.it.app.mokapp.service
 
+import androidx.lifecycle.LiveData
+
 interface IUserService {
     fun addBadges(
         userId: String,
@@ -28,17 +30,15 @@ interface IUserService {
         onComplete: () -> Unit,
         onFailure: (Exception) -> Unit
     )
-     fun removeUserFromProject(
+
+    fun removeUserFromProject(
         projectId: String,
         userId: String,
         onComplete: () -> Unit,
         onFailure: (Exception) -> Unit
     )
 
-    fun getBadgeSumForUserInCategory(
-        userId: String,
-        category: String,
-        onComplete: (Int) -> Unit,
-        onFailure: (Exception) -> Unit
-    )
+    fun getBadgeSumForUserInEachCategory(
+        userId: String
+    ): LiveData<List<UserService.BadgeData>>
 }

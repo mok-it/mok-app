@@ -1,12 +1,15 @@
 package mok.it.app.mokapp.service
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import mok.it.app.mokapp.activity.MainActivity.Companion.TAG
 import mok.it.app.mokapp.firebase.FirebaseUserObject
+import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
@@ -189,59 +192,47 @@ object UserService : IUserService {
             }
     }
 
-    override fun getBadgeSumForUserInCategory(
+    data class BadgeData(
+        var finishedProjectCount: Int,
+        var finishedProjectBadgeSum: Int,
+        var category: Category
+    )
+
+    override fun getBadgeSumForUserInEachCategory(
         userId: String,
-        category: String,
-        onComplete: (Int) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
-        val projectsList = mutableListOf<Project>()
-
-        val userDocumentRef = Firebase.firestore.collection(Collections.USERS)
-            .document(userId)
-
-        val projectsCollectionRef = Firebase.firestore.collection(Collections.PROJECTS)
-        projectsCollectionRef.get()
+    ): LiveData<List<BadgeData>> {
+        val badgesLiveData: MutableLiveData<List<BadgeData>> = MutableLiveData()
+        Firebase.firestore.collection(Collections.PROJECTS).get()
             .addOnSuccessListener { querySnapshot ->
-                for (document in querySnapshot.documents) {
-                    val project = document.toObject(Project::class.java)
-                    if (project != null) {
-                        projectsList.add(project)
-                    }
-                }
-                userDocumentRef.get()
-                    .addOnCompleteListener { userTask ->
-                        if (userTask.isSuccessful) {
-                            val userDocument = userTask.result
+                val projects =
+                    querySnapshot.documents.mapNotNull { it.toObject(Project::class.java) }
+                val categories = projects.map { it.categoryEnum }.distinct()
 
-                            if (userDocument != null && userDocument.exists()) {
-                                val projectBadges =
-                                    userDocument.data?.get("projectBadges") as? Map<String, Int>
+                Firebase.firestore.collection(Collections.USERS).document(userId).get()
+                    .addOnSuccessListener { documentSnapshot ->
+                        if (documentSnapshot.exists()) {
+                            val projectBadges =
+                                documentSnapshot.data?.get("projectBadges") as? Map<String, Long>
+                                    ?: mapOf()
 
-                                if (projectBadges != null) {
-                                    val projectsInCategory = projectBadges
-                                        .filterKeys { projectId ->
-                                            val projectInList =
-                                                projectsList.find { it.id == projectId }
-                                            projectInList?.categoryEnum?.name == category
-                                        }
-                                    val sum = projectsInCategory.values.sum()
-                                    onComplete.invoke(sum)
-                                } else {
-                                    onFailure.invoke(Exception("User document does not contain projectBadges"))
-                                }
-                            } else {
-                                onFailure.invoke(Exception("User document not found"))
+                            val badgeDataList = categories.map { category ->
+                                val projectsInCategory =
+                                    projects.filter { it.categoryEnum == category }
+
+                                val finishedProjectCount =
+                                    projectsInCategory.count { it.id in projectBadges.keys }
+                                val finishedProjectBadgeSum =
+                                    projectsInCategory.sumOf { projectBadges[it.id] ?: 0 }.toInt()
+
+                                BadgeData(finishedProjectCount, finishedProjectBadgeSum, category)
                             }
-                        } else {
-                            onFailure.invoke(userTask.exception ?: Exception("Unknown error"))
+
+                            badgesLiveData.value = badgeDataList
                         }
                     }
+            }
 
-            }
-            .addOnFailureListener { e ->
-                onFailure.invoke(e)
-            }
+        return badgesLiveData
     }
 
     fun capProjectBadges(projectId: String) {

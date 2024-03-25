@@ -28,9 +28,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.fragments.viewmodels.ProfileViewModel
 import mok.it.app.mokapp.model.User
-import mok.it.app.mokapp.service.UserService
 
 @Composable
 fun UserCard(

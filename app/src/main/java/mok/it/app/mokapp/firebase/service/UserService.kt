@@ -1,23 +1,29 @@
-package mok.it.app.mokapp.service
+package mok.it.app.mokapp.firebase.service
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
-import mok.it.app.mokapp.activity.MainActivity.Companion.TAG
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.tasks.await
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.model.Collections
+import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.utility.Utility.TAG
 import kotlin.math.min
 
-object UserService : IUserService {
-    const val userDocNotFound = "User document not found"
-    override fun addBadges(
+object UserService {
+    private const val USERDOCNOTFOUND = "User document not found"
+    fun addBadges(
         userId: String,
         badgeId: String,
         badgeAmount: Int,
@@ -42,7 +48,7 @@ object UserService : IUserService {
                         onFailure.invoke(e)
                     }
             } else {
-                onFailure.invoke(Exception(userDocNotFound))
+                onFailure.invoke(Exception(USERDOCNOTFOUND))
             }
         }
             .addOnFailureListener { e ->
@@ -50,7 +56,7 @@ object UserService : IUserService {
             }
     }
 
-    override fun getBadgeAmountSum(
+    fun getBadgeAmountSum(
         userId: String,
         onComplete: (Int) -> Unit,
         onFailure: (Exception) -> Unit
@@ -69,7 +75,7 @@ object UserService : IUserService {
 
                 onComplete.invoke(sum)
             } else {
-                onFailure.invoke(Exception(userDocNotFound))
+                onFailure.invoke(Exception(USERDOCNOTFOUND))
             }
         }
             .addOnFailureListener { e ->
@@ -77,7 +83,7 @@ object UserService : IUserService {
             }
     }
 
-    override fun getProjectBadges(
+    fun getProjectBadges(
         userId: String,
         onComplete: (Map<String, Int>) -> Unit,
         onFailure: (Exception) -> Unit
@@ -92,7 +98,7 @@ object UserService : IUserService {
 
                 onComplete.invoke(projectBadges)
             } else {
-                onFailure.invoke(Exception(userDocNotFound))
+                onFailure.invoke(Exception(USERDOCNOTFOUND))
             }
         }
             .addOnFailureListener { e ->
@@ -100,11 +106,10 @@ object UserService : IUserService {
             }
     }
 
-    override fun getProjectUsersAndBadges(
+    fun getProjectUsersAndBadges(
         projectId: String,
-        onComplete: (Map<String, Int>) -> Unit,
-        onFailure: (Exception) -> Unit
-    ) {
+    ): LiveData<MutableMap<String, Int>> {
+        val usersAndBadges = MutableLiveData<MutableMap<String, Int>>()
         val usersCollectionRef = Firebase.firestore.collection(Collections.USERS)
 
         usersCollectionRef.whereGreaterThan("projectBadges.$projectId", 0)
@@ -123,15 +128,15 @@ object UserService : IUserService {
                         result[document.id] = badgeAmount
                     }
                 }
-
-                onComplete.invoke(result)
+                usersAndBadges.value = result
             }
             .addOnFailureListener { e ->
-                onFailure.invoke(e)
+                Log.d(TAG, e.message.toString())
             }
+        return usersAndBadges
     }
 
-    override fun joinUsersToProject(
+    fun addUsersToProject(
         projectId: String,
         userIds: List<String>,
         onComplete: () -> Unit,
@@ -157,7 +162,7 @@ object UserService : IUserService {
             }
     }
 
-    override fun removeUserFromProject(
+    fun removeUserFromProject(
         projectId: String,
         userId: String,
         onComplete: () -> Unit,
@@ -173,7 +178,7 @@ object UserService : IUserService {
             if (documentSnapshot.exists()) {
 
                 batch.update(userDocumentRef, "projectBadges.$projectId", FieldValue.delete())
-                Log.d("UserService", "Project badges remove from user")
+                Log.d(TAG, "Project badges remove from user")
 
                 batch.update(userDocumentRef, "joinedBadges", FieldValue.arrayRemove(projectId))
                 batch.update(projectDocumentRef, "members", FieldValue.arrayRemove(userId))
@@ -198,7 +203,7 @@ object UserService : IUserService {
         var category: Category
     )
 
-    override fun getBadgeSumForUserInEachCategory(
+    fun getBadgeSumForUserInEachCategory(
         userId: String,
     ): LiveData<List<BadgeData>> {
         val badgesLiveData: MutableLiveData<List<BadgeData>> = MutableLiveData()
@@ -282,6 +287,102 @@ object UserService : IUserService {
             }
     }
 
+    fun getMembersForProject(projectId: String): LiveData<List<User>> {
+        val members = MutableLiveData<List<User>>() // Initialize with an empty list
+        val docRef = Firebase.firestore.collection(Collections.PROJECTS).document(projectId)
+
+        docRef.get().addOnSuccessListener { document ->
+            if (document != null && document.data != null) {
+                val model = document.toObject(Project::class.java)!!
+
+                // Use Coroutines for cleaner asynchronous task management
+                members.value = kotlinx.coroutines.runBlocking {
+                    model.members.map { memberId ->
+                        async {
+                            val memberDocRef = Firebase.firestore
+                                .collection(Collections.USERS).document(memberId)
+                            memberDocRef.get().await().toObject(User::class.java)
+                        }
+                    }.awaitAll().filterNotNull() // Filter out any failed fetches
+                }
+            } else {
+                Log.d(TAG, "No such document or data is null")
+                members.value = emptyList() // Explicitly set empty state
+            }
+        }
+        return members
+    }
+
+    fun getMostRecentComment(projectId: String): LiveData<Comment> {
+        val mostRecentComment = MutableLiveData<Comment>()
+        Firebase.firestore.collection(Collections.PROJECTS).document(projectId)
+            .collection(Collections.COMMENTS)
+            .orderBy("time", Query.Direction.DESCENDING).limit(1)
+            .get()
+            .addOnSuccessListener { collection ->
+                if (collection != null && collection.documents.isNotEmpty()) {
+                    mostRecentComment.value =
+                        collection.documents[0].toObject(Comment::class.java)!!
+                }
+            }
+        return mostRecentComment
+    }
+
+    /**
+     * Mark a project as completed for a user
+     * 1. Remove the project from the user's joinedBadges
+     * 2. Add the project to the user's collectedBadges
+     * 3. Remove the user from the project's members
+     * @param project: the project to be marked as completed
+     * @param userId: the user who completed the project
+     */
+    fun markProjectAsCompletedForUser(project: Project, userId: String) {
+        val userRef = Firebase.firestore.collection(Collections.USERS).document(userId)
+        userRef.update("joinedBadges", FieldValue.arrayRemove(project.id))
+            .addOnSuccessListener {
+                userRef.update("collectedBadges", FieldValue.arrayUnion(project.id))
+                    .addOnSuccessListener {
+                        Firebase.firestore.collection(Collections.PROJECTS).document(project.id)
+                            .update("members", FieldValue.arrayRemove(userId))
+                            .addOnCompleteListener {
+                                Log.d(TAG, "member removed from badge's collection")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.d(TAG, e.message.toString())
+                            }
+                    }
+            }.addOnFailureListener { e -> Log.d(TAG, e.message.toString()) }
+    }
+
+    fun getUser(userId: String): LiveData<User> {
+        val user = MutableLiveData<User>()
+        Firebase.firestore.collection(Collections.USERS).document(userId)
+            .get()
+            .addOnSuccessListener { document ->
+                if (document != null) {
+                    user.value = document.toObject(User::class.java)
+                }
+            }
+        return user
+    }
+
+    fun getAllUsers(): LiveData<List<User>> {
+        val usersLiveData = MutableLiveData<List<User>>()
+        Firebase.firestore.collection(Collections.USERS).orderBy("name", Query.Direction.ASCENDING)
+            .get()
+            .addOnSuccessListener { querySnapshot ->
+                val users = mutableListOf<User>()
+                for (document in querySnapshot.documents) {
+                    val user = document.toObject(User::class.java)
+                    if (user != null) {
+                        users.add(user)
+                    }
+                }
+                usersLiveData.value = users
+            }
+        return usersLiveData
+    }
+
     fun updateFcmTokenIfEmptyOrOutdated() {
         if (FirebaseUserObject.currentUser == null) {
             Log.e(TAG, "updateFcmTokenIfEmptyOrOutdated: currentUser is null")
@@ -318,4 +419,17 @@ object UserService : IUserService {
                 Log.d(TAG, "onNewToken: token upload failed", exception)
             }
     }
+
+    fun getParticipantsQuery(members: List<String>): Query =
+        Firebase.firestore.collection(Collections.USERS)
+            .orderBy("name", Query.Direction.ASCENDING)
+            .whereIn(
+                FieldPath.documentId(),
+                members
+            ) //NOTE: can not handle lists of size greater than 30
+
+    fun getUsersQuery(): Query =
+        Firebase.firestore.collection(Collections.USERS)
+            .orderBy("name", Query.Direction.ASCENDING)
+
 }

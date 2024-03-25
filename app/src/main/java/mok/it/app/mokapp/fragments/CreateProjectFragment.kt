@@ -11,19 +11,20 @@ import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.FragmentCreateProjectBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
-import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
+import mok.it.app.mokapp.firebase.service.CloudMessagingService
+import mok.it.app.mokapp.firebase.service.ProjectService.addProject
+import mok.it.app.mokapp.fragments.viewmodels.CreateProjectViewModel
 import mok.it.app.mokapp.model.Category
-import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.utility.Utility.TAG
 import java.util.Date
 
 
@@ -37,15 +38,14 @@ import java.util.Date
 open class CreateProjectFragment : DialogFragment() {
 
     private val args: CreateProjectFragmentArgs by navArgs()
+    val viewModel: CreateProjectViewModel by viewModels()
 
     protected lateinit var binding: FragmentCreateProjectBinding
 
-    var users: ArrayList<User> = ArrayList()
-    val userCollectionPath: String = "/users"
-    val firestore = Firebase.firestore
+    var users: List<User> = listOf()
 
-    lateinit var names: Array<String>
-    lateinit var checkedNames: BooleanArray
+    var names: Array<String> = arrayOf()
+    var checkedNames: BooleanArray = booleanArrayOf()
     var selectedEditors: MutableList<String> = mutableListOf()
 
     private val isNameRequired = true
@@ -140,21 +140,17 @@ open class CreateProjectFragment : DialogFragment() {
      *  Creates a new badge in the database.
      *  @return true if successful
      */
-    private fun commitNewBadgeToDatabase(): Boolean {
-        Log.d("Create name", binding.projectName.text.toString())
-        Log.d("Create desc", binding.projectDescription.text.toString())
-        Log.d("Create creator", userModel.documentId)
-        Log.d("Create category", args.category.toString())
+    private fun commitNewProjectToDatabase(): Boolean {
+
         val deadline = Date(
             binding.datePicker.year - 1900,
             binding.datePicker.month,
             binding.datePicker.dayOfMonth
         )
-        Log.d("Create date", deadline.toString())
-        Log.d("Create editors", selectedEditors.toString())
-        Log.d("Create value", binding.tvBadgeValue.text.toString())
 
-        val newBadge = hashMapOf(
+        Log.d(TAG, "Created a new Project with the following id: " + userModel.documentId)
+
+        val newProject = hashMapOf(
             "category" to binding.projectTerulet.text.toString(),
             "created" to Date(),
             "creator" to userModel.documentId,
@@ -168,14 +164,8 @@ open class CreateProjectFragment : DialogFragment() {
             "mandatory" to false
 
         )
-        firestore.collection(Collections.PROJECTS)
-            .add(newBadge)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error adding document", e)
-            }
+
+        addProject(newProject)
 
         return true
     }
@@ -189,9 +179,9 @@ open class CreateProjectFragment : DialogFragment() {
             return false
         }
 
-        val success = commitNewBadgeToDatabase()
+        val success = commitNewProjectToDatabase()
 
-        MyFirebaseMessagingService.sendNotificationToUsers(
+        CloudMessagingService.sendNotificationToUsers(
             "Új projekt lett létrehozva",
             "${userModel.name} egy új projektet hozott létre az alábbi névvel: ${binding.projectName.text}",
             users.filterNot { it.documentId == userModel.documentId }
@@ -257,23 +247,16 @@ open class CreateProjectFragment : DialogFragment() {
     ).show()
 
     protected open fun getUsers() {
-        users = ArrayList()
-
-        firestore.collection(userCollectionPath)
-            .whereArrayContains("categories", args.category.toString())
-            .orderBy("name")
-            .get()
-            .addOnSuccessListener { documents ->
-                if (documents != null) {
-                    for (document in documents) {
-                        users.add(document.toObject(User::class.java))
-                        Log.d("Users", users.toString())
-                    }
-                    names = Array(users.size) { i -> users[i].name }
-                    checkedNames = BooleanArray(users.size) { false }
-                    initEditorsDialog()
+        viewModel.allUsers.observe(viewLifecycleOwner) { users ->
+            if (users != null) {
+                this.users = users
+                names = Array(users.size) { i -> users[i].name }
+                checkedNames = BooleanArray(users.size) { i ->
+                    selectedEditors.contains(users[i].documentId)
                 }
+                initEditorsDialog()
             }
+        }
     }
 
     protected fun initEditorsDialog() {
@@ -286,8 +269,6 @@ open class CreateProjectFragment : DialogFragment() {
                 if (!names.indices.isEmpty()) {
                     for (i in names.indices) {
                         if (checkedNames[i]) {
-                            Log.d("Selected", names[i])
-                            Log.d("Selected", users[i].documentId)
                             selectedEditors.add(users[i].documentId)
                         }
                     }
@@ -298,9 +279,5 @@ open class CreateProjectFragment : DialogFragment() {
             }
             .create()
             .show()
-    }
-
-    companion object {
-        const val TAG = "CreateProjectFragment"
     }
 }

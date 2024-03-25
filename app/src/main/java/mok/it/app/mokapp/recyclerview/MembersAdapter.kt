@@ -20,7 +20,7 @@ class MembersAdapter(
 
     lateinit var context: Context
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MemberViewHolder (
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = MemberViewHolder(
         CardMemberBinding.inflate(LayoutInflater.from(parent.context), parent, false)
     )
 
@@ -47,9 +47,5 @@ class MembersAdapter(
     override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
         super.onAttachedToRecyclerView(recyclerView)
         context = recyclerView.context
-    }
-
-    companion object {
-        private const val TAG = "MembersAdapter"
     }
 }

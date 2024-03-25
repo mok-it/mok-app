@@ -1,11 +1,9 @@
 package mok.it.app.mokapp.fragments
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.icu.text.DateFormat.getDateInstance
 import android.os.Bundle
 import android.util.Log
 import android.util.TypedValue
@@ -25,8 +23,6 @@ import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Callback
 import com.squareup.picasso.Picasso
 import dev.shreyaspatil.MaterialDialog.MaterialDialog
@@ -35,36 +31,23 @@ import mok.it.app.mokapp.databinding.FragmentDetailsBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
-import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
-import mok.it.app.mokapp.fragments.viewmodels.DetailsFragmentViewModel
-import mok.it.app.mokapp.model.Collections
-import mok.it.app.mokapp.model.Comment
-import mok.it.app.mokapp.model.Project
-import mok.it.app.mokapp.model.User
-import mok.it.app.mokapp.service.UserService
-import mok.it.app.mokapp.utility.Utility.getIconFileName
+import mok.it.app.mokapp.firebase.service.CloudMessagingService
+import mok.it.app.mokapp.firebase.service.UserService
+import mok.it.app.mokapp.fragments.viewmodels.DetailsViewModel
+import mok.it.app.mokapp.fragments.viewmodels.DetailsViewModelFactory
+import mok.it.app.mokapp.utility.Utility
+import mok.it.app.mokapp.utility.Utility.TAG
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
-import java.text.SimpleDateFormat
+import java.text.DateFormat
 
 class DetailsFragment : Fragment() {
 
-    companion object {
-        const val TAG = "DetailsFragment"
-    }
-
-    //TODO test whether it updates itself when the "members" tab is open
-    // if not, use FirestoreRecyclerAdapter instead
-
     private val args: DetailsFragmentArgs by navArgs()
-
-    //TODO refactor this to make proper use of the viewModel
-    private val viewModel: DetailsFragmentViewModel by viewModels()
-
-    private lateinit var project: Project
-
-    lateinit var model: Project
+    private val viewModel: DetailsViewModel by viewModels {
+        DetailsViewModelFactory(args.projectId)
+    }
 
     private var userIsEditor: Boolean = false
     private lateinit var _binding: FragmentDetailsBinding
@@ -80,18 +63,82 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        viewModel.mostRecentComment.observe(viewLifecycleOwner) { mostRecentComment ->
+            binding.mostRecentComment.text =
+                getString(
+                    R.string.comment_with_sender,
+                    mostRecentComment.userName,
+                    mostRecentComment.text
+                )
+        }
+
+        viewModel.project.observe(viewLifecycleOwner) { project ->
+            binding.projectName.text = project.name
+            binding.categoryName.text =
+                getString(R.string.specific_category, project.categoryEnum)
+            binding.badgeValueTextView.text =
+                getString(R.string.specific_value, project.maxBadges)
+            binding.projectCreateDescription.text = project.description
+
+            binding.projectCreator.text = viewModel.creatorUser.value?.name
+            val formatter = DateFormat.getDateInstance()
+            binding.projectDeadline.text =
+                formatter.format(project.created)
+            val iconFileName = Utility.getIconFileName(project.icon)
+            val iconFile = File(context?.filesDir, iconFileName)
+            if (iconFile.exists()) {
+                Log.i(TAG, "loading badge icon " + iconFile.path)
+                val bitmap: Bitmap = BitmapFactory.decodeFile(iconFile.path)
+                binding.avatarImagebutton.setImageBitmap(bitmap)
+            } else {
+                Log.i(TAG, "downloading badge icon " + project.icon)
+                val callback = object : Callback {
+                    override fun onSuccess() {
+                        // save image
+                        Log.i(TAG, "saving badge icon " + iconFile.path)
+                        val bitmap: Bitmap =
+                            binding.avatarImagebutton.drawable.toBitmap()
+                        val fos: FileOutputStream?
+                        try {
+                            fos = FileOutputStream(iconFile)
+                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+                            fos.flush()
+                            fos.close()
+                        } catch (e: IOException) {
+                            e.printStackTrace()
+                        }
+                    }
+
+                    override fun onError(e: java.lang.Exception?) {
+                        Log.e(TAG, e.toString())
+                    }
+                }
+                Picasso.get().load(project.icon)
+                    .into(binding.avatarImagebutton, callback)
+            }
+
+            val editors = project.leaders
+            if (editors.contains(userModel.documentId)) {
+                userIsEditor = true
+            }
+            changeVisibilities()
+            initEditButton()
+            initAdminButton()
+        }
+
         if (currentUser == null) {
             findNavController().navigate(R.id.action_global_loginFragment)
         } else {
             setupTopMenu()
             refreshCurrentUserAndUserModel(requireContext()) {
-                getMemberIds()
-                getCommentIds()
+                UserService.getMembersForProject(args.projectId)
                 initLayout()
             }
-            viewModel.members.observe(viewLifecycleOwner) {
-                viewModel.members.value?.apply { initMembers() }
-            }
+        }
+
+        viewModel.members.observe(viewLifecycleOwner) {
+            initMembers()
         }
     }
 
@@ -114,7 +161,7 @@ class DetailsFragment : Fragment() {
                                 Intent.EXTRA_TEXT,
                                 "mokegyesulet.hu/app/badges/${args.projectId}"
                             )
-                            putExtra(Intent.EXTRA_TITLE, project.name)
+                            putExtra(Intent.EXTRA_TITLE, viewModel.project.value!!.name)
                             type = "text/plain"
                         }
                         val shareIntent = Intent.createChooser(sendIntent, null)
@@ -136,12 +183,12 @@ class DetailsFragment : Fragment() {
 
     private fun initLayout() {
         binding.membersOverlayButton.setOnClickListener {
-            if (viewModel.members.value?.isNotEmpty() == true && ::project.isInitialized) {
+            if (viewModel.members.value?.isNotEmpty() == true && viewModel.project.value != null) {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToProjectMembersDialogFragment(
-                        viewModel.members.value!!,
+                        viewModel.members.value!!.toTypedArray(),
                         userIsEditor,
-                        project
+                        viewModel.project.value!!
                     )
                 )
             }
@@ -151,83 +198,20 @@ class DetailsFragment : Fragment() {
             refreshCurrentUserAndUserModel(requireContext())
         }
         binding.joinOrLeaveProjectButton.visibility = View.GONE
-        binding.projectComments.setOnClickListener {
+        binding.mostRecentComment.setOnClickListener {
             val action =
                 DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.projectId)
             findNavController().navigate(action)
         }
-        Firebase.firestore.collection(Collections.PROJECTS).document(args.projectId).get()
-            .addOnSuccessListener { document ->
-                project = document.toObject(Project::class.java)!!
-                binding.projectName.text = project.name
-                binding.categoryName.text =
-                    getString(R.string.specific_category, project.categoryEnum)
-                binding.badgeValueTextView.text =
-                    getString(R.string.specific_value, project.maxBadges)
-                binding.projectCreateDescription.text = project.description
-
-                Firebase.firestore.collection(Collections.USERS)
-                    .document(project.creator)
-                    .get().addOnSuccessListener { creatorDoc ->
-                        if (creatorDoc?.get("name") != null) {
-                            binding.projectCreator.text =
-                                creatorDoc["name"] as String //TODO NPE itt is
-                        }
-                        val formatter = getDateInstance()
-                        binding.projectDeadline.text =
-                            formatter.format(project.created)
-                        val iconFileName = getIconFileName(project.icon)
-                        val iconFile = File(context?.filesDir, iconFileName)
-                        if (iconFile.exists()) {
-                            Log.i(TAG, "loading badge icon " + iconFile.path)
-                            val bitmap: Bitmap = BitmapFactory.decodeFile(iconFile.path)
-                            binding.avatarImagebutton.setImageBitmap(bitmap)
-                        } else {
-                            Log.i(TAG, "downloading badge icon " + project.icon)
-                            val callback = object : Callback {
-                                override fun onSuccess() {
-                                    // save image
-                                    Log.i(TAG, "saving badge icon " + iconFile.path)
-                                    val bitmap: Bitmap =
-                                        binding.avatarImagebutton.drawable.toBitmap()
-                                    val fos: FileOutputStream?
-                                    try {
-                                        fos = FileOutputStream(iconFile)
-                                        bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
-                                        fos.flush()
-                                        fos.close()
-                                    } catch (e: IOException) {
-                                        e.printStackTrace()
-                                    }
-                                }
-
-                                override fun onError(e: java.lang.Exception?) {
-                                    Log.e(TAG, e.toString())
-                                }
-                            }
-                            Picasso.get().load(project.icon)
-                                .into(binding.avatarImagebutton, callback)
-                        }
-
-                        val editors = project.leaders
-                        if (editors.contains(userModel.documentId)) {
-                            userIsEditor = true
-                        }
-                        changeVisibilities()
-                        initEditButton()
-                        initAdminButton()
-                    }
-                changeVisibilities()
-            }
     }
 
     private fun initEditButton() {
-        if (userModel.isCreator || userModel.admin || project.creator == userModel.documentId || userIsEditor) {
+        if (userModel.isCreator || userModel.admin || viewModel.project.value!!.creator == userModel.documentId || userIsEditor) {
             binding.editButton.visibility = View.VISIBLE
             binding.editButton.setOnClickListener {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToEditProjectFragment(
-                        project
+                        viewModel.project.value!!
                     )
                 )
             }
@@ -235,12 +219,12 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initAdminButton() {
-        if (userModel.isCreator || userModel.admin || project.creator == userModel.documentId || userIsEditor) {
+        if (userModel.isCreator || userModel.admin || viewModel.project.value!!.creator == userModel.documentId || userIsEditor) {
             binding.rewardButton.visibility = View.VISIBLE
             binding.rewardButton.setOnClickListener {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToAdminPanelFragment(
-                        project
+                        viewModel.project.value!!
                     )
                 )
             }
@@ -289,7 +273,12 @@ class DetailsFragment : Fragment() {
             (context as Activity).let {
                 MaterialDialog.Builder(it)
                     .setTitle(it.getString(R.string.join_project))
-                    .setMessage(it.getString(R.string.join_project_message, project.name))
+                    .setMessage(
+                        it.getString(
+                            R.string.join_project_message,
+                            viewModel.project.value!!.name
+                        )
+                    )
                     .setPositiveButton(it.getString(R.string.yes)) { dialogInterface, _ ->
                         joinProject()
                         dialogInterface.dismiss()
@@ -304,7 +293,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun joinProject() {
-        UserService.joinUsersToProject(
+        UserService.addUsersToProject(
             args.projectId,
             listOf(userModel.documentId),
             {
@@ -318,7 +307,7 @@ class DetailsFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
                 refreshCurrentUserAndUserModel(requireContext())
-                getMemberIds()
+                UserService.getMembersForProject(args.projectId)
                 changeVisibilities()
             },
             {
@@ -330,11 +319,14 @@ class DetailsFragment : Fragment() {
             }
         )
 
-        MyFirebaseMessagingService.sendNotificationToUsersById(
-            "Csatlakoztak egy projekthez",
-            "${userModel.name} csatlakozott a(z) \"${project.name}\" nevű mancshoz!",
-            listOf(project.creator + project.leaders)
-        )
+        viewModel.project.value?.let { project ->
+            CloudMessagingService.sendNotificationToUsersById(
+                "Csatlakoztak egy projekthez",
+                "${userModel.name} csatlakozott a(z) \"${project.name}\" nevű projekthez!",
+                listOf(project.creator + project.leaders)
+            )
+        }
+
     }
 
     private fun leaveProject() {
@@ -349,7 +341,7 @@ class DetailsFragment : Fragment() {
                 Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT)
                     .show()
                 refreshCurrentUserAndUserModel(requireContext())
-                getMemberIds()
+                UserService.getMembersForProject(args.projectId)
                 changeVisibilities()
             },
             {
@@ -362,71 +354,8 @@ class DetailsFragment : Fragment() {
         )
     }
 
-    private lateinit var memberComments: ArrayList<Comment>
-
-    private fun getMemberIds() {
-        val docRef = Firebase.firestore.collection(Collections.PROJECTS).document(args.projectId)
-        docRef.get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.data != null) {
-                    Log.d(TAG, "DocumentSnapshot data: ${document.data}")
-                    model = document.toObject(Project::class.java)!!
-                    viewModel.getMembers(model.members)
-                    Log.d(TAG, "Model data: $model")
-                    changeVisibilities()
-                    binding.joinOrLeaveProjectButton.isEnabled = true
-                } else {
-                    Log.d(TAG, "No such document or data is null")
-                    changeVisibilities()
-                    binding.joinOrLeaveProjectButton.isEnabled = true
-                }
-            }
-    }
-
-    @SuppressLint("SimpleDateFormat")
-    fun getCommentIds() {
-        memberComments = ArrayList()
-        val collectionRef =
-            Firebase.firestore.collection(Collections.PROJECTS).document(args.projectId)
-                .collection(Collections.COMMENTS)
-        collectionRef.get()
-            .addOnSuccessListener { collection ->
-                if (collection != null && collection.documents.isNotEmpty()) {
-                    for (document in collection.documents) {
-                        val comment = document.toObject(Comment::class.java)!!
-                        memberComments.add(comment)
-                    }
-                    memberComments.sortByDescending { comment: Comment -> comment.time.toDate() }
-
-                    val formatter = SimpleDateFormat("yyyy.MM.dd. hh:mm")
-                    val timeString: String = formatter.format(memberComments[0].time.toDate())
-
-                    // Search user with given uid among the members
-                    var sender = "anonymous"
-                    val docRef =
-                        Firebase.firestore.collection(Collections.USERS)
-                            .document(memberComments[0].uid)
-                    docRef.get()
-                        .addOnSuccessListener { document ->
-                            if (document != null) {
-                                val user = document.toObject(User::class.java)!!
-                                sender = user.name
-                            }
-                            binding.projectComments.text = getString(
-                                R.string.newest_comment_text,
-                                timeString,
-                                sender,
-                                memberComments[0].text
-                            )
-                        }
-                } else {
-                    Log.d(TAG, "No such collection")
-                }
-            }
-    }
-
     private fun initMembers() {
-        binding.membersLeft.isVisible = false //TODO sometimes throws an NPE (members_left is null)
+        binding.membersLeft.isVisible = false
         binding.membersLeftNumber.isVisible = false
 
         val members = listOf(binding.member1, binding.member2, binding.member3)
@@ -450,16 +379,16 @@ class DetailsFragment : Fragment() {
     private fun changeVisibilities() {
         binding.joinOrLeaveProjectButton.visibility = View.VISIBLE
         when {
-            userModel.collectedBadges.contains(project.id) -> binding.joinOrLeaveProjectButton.visibility =
+            userModel.collectedBadges.contains(viewModel.project.value!!.id) -> binding.joinOrLeaveProjectButton.visibility =
                 View.GONE
 
-            userModel.joinedBadges.contains(project.id) -> binding.joinOrLeaveProjectButton.text =
+            userModel.joinedBadges.contains(viewModel.project.value!!.id) -> binding.joinOrLeaveProjectButton.text =
                 getString(R.string.leave)
 
             else -> binding.joinOrLeaveProjectButton.text = getString(R.string.join)
         }
 
-        if (project.leaders.contains(userModel.documentId)) {
+        if (viewModel.project.value!!.leaders.contains(userModel.documentId)) {
             userIsEditor = true
         }
     }

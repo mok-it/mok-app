@@ -1,80 +1,163 @@
 package mok.it.app.mokapp.fragments
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import mok.it.app.mokapp.databinding.CardLinkBinding
-import mok.it.app.mokapp.databinding.FragmentLinksBinding
-import mok.it.app.mokapp.model.Collections
-import mok.it.app.mokapp.recyclerview.LinkViewHolder
-import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
+import androidx.fragment.app.viewModels
+import mok.it.app.mokapp.R
+import mok.it.app.mokapp.fragments.viewmodels.LinksViewModel
+import mok.it.app.mokapp.model.Link
+import mok.it.app.mokapp.utility.Utility.unaccent
+import java.util.Locale
 
 class LinksFragment : Fragment() {
-    private lateinit var _binding: FragmentLinksBinding
-    private val binding get() = _binding
+    private val viewModel: LinksViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentLinksBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    ): View =
+        ComposeView(requireContext()).apply {
+            setContent {
+                LinksFragment()
+            }
+        }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initRecyclerView()
-    }
+    @SuppressLint("NotConstructor")
+    @Composable
+    fun LinksFragment() {
 
-    private fun initRecyclerView() {
-        val adapter = getAdapter()
-        adapter.stateRestorationPolicy =
-            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager = WrapContentLinearLayoutManager(this.context)
-    }
+        var searchQuery by remember { mutableStateOf("") }
+        Column {
+            val filteredLinks = viewModel.links.observeAsState().value
+                ?.filter { link ->
+                    link.title.unaccent().contains(searchQuery.trim().unaccent(), ignoreCase = true)
+                            || link.category.contains(
+                        searchQuery.trim().unaccent(),
+                        ignoreCase = true
+                    )
+                }.orEmpty().sortedWith(compareBy({ it.title }, { it.category }))
 
-    private fun getAdapter(): FirestoreRecyclerAdapter<mok.it.app.mokapp.model.Link, LinkViewHolder> {
-        val query =
-            Firebase.firestore.collection(Collections.LINKS)
-                .orderBy("title", Query.Direction.ASCENDING)
-        val options =
-            FirestoreRecyclerOptions.Builder<mok.it.app.mokapp.model.Link>()
-                .setQuery(query, mok.it.app.mokapp.model.Link::class.java)
-                .setLifecycleOwner(this).build()
-        return object :
-            FirestoreRecyclerAdapter<mok.it.app.mokapp.model.Link, LinkViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) = LinkViewHolder(
-                CardLinkBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-            )
-
-            override fun onBindViewHolder(
-                holder: LinkViewHolder,
-                position: Int,
-                model: mok.it.app.mokapp.model.Link
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth()
+                    .height(56.dp)
             ) {
-                val tvName: TextView = holder.binding.linkName
-                tvName.text = model.title
-                binding.root.setOnClickListener {
-                    openLink(model.url)
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    label = { Text("Keresés") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "Search Icon"
+                        )
+                    },
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+            if (filteredLinks.isEmpty()) {
+                Text(
+                    text = "Nincsenek a feltételeknek megfelelő linkek",
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .align(Alignment.CenterHorizontally),
+                    style = MaterialTheme.typography.headlineSmall,
+                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                )
+            } else {
+                LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    items(filteredLinks) { link ->
+                        LinkCard(link = link, onLinkClick = {
+                            val openURL = Intent(Intent.ACTION_VIEW)
+                            openURL.data = Uri.parse(link.url)
+                            context?.startActivity(openURL)
+                        })
+                    }
                 }
             }
         }
     }
 
-    private fun openLink(url: String) {
-        val intent = Intent(Intent.ACTION_VIEW)
-        intent.data = Uri.parse(url)
-        startActivity(intent)
+    @Composable
+    fun LinkCard(link: Link, onLinkClick: (Link) -> Unit) {
+        val image: Painter = painterResource(id = R.drawable.ic_link)
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp)
+                .clickable { onLinkClick(link) },
+            shape = RoundedCornerShape(8.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        ) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Icon(
+                    painter = image,
+                    contentDescription = "Link icon",
+                    modifier = Modifier.size(50.dp)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+                Column {
+                    Text(
+                        text = link.title,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold
+                    )
+                    Text(
+                        text = link.category.replaceFirstChar {
+                            if (it.isLowerCase()) it.titlecase(
+                                Locale.ROOT
+                            ) else it.toString()
+                        },
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                }
+            }
+        }
     }
 }

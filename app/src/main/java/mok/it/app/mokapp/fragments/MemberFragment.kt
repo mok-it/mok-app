@@ -1,68 +1,136 @@
 package mok.it.app.mokapp.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import mok.it.app.mokapp.R
-import mok.it.app.mokapp.databinding.FragmentMemberBinding
+import coil.compose.AsyncImage
+import mok.it.app.mokapp.composables.UserCard
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.fragments.viewmodels.MemberViewModel
 import mok.it.app.mokapp.model.Category
+import mok.it.app.mokapp.utility.Utility.TAG
+import mok.it.app.mokapp.model.Project
+import mok.it.app.mokapp.model.User
 
 class MemberFragment : Fragment() {
 
-    private lateinit var binding: FragmentMemberBinding
     private val args: MemberFragmentArgs by navArgs()
-    private val viewModel: MemberViewModel by viewModels()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentMemberBinding.inflate(inflater, container, false)
-        loadDataIntoControls()
-        return binding.root
-    }
-
-    private fun loadDataIntoControls() {
-        binding.name.text = args.user.name
-        binding.nickname.text = args.user.nickname.ifEmpty { "Nincs becenév megadva" }
-        binding.phoneNumber.text =
-            args.user.phoneNumber.ifEmpty { getString(R.string.no_phone_number) }
-        binding.email.text = args.user.email
-        viewModel.loadImage(binding.profilePicture, args.user.photoURL)
-
-        loadBadgeCounts()
-    }
-
-    private fun loadBadgeCounts() {
-        var sumOfBadges = 0
-        var numberOfAllProjects = 0
-        for (category in Category.entries) {
-            Log.d("MANCSAIM", Category.entries.toTypedArray().toString())
-            viewModel.getUserBadgeCountByCategory(args.user, category)
-                .observe(viewLifecycleOwner) { badgeData ->
-                    if (badgeData.finishedProjectBadgeSum != 0){
-                        val badgeTextView = TextView(context)
-                        badgeTextView.text = getString(
-                            R.string.project_count,
-                            category.toString(),
-                            badgeData.finishedProjectBadgeSum
-                        )
-                        sumOfBadges += badgeData.finishedProjectBadgeSum
-                        numberOfAllProjects += badgeData.finishedProjectCount
-                        binding.badgeContainer.addView(badgeTextView)
-                    }
-                    binding.collectedBadgesSummary.text =
-                        getString(R.string.collectedBadgesSummary, sumOfBadges)
-                }
+    ): View =
+        ComposeView(requireContext()).apply {
+            setContent {
+                MembersScreen()
+            }
         }
 
+    @Composable
+    private fun MembersScreen() {
+        val viewModel: MemberViewModel by viewModels()
 
+        Column {
+            UserCard(args.user)
+            MutualProjectsOfUsers(userModel, args.user, viewModel) {
+                findNavController().navigate(
+                    MemberFragmentDirections.actionMemberFragmentToDetailsFragment(
+                        it.id
+                    )
+                )
+            }
+        }
+    }
+
+    @Composable
+    private fun MutualProjectsOfUsers(
+        thisUser: User,
+        otherUser: User,
+        viewModel: MemberViewModel,
+        onProjectClick: (Project) -> Unit
+    ) {
+        val mutualProjectIds =
+            thisUser.joinedBadges.intersect(otherUser.joinedBadges.toSet()).toList()
+
+        val mutualProjects by viewModel.getProjectsByIds(mutualProjectIds).observeAsState(listOf())
+
+        Column {
+            Text(
+                text = "Közös projektjeitek",
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+            if (mutualProjects.isEmpty()) {
+                Text("Nincsenek közös projektjeitek :(", modifier = Modifier.padding(16.dp))
+            } else {
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(2),
+                    contentPadding = PaddingValues(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(mutualProjects) { project ->
+                        ProjectCard(project, onProjectClick)
+                    }
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun ProjectCard(project: Project, onClick: (Project) -> Unit) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            shape = RoundedCornerShape(8.dp),
+            onClick = { onClick(project) }
+        ) {
+            Row(modifier = Modifier.padding(16.dp)) {
+                AsyncImage(
+                    model = project.icon,
+                    contentDescription = "Project icon",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .clip(RoundedCornerShape(15))
+                        .padding(end = 8.dp),
+                    contentScale = ContentScale.Inside
+                )
+                Text(
+                    text = project.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
+                )
+            }
+        }
     }
 }

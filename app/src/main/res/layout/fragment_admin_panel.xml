@@ -3,9 +3,9 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/frameLayout2"
-    android:label="Adminisztráció"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:label="@string/administration"
     tools:context=".fragments.AdminPanelFragment">
 
     <Button
@@ -35,11 +35,10 @@
         layout="@layout/card_empty_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/addParticipant"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
         android:visibility="gone"
-        />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/addParticipant" />
 
     <TextView
         android:id="@+id/badgeReward"
@@ -59,7 +58,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        tools:listitem="@layout/card_project_participant"
-        />
+        tools:listitem="@layout/card_project_participant" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

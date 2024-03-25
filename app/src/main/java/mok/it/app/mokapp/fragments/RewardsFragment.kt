@@ -3,7 +3,6 @@ package mok.it.app.mokapp.fragments
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,10 +11,6 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
 import com.squareup.picasso.Picasso
 import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import mok.it.app.mokapp.R
@@ -23,12 +18,11 @@ import mok.it.app.mokapp.databinding.CardRewardBinding
 import mok.it.app.mokapp.databinding.FragmentRewardsBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
-import mok.it.app.mokapp.model.Collections
+import mok.it.app.mokapp.firebase.service.RewardsService
 import mok.it.app.mokapp.model.Reward
 import mok.it.app.mokapp.recyclerview.RewardViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
 import mok.it.app.mokapp.utility.Utility
-import java.util.Date
 import kotlin.math.absoluteValue
 
 class RewardsFragment : Fragment() {
@@ -74,8 +68,7 @@ class RewardsFragment : Fragment() {
     private fun initializeAdapter() {
         val options: FirestoreRecyclerOptions<Reward?> = FirestoreRecyclerOptions.Builder<Reward>()
             .setQuery(
-                Firebase.firestore.collection(Collections.REWARDS)
-                    .orderBy("price", Query.Direction.ASCENDING),
+                RewardsService.getRewardsQuery(),
                 Reward::class.java
             )
             .build()
@@ -144,7 +137,14 @@ class RewardsFragment : Fragment() {
                 .setPositiveButton(
                     it.getString(R.string.ok), R.drawable.ic_check
                 ) { dialogInterface, _ ->
-                    rewardRequestAccepted(reward)
+                    RewardsService.acceptRewardRequest(reward) {
+                        context?.let { context ->
+                            FirebaseUserObject.refreshCurrentUserAndUserModel(context) {
+                                updateUI()
+                                adapter.startListening()
+                            }
+                        }
+                    }
                     dialogInterface.dismiss()
                 }
                 .setNegativeButton(
@@ -152,49 +152,6 @@ class RewardsFragment : Fragment() {
                 ) { dialogInterface, _ -> dialogInterface.dismiss() }
                 .build()
                 .show()
-        }
-    }
-
-    private fun rewardRequestAccepted(reward: Reward) {
-        val request = hashMapOf(
-            "user" to userModel.documentId,
-            "reward" to reward.documentId,
-            "price" to reward.price,
-            "created" to Date()
-        )
-        Firebase.firestore.runTransaction {
-            // substract 1 from the quantity of the reward
-            val rewardRef =
-                Firebase.firestore.collection(Collections.REWARDS).document(reward.documentId)
-            val newQuantity = reward.quantity - 1
-            rewardRef.update("quantity", newQuantity)
-
-
-            Firebase.firestore.collection(Collections.REWARDREQUESTS).add(request)
-                .addOnSuccessListener { documentRef ->
-                    Log.d("Reward", "DocumentSnapshot written with ID: ${documentRef.id}")
-                }
-                .addOnFailureListener { e ->
-                    Log.w("Reward", "Error adding document", e)
-                }
-
-            val userRef =
-                Firebase.firestore.collection(Collections.USERS).document(userModel.documentId)
-            userRef.update(
-                "requestedRewards", FieldValue.arrayUnion(reward.documentId),
-                "points", FieldValue.increment(-1 * reward.price.toDouble())
-            )
-                .addOnCompleteListener {
-                    Log.d("Reward", "Reward added to requested")
-                }
-        }.addOnSuccessListener {
-            context?.let { context ->
-                FirebaseUserObject.refreshCurrentUserAndUserModel(context) {
-                    updateUI()
-                    adapter.startListening()
-                }
-            }
-
         }
     }
 }

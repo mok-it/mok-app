@@ -11,12 +11,12 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.utility.Utility.TAG
 
 
 object FirebaseUserObject {
     lateinit var userModel: User
     var currentUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
-    private const val TAG = "FirebaseUserObject"
 
     /**
      * Refreshes the currentUser and userModel objects and invokes the given method on success, if there's one
@@ -36,7 +36,7 @@ object FirebaseUserObject {
         numberOfConsecutiveCalls: Int
     ) {
         val numberOfMaxTries = 100
-        Log.d("MOKApp", FirebaseAuth.getInstance().currentUser?.uid.toString())
+        Log.d(TAG, FirebaseAuth.getInstance().currentUser?.uid.toString())
         Firebase.firestore.collection(Collections.USERS)
             .document(
                 FirebaseAuth.getInstance().currentUser?.uid

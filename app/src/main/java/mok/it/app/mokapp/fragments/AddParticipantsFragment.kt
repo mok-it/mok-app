@@ -10,35 +10,34 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.squareup.picasso.Picasso
-import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.CardSelectMemberBinding
 import mok.it.app.mokapp.databinding.FragmentAddParticipantsBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject
-import mok.it.app.mokapp.model.Collections
-import mok.it.app.mokapp.model.Project
+import mok.it.app.mokapp.firebase.service.UserService
+import mok.it.app.mokapp.firebase.service.UserService.getUsersQuery
+import mok.it.app.mokapp.fragments.viewmodels.AddParticipantsViewModel
+import mok.it.app.mokapp.fragments.viewmodels.AddParticipantsViewModelFactory
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.SelectMemberViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
-import mok.it.app.mokapp.service.UserService
+import mok.it.app.mokapp.utility.Utility.TAG
+import mok.it.app.mokapp.utility.Utility.loadImage
 
 class AddParticipantsFragment : DialogFragment() {
-    companion object {
-        val TAG = "AddParticipantsFragment"
-    }
 
     private val args: AddParticipantsFragmentArgs by navArgs()
-    private lateinit var project: Project
     private var selectedUsers: MutableList<String> = mutableListOf()
     private lateinit var binding: FragmentAddParticipantsBinding
+
+    private val viewModel: AddParticipantsViewModel by viewModels {
+        AddParticipantsViewModelFactory(args.projectId)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,61 +49,71 @@ class AddParticipantsFragment : DialogFragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        if (FirebaseUserObject.currentUser == null) {
-            findNavController().navigate(R.id.action_global_loginFragment)
-        } else {
-            Firebase.firestore.collection(Collections.PROJECTS).document(args.projectId).get()
-                .addOnSuccessListener { document ->
-                    if (document != null && document.data != null) {
-                        project = document.toObject(Project::class.java)!!
-                    }
-                    FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext()) {
-                        initLayout()
-                        initRecyclerView()
-                    }
-                }
+        viewModel.project.observe(viewLifecycleOwner) {
+            FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext()) {
+                initLayout()
+                initRecyclerView()
+            }
         }
+    }
+
+    private fun showToastMessage(message: String) {
+        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun handleUserJoiningError(exception: Exception) {
+        Log.e(TAG, "Error adding users to project ${viewModel.project.value!!.id}", exception)
+        showToastMessage("A résztvevők hozzáadása sikertelen, kérlek, próbáld újra később.")
+        binding.btnAddParticipants.isEnabled = true
+    }
+
+    private fun handleUserJoiningSuccess() {
+        Log.i(TAG, "Adding ${selectedUsers.size} users to project ${viewModel.project.value!!.id}")
+        showToastMessage("Résztvevők hozzáadva!")
+        findNavController().popBackStack()
     }
 
     private fun initLayout() {
         binding.btnAddParticipants.setOnClickListener {
             if (selectedUsers.isEmpty()) {
-                Toast.makeText(
-                    context,
-                    "Előbb válassz résztvevőket a listából!",
-                    Toast.LENGTH_SHORT
-                ).show()
+                showToastMessage("Előbb válassz résztvevőket a listából!")
                 return@setOnClickListener
             }
             binding.btnAddParticipants.isEnabled = false
-            UserService.joinUsersToProject(project.id, selectedUsers, {
-                Log.i(TAG, "Adding ${selectedUsers.size} users to project ${project.id}")
-                Toast.makeText(context, "Résztvevők hozzáadva!", Toast.LENGTH_SHORT).show()
-                findNavController().popBackStack()
-
-            }, {
-                Toast.makeText(
-                    context,
-                    "A résztvevők hozzáadása sikertelen, kérlek próbáld újra később.",
-                    Toast.LENGTH_SHORT
-                ).show()
-                binding.btnAddParticipants.isEnabled = true
-            }
+            UserService.addUsersToProject(
+                viewModel.project.value!!.id,
+                selectedUsers,
+                ::handleUserJoiningSuccess,
+                ::handleUserJoiningError
             )
         }
     }
 
-    private fun initRecyclerView() {
-        var adapter = getAdapter()
-        adapter.stateRestorationPolicy =
-            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
-
-        binding.nonParticipantsList.adapter = adapter
-        binding.nonParticipantsList.layoutManager = WrapContentLinearLayoutManager(context)
+    private fun setViewHolderData(holder: SelectMemberViewHolder, user: User) {
+        val tvName: TextView = holder.binding.memberName
+        val ivImg: ImageView = holder.binding.memberPicture
+        val cbSelect: CheckBox = holder.binding.memberSelect
+        tvName.text = user.name
+        loadImage(ivImg, user.photoURL, requireContext())
+        cbSelect.setOnCheckedChangeListener(null)
+        if (user.joinedBadges.contains(viewModel.project.value?.id)) {
+            cbSelect.isEnabled = false
+            cbSelect.isChecked = true
+        } else {
+            cbSelect.isEnabled = true
+            cbSelect.isChecked = selectedUsers.contains(user.documentId)
+            cbSelect.setOnCheckedChangeListener { _, enabled ->
+                if (enabled) {
+                    selectedUsers.add(user.documentId)
+                } else {
+                    selectedUsers.remove(user.documentId)
+                }
+            }
+        }
     }
 
     private fun getAdapter(): FirestoreRecyclerAdapter<User, SelectMemberViewHolder> {
-        val query = usersQuery()
+        val query = getUsersQuery()
         val options =
             FirestoreRecyclerOptions.Builder<User>().setQuery(query, User::class.java)
                 .setLifecycleOwner(this).build()
@@ -123,32 +132,17 @@ class AddParticipantsFragment : DialogFragment() {
                 position: Int,
                 user: User
             ) {
-                val tvName: TextView = holder.binding.memberName
-                val ivImg: ImageView = holder.binding.memberPicture
-                val cbSelect: CheckBox = holder.binding.memberSelect
-                tvName.text = user.name
-                Picasso.get().load(user.photoURL).into(ivImg)
-                cbSelect.setOnCheckedChangeListener(null)
-                if (user.joinedBadges.contains(project.id)) {
-                    cbSelect.isEnabled = false
-                    cbSelect.isChecked = true
-                } else {
-                    cbSelect.isEnabled = true
-                    cbSelect.isChecked = selectedUsers.contains(user.documentId)
-                    cbSelect.setOnCheckedChangeListener { _, enabled ->
-                        if (enabled) {
-                            selectedUsers.add(user.documentId)
-                        } else {
-                            selectedUsers.remove(user.documentId)
-                        }
-                    }
-                }
+                setViewHolderData(holder, user)
             }
         }
     }
 
-    private fun usersQuery(): Query {
-        return Firebase.firestore.collection(Collections.USERS)
-            .orderBy("name", Query.Direction.ASCENDING)
+    private fun initRecyclerView() {
+        val adapter = getAdapter()
+        adapter.stateRestorationPolicy =
+            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+
+        binding.nonParticipantsList.adapter = adapter
+        binding.nonParticipantsList.layoutManager = WrapContentLinearLayoutManager(context)
     }
 }

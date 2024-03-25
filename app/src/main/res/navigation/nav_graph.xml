@@ -106,8 +106,7 @@
     <fragment
         android:id="@+id/linksFragment"
         android:name="mok.it.app.mokapp.fragments.LinksFragment"
-        android:label="Linkek"
-        tools:layout="@layout/fragment_links" />
+        android:label="Linkek" />
     <dialog
         android:id="@+id/filterDialogFragment"
         android:name="mok.it.app.mokapp.dialog.FilterDialogFragment"

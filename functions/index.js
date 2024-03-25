@@ -6,6 +6,23 @@ const axios = require("axios");
 admin.initializeApp();
 
 const db = admin.firestore();
+
+exports.sendNotification = functions.https.onCall(async (data, context) => {
+  const message = data.message;
+  const fcmToken = data.fcmToken;
+
+  const payload = {
+    notification: {
+      title: message.title,
+      body: message.body,
+      icon: message.icon,
+      click_action: message.click_action,
+    },
+  };
+
+  await admin.messaging().sendToDevice(fcmToken, payload);
+});
+
 // User létrehozásánál a userc collectionban létrehozzuk a neki megfelelő documentet a szükséges attribútumokkal
 // Ez csak akkor fut le, ha a user emailjet validalni tudjuk, hogy egy mokoshoz tartozik
 exports.createUser = functions.auth.user().onCreate((user) => {

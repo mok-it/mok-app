@@ -4,10 +4,8 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
-import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
 import mok.it.app.mokapp.fragments.DetailsFragment
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
@@ -59,29 +57,29 @@ class DetailsFragmentViewModel : ViewModel() {
                 }
         }
     }
-
-    fun completed(userId: String, project: Project) {
-        Log.d(DetailsFragment.TAG, "badge completed with id ${project.name}")
-
-        val userRef = Firebase.firestore.collection(Collections.USERS).document(userId)
-        userRef.update("joinedBadges", FieldValue.arrayRemove(project.id))
-            .addOnSuccessListener {
-                Log.d(DetailsFragment.TAG, project.name + " removed from " + userId)
-            }.addOnFailureListener { e -> Log.d(DetailsFragment.TAG, e.message.toString()) }
-
-        userRef.update("collectedBadges", FieldValue.arrayUnion(project.id))
-
-        Firebase.firestore.collection(Collections.PROJECTS).document(project.id)
-            .update("members", FieldValue.arrayRemove(userId))
-            .addOnCompleteListener {
-                getMemberIds(project.id)
-                Log.d(DetailsFragment.TAG, "member removed from badge's collection")
-            }
-
-        MyFirebaseMessagingService.sendNotificationToUsersById(
-            "Projekt teljesítve!",
-            "A(z) \"${project.name}\" nevű mancsot sikeresen teljesítetted!",
-            listOf(userId)
-        )
-    }
+//
+//    fun completed(userId: String, project: Project) {
+//        Log.d(DetailsFragment.TAG, "badge completed with id ${project.name}")
+//
+//        val userRef = Firebase.firestore.collection(Collections.USERS).document(userId)
+//        userRef.update("joinedBadges", FieldValue.arrayRemove(project.id))
+//            .addOnSuccessListener {
+//                Log.d(DetailsFragment.TAG, project.name + " removed from " + userId)
+//            }.addOnFailureListener { e -> Log.d(DetailsFragment.TAG, e.message.toString()) }
+//
+//        userRef.update("collectedBadges", FieldValue.arrayUnion(project.id))
+//
+//        Firebase.firestore.collection(Collections.PROJECTS).document(project.id)
+//            .update("members", FieldValue.arrayRemove(userId))
+//            .addOnCompleteListener {
+//                getMemberIds(project.id)
+//                Log.d(DetailsFragment.TAG, "member removed from badge's collection")
+//            }
+//
+//        MyFirebaseMessagingService.sendNotificationToUsersById(
+//            "Projekt teljesítve!",
+//            "A(z) \"${project.name}\" nevű projektet sikeresen teljesítetted, kapott mancsaid száma: ${}",
+//            listOf(userId)
+//        )
+//    }
 }

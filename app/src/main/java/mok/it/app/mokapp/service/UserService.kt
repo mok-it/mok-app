@@ -4,6 +4,9 @@ import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
+import com.google.firebase.messaging.FirebaseMessaging
+import mok.it.app.mokapp.activity.MainActivity.Companion.TAG
+import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
@@ -285,6 +288,43 @@ object UserService : IUserService {
                 } else {
                     onComplete.invoke(false)
                 }
+            }
+    }
+
+    fun updateFcmTokenIfEmptyOrOutdated() {
+        if (FirebaseUserObject.currentUser == null) {
+            Log.e(TAG, "updateFcmTokenIfEmptyOrOutdated: currentUser is null")
+            return
+        }
+
+        FirebaseMessaging.getInstance().token.addOnCompleteListener { task ->
+            if (task.isSuccessful) {
+                val token = task.result
+                Log.d(TAG, "FCM token: $token")
+
+                if (token != FirebaseUserObject.userModel.fcmToken
+                ) {
+                    updateFcmToken(token)
+                }
+            } else {
+                Log.w(
+                    TAG,
+                    "Fetching FCM registration token failed",
+                    task.exception
+                )
+            }
+        }
+    }
+
+    fun updateFcmToken(token: String) {
+        Firebase.firestore.collection(Collections.USERS)
+            .document(FirebaseUserObject.userModel.documentId)
+            .update("fcmToken", token)
+            .addOnSuccessListener {
+                Log.d(TAG, "onNewToken: token uploaded to firestore, new token: $token")
+            }
+            .addOnFailureListener { exception ->
+                Log.d(TAG, "onNewToken: token upload failed", exception)
             }
     }
 }

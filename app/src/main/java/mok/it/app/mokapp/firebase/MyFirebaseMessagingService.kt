@@ -1,17 +1,19 @@
 package mok.it.app.mokapp.firebase
 
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.widget.Toast
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.functions.ktx.functions
 import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
-import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
-import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
-import java.util.Calendar
+import mok.it.app.mokapp.service.UserService
+
 
 class MyFirebaseMessagingService : FirebaseMessagingService() {
 
@@ -23,13 +25,13 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             messageBody: String,
             adresseeUserIdList: List<String>,
         ) {
-            return
-            TODO("haven't been tested yet")
-            require(adresseeUserIdList.size <= 10)
+            val adresseeUserIds = adresseeUserIdList.distinct()
+
+            require(adresseeUserIds.size <= 10)
             { "too many users to send notification to (the limit is 10)" }
 
             Firebase.firestore.collection(Collections.USERS)
-                .whereIn(FieldPath.documentId(), adresseeUserIdList)
+                .whereIn(FieldPath.documentId(), adresseeUserIds)
                 .get().addOnSuccessListener { documents ->
                     val addresseeUserList = ArrayList<User>()
                     for (document in documents) {
@@ -47,45 +49,48 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             messageBody: String,
             adresseeUserList: List<User>
         ) {
-            return
-            TODO("doesn't work correctly yet, npe")
-            adresseeUserList.toHashSet().forEach { addresseeUser ->
-                Firebase.firestore.collection(Collections.USERS).document(addresseeUser.documentId)
-                    .get().addOnSuccessListener { document ->
-                        val fcmToken = document["FCMtokens"] as List<*>
-                        Log.d(TAG, "fcmtoken: ${fcmToken[0]}")
-                        Log.d(TAG, "sending notification to ${document["name"]}")
+            adresseeUserList.distinct().forEach { addresseeUser ->
+                Log.d(
+                    TAG,
+                    "sending notification to ${addresseeUser.name}, FCM token: ${addresseeUser.fcmToken}"
+                )
+                val data = hashMapOf(
+                    "message" to hashMapOf(
+                        "title" to title,
+                        "body" to messageBody,
+                        "icon" to "gs://mokapp-51f86.appspot.com/Feladatellenőrzés 16 feladat ellenőrzése.png",
+                        "click_action" to "",
+                    ),
+                    "fcmToken" to addresseeUser.fcmToken
+                )
 
-                        FirebaseMessaging.getInstance().send(
-                            RemoteMessage.Builder(fcmToken[0] as String)
-                                .setMessageId(generateMessageId())
-                                .addData("title", title)
-                                .addData("message", messageBody)
-                                .build()
-                        )
-
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.d(TAG, "failed to get user: ", exception)
+                Firebase.functions
+                    .getHttpsCallable("sendNotification")
+                    .call(data)
+                    .continueWith { task ->
+                        if (!task.isSuccessful) {
+                            Log.e(TAG, "Error calling cloud function", task.exception)
+                        } else {
+                            Log.d(TAG, "Notification sent successfully")
+                        }
                     }
             }
-        }
-
-        private fun generateMessageId(): String {
-            Log.d(TAG, "generateMessageId: ${Calendar.getInstance().time} ${userModel.name}")
-            return "${Calendar.getInstance().time} ${userModel.name}"
         }
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
-        // TODO(developer): Handle FCM messages here.
-        // Not getting messages here? See why this may be: https://goo.gl/39bRNJ
-        Log.d(TAG, "From: ${remoteMessage.from}")
+        //show it as a notification
+        remoteMessage.notification?.let {
+            Log.d(TAG, "Message Notification Body: ${it.body}")
+            Handler(Looper.getMainLooper()).post {
+                Toast.makeText(this, it.body, Toast.LENGTH_LONG).show()
+            }
+        }
 
-        // Check if message contains a data payload.
+        //handle the data payload, if there is any
         if (remoteMessage.data.isNotEmpty()) {
             Log.d(TAG, "Message data payload: ${remoteMessage.data}")
-            //TODO handle data payload
+            //this is where we should handle the data payload, if we want to
         }
     }
 
@@ -95,16 +100,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
      * FCM registration token is initially generated so this is where you would retrieve the token.
      */
     override fun onNewToken(token: String) {
-        Log.d(TAG, "Refreshed token: $token")
-        currentUser?.apply {
-            Firebase.firestore.collection(Collections.USERS).document(this.uid)
-                .update("FCMtokens", token)
-                .addOnSuccessListener {
-                    Log.d(TAG, "onNewToken: token uploaded to firestore")
-                }
-                .addOnFailureListener { exception ->
-                    Log.d(TAG, "onNewToken: token upload failed", exception)
-                }
-        }
+        UserService.updateFcmToken(token)
     }
 }

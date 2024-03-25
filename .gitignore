@@ -81,5 +81,9 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 
-# sonarlint
-.idea/sonarlint
+# .idea subfolders
+.idea/sonarlint/
+.idea/shelf/
+.idea/copilot/
+
+.idea/navEditor.xml

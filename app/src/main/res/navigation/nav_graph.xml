@@ -81,8 +81,7 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="mok.it.app.mokapp.fragments.ProfileFragment"
-        android:label="Profil"
-        tools:layout="@layout/fragment_profile" />
+        android:label="Profil" />
     <fragment
         android:id="@+id/myBadgesFragment"
         android:name="mok.it.app.mokapp.fragments.MyBadgesFragment"
@@ -124,11 +123,13 @@
     <fragment
         android:id="@+id/memberFragment"
         android:name="mok.it.app.mokapp.fragments.MemberFragment"
-        android:label="Adatok"
-        tools:layout="@layout/fragment_member">
+        android:label="Adatok">
         <argument
             android:name="user"
             app:argType="mok.it.app.mokapp.model.User" />
+        <action
+            android:id="@+id/action_memberFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
     </fragment>
     <action
         android:id="@+id/action_global_memberFragment"

@@ -40,7 +40,7 @@ object ProjectService {
 
             }
             .addOnFailureListener { exception ->
-                Log.e("ProjectService", "Error getting documents: ", exception)
+                Log.e(TAG, "Error getting documents: ", exception)
             }
 
         return projectsLiveData

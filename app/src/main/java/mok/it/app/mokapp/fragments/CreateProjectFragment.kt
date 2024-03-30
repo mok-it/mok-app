@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.app.Dialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,8 +22,8 @@ import mok.it.app.mokapp.firebase.service.CloudMessagingService
 import mok.it.app.mokapp.firebase.service.ProjectService.addProject
 import mok.it.app.mokapp.fragments.viewmodels.CreateProjectViewModel
 import mok.it.app.mokapp.model.Category
+import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
-import mok.it.app.mokapp.utility.Utility.TAG
 import java.util.Date
 
 
@@ -137,10 +136,13 @@ open class CreateProjectFragment : DialogFragment() {
     }
 
     /**
-     *  Creates a new badge in the database.
-     *  @return true if successful
+     * Called if the Create button is pressed in the dialog.
+     * @return whether the dialog should be closed
      */
-    private fun commitNewProjectToDatabase(): Boolean {
+    private fun createProject() {
+        if (!isComplete(true)) {
+            return
+        }
 
         val deadline = Date(
             binding.datePicker.year - 1900,
@@ -148,62 +150,33 @@ open class CreateProjectFragment : DialogFragment() {
             binding.datePicker.dayOfMonth
         )
 
-        Log.d(TAG, "Created a new Project with the following id: " + userModel.documentId)
-
-        val newProject = hashMapOf(
-            "category" to binding.projectTerulet.text.toString(),
-            "created" to Date(),
-            "creator" to userModel.documentId,
-            "deadline" to deadline,
-            "description" to binding.projectDescription.text.toString(),
-            "editors" to selectedEditors,
-            "icon" to "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef",
-            "name" to binding.projectName.text.toString(),
-            "overall_progress" to 0,
-            "value" to badgeValue,
-            "mandatory" to false
-
+        val project = Project(
+            category = binding.projectTerulet.text.toString(),
+            created = Date(),
+            creator = userModel.documentId,
+            deadline = deadline,
+            description = binding.projectDescription.text.toString(),
+            leaders = selectedEditors,
+            icon = "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef",
+            name = binding.projectName.text.toString(),
+            maxBadges = badgeValue,
         )
-
-        addProject(newProject)
-
-        return true
-    }
-
-    /**
-     * Called if the Create button is pressed in the dialog.
-     * @return whether the dialog should be closed
-     */
-    private fun onCreateProject(): Boolean {
-        if (!isComplete(true)) {
-            return false
-        }
-
-        val success = commitNewProjectToDatabase()
+        addProject(project)
 
         CloudMessagingService.sendNotificationToUsers(
             "Új projekt lett létrehozva",
             "${userModel.name} egy új projektet hozott létre az alábbi névvel: ${binding.projectName.text}",
             users.filterNot { it.documentId == userModel.documentId }
         )
-
-        return if (success) {
-            true
-        } else {
-            toast(R.string.error_occurred)
-            false
-        }
     }
 
     /**
      * Called if the user wants to create a project.
      */
     protected open fun onCreateBadgePressed() {
-        val shouldCloseDialog = onCreateProject()
+        createProject()
 
-        if (shouldCloseDialog) {
-            findNavController().navigateUp()
-        }
+        findNavController().navigateUp()
     }
 
     /**

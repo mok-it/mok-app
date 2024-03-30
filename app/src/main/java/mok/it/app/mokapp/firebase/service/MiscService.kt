@@ -7,6 +7,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Link
+import mok.it.app.mokapp.utility.Utility.TAG
 
 object MiscService {
 
@@ -26,7 +27,7 @@ object MiscService {
                 linksLiveData.value = linksList
             }
             .addOnFailureListener { exception ->
-                Log.e("", "Failed to retrieve links: $exception")
+                Log.e(TAG, "Failed to retrieve links: $exception")
             }
         return linksLiveData
     }

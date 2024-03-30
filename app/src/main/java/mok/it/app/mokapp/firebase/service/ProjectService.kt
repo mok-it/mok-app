@@ -40,7 +40,7 @@ object ProjectService {
 
             }
             .addOnFailureListener { exception ->
-                Log.e("ProjectService", "Error getting documents: ", exception)
+                Log.e(TAG, "Error getting documents: ", exception)
             }
 
         return projectsLiveData
@@ -57,9 +57,29 @@ object ProjectService {
         return project
     }
 
-    fun addProject(project: HashMap<String, Any>) {
+    fun addProject(project: Project) {
+
+        Log.d(
+            TAG,
+            "Created a new Project called ${project.name} with category ${project.categoryEnum}"
+        )
+
+        val projectHashMap = hashMapOf(
+            "category" to project.categoryEnum.toString(),
+            "created" to project.created,
+            "creator" to project.creator,
+            "deadline" to project.deadline,
+            "description" to project.description,
+            "leaders" to project.leaders,
+            "icon" to project.icon,
+            "name" to project.name,
+            "maxBadges" to project.maxBadges,
+            "overall_progress" to project.overallProgress,
+            "mandatory" to project.mandatory,
+        )
+
         Firebase.firestore.collection(Collections.PROJECTS)
-            .add(project)
+            .add(projectHashMap)
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
             }
@@ -68,9 +88,21 @@ object ProjectService {
             }
     }
 
-    fun updateProject(project: Project, editedBadge: HashMap<String, Any>) {
-        Firebase.firestore.collection(Collections.PROJECTS).document(project.id)
-            .update(editedBadge)
+    /**
+     * Updates the project with the given ID with the new project data. Caution: only updates certain fields.
+     */
+    fun updateProject(oldProjectId: String, newProject: Project) {
+        val projectHashMap = hashMapOf(
+            "name" to newProject.name,
+            "description" to newProject.description,
+            "category" to newProject.categoryEnum.toString(),
+            "maxBadges" to newProject.maxBadges,
+            "deadline" to newProject.deadline,
+            "leaders" to newProject.leaders,
+        )
+
+        Firebase.firestore.collection(Collections.PROJECTS).document(oldProjectId)
+            .update(projectHashMap)
             .addOnSuccessListener {
                 Log.d(TAG, "DocumentSnapshot successfully updated!")
             }

@@ -107,7 +107,7 @@ object Utility {
                     is Int -> load(imageURLOrDrawable)
                     else -> throw IllegalArgumentException("Unsupported type of imageURLOrDrawable")
                 }
-                    .placeholder(circularProgressDrawable)  //TODO doesn't work with glide, doesn't work with picasso either, anyone any ideas?
+                    .placeholder(circularProgressDrawable)
                     .apply {
                         if (callback != null) this.into(imageView, callback) else this.into(
                             imageView

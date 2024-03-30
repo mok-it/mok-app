@@ -7,6 +7,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.service.ProjectService
+import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.utility.Utility.TAG
 import java.util.Calendar
 import java.util.Date
@@ -24,8 +25,7 @@ class EditProjectFragment : CreateProjectFragment() {
         binding.projectTerulet.setText(
             args.project.categoryEnum.toString(),
             false
-        ) // 0 nem csinál semmit, 1<= kifagy
-        //binding.badgeMcs.setSelection(Category.values().indexOf(args.project.categoryEnum))
+        )
         val cal: Calendar = Calendar.getInstance()
         cal.time = args.project.deadline
         binding.datePicker.updateDate(
@@ -77,16 +77,15 @@ class EditProjectFragment : CreateProjectFragment() {
             binding.datePicker.month,
             binding.datePicker.dayOfMonth
         )
-        val editedBadge = hashMapOf(
-            "category" to binding.projectTerulet.text.toString(),
-            "deadline" to deadline,
-            "description" to binding.projectDescription.text.toString(),
-            "editors" to selectedEditors,
-            "name" to binding.projectName.text.toString(),
-            "value" to badgeValue,
-            //TODO: update icon if a new one was selected, otherwise leave it untouched!
+        val editedProject = Project(
+            name = binding.projectName.text.toString(),
+            description = binding.projectDescription.text.toString(),
+            category = binding.projectTerulet.text.toString(),
+            maxBadges = badgeValue,
+            deadline = deadline,
+            leaders = selectedEditors,
         )
-        ProjectService.updateProject(args.project, editedBadge)
+        ProjectService.updateProject(args.project.id, editedProject)
 
         return true
     }

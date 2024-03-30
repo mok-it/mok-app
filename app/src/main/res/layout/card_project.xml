@@ -82,20 +82,20 @@
 
             <TextView
                 android:id="@+id/projectBadgeValueTextView"
-                android:layout_width="20dp"
-                android:layout_height="wrap_content"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
                 android:layout_marginStart="16dp"
                 android:layout_marginTop="2dp"
                 android:layout_marginEnd="8dp"
-                android:background="@drawable/circle"
+                android:background="@drawable/badgeicon"
                 android:fontFamily="sans-serif"
-                android:gravity="center"
+                android:gravity="bottom|center"
                 android:textColor="@color/white"
-                android:textSize="16sp"
+                android:textSize="18sp"
                 android:textStyle="bold"
                 card_view:layout_constraintEnd_toEndOf="parent"
                 card_view:layout_constraintTop_toTopOf="parent"
-                tools:text="2" />
+                tools:text="10" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>

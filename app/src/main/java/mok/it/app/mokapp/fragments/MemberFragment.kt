@@ -33,11 +33,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.compose.AsyncImage
-import mok.it.app.mokapp.composables.UserCard
+import mok.it.app.mokapp.compose.UserCard
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.fragments.viewmodels.MemberViewModel
-import mok.it.app.mokapp.model.Category
-import mok.it.app.mokapp.utility.Utility.TAG
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 

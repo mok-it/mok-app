@@ -121,5 +121,6 @@
     <string name="quantity">%d db</string>
     <string name="comment_with_sender">%1$s: %2$s</string>
     <string name="administration">Adminisztráció</string>
+    <string name="handle_rewards">Jutalmak kezelése</string>
 
 </resources>

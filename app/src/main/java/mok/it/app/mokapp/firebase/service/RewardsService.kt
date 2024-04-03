@@ -4,7 +4,10 @@ import android.util.Log
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.snapshots
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Reward
@@ -12,9 +15,13 @@ import mok.it.app.mokapp.utility.Utility.TAG
 import java.util.Date
 
 object RewardsService {
-    fun getRewardsQuery() =
+    fun getAllRewards(): Flow<List<Reward>> =
         Firebase.firestore.collection(Collections.REWARDS)
             .orderBy("price", Query.Direction.ASCENDING)
+            .snapshots()
+            .map { snapshot ->
+                snapshot.toObjects(Reward::class.java)
+            }
 
     fun acceptRewardRequest(reward: Reward, onComplete: () -> Unit) {
         val request = hashMapOf(
@@ -51,4 +58,8 @@ object RewardsService {
                 Log.d(TAG, "Reward added to requested")
             }
     }
+
+    fun getRewardsQuery() =
+        Firebase.firestore.collection(Collections.REWARDS)
+            .orderBy("price", Query.Direction.ASCENDING)
 }

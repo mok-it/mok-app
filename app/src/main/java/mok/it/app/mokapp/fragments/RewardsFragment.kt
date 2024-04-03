@@ -1,133 +1,96 @@
 package mok.it.app.mokapp.fragments
 
 import android.app.Activity
-import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageView
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.RecyclerView
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.squareup.picasso.Picasso
+import androidx.fragment.app.viewModels
 import dev.shreyaspatil.MaterialDialog.MaterialDialog
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.databinding.CardRewardBinding
-import mok.it.app.mokapp.databinding.FragmentRewardsBinding
-import mok.it.app.mokapp.firebase.FirebaseUserObject
+import mok.it.app.mokapp.compose.BadgeIcon
+import mok.it.app.mokapp.compose.RewardItem
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.service.RewardsService
+import mok.it.app.mokapp.fragments.viewmodels.RewardsViewModel
 import mok.it.app.mokapp.model.Reward
-import mok.it.app.mokapp.recyclerview.RewardViewHolder
-import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
-import mok.it.app.mokapp.utility.Utility
-import kotlin.math.absoluteValue
 
 class RewardsFragment : Fragment() {
-    lateinit var adapter: FirestoreRecyclerAdapter<*, *>
-    private lateinit var _binding: FragmentRewardsBinding
-    private val binding get() = _binding
+    //TODO
+    //2 - meghatározni, mit szeretne egy admin csinálni (de sztem: admin mód switch(?),
+    // és ha be van kapcsolva, akk ceruza ikonra nyomva editálhatóak az árak és a mennyiségek is,
+    // és a jutalmakat törölni is lehet)
+    //3 - a fentieket implementálni
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentRewardsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
+    ): View =
+        ComposeView(requireContext()).apply {
+            setContent {
+                RewardsScreen()
+            }
+        }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        adapter.stopListening()
-    }
+    @Composable
+    private fun RewardsScreen() {
+        val viewModel: RewardsViewModel by viewModels()
+        val rewards = viewModel.rewards.collectAsState(initial = emptyList())
 
-    override fun onStart() {
-        super.onStart()
-        adapter.startListening()
-    }
-
-    override fun onStop() {
-        super.onStop()
-        adapter.stopListening()
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        updateUI()
-    }
-
-    private fun updateUI() {
-        binding.pointsText.text =
-            getString(R.string.my_badges_count, userModel.projectBadges.values.sum())
-        binding.spentPointsText.text = getString(R.string.my_spent_badges_count, userModel.points)
-        initializeAdapter()
-    }
-
-    private fun initializeAdapter() {
-        val options: FirestoreRecyclerOptions<Reward?> = FirestoreRecyclerOptions.Builder<Reward>()
-            .setQuery(
-                RewardsService.getRewardsQuery(),
-                Reward::class.java
-            )
-            .build()
-
-        adapter =
-            object : FirestoreRecyclerAdapter<Reward?, RewardViewHolder?>(options) {
-                var context: Context? = null
-
-                override fun onCreateViewHolder(parent: ViewGroup, i: Int) = RewardViewHolder(
-                    CardRewardBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                )
-
-                override fun onBindViewHolder(
-                    holder: RewardViewHolder,
-                    position: Int,
-                    model: Reward
+        Column {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.SpaceAround
                 ) {
-                    Utility.loadImage(holder.binding.rewardImage, model.icon, requireContext())
-                    holder.binding.rewardName.text = model.name
-                    holder.binding.rewardPrice.text = model.price.toString()
-                    holder.binding.rewardQuantityLeft.text =
-                        getString(R.string.quantity, model.quantity)
-
-                    // if the user has enough badges AND there is still some of the reward available:
-                    if (userModel.projectBadges.values.sum() - userModel.points.absoluteValue >= model.price &&
-                        model.quantity > 0
-                    ) {
-                        holder.binding.requestButton.isEnabled = true
-                    }
-
-                    if (userModel.requestedRewards.contains(model.documentId)) {
-                        holder.binding.requestButton.visibility = View.GONE
-                        holder.binding.achievedText.visibility = View.VISIBLE
-                    }
-                    holder.binding.requestButton.setOnClickListener {
-                        requestReward(model)
-                    }
-                }
-
-                override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-                    super.onAttachedToRecyclerView(recyclerView)
-                    context = recyclerView.context
-                }
-
-                fun loadImage(imageView: ImageView, imageURL: String): Boolean {
-                    return try {
-                        Picasso.get().apply {
-                            load(imageURL).into(imageView)
-                        }
-                        true
-                    } catch (e: Exception) {
-                        false
-                    }
+                    Text(
+                        text = "Mancsaid száma",
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier
+                            .padding(16.dp)
+                    )
+                    BadgeIcon(
+                        badgeNumber = userModel.points.toString(),
+                        modifier = Modifier.padding(8.dp)
+                    )
                 }
             }
-        binding.recyclerView.adapter = adapter
-        binding.recyclerView.layoutManager =
-            WrapContentLinearLayoutManager(this.context)
+            LazyColumn {
+                items(rewards.value) { reward ->
+                    RewardItem(reward, ::canBeBoughtByCurrentUser, ::requestReward)
+                }
+            }
+        }
     }
+
+    private fun canBeBoughtByCurrentUser(reward: Reward) =
+        userModel.points >= reward.price
+                && reward.quantity > 0
+                && !userModel.requestedRewards.contains(reward.documentId)
 
     private fun requestReward(reward: Reward) {
         (activity as Activity).let {
@@ -138,12 +101,7 @@ class RewardsFragment : Fragment() {
                     it.getString(R.string.ok), R.drawable.ic_check
                 ) { dialogInterface, _ ->
                     RewardsService.acceptRewardRequest(reward) {
-                        context?.let { context ->
-                            FirebaseUserObject.refreshCurrentUserAndUserModel(context) {
-                                updateUI()
-                                adapter.startListening()
-                            }
-                        }
+                        //TODO
                     }
                     dialogInterface.dismiss()
                 }

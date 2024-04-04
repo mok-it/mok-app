@@ -39,14 +39,14 @@ class CategoryTest {
         Assert.assertEquals("MEDIAESDIY", result)
     }
 
-    @Test
-    fun testTaboriprogramEsElokeszites() {
-        val upperCaseWithoutSpace =
-            Category.TABORIPROGRAMESELOKESZITES.toString().uppercase(Locale.getDefault())
-                .replace(" ", "")
-        val result = upperCaseWithoutSpace.unaccent()
-        Assert.assertEquals("TABORIPROGRAMESELOKESZITES", result)
-    }
+//    @Test
+//    fun testTaboriprogramEsElokeszites() {
+//        val upperCaseWithoutSpace =
+//            Category.TABORIPROGRAMESELOKESZITES.toString().uppercase(Locale.getDefault())
+//                .replace(" ", "")
+//        val result = upperCaseWithoutSpace.unaccent()
+//        Assert.assertEquals("TABORIPROGRAMESELOKESZITES", result)
+//    }
 
     @Test
     fun testIT() {

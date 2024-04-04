@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -27,7 +27,7 @@ class AchievementsFragment : Fragment() {
         ComposeView(requireContext()).apply {
             Log.e(TAG, "AchievementsFragment: started")
             setContent {
-                val achievements by viewModel.achievements.collectAsState()
+                val achievements by viewModel.achievements.observeAsState(listOf())
                 Log.e(TAG, "Achievements size: ${achievements.size}")
                 Column {
                     Text(text = "Achievements")

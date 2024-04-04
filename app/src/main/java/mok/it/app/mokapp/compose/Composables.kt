@@ -26,12 +26,14 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,6 +42,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
+import com.airbnb.lottie.compose.rememberLottiePainter
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.compose.parameterproviders.RewardParamProvider
 import mok.it.app.mokapp.firebase.service.UserService
@@ -142,7 +147,11 @@ fun BadgeIcon(badgeNumber: String, modifier: Modifier = Modifier, isEnabled: Boo
         Image(
             painter = painterResource(id = R.drawable.badgeicon),
             contentDescription = "Badge icon",
-            colorFilter = if(isEnabled) null else ColorFilter.tint(Color.Gray),
+            colorFilter = if (isEnabled) null else ColorFilter.colorMatrix(ColorMatrix().apply {
+                setToSaturation(
+                    0f
+                )
+            }),
             contentScale = ContentScale.Crop,
             modifier = modifier
                 .clip(RoundedCornerShape(8.dp))
@@ -151,7 +160,7 @@ fun BadgeIcon(badgeNumber: String, modifier: Modifier = Modifier, isEnabled: Boo
             text = badgeNumber,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(top = 6.dp),
-            color = if(isEnabled) Color.White else Color.DarkGray
+            color = Color.White
         )
     }
 }
@@ -171,9 +180,19 @@ fun RewardItem(
         enabled = canBeBought(reward),
     )
     {
+        val lottieComposition by rememberLottieComposition(
+            LottieCompositionSpec.RawRes(R.raw.loading)
+        )
+        val lottiePainter = rememberLottiePainter(
+            composition = lottieComposition,
+            enableMergePaths = true
+        )
         Row(
-            modifier = Modifier.padding(4.dp).fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween){
+            modifier = Modifier
+                .padding(4.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
             AsyncImage(
                 model = reward.icon,
                 contentDescription = "Icon of the reward",
@@ -182,10 +201,16 @@ fun RewardItem(
                     .clip(RoundedCornerShape(50)),
                 contentScale = ContentScale.Crop,
                 error = painterResource(id = R.drawable.no_image_icon),
-                //TODO add placeholder loading animation
+                placeholder = lottiePainter, //TODO does it move though? I don't think so
+                colorFilter = if (canBeBought(reward)) null else
+                    ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
             )
-            Column(modifier = Modifier.padding(4.dp).fillMaxWidth(),
-                horizontalAlignment = Alignment.Start) {
+            Column(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .fillMaxWidth(),
+                horizontalAlignment = Alignment.Start
+            ) {
                 Text(
                     text = reward.name,
                     style = MaterialTheme.typography.titleMedium,
@@ -198,9 +223,13 @@ fun RewardItem(
                     modifier = Modifier.padding(top = 4.dp)
                 )
             }
-            Column(modifier = Modifier.padding(4.dp).requiredWidth(100.dp)) {
+            Column(
+                modifier = Modifier
+                    .padding(4.dp)
+                    .requiredWidth(100.dp)
+            ) {
                 BadgeIcon(reward.price.toString(), isEnabled = canBeBought(reward))
-                if(canBeBought(reward))
+                if (canBeBought(reward))
                     IconButton(
                         onClick = { onClick(reward) },
                     )

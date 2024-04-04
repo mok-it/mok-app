@@ -27,7 +27,7 @@ class AchievementsFragment : Fragment() {
         ComposeView(requireContext()).apply {
             Log.e(TAG, "AchievementsFragment: started")
             setContent {
-                val achievements by viewModel.achievements.observeAsState(listOf())
+                val achievements by viewModel.achievements.observeAsState(emptyList())
                 Log.e(TAG, "Achievements size: ${achievements.size}")
                 Column {
                     Text(text = "Achievements")

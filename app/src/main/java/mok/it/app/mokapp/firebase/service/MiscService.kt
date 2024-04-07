@@ -3,8 +3,8 @@ package mok.it.app.mokapp.service
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.firestore
+import com.google.firebase.Firebase
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Link
 import mok.it.app.mokapp.utility.Utility.TAG

@@ -17,8 +17,8 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.firebase.ui.firestore.FirestoreRecyclerAdapter
 import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.firestore
+import com.google.firebase.Firebase
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.databinding.CardPhonebookItemBinding
 import mok.it.app.mokapp.databinding.FragmentPhoneListBinding

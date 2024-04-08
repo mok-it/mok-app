@@ -10,23 +10,25 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.RemoveCircle
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -38,18 +40,12 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.airbnb.lottie.compose.LottieCompositionSpec
-import com.airbnb.lottie.compose.rememberLottieComposition
-import com.airbnb.lottie.compose.rememberLottiePainter
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.compose.parameterproviders.RewardParamProvider
 import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.fragments.viewmodels.ProfileViewModel
-import mok.it.app.mokapp.model.Reward
 import mok.it.app.mokapp.model.User
 
 @Composable
@@ -143,6 +139,7 @@ fun ProjectBadgeSummary(viewModel: ProfileViewModel) {
 fun BadgeIcon(badgeNumber: String, modifier: Modifier = Modifier, isEnabled: Boolean = true) {
     Box(
         contentAlignment = Alignment.Center,
+        //modifier = Modifier.align(Alignment.Bottom)
     ) {
         Image(
             painter = painterResource(id = R.drawable.badgeicon),
@@ -165,83 +162,25 @@ fun BadgeIcon(badgeNumber: String, modifier: Modifier = Modifier, isEnabled: Boo
     }
 }
 
-@Preview
 @Composable
-fun RewardItem(
-    @PreviewParameter(RewardParamProvider::class) reward: Reward,
-    canBeBought: (Reward) -> Boolean = { true },
-    onClick: (Reward) -> Unit = {}
-) {
-    Card(
-        onClick = {},
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        enabled = canBeBought(reward),
-    )
-    {
-        val lottieComposition by rememberLottieComposition(
-            LottieCompositionSpec.RawRes(R.raw.loading)
+fun EditNumericValue(value: Int, name: String, onValueChange: (Int) -> Unit = {}) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        IconButton(onClick = { onValueChange(value - 1) }, modifier = Modifier.size(48.dp)) {
+            Icon(imageVector = Icons.Default.RemoveCircle, contentDescription = "Decrease $name")
+        }
+        OutlinedTextField(
+            value = value.toString(),
+            onValueChange = { newValue: String ->
+                onValueChange(newValue.toIntOrNull() ?: 0)
+            },
+            label = { Text(name) },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            modifier = Modifier.width(100.dp)
         )
-        val lottiePainter = rememberLottiePainter(
-            composition = lottieComposition,
-            enableMergePaths = true
-        )
-        Row(
-            modifier = Modifier
-                .padding(4.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            AsyncImage(
-                model = reward.icon,
-                contentDescription = "Icon of the reward",
-                modifier = Modifier
-                    .size(100.dp)
-                    .clip(RoundedCornerShape(50)),
-                contentScale = ContentScale.Crop,
-                error = painterResource(id = R.drawable.no_image_icon),
-                placeholder = lottiePainter, //TODO does it move though? I don't think so
-                colorFilter = if (canBeBought(reward)) null else
-                    ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
-            )
-            Column(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .fillMaxWidth(),
-                horizontalAlignment = Alignment.Start
-            ) {
-                Text(
-                    text = reward.name,
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(top = 8.dp),
-                    fontWeight = FontWeight.Bold
-                )
-                Text(
-                    text = stringResource(R.string.quantity, reward.quantity),
-                    style = MaterialTheme.typography.titleSmall,
-                    modifier = Modifier.padding(top = 4.dp)
-                )
-            }
-            Column(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .requiredWidth(100.dp)
-            ) {
-                BadgeIcon(reward.price.toString(), isEnabled = canBeBought(reward))
-                if (canBeBought(reward))
-                    IconButton(
-                        onClick = { onClick(reward) },
-                    )
-                    {
-                        Icon(
-                            imageVector = Icons.Filled.AddCircle,
-                            contentDescription = "Request reward",
-                            tint = MaterialTheme.colorScheme.primary,
-                            modifier = Modifier.size(32.dp)
-                        )
-                    }
-            }
+        IconButton(onClick = { onValueChange(value + 1) }, modifier = Modifier.size(48.dp)) {
+            Icon(imageVector = Icons.Default.AddCircle, contentDescription = "Increase $name")
         }
     }
 }

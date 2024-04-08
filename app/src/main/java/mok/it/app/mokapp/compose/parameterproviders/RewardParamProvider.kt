@@ -12,5 +12,4 @@ class RewardParamProvider : PreviewParameterProvider<Reward> {
             quantity = 100,
         ),
     )
-
 }

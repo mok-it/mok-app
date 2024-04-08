@@ -23,7 +23,7 @@ object RewardsService {
                 snapshot.toObjects(Reward::class.java)
             }
 
-    fun acceptRewardRequest(reward: Reward, onComplete: () -> Unit) {
+    fun requestReward(reward: Reward) {
         val request = hashMapOf(
             "user" to FirebaseUserObject.userModel.documentId,
             "reward" to reward.documentId,
@@ -41,7 +41,6 @@ object RewardsService {
         Firebase.firestore.collection(Collections.REWARDREQUESTS).add(request)
             .addOnSuccessListener { documentRef ->
                 Log.d(TAG, "DocumentSnapshot written with ID: ${documentRef.id}")
-                onComplete.invoke()
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error adding document", e)
@@ -56,6 +55,28 @@ object RewardsService {
         )
             .addOnCompleteListener {
                 Log.d(TAG, "Reward added to requested")
+            }
+    }
+
+    fun updateReward(reward: Reward) {
+        Firebase.firestore.collection(Collections.REWARDS).document(reward.documentId)
+            .set(reward)
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully updated!")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error updating document", e)
+            }
+    }
+
+    fun deleteReward(reward: Reward) {
+        Firebase.firestore.collection(Collections.REWARDS).document(reward.documentId)
+            .delete()
+            .addOnSuccessListener {
+                Log.d(TAG, "DocumentSnapshot successfully deleted!")
+            }
+            .addOnFailureListener { e ->
+                Log.w(TAG, "Error deleting document", e)
             }
     }
 

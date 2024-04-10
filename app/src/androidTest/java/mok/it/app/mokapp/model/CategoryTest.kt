@@ -42,10 +42,10 @@ class CategoryTest {
     @Test
     fun testTaboriprogramEsElokeszites() {
         val upperCaseWithoutSpace =
-            Category.TABORIPROGRAMESELOKESZITES.toString().uppercase(Locale.getDefault())
+            Category.NYARITABORIELOKESZITES.toString().uppercase(Locale.getDefault())
                 .replace(" ", "")
         val result = upperCaseWithoutSpace.unaccent()
-        Assert.assertEquals("TABORIPROGRAMESELOKESZITES", result)
+        Assert.assertEquals("NYARITABORIELOKESZITES", result)
     }
 
     @Test

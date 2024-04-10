@@ -95,8 +95,7 @@
     <fragment
         android:id="@+id/rewardsFragment"
         android:name="mok.it.app.mokapp.fragments.RewardsFragment"
-        android:label="Jutalmak"
-        tools:layout="@layout/fragment_rewards" />
+        android:label="Jutalmak" />
     <fragment
         android:id="@+id/phoneBookFragment"
         android:name="mok.it.app.mokapp.fragments.PhoneBookFragment"

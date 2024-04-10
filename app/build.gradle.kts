@@ -84,9 +84,11 @@ dependencies {
     implementation("com.github.bumptech.glide:glide:4.14.2")
 
     //Compose
-    implementation("androidx.compose.ui:ui-android:1.6.4")
+    val composeVersion = "1.6.5"
+    implementation("androidx.compose.ui:ui-android:$composeVersion")
+    implementation("androidx.compose.ui:ui-tooling:$composeVersion")
+    implementation("androidx.compose.material:material-icons-extended:$composeVersion")
     implementation("androidx.compose.material3:material3:1.2.1")
-    implementation("androidx.compose.ui:ui-tooling:1.6.4")
 
     //Coil
     implementation("io.coil-kt:coil-compose:2.5.0")
@@ -128,7 +130,11 @@ dependencies {
 
     // Material Dialog Library
     implementation("dev.shreyaspatil.MaterialDialog:MaterialDialog:2.2.3")
-    implementation("com.airbnb.android:lottie:6.4.0")
+
+    // Lottie
+    val lottieVersion = "6.4.0"
+    implementation("com.airbnb.android:lottie:$lottieVersion")
+    implementation("com.airbnb.android:lottie-compose:$lottieVersion")
 
     //Fragment
     implementation("androidx.fragment:fragment-ktx:1.7.0-alpha10")

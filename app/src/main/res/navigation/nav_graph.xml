@@ -41,8 +41,7 @@
     <fragment
         android:id="@+id/allProjectsListFragment"
         android:name="mok.it.app.mokapp.fragments.AllProjectsListFragment"
-        android:label="Az összes Projekt"
-        tools:layout="@layout/fragment_all_projects_list">
+        android:label="Az összes Projekt">
         <action
             android:id="@+id/action_allProjectsListFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />
@@ -61,9 +60,6 @@
             android:defaultValue="@null"
             app:argType="mok.it.app.mokapp.model.Filter"
             app:nullable="true" />
-        <action
-            android:id="@+id/action_allProjectsListFragment_to_filterDialogFragment"
-            app:destination="@id/filterDialogFragment" />
         <action
             android:id="@+id/action_allProjectsListFragment_to_createProjectFragment"
             app:destination="@id/createProjectFragment" />
@@ -105,17 +101,6 @@
         android:id="@+id/linksFragment"
         android:name="mok.it.app.mokapp.fragments.LinksFragment"
         android:label="Linkek" />
-    <dialog
-        android:id="@+id/filterDialogFragment"
-        android:name="mok.it.app.mokapp.dialog.FilterDialogFragment"
-        android:label="Filterek"
-        tools:layout="@layout/fragment_filter_dialog">
-        <argument
-            android:name="filter"
-            android:defaultValue="@null"
-            app:argType="mok.it.app.mokapp.model.Filter"
-            app:nullable="true" />
-    </dialog>
     <action
         android:id="@+id/action_global_loginFragment"
         app:destination="@id/loginFragment" />

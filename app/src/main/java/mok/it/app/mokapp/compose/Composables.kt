@@ -136,7 +136,7 @@ fun ProjectBadgeSummary(viewModel: ProfileViewModel) {
 }
 
 @Composable
-fun BadgeIcon(badgeNumber: String, modifier: Modifier = Modifier, isEnabled: Boolean = true) {
+fun BadgeIcon(badgeNumberText: String, modifier: Modifier = Modifier, isEnabled: Boolean = true) {
     Box(
         contentAlignment = Alignment.Center,
         //modifier = Modifier.align(Alignment.Bottom)
@@ -154,7 +154,7 @@ fun BadgeIcon(badgeNumber: String, modifier: Modifier = Modifier, isEnabled: Boo
                 .clip(RoundedCornerShape(8.dp))
         )
         Text(
-            text = badgeNumber,
+            text = badgeNumberText,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(top = 6.dp),
             color = Color.White

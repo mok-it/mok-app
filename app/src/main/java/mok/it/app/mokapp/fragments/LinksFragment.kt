@@ -121,7 +121,6 @@ class LinksFragment : Fragment() {
 
     @Composable
     fun LinkCard(link: Link, onLinkClick: (Link) -> Unit) {
-        val image: Painter = painterResource(id = R.drawable.ic_link)
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -137,7 +136,7 @@ class LinksFragment : Fragment() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    painter = image,
+                    painter = painterResource(id = R.drawable.ic_link),
                     contentDescription = "Link icon",
                     modifier = Modifier.size(50.dp)
                 )

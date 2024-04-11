@@ -4,11 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,15 +16,22 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -46,9 +52,9 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserMo
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.fragments.viewmodels.AllProjectsListViewModel
 import mok.it.app.mokapp.model.Project
+import mok.it.app.mokapp.utility.Utility.unaccent
 
-class AllProjectsListFragment :
-    Fragment() {
+class AllProjectsListFragment : Fragment() {
 
     private val args: AllProjectsListFragmentArgs by navArgs()
     private val viewModel: AllProjectsListViewModel by viewModels()
@@ -60,21 +66,20 @@ class AllProjectsListFragment :
 
     @Composable
     fun AllProjectsListScreen() {
-        val projects = viewModel.projects.observeAsState(emptyList()).value
         val lazyListState = rememberLazyListState()
 
-        Box(modifier = Modifier.fillMaxSize()) {
-            LazyColumn(state = lazyListState) {
-                items(projects) { project ->
-                    ProjectItem(project = project, onClick = {
-                        val action =
-                            AllProjectsListFragmentDirections.actionAllProjectsListFragmentToDetailsFragment(
-                                project.id
-                            )
-                        findNavController().navigate(action)
-                    })
-                }
-            }
+        var searchQuery by remember { mutableStateOf("") }
+        val filteredProjects = viewModel.projects.observeAsState().value
+            ?.filter { project ->
+                project.name.unaccent()
+                    .contains(searchQuery.trim().unaccent(), ignoreCase = true)
+                        || project.categoryEnum.toString().contains(
+                    searchQuery.trim().unaccent(),
+                    ignoreCase = true
+                )
+            }.orEmpty().sortedWith(compareBy({ it.categoryEnum }, { it.name }))
+
+        Scaffold(floatingActionButton = {
             if (userModel.isCreator || userModel.admin) {
                 FloatingActionButton(
                     onClick = {
@@ -85,10 +90,48 @@ class AllProjectsListFragment :
                         )
                     },
                     modifier = Modifier
-                        .align(Alignment.BottomEnd)
                         .padding(16.dp),
                 ) {
                     Icon(Icons.Filled.Add, contentDescription = "Add Project")
+                }
+            }
+        }) { padding ->
+            Column {
+                OutlinedTextField(
+                    value = searchQuery,
+                    onValueChange = { searchQuery = it },
+                    label = { Text("Keresés") },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = Icons.Filled.Search,
+                            contentDescription = "Search Icon"
+                        )
+                    },
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                        .height(56.dp)
+                )
+                if (filteredProjects.isEmpty()) {
+                    Text(
+                        text = "Nincsenek a feltételeknek megfelelő projektek",
+                        modifier = Modifier
+                            .padding(16.dp),
+                        style = MaterialTheme.typography.headlineSmall,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                } else {
+                    LazyColumn(state = lazyListState) {
+                        items(filteredProjects) { project ->
+                            ProjectItem(project = project, onClick = {
+                                val action =
+                                    AllProjectsListFragmentDirections.actionAllProjectsListFragmentToDetailsFragment(
+                                        project.id
+                                    )
+                                findNavController().navigate(action)
+                            })
+                        }
+                    }
                 }
             }
         }

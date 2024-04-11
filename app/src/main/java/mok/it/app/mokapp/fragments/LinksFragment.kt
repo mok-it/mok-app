@@ -36,7 +36,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
@@ -64,44 +63,38 @@ class LinksFragment : Fragment() {
     @SuppressLint("NotConstructor")
     @Composable
     fun LinksFragment() {
-
         var searchQuery by remember { mutableStateOf("") }
-        Column {
-            val filteredLinks = viewModel.links.observeAsState().value
-                ?.filter { link ->
-                    link.title.unaccent().contains(searchQuery.trim().unaccent(), ignoreCase = true)
-                            || link.category.contains(
-                        searchQuery.trim().unaccent(),
-                        ignoreCase = true
-                    )
-                }.orEmpty().sortedWith(compareBy({ it.title }, { it.category }))
+        val filteredLinks = viewModel.links.observeAsState().value
+            ?.filter { link ->
+                link.title.unaccent().contains(searchQuery.trim().unaccent(), ignoreCase = true)
+                        || link.category.contains(
+                    searchQuery.trim().unaccent(),
+                    ignoreCase = true
+                )
+            }.orEmpty().sortedWith(compareBy({ it.title }, { it.category }))
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
+        Column {
+            OutlinedTextField(
+                value = searchQuery,
+                onValueChange = { searchQuery = it },
+                label = { Text("Keresés") },
+                leadingIcon = {
+                    Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = "Search Icon"
+                    )
+                },
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth()
                     .height(56.dp)
-            ) {
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    label = { Text("Keresés") },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Search Icon"
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+            )
             if (filteredLinks.isEmpty()) {
                 Text(
                     text = "Nincsenek a feltételeknek megfelelő linkek",
                     modifier = Modifier
-                        .padding(16.dp)
-                        .align(Alignment.CenterHorizontally),
+                        .padding(16.dp),
+                    //.align(Alignment.CenterHorizontally),
                     style = MaterialTheme.typography.headlineSmall,
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )

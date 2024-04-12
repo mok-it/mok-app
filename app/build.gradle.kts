@@ -138,6 +138,9 @@ dependencies {
 
     //Fragment
     implementation("androidx.fragment:fragment-ktx:1.7.0-alpha10")
+
+    // Chip text field
+    implementation("io.github.dokar3:chiptextfield-m3:0.7.0-alpha02")
 }
 
 apply(plugin = "com.google.gms.google-services")

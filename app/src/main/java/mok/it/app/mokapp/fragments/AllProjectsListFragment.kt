@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
@@ -16,14 +15,12 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -45,8 +42,12 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.compose.AsyncImage
+import com.dokar.chiptextfield.Chip
+import com.dokar.chiptextfield.m3.ChipTextField
+import com.dokar.chiptextfield.rememberChipTextFieldState
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.compose.BadgeIcon
+import mok.it.app.mokapp.compose.SearchField
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
@@ -74,9 +75,9 @@ class AllProjectsListFragment : Fragment() {
                 project.name.unaccent()
                     .contains(searchQuery.trim().unaccent(), ignoreCase = true)
                         || project.categoryEnum.toString().contains(
-                    searchQuery.trim().unaccent(),
-                    ignoreCase = true
+                    searchQuery.trim().unaccent(), ignoreCase = true
                 )
+                        || project.maxBadges == searchQuery.toIntOrNull()
             }.orEmpty().sortedWith(compareBy({ it.categoryEnum }, { it.name }))
 
         Scaffold(floatingActionButton = {
@@ -97,21 +98,7 @@ class AllProjectsListFragment : Fragment() {
             }
         }) { padding ->
             Column {
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    label = { Text("Keresés") },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Search Icon"
-                        )
-                    },
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth()
-                        .height(56.dp)
-                )
+                SearchField(searchQuery = searchQuery, onValueChange = { searchQuery = it })
                 if (filteredProjects.isEmpty()) {
                     Text(
                         text = "Nincsenek a feltételeknek megfelelő projektek",

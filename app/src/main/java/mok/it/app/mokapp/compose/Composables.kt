@@ -53,6 +53,10 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.dokar.chiptextfield.Chip
+import com.dokar.chiptextfield.ChipTextFieldState
+import com.dokar.chiptextfield.m3.ChipTextField
+import com.dokar.chiptextfield.rememberChipTextFieldState
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.fragments.viewmodels.ProfileViewModel
@@ -223,18 +227,29 @@ private fun BadgeCard(badgeData: UserService.BadgeData) {
 @Composable
 fun SearchFieldPreview() {
     var searchQuery by remember { mutableStateOf("") }
-    SearchField(searchQuery = searchQuery, onValueChange = { searchQuery = it })
+    val state = rememberChipTextFieldState<Chip>()
+    SearchField(searchQuery = searchQuery, chipState = state, onValueChange = { searchQuery = it })
 }
 
 @Composable
-fun SearchField(searchQuery: String = "", onValueChange: (String) -> Unit) {
+fun SearchField(
+    searchQuery: String,
+    chipState: ChipTextFieldState<Chip>,
+    onValueChange: (String) -> Unit,
+) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
-    OutlinedTextField(
+    ChipTextField(
+        state = chipState,
         value = searchQuery,
         onValueChange = { onValueChange(it) },
+        onSubmit = { text -> Chip(text.trim()) },
         label = { Text("Keresés") },
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
         leadingIcon = {
             Icon(
                 imageVector = Icons.Filled.Search,
@@ -254,10 +269,5 @@ fun SearchField(searchQuery: String = "", onValueChange: (String) -> Unit) {
                 }
             }
         },
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-            .height(56.dp)
-            .focusRequester(focusRequester)
     )
 }

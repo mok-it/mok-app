@@ -43,7 +43,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.compose.AsyncImage
 import com.dokar.chiptextfield.Chip
-import com.dokar.chiptextfield.m3.ChipTextField
+import com.dokar.chiptextfield.ChipTextFieldState
 import com.dokar.chiptextfield.rememberChipTextFieldState
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.compose.BadgeIcon
@@ -69,16 +69,9 @@ class AllProjectsListFragment : Fragment() {
     fun AllProjectsListScreen() {
         val lazyListState = rememberLazyListState()
 
+        val chipState = rememberChipTextFieldState<Chip>()
         var searchQuery by remember { mutableStateOf("") }
-        val filteredProjects = viewModel.projects.observeAsState().value
-            ?.filter { project ->
-                project.name.unaccent()
-                    .contains(searchQuery.trim().unaccent(), ignoreCase = true)
-                        || project.categoryEnum.toString().contains(
-                    searchQuery.trim().unaccent(), ignoreCase = true
-                )
-                        || project.maxBadges == searchQuery.toIntOrNull()
-            }.orEmpty().sortedWith(compareBy({ it.categoryEnum }, { it.name }))
+        val filteredProjects = getFilteredProjects(searchQuery, chipState)
 
         Scaffold(floatingActionButton = {
             if (userModel.isCreator || userModel.admin) {
@@ -98,7 +91,11 @@ class AllProjectsListFragment : Fragment() {
             }
         }) { padding ->
             Column {
-                SearchField(searchQuery = searchQuery, onValueChange = { searchQuery = it })
+                SearchField(
+                    searchQuery = searchQuery,
+                    chipState = chipState,
+                    onValueChange = { searchQuery = it },
+                )
                 if (filteredProjects.isEmpty()) {
                     Text(
                         text = "Nincsenek a feltételeknek megfelelő projektek",
@@ -121,6 +118,31 @@ class AllProjectsListFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun getFilteredProjects(
+        searchQuery: String,
+        chipState: ChipTextFieldState<Chip>
+    ) = viewModel.projects.observeAsState().value
+        ?.filter { project -> isProjectMatched(project, searchQuery, chipState) }
+        .orEmpty()
+        .sortedWith(compareBy({ it.categoryEnum }, { it.name }))
+
+    private fun isProjectMatched(
+        project: Project,
+        cleanSearchQuery: String,
+        chipState: ChipTextFieldState<Chip>
+    ): Boolean {
+        val cleanSearchWords =
+            chipState.chips.map { it.text.trim().unaccent() } + cleanSearchQuery.trim().unaccent()
+
+        return cleanSearchWords.all {
+            project.name.unaccent().contains(it, ignoreCase = true)
+                    || project.description.unaccent().contains(it, ignoreCase = true)
+                    || project.categoryEnum.toString().contains(it, ignoreCase = true)
+                    || it == project.maxBadges.toString()
         }
     }
 

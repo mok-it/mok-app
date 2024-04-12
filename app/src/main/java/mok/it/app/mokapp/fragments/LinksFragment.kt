@@ -38,6 +38,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.dokar.chiptextfield.Chip
+import com.dokar.chiptextfield.ChipTextFieldState
+import com.dokar.chiptextfield.rememberChipTextFieldState
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.compose.SearchField
 import mok.it.app.mokapp.fragments.viewmodels.LinksViewModel
@@ -60,18 +63,16 @@ class LinksFragment : Fragment() {
     @SuppressLint("NotConstructor")
     @Composable
     fun LinksFragment() {
+        val chipState = rememberChipTextFieldState<Chip>()
         var searchQuery by remember { mutableStateOf("") }
-        val filteredLinks = viewModel.links.observeAsState().value
-            ?.filter { link ->
-                link.title.unaccent().contains(searchQuery.trim().unaccent(), ignoreCase = true)
-                        || link.category.contains(
-                    searchQuery.trim().unaccent(),
-                    ignoreCase = true
-                )
-            }.orEmpty().sortedWith(compareBy({ it.title }, { it.category }))
+        val filteredLinks = getFilteredLinks(searchQuery, chipState)
 
         Column {
-            SearchField(searchQuery = searchQuery, onValueChange = { searchQuery = it })
+            SearchField(
+                searchQuery = searchQuery,
+                chipState = chipState,
+                onValueChange = { searchQuery = it },
+            )
             if (filteredLinks.isEmpty()) {
                 Text(
                     text = "Nincsenek a feltételeknek megfelelő linkek",
@@ -91,6 +92,32 @@ class LinksFragment : Fragment() {
                     }
                 }
             }
+        }
+    }
+
+    @Composable
+    private fun getFilteredLinks(
+        searchQuery: String,
+        chipState: ChipTextFieldState<Chip>
+    ): List<Link> {
+        val cleanSearchQuery = searchQuery.trim().unaccent()
+        return viewModel.links.observeAsState().value
+            ?.filter { link -> isLinkMatched(link, cleanSearchQuery, chipState) }
+            .orEmpty()
+            .sortedWith(compareBy({ it.category }, { it.title }))
+    }
+
+    private fun isLinkMatched(
+        link: Link,
+        cleanSearchQuery: String,
+        chipState: ChipTextFieldState<Chip>
+    ): Boolean {
+        val cleanSearchWords =
+            chipState.chips.map { it.text.trim().unaccent() } + cleanSearchQuery.trim().unaccent()
+
+        return cleanSearchWords.all {
+            link.title.unaccent().contains(it, ignoreCase = true)
+                    || link.category.unaccent().contains(it, ignoreCase = true)
         }
     }
 

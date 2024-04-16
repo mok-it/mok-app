@@ -19,7 +19,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddCircle
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.RemoveCircle
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -29,20 +31,32 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.dokar.chiptextfield.Chip
+import com.dokar.chiptextfield.ChipTextFieldState
+import com.dokar.chiptextfield.m3.ChipTextField
+import com.dokar.chiptextfield.rememberChipTextFieldState
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.fragments.viewmodels.ProfileViewModel
@@ -136,7 +150,7 @@ fun ProjectBadgeSummary(viewModel: ProfileViewModel) {
 }
 
 @Composable
-fun BadgeIcon(badgeNumber: String, modifier: Modifier = Modifier, isEnabled: Boolean = true) {
+fun BadgeIcon(badgeNumberText: String, modifier: Modifier = Modifier, isEnabled: Boolean = true) {
     Box(
         contentAlignment = Alignment.Center,
         //modifier = Modifier.align(Alignment.Bottom)
@@ -154,7 +168,7 @@ fun BadgeIcon(badgeNumber: String, modifier: Modifier = Modifier, isEnabled: Boo
                 .clip(RoundedCornerShape(8.dp))
         )
         Text(
-            text = badgeNumber,
+            text = badgeNumberText,
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(top = 6.dp),
             color = Color.White
@@ -207,4 +221,53 @@ private fun BadgeCard(badgeData: UserService.BadgeData) {
             )
         }
     }
+}
+
+@Preview
+@Composable
+fun SearchFieldPreview() {
+    var searchQuery by remember { mutableStateOf("") }
+    val state = rememberChipTextFieldState<Chip>()
+    SearchField(searchQuery = searchQuery, chipState = state, onValueChange = { searchQuery = it })
+}
+
+@Composable
+fun SearchField(
+    searchQuery: String,
+    chipState: ChipTextFieldState<Chip>,
+    onValueChange: (String) -> Unit,
+) {
+    val focusRequester = remember { FocusRequester() }
+    val focusManager = LocalFocusManager.current
+
+    ChipTextField(
+        state = chipState,
+        value = searchQuery,
+        onValueChange = { onValueChange(it) },
+        onSubmit = { text -> Chip(text.trim()) },
+        label = { Text("Keresés") },
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth()
+            .focusRequester(focusRequester),
+        leadingIcon = {
+            Icon(
+                imageVector = Icons.Filled.Search,
+                contentDescription = "Search Icon"
+            )
+        },
+        trailingIcon = {
+            if (searchQuery.isNotEmpty()) {
+                IconButton(onClick = {
+                    onValueChange("")
+                    focusManager.clearFocus()
+                }) {
+                    Icon(
+                        imageVector = Icons.Filled.Close,
+                        contentDescription = "Clear Search"
+                    )
+                }
+            }
+        },
+    )
 }

@@ -13,20 +13,16 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -36,14 +32,17 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import com.dokar.chiptextfield.Chip
+import com.dokar.chiptextfield.ChipTextFieldState
+import com.dokar.chiptextfield.rememberChipTextFieldState
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.compose.SearchField
 import mok.it.app.mokapp.fragments.viewmodels.LinksViewModel
 import mok.it.app.mokapp.model.Link
 import mok.it.app.mokapp.utility.Utility.unaccent
@@ -64,44 +63,21 @@ class LinksFragment : Fragment() {
     @SuppressLint("NotConstructor")
     @Composable
     fun LinksFragment() {
-
+        val chipState = rememberChipTextFieldState<Chip>()
         var searchQuery by remember { mutableStateOf("") }
-        Column {
-            val filteredLinks = viewModel.links.observeAsState().value
-                ?.filter { link ->
-                    link.title.unaccent().contains(searchQuery.trim().unaccent(), ignoreCase = true)
-                            || link.category.contains(
-                        searchQuery.trim().unaccent(),
-                        ignoreCase = true
-                    )
-                }.orEmpty().sortedWith(compareBy({ it.title }, { it.category }))
+        val filteredLinks = getFilteredLinks(searchQuery, chipState)
 
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth()
-                    .height(56.dp)
-            ) {
-                OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    label = { Text("Keresés") },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Search Icon"
-                        )
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
+        Column {
+            SearchField(
+                searchQuery = searchQuery,
+                chipState = chipState,
+                onValueChange = { searchQuery = it },
+            )
             if (filteredLinks.isEmpty()) {
                 Text(
                     text = "Nincsenek a feltételeknek megfelelő linkek",
                     modifier = Modifier
-                        .padding(16.dp)
-                        .align(Alignment.CenterHorizontally),
+                        .padding(16.dp),
                     style = MaterialTheme.typography.headlineSmall,
                     textAlign = androidx.compose.ui.text.style.TextAlign.Center
                 )
@@ -120,8 +96,33 @@ class LinksFragment : Fragment() {
     }
 
     @Composable
+    private fun getFilteredLinks(
+        searchQuery: String,
+        chipState: ChipTextFieldState<Chip>
+    ): List<Link> {
+        val cleanSearchQuery = searchQuery.trim().unaccent()
+        return viewModel.links.observeAsState().value
+            ?.filter { link -> isLinkMatched(link, cleanSearchQuery, chipState) }
+            .orEmpty()
+            .sortedWith(compareBy({ it.category }, { it.title }))
+    }
+
+    private fun isLinkMatched(
+        link: Link,
+        cleanSearchQuery: String,
+        chipState: ChipTextFieldState<Chip>
+    ): Boolean {
+        val cleanSearchWords =
+            chipState.chips.map { it.text.trim().unaccent() } + cleanSearchQuery.trim().unaccent()
+
+        return cleanSearchWords.all {
+            link.title.unaccent().contains(it, ignoreCase = true)
+                    || link.category.unaccent().contains(it, ignoreCase = true)
+        }
+    }
+
+    @Composable
     fun LinkCard(link: Link, onLinkClick: (Link) -> Unit) {
-        val image: Painter = painterResource(id = R.drawable.ic_link)
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -137,7 +138,7 @@ class LinksFragment : Fragment() {
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    painter = image,
+                    painter = painterResource(id = R.drawable.ic_link),
                     contentDescription = "Link icon",
                     modifier = Modifier.size(50.dp)
                 )

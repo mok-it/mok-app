@@ -98,7 +98,7 @@ class RewardsFragment : Fragment() {
                             .padding(16.dp)
                     )
                     BadgeIcon(
-                        badgeNumber = userModel.points.toString(),
+                        badgeNumberText = userModel.points.toString(),
                         modifier = Modifier.padding(8.dp)
                     )
                 }

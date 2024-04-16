@@ -3,15 +3,23 @@ package mok.it.app.mokapp.firebase.service
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.snapshots
+import kotlinx.coroutines.flow.map
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.utility.Utility.TAG
 
 object ProjectService {
+    fun getProjectsQuery() =
+        Firebase.firestore.collection(Collections.PROJECTS)
+            .orderBy("category", Query.Direction.ASCENDING)
+            .orderBy("name", Query.Direction.ASCENDING)
+
     fun getProjectsByIds(
         projectIds: List<String>
     ): LiveData<List<Project>> {
@@ -111,9 +119,13 @@ object ProjectService {
             }
     }
 
-    fun getProjectsQuery() =
+    fun getAllProjects(): LiveData<List<Project>> =
         Firebase.firestore.collection(Collections.PROJECTS)
-            .orderBy("category", Query.Direction.ASCENDING)
-            .orderBy("name", Query.Direction.ASCENDING)
-
+            .orderBy("category")
+            .orderBy("name")
+            .snapshots()
+            .map { s ->
+                s.toObjects(Project::class.java)
+            }
+            .asLiveData()
 }

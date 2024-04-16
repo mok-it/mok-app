@@ -32,8 +32,7 @@
     <fragment
         android:id="@+id/commentsFragment"
         android:name="mok.it.app.mokapp.fragments.CommentsFragment"
-        android:label="Kommentek"
-        tools:layout="@layout/fragment_comments">
+        android:label="Kommentek">
         <argument
             android:name="projectId"
             app:argType="string" />
@@ -154,8 +153,7 @@
     <fragment
         android:id="@+id/aboutFragment"
         android:name="mok.it.app.mokapp.fragments.AboutFragment"
-        android:label="@string/about"
-        tools:layout="@layout/fragment_about" />
+        android:label="@string/about" />
     <fragment
         android:id="@+id/adminPanelFragment"
         android:name="mok.it.app.mokapp.fragments.AdminPanelFragment"

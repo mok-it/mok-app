@@ -1,12 +1,10 @@
 package mok.it.app.mokapp.fragments
 
-import android.app.Activity
+//import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
+//import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.util.Log
-import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -14,32 +12,62 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.graphics.drawable.toBitmap
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.Card
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalInspectionMode
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
-import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
-import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.squareup.picasso.Callback
-import com.squareup.picasso.Picasso
-import dev.shreyaspatil.MaterialDialog.MaterialDialog
+import coil.compose.AsyncImage
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.databinding.FragmentDetailsBinding
-import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
+import mok.it.app.mokapp.compose.BadgeIcon
+import mok.it.app.mokapp.compose.DataBlock
+import mok.it.app.mokapp.compose.parameterproviders.ProjectParamProvider
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.service.CloudMessagingService
 import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.fragments.viewmodels.DetailsViewModel
 import mok.it.app.mokapp.fragments.viewmodels.DetailsViewModelFactory
-import mok.it.app.mokapp.utility.Utility
+import mok.it.app.mokapp.model.Comment
+import mok.it.app.mokapp.model.Project
+import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.utility.Utility.TAG
-import java.io.File
-import java.io.FileOutputStream
-import java.io.IOException
 import java.text.DateFormat
 
 class DetailsFragment : Fragment() {
@@ -49,97 +77,418 @@ class DetailsFragment : Fragment() {
         DetailsViewModelFactory(args.projectId)
     }
 
-    private var userIsEditor: Boolean = false
-    private lateinit var _binding: FragmentDetailsBinding
-    private val binding get() = _binding
+    enum class DialogType {
+        NONE, JOIN, LEAVE
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentDetailsBinding.inflate(inflater, container, false)
-        return binding.root
+        setupTopMenu()
+        return ComposeView(requireContext()).apply {
+            setContent {
+                val project by viewModel.project.observeAsState(initial = Project())
+                DetailsScreen(project)
+            }
+        }
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    // ha a FirebaseUserObject refaktorálva lesz, ez a függvény is sokat egyszerűsödik majd
+    @Preview
+    @Composable
+    private fun DetailsScreen(
+        @PreviewParameter(ProjectParamProvider::class) project: Project
+    ) {
+        var showDialog by remember { mutableStateOf(DialogType.NONE) }
+        val isPreview = LocalInspectionMode.current
 
-        viewModel.mostRecentComment.observe(viewLifecycleOwner) { mostRecentComment ->
-            binding.mostRecentComment.text =
-                getString(
-                    R.string.comment_with_sender,
-                    mostRecentComment.userName,
-                    mostRecentComment.text
-                )
-        }
+        Scaffold(
+            bottomBar = {
+                Button(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    onClick = {
 
-        viewModel.project.observe(viewLifecycleOwner) { project ->
-            binding.projectName.text = project.name
-            binding.categoryName.text =
-                getString(R.string.specific_category, project.categoryEnum)
-            binding.badgeValueTextView.text =
-                getString(R.string.specific_value, project.maxBadges)
-            binding.projectCreateDescription.text = project.description
+                        showDialog =
+                            if (isPreview || userModel.joinedBadges.contains(args.projectId)) {
+                                DialogType.LEAVE
+                            } else {
+                                DialogType.JOIN
+                            }
 
-            binding.projectCreator.text = viewModel.creatorUser.value?.name
-            val formatter = DateFormat.getDateInstance()
-            binding.projectDeadline.text =
-                formatter.format(project.created)
-            val iconFileName = Utility.getIconFileName(project.icon)
-            val iconFile = File(context?.filesDir, iconFileName)
-            if (iconFile.exists()) {
-                Log.i(TAG, "loading badge icon " + iconFile.path)
-                val bitmap: Bitmap = BitmapFactory.decodeFile(iconFile.path)
-                binding.avatarImagebutton.setImageBitmap(bitmap)
-            } else {
-                Log.i(TAG, "downloading badge icon " + project.icon)
-                val callback = object : Callback {
-                    override fun onSuccess() {
-                        // save image
-                        Log.i(TAG, "saving badge icon " + iconFile.path)
-                        val bitmap: Bitmap =
-                            binding.avatarImagebutton.drawable.toBitmap()
-                        val fos: FileOutputStream?
-                        try {
-                            fos = FileOutputStream(iconFile)
-                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
-                            fos.flush()
-                            fos.close()
-                        } catch (e: IOException) {
-                            e.printStackTrace()
-                        }
-                    }
-
-                    override fun onError(e: java.lang.Exception?) {
-                        Log.e(TAG, e.toString())
+                    }) {
+                    if (isPreview || userModel.joinedBadges.contains(args.projectId)) {
+                        Text("Lecsatlakozás")
+                    } else {
+                        Text("Csatlakozás")
                     }
                 }
-                Picasso.get().load(project.icon)
-                    .into(binding.avatarImagebutton, callback)
             }
+        ) { padding ->
+            Column(
+                modifier = Modifier.padding(padding)
+            ) {
+                when (showDialog) {
+                    DialogType.JOIN -> {
+                        joinProject(project)
+                        showDialog = DialogType.NONE
+                    }
 
-            val editors = project.leaders
-            if (editors.contains(userModel.documentId)) {
-                userIsEditor = true
+                    DialogType.LEAVE -> {
+                        leaveProject()
+                        showDialog = DialogType.NONE
+                    }
+
+                    DialogType.NONE -> {}
+                }
+
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 8.dp)
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    AsyncImage(
+                        model = project.icon,
+                        placeholder = painterResource(id = R.drawable.no_image_icon),
+                        contentDescription = "Project icon",
+                        modifier = Modifier
+                            .size(100.dp),
+                        contentScale = ContentScale.Fit
+                    )
+                    Column(modifier = Modifier.padding(8.dp)) {
+                        Text(
+                            project.name,
+                            style = MaterialTheme.typography.titleLarge,
+                        )
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(4.dp),
+                        ) {
+                            BadgeIcon(project.maxBadges)
+                            ProjectMembers(project)
+                        }
+                    }
+                }
+
+                Card(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .weight(1f)
+                        .verticalScroll(rememberScrollState()),
+                    shape = RoundedCornerShape(16.dp),
+
+                    ) {
+                    Column(
+                        modifier = Modifier.padding(16.dp)
+                    ) {
+                        DataBlock("Kategória", project.categoryEnum)
+                        DataBlock(
+                            "Készítő",
+                            if (isPreview) {
+                                "Teszt Jenő"
+                            } else {
+                                viewModel.creatorUser.value?.name ?: "Ismeretlen készítő"
+                            }
+                        )
+                        DataBlock(
+                            "Határidő",
+                            DateFormat.getDateInstance().format(project.created)
+                        )
+                        Text(
+                            text = "Leírás", style = MaterialTheme.typography.bodyLarge,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                        Text(
+                            text = project.description,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
+                LastCommentCard(viewModel.mostRecentComment.value)
             }
-            changeVisibilities()
-            initEditButton()
-            initAdminButton()
         }
 
-        if (currentUser == null) {
-            findNavController().navigate(R.id.action_global_loginFragment)
-        } else {
-            setupTopMenu()
-            refreshCurrentUserAndUserModel(requireContext()) {
+//        viewModel.project.observe(viewLifecycleOwner) { project ->
+//            binding.projectName.text = project.name
+//            binding.categoryName.text =
+//                getString(R.string.specific_category, project.categoryEnum)
+//            binding.badgeValueTextView.text =
+//                getString(R.string.specific_value, project.maxBadges)
+//            binding.projectCreateDescription.text = project.description
+//
+//            binding.projectCreator.text = viewModel.creatorUser.value?.name
+//            val formatter = DateFormat.getDateInstance()
+//            binding.projectDeadline.text =
+//                formatter.format(project.created)
+//            val iconFileName = Utility.getIconFileName(project.icon)
+//            val iconFile = File(context?.filesDir, iconFileName)
+//            if (iconFile.exists()) {
+//                Log.i(TAG, "loading badge icon " + iconFile.path)
+//                val bitmap: Bitmap = BitmapFactory.decodeFile(iconFile.path)
+//                binding.avatarImagebutton.setImageBitmap(bitmap)
+//            } else {
+//                Log.i(TAG, "downloading badge icon " + project.icon)
+//                val callback = object : Callback {
+//                    override fun onSuccess() {
+//                        // save image
+//                        Log.i(TAG, "saving badge icon " + iconFile.path)
+//                        val bitmap: Bitmap =
+//                            binding.avatarImagebutton.drawable.toBitmap()
+//                        val fos: FileOutputStream?
+//                        try {
+//                            fos = FileOutputStream(iconFile)
+//                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
+//                            fos.flush()
+//                            fos.close()
+//                        } catch (e: IOException) {
+//                            e.printStackTrace()
+//                        }
+//                    }
+//
+//                    override fun onError(e: java.lang.Exception?) {
+//                        Log.e(TAG, e.toString())
+//                    }
+//                }
+//                Picasso.get().load(project.icon)
+//                    .into(binding.avatarImagebutton, callback)
+//            }
+//
+//            val editors = project.leaders
+//            if (editors.contains(userModel.documentId)) {
+//                userIsEditor = true
+//            }
+
+//        if (currentUser == null) {
+//            findNavController().navigate(R.id.action_global_loginFragment)
+//        } else {
+//            setupTopMenu()
+//            refreshCurrentUserAndUserModel(requireContext()) {
+//                UserService.getMembersForProject(args.projectId)
+//                initLayout()
+//            }
+//        }
+//
+//        viewModel.members.observe(viewLifecycleOwner) {
+//            initMembers()
+//        }
+//
+//        if (userModel.isCreator || userModel.admin || viewModel.project.value!!.creator == userModel.documentId || userIsEditor) {
+//            binding.rewardButton.visibility = View.VISIBLE
+//            binding.rewardButton.setOnClickListener {
+//                findNavController().navigate(
+//                    DetailsFragmentDirections.actionDetailsFragmentToAdminPanelFragment(
+//                        viewModel.project.value!!
+//                    )
+//                )
+//            }
+//        }
+
+//        binding.joinOrLeaveProjectButton.visibility = View.VISIBLE
+//        when {
+//            userModel.collectedBadges.contains(viewModel.project.value!!.id) -> binding.joinOrLeaveProjectButton.visibility =
+//                View.GONE
+//
+//            userModel.joinedBadges.contains(viewModel.project.value!!.id) -> binding.joinOrLeaveProjectButton.text =
+//                getString(R.string.leave)
+//
+//            else -> binding.joinOrLeaveProjectButton.text = getString(R.string.join)
+//        }
+//
+//        if (viewModel.project.value!!.leaders.contains(userModel.documentId)) {
+//            userIsEditor = true
+//        }
+
+
+//        if (userModel.isCreator || userModel.admin || viewModel.project.value!!.creator == userModel.documentId || userIsEditor) {
+//            binding.editButton.visibility = View.VISIBLE
+//            binding.editButton.setOnClickListener {
+//                findNavController().navigate(
+//                    DetailsFragmentDirections.actionDetailsFragmentToEditProjectFragment(
+//                        viewModel.project.value!!
+//                    )
+//                )
+//            }
+//        }
+
+//        binding.membersOverlayButton.setOnClickListener {
+//            if (viewModel.members.value?.isNotEmpty() == true && viewModel.project.value != null) {
+//                findNavController().navigate(
+//                    DetailsFragmentDirections.actionDetailsFragmentToProjectMembersDialogFragment(
+//                        viewModel.members.value!!.toTypedArray(),
+//                        userIsEditor,
+//                        viewModel.project.value!!
+//                    )
+//                )
+//            }
+//        }
+//        binding.joinOrLeaveProjectButton.setOnClickListener {
+//            joinOrLeaveButtonPressed()
+//            refreshCurrentUserAndUserModel(requireContext())
+//        }
+//        binding.joinOrLeaveProjectButton.visibility = View.GONE
+//        binding.mostRecentComment.setOnClickListener {
+//            val action =
+//                DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.projectId)
+//            findNavController().navigate(action)
+//        }
+//
+
+    }
+
+    @Composable
+    private fun LastCommentCard(comment: Comment?) {
+        Card(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Text(
+                    text = "Legutóbbi hozzászólás",
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold
+                )
+                if (comment == null) {
+                    Text(
+                        text = "Nincs még hozzászólás",
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                } else {
+                    Text(
+                        text = comment.userName,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                    Text(
+                        text = comment.text,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
+            }
+        }
+    }
+
+
+    @Preview
+    @Composable
+    fun ProjectMembers(
+        @PreviewParameter(ProjectParamProvider::class) project: Project
+    ) {
+        val members =
+            if (LocalInspectionMode.current) {
+                listOf(
+                    User(name = "Teszt Jenő"),
+                    User(name = "Teszt József"),
+                    User(name = "Teszt Béla"),
+                    User(name = "Teszt Jenő"),
+                    User(name = "Teszt József"),
+                    User(name = "Teszt Béla")
+                )
+            } else {
+                viewModel.members.observeAsState(initial = emptyList()).value
+            }
+        val displayMembers = members.take(5)
+        val extraMembers = members.size - 5
+
+        Row(
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+            horizontalArrangement = Arrangement.spacedBy((-16).dp)
+        ) {
+            displayMembers.forEach { member ->
+                AsyncImage(
+                    model = member.photoURL,
+                    placeholder = painterResource(id = R.drawable.no_image_icon),
+                    contentDescription = "Member icon",
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape),
+                    contentScale = ContentScale.Crop,
+                )
+            }
+
+            if (extraMembers > 0) {
+                Box(
+                    modifier = Modifier
+                        .size(40.dp)
+                        .clip(CircleShape)
+                        .background(Color.Gray),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text(
+                        text = "+$extraMembers",
+                        color = Color.White,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+            }
+        }
+    }
+
+    private fun joinProject(project: Project) {
+        UserService.addUsersToProject(
+            args.projectId,
+            listOf(userModel.documentId),
+            {
+                Log.i(
+                    TAG,
+                    "Adding ${userModel.documentId} to project ${args.projectId}"
+                )
+                Toast.makeText(
+                    context,
+                    "Sikeresen csatlakoztál!",
+                    Toast.LENGTH_SHORT
+                ).show()
+                refreshCurrentUserAndUserModel(requireContext())
                 UserService.getMembersForProject(args.projectId)
-                initLayout()
+            },
+            {
+                Toast.makeText(
+                    context,
+                    "A csatlakozás sikertelen, kérlek próbáld újra később.",
+                    Toast.LENGTH_SHORT
+                ).show()
             }
-        }
+        )
 
-        viewModel.members.observe(viewLifecycleOwner) {
-            initMembers()
-        }
+        CloudMessagingService.sendNotificationToUsersById(
+            "Csatlakoztak egy projekthez",
+            "${userModel.name} csatlakozott a(z) \"${project.name}\" nevű projekthez!",
+            listOf(project.creator + project.leaders)
+        )
+    }
+
+    private fun leaveProject() {
+        UserService.removeUserFromProject(
+            args.projectId,
+            userModel.documentId,
+            {
+                Log.i(
+                    TAG,
+                    "Removing ${userModel.documentId} from project ${args.projectId}"
+                )
+                Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT)
+                    .show()
+                refreshCurrentUserAndUserModel(requireContext())
+                UserService.getMembersForProject(args.projectId)
+            },
+            {
+                Toast.makeText(
+                    context,
+                    "A lecsatlakozás sikertelen, kérlek próbáld újra később.",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        )
     }
 
     private fun setupTopMenu() {
@@ -176,220 +525,4 @@ class DetailsFragment : Fragment() {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
-    override fun onResume() {
-        super.onResume()
-        initLayout()
-    }
-
-    private fun initLayout() {
-        binding.membersOverlayButton.setOnClickListener {
-            if (viewModel.members.value?.isNotEmpty() == true && viewModel.project.value != null) {
-                findNavController().navigate(
-                    DetailsFragmentDirections.actionDetailsFragmentToProjectMembersDialogFragment(
-                        viewModel.members.value!!.toTypedArray(),
-                        userIsEditor,
-                        viewModel.project.value!!
-                    )
-                )
-            }
-        }
-        binding.joinOrLeaveProjectButton.setOnClickListener {
-            joinOrLeaveButtonPressed()
-            refreshCurrentUserAndUserModel(requireContext())
-        }
-        binding.joinOrLeaveProjectButton.visibility = View.GONE
-        binding.mostRecentComment.setOnClickListener {
-            val action =
-                DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.projectId)
-            findNavController().navigate(action)
-        }
-    }
-
-    private fun initEditButton() {
-        if (userModel.isCreator || userModel.admin || viewModel.project.value!!.creator == userModel.documentId || userIsEditor) {
-            binding.editButton.visibility = View.VISIBLE
-            binding.editButton.setOnClickListener {
-                findNavController().navigate(
-                    DetailsFragmentDirections.actionDetailsFragmentToEditProjectFragment(
-                        viewModel.project.value!!
-                    )
-                )
-            }
-        }
-    }
-
-    private fun initAdminButton() {
-        if (userModel.isCreator || userModel.admin || viewModel.project.value!!.creator == userModel.documentId || userIsEditor) {
-            binding.rewardButton.visibility = View.VISIBLE
-            binding.rewardButton.setOnClickListener {
-                findNavController().navigate(
-                    DetailsFragmentDirections.actionDetailsFragmentToAdminPanelFragment(
-                        viewModel.project.value!!
-                    )
-                )
-            }
-        }
-    }
-
-
-    /**
-     * We adjust the extra member counter's text size based on the length of it
-     */
-    private fun initExtraMemberCounter(numOfExtraMembers: Int) {
-
-        val textSizeResource = when ("$numOfExtraMembers".length) {
-            1 -> R.dimen.profile_circle_leftover_text_size_1_digit
-            2 -> R.dimen.profile_circle_leftover_text_size_2_digit
-            3 -> R.dimen.profile_circle_leftover_text_size_3_digit
-            else -> R.dimen.profile_circle_leftover_text_size_3_digit
-        }
-
-        val textSizeSP = resources.getDimension(textSizeResource)
-
-        Log.d(TAG, "textSizeSP = $textSizeSP")
-
-        binding.membersLeftNumber.text = getString(R.string.extra_members, numOfExtraMembers)
-        binding.membersLeftNumber.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSizeSP)
-
-    }
-
-    private fun joinOrLeaveButtonPressed() {
-        if (userModel.joinedBadges.contains(args.projectId)) { //dialog to leave project
-            (context as Activity).let {
-                MaterialDialog.Builder(it)
-                    .setTitle(it.getString(R.string.leave_project))
-                    .setMessage(it.getString(R.string.leave_project_message))
-                    .setPositiveButton(it.getString(R.string.yes)) { dialogInterface, _ ->
-                        leaveProject()
-                        dialogInterface.dismiss()
-                    }
-                    .setNegativeButton(it.getString(R.string.cancel)) { dialogInterface, _ ->
-                        dialogInterface.dismiss()
-                    }
-                    .build()
-                    .show()
-            }
-        } else { // dialog to join project
-            (context as Activity).let {
-                MaterialDialog.Builder(it)
-                    .setTitle(it.getString(R.string.join_project))
-                    .setMessage(
-                        it.getString(
-                            R.string.join_project_message,
-                            viewModel.project.value!!.name
-                        )
-                    )
-                    .setPositiveButton(it.getString(R.string.yes)) { dialogInterface, _ ->
-                        joinProject()
-                        dialogInterface.dismiss()
-                    }
-                    .setNegativeButton(it.getString(R.string.cancel)) { dialogInterface, _ ->
-                        dialogInterface.dismiss()
-                    }
-                    .build()
-                    .show()
-            }
-        }
-    }
-
-    private fun joinProject() {
-        UserService.addUsersToProject(
-            args.projectId,
-            listOf(userModel.documentId),
-            {
-                Log.i(
-                    TAG,
-                    "Adding ${userModel.documentId} to project ${args.projectId}"
-                )
-                Toast.makeText(
-                    context,
-                    "Sikeresen csatlakoztál!",
-                    Toast.LENGTH_SHORT
-                ).show()
-                refreshCurrentUserAndUserModel(requireContext())
-                UserService.getMembersForProject(args.projectId)
-                changeVisibilities()
-            },
-            {
-                Toast.makeText(
-                    context,
-                    "A csatlakozás sikertelen, kérlek próbáld újra később.",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        )
-
-        viewModel.project.value?.let { project ->
-            CloudMessagingService.sendNotificationToUsersById(
-                "Csatlakoztak egy projekthez",
-                "${userModel.name} csatlakozott a(z) \"${project.name}\" nevű projekthez!",
-                listOf(project.creator + project.leaders)
-            )
-        }
-
-    }
-
-    private fun leaveProject() {
-        UserService.removeUserFromProject(
-            args.projectId,
-            userModel.documentId,
-            {
-                Log.i(
-                    TAG,
-                    "Removing ${userModel.documentId} from project ${args.projectId}"
-                )
-                Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT)
-                    .show()
-                refreshCurrentUserAndUserModel(requireContext())
-                UserService.getMembersForProject(args.projectId)
-                changeVisibilities()
-            },
-            {
-                Toast.makeText(
-                    context,
-                    "A lecsatlakozás sikertelen, kérlek próbáld újra később.",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        )
-    }
-
-    private fun initMembers() {
-        binding.membersLeft.isVisible = false
-        binding.membersLeftNumber.isVisible = false
-
-        val members = listOf(binding.member1, binding.member2, binding.member3)
-
-        for (i in 0 until 3) {
-            if (viewModel.members.value!!.size > i) {
-                Picasso.get().load(viewModel.members.value!![i].photoURL).into(members[i])
-                members[i].isVisible = true
-            } else {
-                members[i].isVisible = false
-            }
-        }
-
-        if (viewModel.members.value!!.size >= 4) {
-            initExtraMemberCounter(viewModel.members.value!!.size - 3)
-            binding.membersLeft.isVisible = true
-            binding.membersLeftNumber.isVisible = true
-        }
-    }
-
-    private fun changeVisibilities() {
-        binding.joinOrLeaveProjectButton.visibility = View.VISIBLE
-        when {
-            userModel.collectedBadges.contains(viewModel.project.value!!.id) -> binding.joinOrLeaveProjectButton.visibility =
-                View.GONE
-
-            userModel.joinedBadges.contains(viewModel.project.value!!.id) -> binding.joinOrLeaveProjectButton.text =
-                getString(R.string.leave)
-
-            else -> binding.joinOrLeaveProjectButton.text = getString(R.string.join)
-        }
-
-        if (viewModel.project.value!!.leaders.contains(userModel.documentId)) {
-            userIsEditor = true
-        }
-    }
 }

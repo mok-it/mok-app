@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -150,10 +151,11 @@ fun ProjectBadgeSummary(viewModel: ProfileViewModel) {
 }
 
 @Composable
-fun BadgeIcon(badgeNumberText: String, modifier: Modifier = Modifier, isEnabled: Boolean = true) {
+fun BadgeIcon(badgeNumber: Any, modifier: Modifier = Modifier, isEnabled: Boolean = true) {
     Box(
         contentAlignment = Alignment.Center,
-        //modifier = Modifier.align(Alignment.Bottom)
+        modifier = Modifier
+            .requiredSize(48.dp)
     ) {
         Image(
             painter = painterResource(id = R.drawable.badgeicon),
@@ -168,7 +170,7 @@ fun BadgeIcon(badgeNumberText: String, modifier: Modifier = Modifier, isEnabled:
                 .clip(RoundedCornerShape(8.dp))
         )
         Text(
-            text = badgeNumberText,
+            text = badgeNumber.toString(),
             style = MaterialTheme.typography.bodyMedium,
             modifier = Modifier.padding(top = 6.dp),
             color = Color.White
@@ -270,4 +272,31 @@ fun SearchField(
             }
         },
     )
+}
+
+@Preview(showBackground = true)
+@Composable
+fun DataBlockPreview() {
+    DataBlock("Terület", "IT")
+}
+
+@Composable
+fun DataBlock(label: String, data: Any, needsDivider: Boolean = true) {
+    Column {
+        Row(
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = label, style = MaterialTheme.typography.bodyLarge,
+                fontWeight = FontWeight.Normal
+            )
+            Text(text = data.toString(), style = MaterialTheme.typography.bodyMedium)
+        }
+        if (needsDivider) {
+            HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp, vertical = 4.dp))
+        }
+    }
 }

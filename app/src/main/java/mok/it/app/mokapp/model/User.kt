@@ -37,7 +37,8 @@ data class User(
     val fcmToken: String = "",
     val nickname: String = "",
     val projectBadges: MutableMap<String, Int> = HashMap(),
-    val points: Int = 0
+    val points: Int = 0,
+    val stamps: MutableMap<String, Int> = HashMap(),
 ) : Parcelable {
     fun generateCategories() {
         categoryList = categories.map { it.toCategory() }.toMutableList()

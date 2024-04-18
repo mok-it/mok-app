@@ -12,4 +12,5 @@ object Collections {
 
     val REWARDREQUESTS = "/rewardrequests" + Firebase.remoteConfig.getString("season")
     val PROJECTS: String = "projects" + Firebase.remoteConfig.getString("season")
+    val STAMPS: String = "/stamps" + Firebase.remoteConfig.getString("season")
 }

@@ -42,9 +42,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.compose.AsyncImage
-import com.dokar.chiptextfield.Chip
 import com.dokar.chiptextfield.ChipTextFieldState
 import com.dokar.chiptextfield.rememberChipTextFieldState
+import com.google.android.material.chip.Chip
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.compose.BadgeIcon
 import mok.it.app.mokapp.compose.SearchField

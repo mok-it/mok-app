@@ -379,7 +379,7 @@ class DetailsFragment : Fragment() {
     private fun changeVisibilities() {
         binding.joinOrLeaveProjectButton.visibility = View.VISIBLE
         when {
-            userModel.collectedBadges.contains(viewModel.project.value!!.id) -> binding.joinOrLeaveProjectButton.visibility =
+            userModel.projectBadges.contains(viewModel.project.value!!.id) -> binding.joinOrLeaveProjectButton.visibility =
                 View.GONE
 
             userModel.joinedBadges.contains(viewModel.project.value!!.id) -> binding.joinOrLeaveProjectButton.text =

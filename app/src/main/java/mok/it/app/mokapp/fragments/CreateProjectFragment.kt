@@ -21,9 +21,9 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.service.CloudMessagingService
 import mok.it.app.mokapp.firebase.service.ProjectService.addProject
 import mok.it.app.mokapp.fragments.viewmodels.CreateProjectViewModel
-import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.model.enums.Category
 import java.util.Date
 
 

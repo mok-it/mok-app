@@ -1,7 +1,6 @@
 package mok.it.app.mokapp.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -28,7 +27,6 @@ import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.recyclerview.SelectMemberViewHolder
 import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
-import mok.it.app.mokapp.service.UserService
 
 class AddParticipantsFragment : DialogFragment() {
     companion object {
@@ -77,20 +75,22 @@ class AddParticipantsFragment : DialogFragment() {
                 return@setOnClickListener
             }
             binding.btnAddParticipants.isEnabled = false
-            UserService.joinUsersToProject(project.id, selectedUsers, {
-                Log.i(TAG, "Adding ${selectedUsers.size} users to project ${project.id}")
-                Toast.makeText(context, "Résztvevők hozzáadva!", Toast.LENGTH_SHORT).show()
-                findNavController().popBackStack()
 
-            }, {
-                Toast.makeText(
-                    context,
-                    "A résztvevők hozzáadása sikertelen, kérlek próbáld újra később.",
-                    Toast.LENGTH_SHORT
-                ).show()
-                binding.btnAddParticipants.isEnabled = true
-            }
-            )
+            //TODO remélhetőleg a másik branchen jó
+//            UserService.joinUsersToProject(project.id, selectedUsers, {
+//                Log.i(TAG, "Adding ${selectedUsers.size} users to project ${project.id}")
+//                Toast.makeText(context, "Résztvevők hozzáadva!", Toast.LENGTH_SHORT).show()
+//                findNavController().popBackStack()
+//
+//            }, {
+//                Toast.makeText(
+//                    context,
+//                    "A résztvevők hozzáadása sikertelen, kérlek próbáld újra később.",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//                binding.btnAddParticipants.isEnabled = true
+//            }
+//            )
         }
     }
 

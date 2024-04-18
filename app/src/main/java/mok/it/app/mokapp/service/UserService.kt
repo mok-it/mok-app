@@ -3,15 +3,20 @@ package mok.it.app.mokapp.service
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.snapshots
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import kotlin.math.min
 
-object UserService : IUserService {
+object UserService {
     const val userDocNotFound = "User document not found"
 
     fun getUserById(
@@ -36,7 +41,20 @@ object UserService : IUserService {
         return userLiveData
     }
 
-    override fun addBadges(
+    fun getUsersById(userIds: List<String>): Flow<List<User>> =
+        Firebase.firestore.collection(Collections.USERS)
+            .whereIn(FieldPath.documentId(), userIds)
+            .snapshots()
+            .map { querySnapshot ->
+                querySnapshot.documents.mapNotNull { it.toObject(User::class.java) }
+            }
+
+    @JvmName("getUsersByIdFromUserList")
+    fun getUsersById(users: List<User>) =
+        getUsersById(users.map { it.documentId })
+
+
+    fun addBadges(
         userId: String,
         badgeId: String,
         badgeAmount: Int,
@@ -69,7 +87,7 @@ object UserService : IUserService {
             }
     }
 
-    override fun getBadgeAmountSum(
+    fun getBadgeAmountSum(
         userId: String,
         onComplete: (Int) -> Unit,
         onFailure: (Exception) -> Unit
@@ -96,27 +114,14 @@ object UserService : IUserService {
             }
     }
 
-    override fun getAllUsers(): LiveData<List<User>> {
-        val users: MutableLiveData<List<User>> = MutableLiveData()
-        val usersCollectionRef = Firebase.firestore.collection(Collections.USERS)
+    fun getAllUsers(): LiveData<List<User>> =
+        Firebase.firestore.collection(Collections.USERS)
+            .snapshots()
+            .map { querySnapshot ->
+                querySnapshot.documents.mapNotNull { it.toObject(User::class.java) }
+            }.asLiveData()
 
-        usersCollectionRef.get()
-            .addOnSuccessListener { querySnapshot ->
-
-                for (document in querySnapshot.documents) {
-                    val user = document.toObject(User::class.java)
-                    if (user != null) {
-                        users.value = users.value?.plus(user) ?: listOf(user)
-                    }
-                }
-            }
-            .addOnFailureListener { e ->
-                Log.e("UserService", "Error getting users", e)
-            }
-        return users
-    }
-
-    override fun getProjectBadges(
+    fun getProjectBadges(
         userId: String,
         onComplete: (Map<String, Int>) -> Unit,
         onFailure: (Exception) -> Unit
@@ -139,7 +144,7 @@ object UserService : IUserService {
             }
     }
 
-    override fun getProjectUsersAndBadges(
+    fun getProjectUsersAndBadges(
         projectId: String,
         onComplete: (Map<String, Int>) -> Unit,
         onFailure: (Exception) -> Unit
@@ -170,7 +175,7 @@ object UserService : IUserService {
             }
     }
 
-    override fun joinUsersToProject(
+    fun joinUsersToProject(
         projectId: String,
         userIds: List<String>,
         onComplete: () -> Unit,
@@ -196,7 +201,7 @@ object UserService : IUserService {
             }
     }
 
-    override fun removeUserFromProject(
+    fun removeUserFromProject(
         projectId: String,
         userId: String,
         onComplete: () -> Unit,
@@ -231,7 +236,7 @@ object UserService : IUserService {
             }
     }
 
-    override fun getBadgeSumForUserInCategory(
+    fun getBadgeSumForUserInCategory(
         userId: String,
         category: String,
         onComplete: (Int) -> Unit,

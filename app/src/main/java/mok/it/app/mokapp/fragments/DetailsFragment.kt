@@ -15,7 +15,6 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -41,7 +40,6 @@ import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
-import mok.it.app.mokapp.service.UserService
 import mok.it.app.mokapp.utility.Utility.getIconFileName
 import java.io.File
 import java.io.FileOutputStream
@@ -304,31 +302,32 @@ class DetailsFragment : Fragment() {
     }
 
     private fun joinProject() {
-        UserService.joinUsersToProject(
-            args.projectId,
-            listOf(userModel.documentId),
-            {
-                Log.i(
-                    TAG,
-                    "Adding ${userModel.documentId} to project ${args.projectId}"
-                )
-                Toast.makeText(
-                    context,
-                    "Sikeresen csatlakoztál!",
-                    Toast.LENGTH_SHORT
-                ).show()
-                refreshCurrentUserAndUserModel(requireContext())
-                getMemberIds()
-                changeVisibilities()
-            },
-            {
-                Toast.makeText(
-                    context,
-                    "A csatlakozás sikertelen, kérlek próbáld újra később.",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        )
+        //TODO remélhetőleg a másik branchen jó
+//        UserService.joinUsersToProject(
+//            args.projectId,
+//            listOf(userModel.documentId),
+//            {
+//                Log.i(
+//                    TAG,
+//                    "Adding ${userModel.documentId} to project ${args.projectId}"
+//                )
+//                Toast.makeText(
+//                    context,
+//                    "Sikeresen csatlakoztál!",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//                refreshCurrentUserAndUserModel(requireContext())
+//                getMemberIds()
+//                changeVisibilities()
+//            },
+//            {
+//                Toast.makeText(
+//                    context,
+//                    "A csatlakozás sikertelen, kérlek próbáld újra később.",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//        )
 
         MyFirebaseMessagingService.sendNotificationToUsersById(
             "Csatlakoztak egy projekthez",
@@ -338,28 +337,29 @@ class DetailsFragment : Fragment() {
     }
 
     private fun leaveProject() {
-        UserService.removeUserFromProject(
-            args.projectId,
-            userModel.documentId,
-            {
-                Log.i(
-                    TAG,
-                    "Removing ${userModel.documentId} from project ${args.projectId}"
-                )
-                Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT)
-                    .show()
-                refreshCurrentUserAndUserModel(requireContext())
-                getMemberIds()
-                changeVisibilities()
-            },
-            {
-                Toast.makeText(
-                    context,
-                    "A lecsatlakozás sikertelen, kérlek próbáld újra később.",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        )
+        //TODO remélhetőleg a másik branchen jó
+//        UserService.removeUserFromProject(
+//            args.projectId,
+//            userModel.documentId,
+//            {
+//                Log.i(
+//                    TAG,
+//                    "Removing ${userModel.documentId} from project ${args.projectId}"
+//                )
+//                Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT)
+//                    .show()
+//                refreshCurrentUserAndUserModel(requireContext())
+//                getMemberIds()
+//                changeVisibilities()
+//            },
+//            {
+//                Toast.makeText(
+//                    context,
+//                    "A lecsatlakozás sikertelen, kérlek próbáld újra később.",
+//                    Toast.LENGTH_SHORT
+//                ).show()
+//            }
+//        )
     }
 
     private lateinit var memberComments: ArrayList<Comment>

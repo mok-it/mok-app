@@ -1,16 +1,18 @@
 package mok.it.app.mokapp.service
 
-import android.util.Log
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import com.google.firebase.firestore.FieldPath
+import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.snapshots
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.map
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 
-object ProjectService : IProjectService {
-    override fun getProjectsByIds(
+object ProjectService {
+    fun getProjectsByIds(
         projectIds: List<String>,
         onComplete: (List<Project>) -> Unit,
         onFailure: (Exception) -> Unit
@@ -39,23 +41,13 @@ object ProjectService : IProjectService {
             }
     }
 
-    fun getAllProjects(): LiveData<List<Project>> {
-        val projects: MutableLiveData<List<Project>> = MutableLiveData()
-        val projectsCollectionRef = Firebase.firestore.collection(Collections.PROJECTS)
-
-        projectsCollectionRef.get()
-            .addOnSuccessListener { querySnapshot ->
-
-                for (document in querySnapshot.documents) {
-                    val project = document.toObject(Project::class.java)
-                    if (project != null) {
-                        projects.value = projects.value?.plus(project) ?: listOf(project)
-                    }
-                }
+    fun getAllProjects(): LiveData<List<Project>> =
+        com.google.firebase.Firebase.firestore.collection(Collections.PROJECTS)
+            .orderBy("category")
+            .orderBy("name")
+            .snapshots()
+            .map { s ->
+                s.toObjects(Project::class.java)
             }
-            .addOnFailureListener { e ->
-                Log.e("TAG", "Error getting projects", e)
-            }
-        return projects
-    }
+            .asLiveData()
 }

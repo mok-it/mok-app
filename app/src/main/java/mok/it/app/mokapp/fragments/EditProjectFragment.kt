@@ -8,7 +8,6 @@ import androidx.navigation.fragment.navArgs
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
-import mok.it.app.mokapp.service.UserService
 import java.util.Calendar
 import java.util.Date
 
@@ -98,7 +97,8 @@ class EditProjectFragment : CreateProjectFragment() {
             .update(editedBadge as Map<String, Any>)
             .addOnSuccessListener {
                 Log.d(TAG, "DocumentSnapshot edited with ID: ${args.project.id}")
-                UserService.capProjectBadges(args.project.id)
+                //TODO remélhetőleg a másik branchen jó
+//                UserService.capProjectBadges(args.project.id)
             }
             .addOnFailureListener { e ->
                 Log.w(TAG, "Error editing document", e)

@@ -1,9 +1,9 @@
-package mok.it.app.mokapp.modekkl
+package mok.it.app.mokapp.model
 
 import com.google.firebase.firestore.DocumentId
-import java.util.*
+import java.util.Date
 
-data class RewardRequest (
+data class RewardRequest(
     @DocumentId
     val documentId: String = "",
 
@@ -11,4 +11,4 @@ data class RewardRequest (
     val reward: String = "",
     val price: String = "",
     val created: Date = Date(),
-)
+) 

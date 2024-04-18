@@ -166,14 +166,16 @@ class AdminPanelFragment : Fragment() {
     }
 
     private fun initUserBadges() {
-        UserService.getProjectUsersAndBadges(
-            args.project.id,
-            {
-                userBadges = it.toMutableMap()
-                getProjectData()
-            },
-            {}
-        )
+
+        //TODO remélhetőleg a másik branchen jó
+//        UserService.getProjectUsersAndBadges(
+//            args.project.id,
+//            {
+//                userBadges = it.toMutableMap()
+//                getProjectData()
+//            },
+//            {}
+//        )
     }
 
     private fun getProjectData() {

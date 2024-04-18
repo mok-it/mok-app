@@ -25,8 +25,8 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Achievement
 
 @Composable
-fun AchievementCard(owned: Boolean, achievement: Achievement /*onClick: () -> Unit*/) {
-    Card(/*onClick = onClick*/ modifier = Modifier.padding(8.dp, 4.dp)) {
+fun AchievementCard(owned: Boolean, achievement: Achievement, onClick: () -> Unit) {
+    Card(onClick = onClick, modifier = Modifier.padding(8.dp, 4.dp)) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
@@ -101,9 +101,9 @@ fun cards() {
     )
     LazyColumn {
         items(achievements) { achievement ->
-            AchievementCard(owned = false, achievement = achievement)
+            AchievementCard(owned = false, achievement = achievement, onClick = {})
         }
-        item { AchievementCard(owned = true, achievement = achievements[0]) }
+        item { AchievementCard(owned = true, achievement = achievements[0], onClick = {}) }
     }
 
 }

@@ -9,4 +9,5 @@ data class Achievement(
     val description: String = "",
     val icon: String = "",
     val mandatory: Boolean = false,
+    val ownerIds: List<String> = ArrayList(),
 )

@@ -3,14 +3,17 @@ package mok.it.app.mokapp.firebase.service
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.firestore.snapshots
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.model.Category
@@ -432,4 +435,11 @@ object UserService {
         Firebase.firestore.collection(Collections.USERS)
             .orderBy("name", Query.Direction.ASCENDING)
 
+    fun getUsers(userIds: List<String>): LiveData<List<User>> {
+        return Firebase.firestore.collection(Collections.USERS)
+            .whereIn(FieldPath.documentId(), userIds)
+            .snapshots()
+            .map { s -> s.toObjects(User::class.java) }
+            .asLiveData()
+    }
 }

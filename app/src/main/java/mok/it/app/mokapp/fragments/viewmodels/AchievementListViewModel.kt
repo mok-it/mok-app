@@ -3,8 +3,10 @@ package mok.it.app.mokapp.fragments.viewmodels
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.liveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.service.AchievementService
 import mok.it.app.mokapp.model.Achievement
 
@@ -23,5 +25,9 @@ class AchievementListViewModel : ViewModel() {
                 _achievements.value = it
             }
         }
+    }
+
+    fun isOwned(achievement: Achievement): LiveData<Boolean> {
+        return liveData { emit(userModel.achievements.contains(achievement.id)) }
     }
 }

@@ -198,5 +198,17 @@
     <fragment
         android:id="@+id/achievementsFragment"
         android:name="mok.it.app.mokapp.fragments.AchievementsFragment"
-        android:label="AchievementsFragment" />
+        android:label="AchievementsFragment">
+        <action
+            android:id="@+id/action_achievementsFragment_to_achievementDetailsFragment"
+            app:destination="@id/achievementDetailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/achievementDetailsFragment"
+        android:name="mok.it.app.mokapp.fragments.AchievementDetailsFragment"
+        android:label="AchievementDetailsFragment">
+        <argument
+            android:name="achievementId"
+            app:argType="string" />
+    </fragment>
 </navigation>

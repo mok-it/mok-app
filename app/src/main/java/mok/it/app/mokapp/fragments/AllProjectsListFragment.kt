@@ -42,9 +42,9 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.compose.AsyncImage
+import com.dokar.chiptextfield.Chip
 import com.dokar.chiptextfield.ChipTextFieldState
 import com.dokar.chiptextfield.rememberChipTextFieldState
-import com.google.android.material.chip.Chip
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.compose.BadgeIcon
 import mok.it.app.mokapp.compose.SearchField
@@ -53,6 +53,7 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserMo
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.fragments.viewmodels.AllProjectsListViewModel
 import mok.it.app.mokapp.model.Project
+import mok.it.app.mokapp.model.enums.Role
 import mok.it.app.mokapp.utility.Utility.unaccent
 
 class AllProjectsListFragment : Fragment() {
@@ -74,7 +75,7 @@ class AllProjectsListFragment : Fragment() {
         val filteredProjects = getFilteredProjects(searchQuery, chipState)
 
         Scaffold(floatingActionButton = {
-            if (userModel.isCreator || userModel.admin) {
+            if (userModel.roleAtLeast(Role.AREA_MANAGER)) {
                 FloatingActionButton(
                     onClick = {
                         findNavController().navigate(

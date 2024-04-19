@@ -35,6 +35,7 @@ import mok.it.app.mokapp.firebase.service.CloudMessagingService
 import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.fragments.viewmodels.DetailsViewModel
 import mok.it.app.mokapp.fragments.viewmodels.DetailsViewModelFactory
+import mok.it.app.mokapp.model.enums.Role
 import mok.it.app.mokapp.utility.Utility
 import mok.it.app.mokapp.utility.Utility.TAG
 import java.io.File
@@ -49,7 +50,6 @@ class DetailsFragment : Fragment() {
         DetailsViewModelFactory(args.projectId)
     }
 
-    private var userIsEditor: Boolean = false
     private lateinit var _binding: FragmentDetailsBinding
     private val binding get() = _binding
 
@@ -118,10 +118,6 @@ class DetailsFragment : Fragment() {
                     .into(binding.avatarImagebutton, callback)
             }
 
-            val editors = project.leaders
-            if (editors.contains(userModel.documentId)) {
-                userIsEditor = true
-            }
             changeVisibilities()
             initEditButton()
             initAdminButton()
@@ -187,7 +183,7 @@ class DetailsFragment : Fragment() {
                 findNavController().navigate(
                     DetailsFragmentDirections.actionDetailsFragmentToProjectMembersDialogFragment(
                         viewModel.members.value!!.toTypedArray(),
-                        userIsEditor,
+                        false, //tök mindegy, másik branchen refaktorálódik az egész
                         viewModel.project.value!!
                     )
                 )
@@ -206,7 +202,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initEditButton() {
-        if (userModel.isCreator || userModel.admin || viewModel.project.value!!.creator == userModel.documentId || userIsEditor) {
+        if (userModel.roleAtLeast(Role.AREA_MANAGER) || viewModel.project.value!!.creator == userModel.documentId) {
             binding.editButton.visibility = View.VISIBLE
             binding.editButton.setOnClickListener {
                 findNavController().navigate(
@@ -219,7 +215,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initAdminButton() {
-        if (userModel.isCreator || userModel.admin || viewModel.project.value!!.creator == userModel.documentId || userIsEditor) {
+        if (userModel.isCreator || userModel.admin || viewModel.project.value!!.creator == userModel.documentId) {
             binding.rewardButton.visibility = View.VISIBLE
             binding.rewardButton.setOnClickListener {
                 findNavController().navigate(
@@ -323,7 +319,7 @@ class DetailsFragment : Fragment() {
             CloudMessagingService.sendNotificationToUsersById(
                 "Csatlakoztak egy projekthez",
                 "${userModel.name} csatlakozott a(z) \"${project.name}\" nevű projekthez!",
-                listOf(project.creator + project.leaders)
+                listOf(project.projectLeader)
             )
         }
 
@@ -388,8 +384,8 @@ class DetailsFragment : Fragment() {
             else -> binding.joinOrLeaveProjectButton.text = getString(R.string.join)
         }
 
-        if (viewModel.project.value!!.leaders.contains(userModel.documentId)) {
-            userIsEditor = true
-        }
+//        if (viewModel.project.value!!.leaders.contains(userModel.documentId)) { //ez úgyis refaktorálódiké pp másik brfanchen
+//            userIsEditor = true
+//        }
     }
 }

@@ -29,7 +29,6 @@ data class Project(
     val creator: String = "",
     val deadline: Date = Date(),
     val description: String = "",
-    val leaders: List<String> = ArrayList(),
     val icon: String = "",
     val members: List<String> = ArrayList(),
     val name: String = "",
@@ -39,6 +38,7 @@ data class Project(
     val tasks: List<String> = ArrayList(),
     val comments: List<String> = ArrayList(),
     val maxBadges: Int = 1,
+    val projectLeader: String = "",
 ) : Parcelable {
 
     val categoryEnum: Category

@@ -78,7 +78,7 @@ object ProjectService {
             "creator" to project.creator,
             "deadline" to project.deadline,
             "description" to project.description,
-            "leaders" to project.leaders,
+            "projectLeader" to project.projectLeader,
             "icon" to project.icon,
             "name" to project.name,
             "maxBadges" to project.maxBadges,
@@ -100,13 +100,13 @@ object ProjectService {
      * Updates the project with the given ID with the new project data. Caution: only updates certain fields.
      */
     fun updateProject(oldProjectId: String, newProject: Project) {
-        val projectHashMap = hashMapOf(
+        val projectHashMap: HashMap<String, Any> = hashMapOf(
             "name" to newProject.name,
             "description" to newProject.description,
             "category" to newProject.categoryEnum.toString(),
             "maxBadges" to newProject.maxBadges,
             "deadline" to newProject.deadline,
-            "leaders" to newProject.leaders,
+            "projectLeader" to newProject.projectLeader,
         )
 
         Firebase.firestore.collection(Collections.PROJECTS).document(oldProjectId)

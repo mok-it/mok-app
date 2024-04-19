@@ -46,4 +46,6 @@ data class User(
         set(value) {
             role = value.name
         }
+
+    fun roleAtLeast(role: Role) = roleEnum.ordinal >= role.ordinal
 }

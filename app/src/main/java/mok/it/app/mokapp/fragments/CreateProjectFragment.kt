@@ -37,6 +37,8 @@ import java.util.Date
 open class CreateProjectFragment : DialogFragment() {
 
     private val args: CreateProjectFragmentArgs by navArgs()
+
+    //TODO a teruletvezetok jo lenne, ha csak a sajat teruletukhoz tudnanak letrehozni projektet, ez ezért van még itt
     val viewModel: CreateProjectViewModel by viewModels()
 
     protected lateinit var binding: FragmentCreateProjectBinding
@@ -44,8 +46,7 @@ open class CreateProjectFragment : DialogFragment() {
     var users: List<User> = listOf()
 
     var names: Array<String> = arrayOf()
-    var checkedNames: BooleanArray = booleanArrayOf()
-    var selectedEditors: MutableList<String> = mutableListOf()
+    var selectedProjectLeader: String = ""
 
     private val isNameRequired = true
     private val isDescriptionRequired = true
@@ -78,7 +79,7 @@ open class CreateProjectFragment : DialogFragment() {
             onCreateBadgePressed()
         }
 
-        binding.editorSelect.setOnClickListener {
+        binding.projectLeaderSelect.setOnClickListener {
             getUsers()
         }
 
@@ -105,8 +106,6 @@ open class CreateProjectFragment : DialogFragment() {
             it.window?.setLayout(width, height)
             isCancelable = false
         }
-
-        selectedEditors = mutableListOf(userModel.documentId)
     }
 
     /**
@@ -156,7 +155,7 @@ open class CreateProjectFragment : DialogFragment() {
             creator = userModel.documentId,
             deadline = deadline,
             description = binding.projectDescription.text.toString(),
-            leaders = selectedEditors,
+            projectLeader = selectedProjectLeader,
             icon = "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef",
             name = binding.projectName.text.toString(),
             maxBadges = badgeValue,
@@ -224,27 +223,21 @@ open class CreateProjectFragment : DialogFragment() {
             if (users != null) {
                 this.users = users
                 names = Array(users.size) { i -> users[i].name }
-                checkedNames = BooleanArray(users.size) { i ->
-                    selectedEditors.contains(users[i].documentId)
-                }
-                initEditorsDialog()
+                projectLeaderDialog()
             }
         }
     }
 
-    protected fun initEditorsDialog() {
+    protected fun projectLeaderDialog() {
+        var checkedItem = users.indexOfFirst { it.documentId == selectedProjectLeader }
         AlertDialog.Builder(context)
-            .setTitle("Válassz kezelőt!")
-            .setMultiChoiceItems(names, checkedNames) { _, which, isChecked ->
-                checkedNames[which] = isChecked
+            .setTitle("Válassz projektvezetőt!")
+            .setSingleChoiceItems(names, checkedItem) { _, which ->
+                checkedItem = which
             }
             .setPositiveButton("Ok") { _, _ ->
-                if (!names.indices.isEmpty()) {
-                    for (i in names.indices) {
-                        if (checkedNames[i]) {
-                            selectedEditors.add(users[i].documentId)
-                        }
-                    }
+                if (checkedItem != -1) {
+                    selectedProjectLeader = users[checkedItem].documentId
                 }
             }
             .setNegativeButton("Mégsem") { dialog, _ ->

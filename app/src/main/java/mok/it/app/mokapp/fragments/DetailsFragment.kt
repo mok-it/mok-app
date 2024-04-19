@@ -215,7 +215,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initAdminButton() {
-        if (userModel.isCreator || userModel.admin || viewModel.project.value!!.creator == userModel.documentId) {
+        if (userModel.admin || viewModel.project.value!!.creator == userModel.documentId) {
             binding.rewardButton.visibility = View.VISIBLE
             binding.rewardButton.setOnClickListener {
                 findNavController().navigate(

@@ -2,7 +2,6 @@ package mok.it.app.mokapp.model
 
 import android.os.Parcelable
 import com.google.firebase.firestore.DocumentId
-import com.google.firebase.firestore.PropertyName
 import kotlinx.parcelize.Parcelize
 import mok.it.app.mokapp.model.enums.Role
 
@@ -26,9 +25,6 @@ data class User(
     @Deprecated("This is no longer in use; use projectBadges instead")
     val joinedBadges: List<String> = ArrayList(),
     val name: String = "",
-    @get:PropertyName("isCreator")
-    @Deprecated("This is no longer in use; use role instead")
-    val isCreator: Boolean = false,
     val photoURL: String = "",
     val phoneNumber: String = "",
     val requestedRewards: List<String> = ArrayList(),

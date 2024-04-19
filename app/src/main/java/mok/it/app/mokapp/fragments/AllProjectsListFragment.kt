@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -166,39 +168,61 @@ class AllProjectsListFragment : Fragment() {
         ) {
             Row(
                 modifier = Modifier.padding(2.dp),
-                verticalAlignment = Alignment.CenterVertically
             ) {
-                AsyncImage(
-                    model = project.icon,
-                    contentDescription = "Project icon",
-                    modifier = Modifier
-                        .size(80.dp)
-                        .padding(8.dp)
-                        .clip(RoundedCornerShape(50)),
-                    contentScale = ContentScale.Crop
-                )
                 Column(
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(vertical = 8.dp)
+                        .align(Alignment.CenterVertically)
                 ) {
-                    Text(
-                        text = project.name,
-                        style = MaterialTheme.typography.titleMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Text(
-                        text = project.description,
-                        style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                    AsyncImage(
+                        model = project.icon,
+                        contentDescription = "Project icon",
+                        modifier = Modifier
+                            .size(80.dp)
+                            .padding(8.dp)
+                            .clip(RoundedCornerShape(50)),
+                        contentScale = ContentScale.Crop
                     )
                 }
-                BadgeIcon(
-                    badgeNumberText = project.maxBadges.toString(),
-                    modifier = Modifier.padding(8.dp)
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxHeight()
+                        .padding(vertical = 4.dp, horizontal = 8.dp)
+                ) {
+                    Row(
+                        modifier = Modifier
+                            .padding(vertical = 8.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = project.name,
+                            style = MaterialTheme.typography.titleMedium,
+                            modifier = Modifier.padding(end = 16.dp),
+                        )
+                        Text(
+                            text = project.categoryEnum.toString(),
+                            style = MaterialTheme.typography.titleSmall,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                    ) {
+                        Text(
+                            text = project.description,
+                            style = MaterialTheme.typography.bodyMedium,
+                            maxLines = 3,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f)
+                        )
+                        BadgeIcon(
+                            badgeNumberText = project.maxBadges.toString(),
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
+                }
             }
         }
     }

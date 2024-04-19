@@ -17,13 +17,7 @@ data class User(
     @DocumentId
     val documentId: String = "",
 
-    @Deprecated("This is no longer in use; use role instead")
-    val admin: Boolean = false,
-    @Deprecated("This is no longer in use; use projectBadges instead")
-    val collectedBadges: List<String> = ArrayList(),
     val email: String = "",
-    @Deprecated("This is no longer in use; use projectBadges instead")
-    val joinedBadges: List<String> = ArrayList(),
     val name: String = "",
     val photoURL: String = "",
     val phoneNumber: String = "",

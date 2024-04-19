@@ -61,6 +61,7 @@ import mok.it.app.mokapp.compose.EditNumericValue
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.fragments.viewmodels.RewardsViewModel
 import mok.it.app.mokapp.model.Reward
+import mok.it.app.mokapp.model.enums.Role
 
 class RewardsFragment : Fragment() {
     override fun onCreateView(
@@ -307,7 +308,7 @@ class RewardsFragment : Fragment() {
                             )
                         }
                     }
-                    if (LocalInspectionMode.current || userModel.admin) { // for the sake of preview
+                    if (LocalInspectionMode.current || userModel.roleAtLeast(Role.ADMIN)) { // for the sake of preview
                         IconButton(
                             onClick = {
                                 showDialog = DialogType.DELETE

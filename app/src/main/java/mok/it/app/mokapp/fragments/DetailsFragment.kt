@@ -215,7 +215,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun initAdminButton() {
-        if (userModel.admin || viewModel.project.value!!.creator == userModel.documentId) {
+        if (userModel.roleAtLeast(Role.ADMIN) || viewModel.project.value!!.creator == userModel.documentId) {
             binding.rewardButton.visibility = View.VISIBLE
             binding.rewardButton.setOnClickListener {
                 findNavController().navigate(
@@ -250,7 +250,7 @@ class DetailsFragment : Fragment() {
     }
 
     private fun joinOrLeaveButtonPressed() {
-        if (userModel.joinedBadges.contains(args.projectId)) { //dialog to leave project
+        if (userModel.projectBadges.contains(args.projectId)) { //dialog to leave project
             (context as Activity).let {
                 MaterialDialog.Builder(it)
                     .setTitle(it.getString(R.string.leave_project))
@@ -378,7 +378,7 @@ class DetailsFragment : Fragment() {
             userModel.projectBadges.contains(viewModel.project.value!!.id) -> binding.joinOrLeaveProjectButton.visibility =
                 View.GONE
 
-            userModel.joinedBadges.contains(viewModel.project.value!!.id) -> binding.joinOrLeaveProjectButton.text =
+            userModel.projectBadges.contains(viewModel.project.value!!.id) -> binding.joinOrLeaveProjectButton.text =
                 getString(R.string.leave)
 
             else -> binding.joinOrLeaveProjectButton.text = getString(R.string.join)

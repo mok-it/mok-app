@@ -99,7 +99,7 @@ class RewardsFragment : Fragment() {
                             .padding(16.dp)
                     )
                     BadgeIcon(
-                        badgeNumberText = userModel.points.toString(),
+                        badgeNumberText = userModel.remainingBadges.toString(),
                         modifier = Modifier.padding(8.dp)
                     )
                 }
@@ -364,7 +364,7 @@ class RewardsFragment : Fragment() {
     }
 
     private fun canBeBoughtByCurrentUser(reward: Reward) =
-        userModel.points >= reward.price
+        userModel.remainingBadges >= reward.price
                 && reward.quantity > 0
                 && !userModel.requestedRewards.contains(reward.documentId)
 }

@@ -81,8 +81,8 @@ exports.updateOnBadgeCollectionChange = functions.firestore
     const oldUser = change.before.data();
     const newUser = change.after.data();
 
-    // Only update fields if the collectedBadges field has changed
-    if (oldUser.projectBadges === newUser.projectBadges) {
+    // Only update fields if the user got/lost some badges or requested a reward
+    if (oldUser.projectBadges === newUser.projectBadges && oldUser.requestedRewards === newUser.requestedRewards) {
       return null;
     }
 
@@ -104,8 +104,8 @@ exports.updateOnBadgeCollectionChange = functions.firestore
           .collection("rewards")
           .doc(rewardId)
           .get();
-        const rewardValue = rewardDoc.data().price;
-        remainingBadges -= rewardValue;
+        
+        remainingBadges -= rewardDoc.data().price;
       }
       functions.logger.log(
         "price of all requested stuff: " + remainingBadges + " badges"

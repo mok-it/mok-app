@@ -1,5 +1,6 @@
 package mok.it.app.mokapp.model
 
+import mok.it.app.mokapp.model.enums.Category
 import mok.it.app.mokapp.utility.Utility.unaccent
 import org.junit.Assert
 import org.junit.Test

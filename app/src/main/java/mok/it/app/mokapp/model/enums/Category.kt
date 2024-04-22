@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.model
+package mok.it.app.mokapp.model.enums
 
 import mok.it.app.mokapp.utility.Utility.unaccent
 

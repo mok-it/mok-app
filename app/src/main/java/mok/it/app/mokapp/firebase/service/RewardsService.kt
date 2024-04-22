@@ -50,8 +50,7 @@ object RewardsService {
             Firebase.firestore.collection(Collections.USERS)
                 .document(FirebaseUserObject.userModel.documentId)
         userRef.update(
-            "requestedRewards", FieldValue.arrayUnion(reward.documentId),
-            "points", FieldValue.increment(-1 * reward.price.toDouble())
+            "requestedRewards", FieldValue.arrayUnion(reward.documentId)
         )
             .addOnCompleteListener {
                 Log.d(TAG, "Reward added to requested")

@@ -11,8 +11,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import mok.it.app.mokapp.databinding.FragmentMyBadgesBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.fragments.viewmodels.MyBadgesViewModel
-import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.model.Project
+import mok.it.app.mokapp.model.enums.Category
 import mok.it.app.mokapp.recyclerview.ProjectCategoriesAdapter
 import mok.it.app.mokapp.recyclerview.ProjectsAdapter
 

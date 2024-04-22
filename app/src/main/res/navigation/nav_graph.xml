@@ -51,7 +51,7 @@
         <argument
             android:name="category"
             android:defaultValue="UNIVERZALIS"
-            app:argType="mok.it.app.mokapp.model.Category" />
+            app:argType="mok.it.app.mokapp.model.enums.Category" />
         <action
             android:id="@+id/action_allProjectsListFragment_to_linksFragment"
             app:destination="@id/linksFragment" />
@@ -125,7 +125,7 @@
         tools:layout="@layout/fragment_create_project">
         <argument
             android:name="category"
-            app:argType="mok.it.app.mokapp.model.Category" />
+            app:argType="mok.it.app.mokapp.model.enums.Category" />
     </dialog>
     <dialog
         android:id="@+id/editProjectFragment"

@@ -5,6 +5,7 @@ import android.util.Log
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.PropertyName
 import kotlinx.parcelize.Parcelize
+import mok.it.app.mokapp.model.enums.Category
 import mok.it.app.mokapp.utility.Utility.TAG
 import mok.it.app.mokapp.utility.Utility.unaccent
 import java.util.Date
@@ -28,7 +29,6 @@ data class Project(
     val creator: String = "",
     val deadline: Date = Date(),
     val description: String = "",
-    val leaders: List<String> = ArrayList(),
     val icon: String = "",
     val members: List<String> = ArrayList(),
     val name: String = "",
@@ -38,6 +38,7 @@ data class Project(
     val tasks: List<String> = ArrayList(),
     val comments: List<String> = ArrayList(),
     val maxBadges: Int = 1,
+    val projectLeader: String = "",
 ) : Parcelable {
 
     val categoryEnum: Category

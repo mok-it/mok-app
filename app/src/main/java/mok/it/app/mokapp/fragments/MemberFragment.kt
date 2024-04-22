@@ -77,7 +77,7 @@ class MemberFragment : Fragment() {
         onProjectClick: (Project) -> Unit
     ) {
         val mutualProjectIds =
-            thisUser.joinedBadges.intersect(otherUser.joinedBadges.toSet()).toList()
+            thisUser.projectBadges.keys.intersect(otherUser.projectBadges.keys.toSet()).toList()
 
         val mutualProjects by viewModel.getProjectsByIds(mutualProjectIds).observeAsState(listOf())
 

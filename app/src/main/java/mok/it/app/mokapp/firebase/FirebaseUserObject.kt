@@ -5,10 +5,10 @@ import android.os.Handler
 import android.os.Looper
 import android.util.Log
 import android.widget.Toast
+import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.firestore
-import com.google.firebase.Firebase
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.utility.Utility.TAG
@@ -48,7 +48,6 @@ object FirebaseUserObject {
                 Log.d(TAG, "refreshCurrentUser(): got document ${userToBe.toString()}")
                 if (userToBe != null) {
                     userModel = userToBe
-                    userModel.generateCategories()
                     currentUser = FirebaseAuth.getInstance().currentUser
                         ?: throw Exception("FirebaseAuth user is null")
                     Log.d(TAG, "refreshCurrentUser(): user refreshed")

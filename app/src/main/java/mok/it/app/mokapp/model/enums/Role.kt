@@ -7,9 +7,6 @@ enum class Role {
     BASIC_USER {
         override fun toString() = "Tag"
     },
-    PROJECT_LEADER {
-        override fun toString() = "Projektvezető"
-    },
     AREA_MANAGER {
         override fun toString() = "Területvezető"
     },

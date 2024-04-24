@@ -271,8 +271,8 @@ class DetailsFragment : Fragment() {
     }
 
     @Composable
-    private fun AdminButtonRow(project: Project?) {
-        if (userModel.roleAtLeast(Role.AREA_MANAGER)) {
+    private fun AdminButtonRow(project: Project) {
+        if (canHandleProject(project)) {
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier
@@ -287,7 +287,7 @@ class DetailsFragment : Fragment() {
                     onClick = {
                         findNavController().navigate(
                             DetailsFragmentDirections.actionDetailsFragmentToAdminPanelFragment(
-                                project!!
+                                project
                             )
                         )
                     }
@@ -299,7 +299,7 @@ class DetailsFragment : Fragment() {
                 ) {
                     findNavController().navigate(
                         DetailsFragmentDirections.actionDetailsFragmentToEditProjectFragment(
-                            project!!
+                            project
                         )
                     )
                 }
@@ -307,6 +307,11 @@ class DetailsFragment : Fragment() {
 
         }
     }
+
+    @Composable
+    private fun canHandleProject(project: Project) =
+        userModel.roleAtLeast(Role.AREA_MANAGER)
+                || project.projectLeader == userModel.documentId
 
     @Composable
     private fun AdminButton(

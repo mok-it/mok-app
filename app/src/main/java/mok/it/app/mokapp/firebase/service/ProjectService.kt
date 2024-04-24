@@ -9,6 +9,8 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.snapshots
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
@@ -54,25 +56,13 @@ object ProjectService {
         return projectsLiveData
     }
 
-    fun getProjectData2(projectId: String): LiveData<Project> {
-        val project = MutableLiveData<Project>()
-        Firebase.firestore.collection(Collections.PROJECTS).document(projectId).get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.data != null) {
-                    project.value = document.toObject(Project::class.java)!!
-                }
-            }
-        return project
-    }
-
-    fun getProjectData(projectId: String): LiveData<Project?> =
+    fun getProjectData(projectId: String): Flow<Project> =
         Firebase.firestore.collection(Collections.PROJECTS).document(projectId)
             .snapshots()
             .map { s ->
                 s.toObject(Project::class.java)
             }
-            .asLiveData()
-    //TODO refactor this so that it returns a LiveData<Project>
+            .filterNotNull()
 
     fun addProject(project: Project) {
 

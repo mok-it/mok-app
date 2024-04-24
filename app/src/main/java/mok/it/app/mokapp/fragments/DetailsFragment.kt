@@ -1,5 +1,7 @@
 package mok.it.app.mokapp.fragments
 
+import DetailsViewModel
+import DetailsViewModelFactory
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -70,8 +72,6 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserMo
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.service.CloudMessagingService
 import mok.it.app.mokapp.firebase.service.UserService
-import mok.it.app.mokapp.fragments.viewmodels.DetailsViewModel
-import mok.it.app.mokapp.fragments.viewmodels.DetailsViewModelFactory
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
@@ -172,7 +172,7 @@ class DetailsFragment : Fragment() {
                     DialogType.JOIN -> {
                         JoinAlertDialog(
                             onConfirm = {
-                                joinProject(project!!)
+                                joinProject(project)
                                 refreshCurrentUserAndUserModel(requireContext())
                             },
                             onDismiss = {
@@ -202,7 +202,7 @@ class DetailsFragment : Fragment() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     AsyncImage(
-                        model = project!!.icon,
+                        model = project.icon,
                         placeholder = painterResource(id = R.drawable.no_image_icon),
                         contentDescription = "Project icon",
                         modifier = Modifier
@@ -211,7 +211,7 @@ class DetailsFragment : Fragment() {
                     )
                     Column(modifier = Modifier.padding(8.dp)) {
                         Text(
-                            project!!.name,
+                            project.name,
                             style = MaterialTheme.typography.titleLarge,
                         )
                         Row(
@@ -219,7 +219,7 @@ class DetailsFragment : Fragment() {
                                 .fillMaxWidth()
                                 .padding(4.dp),
                         ) {
-                            BadgeIcon(project!!.maxBadges)
+                            BadgeIcon(project.maxBadges)
                             ProjectMembers(members = members, onMembersClick = {
                                 showDialog = DialogType.MEMBERS
                             })
@@ -239,7 +239,7 @@ class DetailsFragment : Fragment() {
                     Column(
                         modifier = Modifier.padding(16.dp)
                     ) {
-                        DataBlock("Kategória", project!!.categoryEnum)
+                        DataBlock("Kategória", project.categoryEnum)
                         DataBlock(
                             "Készítő",
                             if (isPreview) {
@@ -250,14 +250,14 @@ class DetailsFragment : Fragment() {
                         )
                         DataBlock(
                             "Határidő",
-                            DateFormat.getDateInstance().format(project!!.created)
+                            DateFormat.getDateInstance().format(project.created)
                         )
                         Text(
                             text = "Leírás", style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.padding(8.dp)
                         )
                         Text(
-                            text = project!!.description,
+                            text = project.description,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(8.dp)
                         )

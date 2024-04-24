@@ -1,7 +1,5 @@
 package mok.it.app.mokapp.fragments
 
-//import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
-//import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -13,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -20,13 +19,22 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.People
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -39,25 +47,25 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.compose.AsyncImage
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.compose.BadgeIcon
 import mok.it.app.mokapp.compose.DataBlock
-import mok.it.app.mokapp.compose.parameterproviders.ProjectParamProvider
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.service.CloudMessagingService
@@ -78,7 +86,7 @@ class DetailsFragment : Fragment() {
     }
 
     enum class DialogType {
-        NONE, JOIN, LEAVE
+        NONE, JOIN, LEAVE, MEMBERS
     }
 
     override fun onCreateView(
@@ -88,20 +96,34 @@ class DetailsFragment : Fragment() {
         setupTopMenu()
         return ComposeView(requireContext()).apply {
             setContent {
-                val project by viewModel.project.observeAsState(initial = Project())
-                DetailsScreen(project)
+                DetailsScreen()
             }
         }
     }
 
+    //TODO nem frissül sem a projectmembers, sem pedig a gomb szövege (de a db-ben igen azért) - ez is a FirebaseUserObject refaktorálásától függ (többek közt)
     // ha a FirebaseUserObject refaktorálva lesz, ez a függvény is sokat egyszerűsödik majd
-    @Preview
+
     @Composable
-    private fun DetailsScreen(
-        @PreviewParameter(ProjectParamProvider::class) project: Project
-    ) {
-        var showDialog by remember { mutableStateOf(DialogType.NONE) }
+    private fun DetailsScreen() {
         val isPreview = LocalInspectionMode.current
+
+        val project by viewModel.project.observeAsState(initial = Project())
+        val creator by viewModel.creatorUser.observeAsState(initial = User())
+        var showDialog by remember { mutableStateOf(DialogType.NONE) }
+        val members =
+            if (LocalInspectionMode.current) {
+                listOf(
+                    User(name = "Teszt Ödön"),
+                    User(name = "Teszt József"),
+                    User(name = "Teszt Béla"),
+                    User(name = "Teszt Jenő"),
+                    User(name = "Teszt József"),
+                    User(name = "Teszt Béla")
+                )
+            } else {
+                viewModel.members.observeAsState(initial = emptyList()).value
+            }
 
         Scaffold(
             bottomBar = {
@@ -112,14 +134,14 @@ class DetailsFragment : Fragment() {
                     onClick = {
 
                         showDialog =
-                            if (isPreview || userModel.joinedBadges.contains(args.projectId)) {
+                            if (isPreview || userModel.projectBadges.contains(args.projectId)) {
                                 DialogType.LEAVE
                             } else {
                                 DialogType.JOIN
                             }
 
                     }) {
-                    if (isPreview || userModel.joinedBadges.contains(args.projectId)) {
+                    if (isPreview || userModel.projectBadges.contains(args.projectId)) {
                         Text("Lecsatlakozás")
                     } else {
                         Text("Csatlakozás")
@@ -131,14 +153,43 @@ class DetailsFragment : Fragment() {
                 modifier = Modifier.padding(padding)
             ) {
                 when (showDialog) {
+                    DialogType.MEMBERS -> {
+                        ProjectMembersDialog(
+                            members = members,
+                            onMemberClick = { user ->
+                                findNavController().navigate(
+                                    DetailsFragmentDirections.actionGlobalMemberFragment(
+                                        user
+                                    )
+                                )
+                            },
+                            onDismiss = {
+                                showDialog = DialogType.NONE
+                            }
+                        )
+                    }
+
                     DialogType.JOIN -> {
-                        joinProject(project)
-                        showDialog = DialogType.NONE
+                        JoinAlertDialog(
+                            onConfirm = {
+                                joinProject(project!!)
+                                refreshCurrentUserAndUserModel(requireContext())
+                            },
+                            onDismiss = {
+                                showDialog = DialogType.NONE
+                            }
+                        )
                     }
 
                     DialogType.LEAVE -> {
-                        leaveProject()
-                        showDialog = DialogType.NONE
+                        LeaveAlertDIalog(
+                            onConfirm = {
+                                leaveProject()
+                            },
+                            onDismiss = {
+                                showDialog = DialogType.NONE
+                            }
+                        )
                     }
 
                     DialogType.NONE -> {}
@@ -151,7 +202,7 @@ class DetailsFragment : Fragment() {
                     horizontalArrangement = Arrangement.SpaceBetween
                 ) {
                     AsyncImage(
-                        model = project.icon,
+                        model = project!!.icon,
                         placeholder = painterResource(id = R.drawable.no_image_icon),
                         contentDescription = "Project icon",
                         modifier = Modifier
@@ -160,7 +211,7 @@ class DetailsFragment : Fragment() {
                     )
                     Column(modifier = Modifier.padding(8.dp)) {
                         Text(
-                            project.name,
+                            project!!.name,
                             style = MaterialTheme.typography.titleLarge,
                         )
                         Row(
@@ -168,11 +219,14 @@ class DetailsFragment : Fragment() {
                                 .fillMaxWidth()
                                 .padding(4.dp),
                         ) {
-                            BadgeIcon(project.maxBadges)
-                            ProjectMembers(project)
+                            BadgeIcon(project!!.maxBadges)
+                            ProjectMembers(members = members, onMembersClick = {
+                                showDialog = DialogType.MEMBERS
+                            })
                         }
                     }
                 }
+                AdminButtonRow(project)
 
                 Card(
                     modifier = Modifier
@@ -185,167 +239,198 @@ class DetailsFragment : Fragment() {
                     Column(
                         modifier = Modifier.padding(16.dp)
                     ) {
-                        DataBlock("Kategória", project.categoryEnum)
+                        DataBlock("Kategória", project!!.categoryEnum)
                         DataBlock(
                             "Készítő",
                             if (isPreview) {
                                 "Teszt Jenő"
                             } else {
-                                viewModel.creatorUser.value?.name ?: "Ismeretlen készítő"
+                                creator.name
                             }
                         )
                         DataBlock(
                             "Határidő",
-                            DateFormat.getDateInstance().format(project.created)
+                            DateFormat.getDateInstance().format(project!!.created)
                         )
                         Text(
                             text = "Leírás", style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.padding(8.dp)
                         )
                         Text(
-                            text = project.description,
+                            text = project!!.description,
                             style = MaterialTheme.typography.bodyMedium,
                             modifier = Modifier.padding(8.dp)
                         )
                     }
                 }
-                LastCommentCard(viewModel.mostRecentComment.value)
+                val comment by viewModel.mostRecentComment.observeAsState(initial = null)
+                LastCommentCard(comment)
             }
         }
-
-//        viewModel.project.observe(viewLifecycleOwner) { project ->
-//            binding.projectName.text = project.name
-//            binding.categoryName.text =
-//                getString(R.string.specific_category, project.categoryEnum)
-//            binding.badgeValueTextView.text =
-//                getString(R.string.specific_value, project.maxBadges)
-//            binding.projectCreateDescription.text = project.description
-//
-//            binding.projectCreator.text = viewModel.creatorUser.value?.name
-//            val formatter = DateFormat.getDateInstance()
-//            binding.projectDeadline.text =
-//                formatter.format(project.created)
-//            val iconFileName = Utility.getIconFileName(project.icon)
-//            val iconFile = File(context?.filesDir, iconFileName)
-//            if (iconFile.exists()) {
-//                Log.i(TAG, "loading badge icon " + iconFile.path)
-//                val bitmap: Bitmap = BitmapFactory.decodeFile(iconFile.path)
-//                binding.avatarImagebutton.setImageBitmap(bitmap)
-//            } else {
-//                Log.i(TAG, "downloading badge icon " + project.icon)
-//                val callback = object : Callback {
-//                    override fun onSuccess() {
-//                        // save image
-//                        Log.i(TAG, "saving badge icon " + iconFile.path)
-//                        val bitmap: Bitmap =
-//                            binding.avatarImagebutton.drawable.toBitmap()
-//                        val fos: FileOutputStream?
-//                        try {
-//                            fos = FileOutputStream(iconFile)
-//                            bitmap.compress(Bitmap.CompressFormat.PNG, 100, fos)
-//                            fos.flush()
-//                            fos.close()
-//                        } catch (e: IOException) {
-//                            e.printStackTrace()
-//                        }
-//                    }
-//
-//                    override fun onError(e: java.lang.Exception?) {
-//                        Log.e(TAG, e.toString())
-//                    }
-//                }
-//                Picasso.get().load(project.icon)
-//                    .into(binding.avatarImagebutton, callback)
-//            }
-//
-//            val editors = project.leaders
-//            if (editors.contains(userModel.documentId)) {
-//                userIsEditor = true
-//            }
-
-//        if (currentUser == null) {
-//            findNavController().navigate(R.id.action_global_loginFragment)
-//        } else {
-//            setupTopMenu()
-//            refreshCurrentUserAndUserModel(requireContext()) {
-//                UserService.getMembersForProject(args.projectId)
-//                initLayout()
-//            }
-//        }
-//
-//        viewModel.members.observe(viewLifecycleOwner) {
-//            initMembers()
-//        }
-//
-//        if (userModel.isCreator || userModel.admin || viewModel.project.value!!.creator == userModel.documentId || userIsEditor) {
-//            binding.rewardButton.visibility = View.VISIBLE
-//            binding.rewardButton.setOnClickListener {
-//                findNavController().navigate(
-//                    DetailsFragmentDirections.actionDetailsFragmentToAdminPanelFragment(
-//                        viewModel.project.value!!
-//                    )
-//                )
-//            }
-//        }
-
-//        binding.joinOrLeaveProjectButton.visibility = View.VISIBLE
-//        when {
-//            userModel.collectedBadges.contains(viewModel.project.value!!.id) -> binding.joinOrLeaveProjectButton.visibility =
-//                View.GONE
-//
-//            userModel.joinedBadges.contains(viewModel.project.value!!.id) -> binding.joinOrLeaveProjectButton.text =
-//                getString(R.string.leave)
-//
-//            else -> binding.joinOrLeaveProjectButton.text = getString(R.string.join)
-//        }
-//
-//        if (viewModel.project.value!!.leaders.contains(userModel.documentId)) {
-//            userIsEditor = true
-//        }
-
-
-//        if (userModel.isCreator || userModel.admin || viewModel.project.value!!.creator == userModel.documentId || userIsEditor) {
-//            binding.editButton.visibility = View.VISIBLE
-//            binding.editButton.setOnClickListener {
-//                findNavController().navigate(
-//                    DetailsFragmentDirections.actionDetailsFragmentToEditProjectFragment(
-//                        viewModel.project.value!!
-//                    )
-//                )
-//            }
-//        }
-
-//        binding.membersOverlayButton.setOnClickListener {
-//            if (viewModel.members.value?.isNotEmpty() == true && viewModel.project.value != null) {
-//                findNavController().navigate(
-//                    DetailsFragmentDirections.actionDetailsFragmentToProjectMembersDialogFragment(
-//                        viewModel.members.value!!.toTypedArray(),
-//                        userIsEditor,
-//                        viewModel.project.value!!
-//                    )
-//                )
-//            }
-//        }
-//        binding.joinOrLeaveProjectButton.setOnClickListener {
-//            joinOrLeaveButtonPressed()
-//            refreshCurrentUserAndUserModel(requireContext())
-//        }
-//        binding.joinOrLeaveProjectButton.visibility = View.GONE
-//        binding.mostRecentComment.setOnClickListener {
-//            val action =
-//                DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(args.projectId)
-//            findNavController().navigate(action)
-//        }
-//
-
     }
+
+    @Composable
+    private fun AdminButtonRow(project: Project?) {
+        if (userModel.admin) { //TODO userModel.roleAtLeast-tal
+            Row(
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+            ) {
+                AdminButton(
+                    modifier = Modifier
+                        .weight(1f),
+                    imageVector = Icons.Default.People,
+                    contentDescription = "Edit members' badges",
+                    onClick = {
+                        findNavController().navigate(
+                            DetailsFragmentDirections.actionDetailsFragmentToAdminPanelFragment(
+                                project!!
+                            )
+                        )
+                    }
+                )
+                AdminButton(
+                    modifier = Modifier.weight(1f),
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit project",
+                ) {
+                    findNavController().navigate(
+                        DetailsFragmentDirections.actionDetailsFragmentToEditProjectFragment(
+                            project!!
+                        )
+                    )
+                }
+            }
+
+        }
+    }
+
+    @Composable
+    private fun AdminButton(
+        modifier: Modifier, imageVector: ImageVector,
+        contentDescription: String,
+        onClick: () -> Unit
+    ) {
+        IconButton(
+            modifier = modifier
+                .padding(horizontal = 8.dp, vertical = 8.dp)
+                .clip(RoundedCornerShape(8.dp))
+                .background(MaterialTheme.colorScheme.primary),
+            onClick = {
+                onClick()
+            }) {
+            Icon(
+                imageVector = imageVector,
+                contentDescription = contentDescription,
+                tint = MaterialTheme.colorScheme.inversePrimary,
+            )
+        }
+    }
+
+    @Composable
+    private fun ProjectMembersDialog(
+        members: List<User>,
+        onDismiss: () -> Unit,
+        onMemberClick: (User) -> Unit
+    ) = AlertDialog(
+        onDismissRequest = { onDismiss() },
+        title = { Text("Projekttagok") },
+        text = {
+            LazyColumn {
+                items(members) { member ->
+                    Card(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp)
+                            .clickable { onMemberClick(member) }
+                    ) {
+                        Row {
+                            AsyncImage(
+                                // jelenleg nincs elcache-elve ez a kép sem, szóval újra letöltődik, amikor rányomunk a ProjetMembersre
+                                model = member.photoURL,
+                                placeholder = painterResource(id = R.drawable.no_image_icon),
+                                contentDescription = "Member icon",
+                                modifier = Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape),
+                                contentScale = ContentScale.Crop,
+                            )
+                            Text(
+                                text = member.name,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(8.dp)
+                            )
+                        }
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            Button(onClick = { onDismiss() }) {
+                Text("Close")
+            }
+        }
+    )
+
+    @Composable
+    private fun JoinAlertDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) =
+        AlertDialog(
+            onDismissRequest = { onDismiss() },
+            confirmButton = {
+                Button(onClick = {
+                    onConfirm()
+                    onDismiss()
+                }) {
+                    Text("Csatlakozás")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { onDismiss() }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+            text = {
+                Text("Biztos, hogy szeretnél csatlakozni a projekthez?")
+            })
+
+
+    @Composable
+    private fun LeaveAlertDIalog(onConfirm: () -> Unit, onDismiss: () -> Unit) =
+        AlertDialog(
+            onDismissRequest = { onDismiss() },
+            confirmButton = {
+                Button(onClick = {
+                    onConfirm()
+                    onDismiss()
+                }) {
+                    Text("Lecsatlakozás")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { onDismiss() }) {
+                    Text(stringResource(R.string.cancel))
+                }
+            },
+            text = {
+                Text("Biztos, hogy le szeretnél csatlakozni a projektről? A projekten szerzett mancsaid ekkor elvesznek.")
+            })
+
 
     @Composable
     private fun LastCommentCard(comment: Comment?) {
         Card(
             modifier = Modifier
                 .padding(8.dp)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .clickable {
+                    findNavController().navigate(
+                        DetailsFragmentDirections.actionDetailsFragmentToCommentsFragment(
+                            args.projectId
+                        )
+                    )
+                },
             shape = RoundedCornerShape(16.dp),
         ) {
             Column(
@@ -379,33 +464,26 @@ class DetailsFragment : Fragment() {
     }
 
 
-    @Preview
     @Composable
     fun ProjectMembers(
-        @PreviewParameter(ProjectParamProvider::class) project: Project
+        members: List<User>,
+        onMembersClick: () -> Unit
     ) {
-        val members =
-            if (LocalInspectionMode.current) {
-                listOf(
-                    User(name = "Teszt Jenő"),
-                    User(name = "Teszt József"),
-                    User(name = "Teszt Béla"),
-                    User(name = "Teszt Jenő"),
-                    User(name = "Teszt József"),
-                    User(name = "Teszt Béla")
-                )
-            } else {
-                viewModel.members.observeAsState(initial = emptyList()).value
-            }
-        val displayMembers = members.take(5)
-        val extraMembers = members.size - 5
+        val membersToShow = 5
+        val displayMembers = members.take(membersToShow)
+        val extraMembers = members.size - membersToShow
 
         Row(
-            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+            modifier = Modifier
+                .padding(top = 8.dp, bottom = 8.dp, start = 16.dp, end = 8.dp)
+                .clickable {
+                    onMembersClick()
+                },
             horizontalArrangement = Arrangement.spacedBy((-16).dp)
         ) {
             displayMembers.forEach { member ->
                 AsyncImage(
+                    // jelenleg nincs elcache-elve ez a kép, szóval újra letöltődik, amikor átjövünk ide a listázós fragmentből
                     model = member.photoURL,
                     placeholder = painterResource(id = R.drawable.no_image_icon),
                     contentDescription = "Member icon",
@@ -454,7 +532,7 @@ class DetailsFragment : Fragment() {
             {
                 Toast.makeText(
                     context,
-                    "A csatlakozás sikertelen, kérlek próbáld újra később.",
+                    "A csatlakozás sikertelen, kérlek próbáld újra később",
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -484,7 +562,7 @@ class DetailsFragment : Fragment() {
             {
                 Toast.makeText(
                     context,
-                    "A lecsatlakozás sikertelen, kérlek próbáld újra később.",
+                    "A lecsatlakozás sikertelen, kérlek próbáld újra később",
                     Toast.LENGTH_SHORT
                 ).show()
             }
@@ -508,7 +586,7 @@ class DetailsFragment : Fragment() {
                             //this should match the deeplink in the nav_graph. ikr it's ugly
                             putExtra(
                                 Intent.EXTRA_TEXT,
-                                "mokegyesulet.hu/app/badges/${args.projectId}"
+                                "mokapp-51f86.web.app/project/${args.projectId}"
                             )
                             putExtra(Intent.EXTRA_TITLE, viewModel.project.value!!.name)
                             type = "text/plain"

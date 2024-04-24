@@ -54,7 +54,7 @@ object ProjectService {
         return projectsLiveData
     }
 
-    fun getProjectData(projectId: String): LiveData<Project> {
+    fun getProjectData2(projectId: String): LiveData<Project> {
         val project = MutableLiveData<Project>()
         Firebase.firestore.collection(Collections.PROJECTS).document(projectId).get()
             .addOnSuccessListener { document ->
@@ -64,6 +64,15 @@ object ProjectService {
             }
         return project
     }
+
+    fun getProjectData(projectId: String): LiveData<Project?> =
+        Firebase.firestore.collection(Collections.PROJECTS).document(projectId)
+            .snapshots()
+            .map { s ->
+                s.toObject(Project::class.java)
+            }
+            .asLiveData()
+    //TODO refactor this so that it returns a LiveData<Project>
 
     fun addProject(project: Project) {
 

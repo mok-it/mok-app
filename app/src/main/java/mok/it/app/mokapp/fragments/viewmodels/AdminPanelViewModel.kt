@@ -2,11 +2,11 @@ package mok.it.app.mokapp.fragments.viewmodels
 
 import android.util.Log
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import com.google.firebase.firestore.Query
 import mok.it.app.mokapp.firebase.service.CloudMessagingService
-import mok.it.app.mokapp.firebase.service.ProjectService
 import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
@@ -49,7 +49,9 @@ class AdminPanelViewModel(projectId: String) : ViewModel() {
         )
     }
 
-    val project: LiveData<Project> = ProjectService.getProjectData(projectId)
+    val project: LiveData<Project> = MutableLiveData()
+
+    //TODO ProjectService.getProjectData(projectId)
     val userBadges: LiveData<MutableMap<String, Int>> =
         UserService.getProjectUsersAndBadges(projectId)
 }

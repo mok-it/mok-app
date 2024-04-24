@@ -3,6 +3,7 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel>
       <module name="MOKApp.app" target="17" />
+      <module name="repos.Android.MOKApp.app" target="17" />
     </bytecodeTargetLevel>
   </component>
 </project>

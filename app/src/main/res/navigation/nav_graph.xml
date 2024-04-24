@@ -17,7 +17,7 @@
         <deepLink
             android:id="@+id/badge_deeplink"
             android:autoVerify="true"
-            app:uri="mokegyesulet.hu/app/badges/{projectId}" />
+            app:uri="mokapp-51f86.web.app/project/{projectId}" />
         <action
             android:id="@+id/action_detailsFragment_to_editProjectFragment"
             app:destination="@id/editProjectFragment" />

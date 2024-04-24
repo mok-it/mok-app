@@ -34,11 +34,10 @@ class EditProjectFragment : CreateProjectFragment() {
             cal[Calendar.DAY_OF_MONTH]
         )
         badgeValue = args.project.maxBadges
+        selectedProjectLeader = args.project.projectLeader
         binding.tvBadgeValue.text = badgeValue.toString()
         binding.textViewTitle.text = getString(R.string.edit_project)
         binding.createButton.text = getString(R.string.edit_text)
-
-        selectedEditors = args.project.leaders.toMutableList()
     }
 
     override fun getUsers() {
@@ -46,10 +45,7 @@ class EditProjectFragment : CreateProjectFragment() {
             if (users != null) {
                 this.users = users
                 names = Array(users.size) { i -> users[i].name }
-                checkedNames = BooleanArray(users.size) { i ->
-                    args.project.leaders.contains(users[i].documentId)
-                }
-                initEditorsDialog()
+                projectLeaderDialog()
             }
         }
     }
@@ -83,7 +79,7 @@ class EditProjectFragment : CreateProjectFragment() {
             category = binding.projectTerulet.text.toString(),
             maxBadges = badgeValue,
             deadline = deadline,
-            leaders = selectedEditors,
+            projectLeader = selectedProjectLeader,
         )
         ProjectService.updateProject(args.project.id, editedProject)
 

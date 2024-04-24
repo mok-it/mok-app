@@ -5,9 +5,9 @@ import android.os.Looper
 import android.util.Log
 import android.widget.Toast
 import com.google.firebase.firestore.FieldPath
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.functions.ktx.functions
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.firestore
+import com.google.firebase.functions.functions
+import com.google.firebase.Firebase
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import mok.it.app.mokapp.model.Collections

@@ -2,10 +2,8 @@ package mok.it.app.mokapp.model
 
 import android.os.Parcelable
 import com.google.firebase.firestore.DocumentId
-import com.google.firebase.firestore.Exclude
-import com.google.firebase.firestore.PropertyName
 import kotlinx.parcelize.Parcelize
-import mok.it.app.mokapp.model.Category.Companion.toCategory
+import mok.it.app.mokapp.model.enums.Role
 
 /**
  * The user object that is stored in the Firestore database.
@@ -19,28 +17,31 @@ data class User(
     @DocumentId
     val documentId: String = "",
 
-    val admin: Boolean = false,
-    @Deprecated("Use categoryList instead")
-    val categories: List<String> = ArrayList(),
-    @Exclude
-    var categoryList: MutableList<Category> = ArrayList(),
-    val collectedBadges: List<String> = ArrayList(),
     val email: String = "",
-    val joinedBadges: List<String> = ArrayList(),
     val name: String = "",
-    @get:PropertyName("isCreator")
-    val isCreator: Boolean = false,
     val photoURL: String = "",
     val phoneNumber: String = "",
     val requestedRewards: List<String> = ArrayList(),
-    val badges: Int = 0,
+    /**
+     * The total number of badges the user has earned in the current season. It is calculated by a cloud function, so do not modify.
+     */
+    val allBadges: Int = 0,
+    /**
+     * The number of badges the user has earned and didn't spend in the current season. It is calculated by a cloud function, so do not modify.
+     */
+    val remainingBadges: Int = 0,
     val fcmToken: String = "",
     val nickname: String = "",
     val projectBadges: MutableMap<String, Int> = HashMap(),
-    val points: Int = 0,
     val achievements: List<String> = ArrayList(),
+    @Deprecated("Use roleEnum instead")
+    var role: String = "",
 ) : Parcelable {
-    fun generateCategories() {
-        categoryList = categories.map { it.toCategory() }.toMutableList()
-    }
+    var roleEnum: Role
+        get() = Role.valueOf(role)
+        set(value) {
+            role = value.name
+        }
+
+    fun roleAtLeast(role: Role) = roleEnum.ordinal >= role.ordinal
 }

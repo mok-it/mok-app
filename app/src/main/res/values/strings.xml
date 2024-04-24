@@ -31,7 +31,7 @@
     <string name="choose_category">Válassz kategóriát</string>
     <string name="sender">Feladó</string>
     <string name="project_icon">Projektikon</string>
-    <string name="choose_manager">Válassz kezelőket</string>
+    <string name="choose_project_leader">Válassz projektvezetőt</string>
     <string name="log_out">Kijelentkezés</string>
     <string name="cancel">Mégsem</string>
     <string name="project_creator">Projekt készítője</string>
@@ -121,5 +121,7 @@
     <string name="quantity">%d db</string>
     <string name="comment_with_sender">%1$s: %2$s</string>
     <string name="administration">Adminisztráció</string>
+    <string name="handle_rewards">Jutalmak kezelése</string>
+    <string name="request_reward_contentdescription">Request reward</string>
 
 </resources>

@@ -1,7 +1,7 @@
 package mok.it.app.mokapp.composables.achievements
 
-import android.util.Log
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
@@ -27,6 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import mok.it.app.mokapp.R
@@ -37,9 +39,8 @@ import mok.it.app.mokapp.model.User
 fun AchievementDetails(
     achievement: Achievement,
     owned: Boolean,
-    owners: List<User>
+    owners: List<User>,
 ) {
-//    val owned by remember { mutableStateOf(false) }
     Surface {
         Column(modifier = Modifier.padding(8.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
@@ -90,8 +91,14 @@ private fun TopIcon(owned: Boolean, mandatory: Boolean) {
 }
 
 @Composable
-private fun StatusCard(colors: CardColors, icon: @Composable () -> Unit, text: String) {
+private fun StatusCard(
+    colors: CardColors,
+    icon: @Composable () -> Unit,
+    text: String,
+    onClick: () -> Unit = {}
+) {
     Card(
+        onClick = onClick,
         colors = colors,
         modifier = Modifier
             .fillMaxWidth()
@@ -123,7 +130,7 @@ private fun StatusCard(colors: CardColors, icon: @Composable () -> Unit, text: S
 }
 
 @Composable
-private fun OwnedStatusCard() {
+private fun OwnedStatusCard() { //TODO: delete param
     StatusCard(
         colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.green_light)),
         icon = {
@@ -170,25 +177,38 @@ private fun MandatoryStatusCard() {
         },
         text = "Ennek az acsinak a megszerzése kötelező a szezonban."
     )
-//    Card(colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.red_light))) {
-//        Column {
-//            Icon(
-//                painter = painterResource(id = R.drawable.ic_exclamation_mark),
-//                contentDescription = "Kötelező acsi",
-//                tint = colorResource(id = R.color.red_dark)
-//            )
-//            Text(text = "Ennek az acsinak a megszerzése kötelező a szezonban.")
-//        }
-//    }
 }
 
 @Composable
 private fun OwnersGrid(owners: List<User>) {
-    Log.d("OwnersGrid", "Owners: $owners")
-    LazyVerticalGrid(columns = GridCells.Adaptive(minSize = 220.dp)) {
+    LazyVerticalGrid(columns = GridCells.Adaptive(150.dp)) {
         items(owners) { owner ->
-            Card {
-                Text(text = "Owner: ${owner.name}")
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .wrapContentHeight()
+                    .padding(4.dp)
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Start
+                ) {
+                    AsyncImage(
+                        model = owner.photoURL,
+                        contentDescription = "Owner's profile picture",
+                        modifier = Modifier
+                            .size(50.dp)
+                            .padding(6.dp)
+                            .clip(CircleShape)
+                    )
+                    Text(
+                        text = owner.name,
+                        softWrap = false,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
             }
         }
     }

@@ -5,8 +5,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.material3.Text
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -28,16 +28,16 @@ class AchievementDetailsFragment : Fragment() {
     ): View =
         ComposeView(requireContext()).apply {
             setContent {
-                val owners: List<User> by viewModel.owners.observeAsState(emptyList())
-                val achievement by viewModel.achievement.observeAsState()
-                val owned by viewModel.owned.observeAsState(false)
+                val owners: List<User> by viewModel.owners.collectAsState(emptyList())
+                val achievement by viewModel.achievement.collectAsState(initial = null)
+                val owned by viewModel.owned.collectAsState(false)
                 if (achievement == null) {
                     Text("Loading...") //TODO show loading screen
                 } else {
                     AchievementDetails(
                         achievement!!,
                         owned,
-                        owners
+                        owners,
                     ) //TODO: he shot me down bang bang
                 }
             }

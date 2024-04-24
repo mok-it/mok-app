@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -24,11 +24,11 @@ class AchievementsFragment : Fragment() {
     ): View =
         ComposeView(requireContext()).apply {
             setContent {
-                val achievements by viewModel.achievements.observeAsState(emptyList())
+                val achievements by viewModel.achievements.collectAsState(emptyList())
                 Column {
                     LazyColumn {
                         items(achievements) { achievement ->
-                            val owned by viewModel.isOwned(achievement).observeAsState(false)
+                            val owned by viewModel.isOwned(achievement).collectAsState(false)
                             AchievementCard(
                                 owned = owned,
                                 achievement = achievement,

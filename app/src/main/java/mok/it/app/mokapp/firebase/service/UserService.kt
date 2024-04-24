@@ -436,8 +436,9 @@ object UserService {
             .orderBy("name", Query.Direction.ASCENDING)
 
     fun getUsers(userIds: List<String>): LiveData<List<User>> {
+        val ids = userIds.ifEmpty { listOf("_") }
         return Firebase.firestore.collection(Collections.USERS)
-            .whereIn(FieldPath.documentId(), userIds)
+            .whereIn(FieldPath.documentId(), ids)
             .snapshots()
             .map { s -> s.toObjects(User::class.java) }
             .asLiveData()

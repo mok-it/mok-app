@@ -1,33 +1,30 @@
 package mok.it.app.mokapp.firebase.service
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.ktx.Firebase
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import mok.it.app.mokapp.model.Achievement
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 
 object AchievementService {
-    fun getAchievements(): LiveData<List<Achievement>> {
+    fun getAchievements(): Flow<List<Achievement>> {
         return Firebase.firestore.collection(Collections.ACHIEVMENTS)
             .snapshots()
             .map { s ->
                 s.toObjects(Achievement::class.java)
             }
-            .asLiveData()
     }
 
-    fun getAchievement(id: String): LiveData<Achievement> {
+    fun getAchievement(id: String): Flow<Achievement> {
         return Firebase.firestore.collection(Collections.ACHIEVMENTS).document(id)
             .snapshots()
             .map { s ->
                 s.toObject(Achievement::class.java)
                     ?: Achievement() //TODO: more sophisticated error handling
             }
-            .asLiveData()
     }
 
     fun grantAchievement(achievement: Achievement, user: User) {
@@ -50,6 +47,15 @@ object AchievementService {
                             achievementDocRef.update("owners", owners)
                         }
                 }
+            }
+    }
+
+    fun getOwners(achievementId: String): Flow<List<User>> {
+        return Firebase.firestore.collection(Collections.USERS)
+            .whereArrayContains("achievements", achievementId)
+            .snapshots()
+            .map { s ->
+                s.toObjects(User::class.java)
             }
     }
 }

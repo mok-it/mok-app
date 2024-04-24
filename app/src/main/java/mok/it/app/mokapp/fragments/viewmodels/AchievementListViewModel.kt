@@ -1,33 +1,17 @@
 package mok.it.app.mokapp.fragments.viewmodels
 
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.liveData
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flowOf
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.service.AchievementService
 import mok.it.app.mokapp.model.Achievement
 
 class AchievementListViewModel : ViewModel() {
-    private val _achievements: MediatorLiveData<List<Achievement>> = MediatorLiveData(listOf())
-    val achievements: LiveData<List<Achievement>> get() = _achievements
+    private val _achievements: Flow<List<Achievement>> = AchievementService.getAchievements()
+    val achievements: Flow<List<Achievement>> get() = _achievements
 
-    init {
-        fetchAchievements()
-    }
-
-    private fun fetchAchievements() {
-        viewModelScope.launch {
-            val achievementsLiveData = AchievementService.getAchievements()
-            _achievements.addSource(achievementsLiveData) {
-                _achievements.value = it
-            }
-        }
-    }
-
-    fun isOwned(achievement: Achievement): LiveData<Boolean> {
-        return liveData { emit(userModel.achievements.contains(achievement.id)) }
+    fun isOwned(achievement: Achievement): Flow<Boolean> {
+        return flowOf(userModel.achievements.contains(achievement.id))
     }
 }

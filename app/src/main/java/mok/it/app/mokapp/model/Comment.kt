@@ -9,8 +9,9 @@ data class Comment(
     @DocumentId
     val collectionId: String = "",
 
-    val text: String = "",
     val time: Timestamp = Timestamp.now(),
-    val uid: String = "",
+
     val userName: String = "",
+    val uid: String = "",
+    val text: String = "",
 )

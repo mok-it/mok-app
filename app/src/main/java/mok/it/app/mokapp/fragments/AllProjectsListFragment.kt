@@ -31,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
@@ -166,7 +165,7 @@ class AllProjectsListFragment : Fragment() {
             )
         ) {
             Row(
-                modifier = Modifier.padding(2.dp),
+                modifier = Modifier.padding(end = 8.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 AsyncImage(
@@ -174,14 +173,13 @@ class AllProjectsListFragment : Fragment() {
                     contentDescription = "Project icon",
                     modifier = Modifier
                         .size(80.dp)
-                        .padding(8.dp)
-                        .clip(RoundedCornerShape(50)),
-                    contentScale = ContentScale.Crop
+                        .padding(8.dp),
+                    contentScale = ContentScale.Fit
                 )
                 Column(
                     modifier = Modifier
                         .weight(1f)
-                        .padding(vertical = 8.dp)
+                        .padding(8.dp)
                 ) {
                     Text(
                         text = project.name,
@@ -198,7 +196,6 @@ class AllProjectsListFragment : Fragment() {
                 }
                 BadgeIcon(
                     badgeNumberText = project.maxBadges.toString(),
-                    modifier = Modifier.padding(8.dp)
                 )
             }
         }

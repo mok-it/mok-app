@@ -14,7 +14,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MOKApp.NoActionBar">
         <activity
-            android:name=".activity.MainActivity"
+            android:name=".MainActivity"
             android:exported="true"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.MOKApp.NoActionBar"

@@ -6,7 +6,7 @@
     app:startDestination="@id/allProjectsListFragment">
     <fragment
         android:id="@+id/detailsFragment"
-        android:name="mok.it.app.mokapp.fragments.DetailsFragment"
+        android:name="mok.it.app.mokapp.feature.project_detail.DetailsFragment"
         android:label="Projekt adatai">
         <action
             android:id="@+id/action_detailsFragment_to_commentsFragment"
@@ -27,7 +27,7 @@
     </fragment>
     <fragment
         android:id="@+id/commentsFragment"
-        android:name="mok.it.app.mokapp.fragments.CommentsFragment"
+        android:name="mok.it.app.mokapp.feature.project_comments.CommentsFragment"
         android:label="Kommentek">
         <argument
             android:name="projectId"
@@ -61,7 +61,7 @@
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
-        android:name="mok.it.app.mokapp.fragments.LoginFragment"
+        android:name="mok.it.app.mokapp.feature.login.LoginFragment"
         android:label="Bejelentkezés"
         tools:layout="@layout/fragment_login">
         <action
@@ -71,11 +71,11 @@
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
-        android:name="mok.it.app.mokapp.fragments.ProfileFragment"
+        android:name="mok.it.app.mokapp.feature.profile_view.ProfileFragment"
         android:label="Profil" />
     <fragment
         android:id="@+id/myBadgesFragment"
-        android:name="mok.it.app.mokapp.fragments.MyBadgesFragment"
+        android:name="mok.it.app.mokapp.feature.my_badges.MyBadgesFragment"
         android:label="Saját Mancsaim"
 
         tools:layout="@layout/fragment_my_badges">
@@ -85,23 +85,23 @@
     </fragment>
     <fragment
         android:id="@+id/rewardsFragment"
-        android:name="mok.it.app.mokapp.fragments.RewardsFragment"
+        android:name="mok.it.app.mokapp.feature.rewards_list.RewardsFragment"
         android:label="Jutalmak" />
     <fragment
         android:id="@+id/phoneBookFragment"
-        android:name="mok.it.app.mokapp.fragments.PhoneBookFragment"
+        android:name="mok.it.app.mokapp.feature.phonebook_list.PhoneBookFragment"
         android:label="Telefonkönyv"
         tools:layout="@layout/fragment_phone_list" />
     <fragment
         android:id="@+id/linksFragment"
-        android:name="mok.it.app.mokapp.fragments.LinksFragment"
+        android:name="mok.it.app.mokapp.feature.links.LinksFragment"
         android:label="Linkek" />
     <action
         android:id="@+id/action_global_loginFragment"
         app:destination="@id/loginFragment" />
     <fragment
         android:id="@+id/memberFragment"
-        android:name="mok.it.app.mokapp.fragments.MemberFragment"
+        android:name="mok.it.app.mokapp.feature.member_view.MemberFragment"
         android:label="Adatok">
         <argument
             android:name="user"
@@ -115,7 +115,7 @@
         app:destination="@id/memberFragment" />
     <dialog
         android:id="@+id/createProjectFragment"
-        android:name="mok.it.app.mokapp.fragments.CreateProjectFragment"
+        android:name="mok.it.app.mokapp.feature.project_create.CreateProjectFragment"
         android:label="CreateProjectFragment"
         tools:layout="@layout/fragment_create_project">
         <argument
@@ -124,7 +124,7 @@
     </dialog>
     <dialog
         android:id="@+id/editProjectFragment"
-        android:name="mok.it.app.mokapp.fragments.EditProjectFragment"
+        android:name="mok.it.app.mokapp.feature.project_edit.EditProjectFragment"
         android:label="EditProjectFragment"
         tools:layout="@layout/fragment_create_project">
         <argument
@@ -133,11 +133,11 @@
     </dialog>
     <fragment
         android:id="@+id/aboutFragment"
-        android:name="mok.it.app.mokapp.fragments.AboutFragment"
+        android:name="mok.it.app.mokapp.feature.about.AboutFragment"
         android:label="@string/about" />
     <fragment
         android:id="@+id/adminPanelFragment"
-        android:name="mok.it.app.mokapp.fragments.AdminPanelFragment"
+        android:name="mok.it.app.mokapp.feature.project_give_badge.AdminPanelFragment"
         android:label="Adminisztráció"
         tools:layout="@layout/fragment_admin_panel">
         <argument
@@ -149,7 +149,7 @@
     </fragment>
     <fragment
         android:id="@+id/addParticipantsDialogFragment"
-        android:name="mok.it.app.mokapp.fragments.AddParticipantsFragment"
+        android:name="mok.it.app.mokapp.feature.project_add_participants.AddParticipantsFragment"
         android:label="Résztvevők felvétele">
         <argument
             android:name="projectId"

@@ -50,11 +50,6 @@
         <action
             android:id="@+id/action_allProjectsListFragment_to_linksFragment"
             app:destination="@id/linksFragment" />
-        <argument
-            android:name="filter"
-            android:defaultValue="@null"
-            app:argType="mok.it.app.mokapp.model.Filter"
-            app:nullable="true" />
         <action
             android:id="@+id/action_allProjectsListFragment_to_createProjectFragment"
             app:destination="@id/createProjectFragment" />

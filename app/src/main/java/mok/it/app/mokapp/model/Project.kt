@@ -23,6 +23,7 @@ data class Project(
 
     @DocumentId
     val id: String = "",
+
     @Deprecated("Use categoryEnum instead")
     val category: String = "", // can't mark it private, but don't use it
     val created: Date = Date(),
@@ -34,8 +35,6 @@ data class Project(
     val name: String = "",
     @get:PropertyName("overall_progress")
     val overallProgress: Int = 0,
-    val mandatory: Boolean = false,
-    val tasks: List<String> = ArrayList(),
     val comments: List<String> = ArrayList(),
     val maxBadges: Int = 1,
     val projectLeader: String = "",

@@ -50,7 +50,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -105,24 +104,10 @@ class DetailsFragment : Fragment() {
 
     @Composable
     private fun DetailsScreen() {
-        val isPreview = LocalInspectionMode.current
-
         val project by viewModel.project.observeAsState(initial = Project())
-        val creator by viewModel.creatorUser.observeAsState(initial = User())
+        val projectLeader by viewModel.projectLeader.observeAsState(initial = User())
         var showDialog by remember { mutableStateOf(DialogType.NONE) }
-        val members =
-            if (LocalInspectionMode.current) {
-                listOf(
-                    User(name = "Teszt Ödön"),
-                    User(name = "Teszt József"),
-                    User(name = "Teszt Béla"),
-                    User(name = "Teszt Jenő"),
-                    User(name = "Teszt József"),
-                    User(name = "Teszt Béla")
-                )
-            } else {
-                viewModel.members.observeAsState(initial = emptyList()).value
-            }
+        val members = viewModel.members.observeAsState(initial = emptyList()).value
 
         Scaffold(
             bottomBar = {
@@ -133,14 +118,14 @@ class DetailsFragment : Fragment() {
                     onClick = {
 
                         showDialog =
-                            if (isPreview || userModel.projectBadges.contains(args.projectId)) {
+                            if (userModel.projectBadges.contains(args.projectId)) {
                                 DialogType.LEAVE
                             } else {
                                 DialogType.JOIN
                             }
 
                     }) {
-                    if (isPreview || userModel.projectBadges.contains(args.projectId)) {
+                    if (userModel.projectBadges.contains(args.projectId)) {
                         Text("Lecsatlakozás")
                     } else {
                         Text("Csatlakozás")
@@ -241,11 +226,7 @@ class DetailsFragment : Fragment() {
                         DataBlock("Kategória", project.categoryEnum)
                         DataBlock(
                             "Készítő",
-                            if (isPreview) {
-                                "Teszt Jenő"
-                            } else {
-                                creator.name
-                            }
+                            projectLeader.name
                         )
                         DataBlock(
                             "Határidő",

@@ -96,7 +96,7 @@ class AddParticipantsFragment : DialogFragment() {
         tvName.text = user.name
         loadImage(ivImg, user.photoURL, requireContext())
         cbSelect.setOnCheckedChangeListener(null)
-        if (user.joinedBadges.contains(viewModel.project.value?.id)) {
+        if (user.projectBadges.contains(viewModel.project.value?.id)) {
             cbSelect.isEnabled = false
             cbSelect.isChecked = true
         } else {

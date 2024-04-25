@@ -1,5 +1,6 @@
 package mok.it.app.mokapp.model
 
+import mok.it.app.mokapp.model.enums.Category
 import mok.it.app.mokapp.utility.Utility.unaccent
 import org.junit.Assert
 import org.junit.Test
@@ -42,10 +43,10 @@ class CategoryTest {
     @Test
     fun testTaboriprogramEsElokeszites() {
         val upperCaseWithoutSpace =
-            Category.TABORIPROGRAMESELOKESZITES.toString().uppercase(Locale.getDefault())
+            Category.NYARITABORIELOKESZITES.toString().uppercase(Locale.getDefault())
                 .replace(" ", "")
         val result = upperCaseWithoutSpace.unaccent()
-        Assert.assertEquals("TABORIPROGRAMESELOKESZITES", result)
+        Assert.assertEquals("NYARITABORIELOKESZITES", result)
     }
 
     @Test

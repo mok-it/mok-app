@@ -3,15 +3,25 @@ package mok.it.app.mokapp.firebase.service
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
+import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.snapshots
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.utility.Utility.TAG
 
 object ProjectService {
+    fun getProjectsQuery() =
+        Firebase.firestore.collection(Collections.PROJECTS)
+            .orderBy("category", Query.Direction.ASCENDING)
+            .orderBy("name", Query.Direction.ASCENDING)
+
     fun getProjectsByIds(
         projectIds: List<String>
     ): LiveData<List<Project>> {
@@ -46,16 +56,13 @@ object ProjectService {
         return projectsLiveData
     }
 
-    fun getProjectData(projectId: String): LiveData<Project> {
-        val project = MutableLiveData<Project>()
-        Firebase.firestore.collection(Collections.PROJECTS).document(projectId).get()
-            .addOnSuccessListener { document ->
-                if (document != null && document.data != null) {
-                    project.value = document.toObject(Project::class.java)!!
-                }
+    fun getProjectData(projectId: String): Flow<Project> =
+        Firebase.firestore.collection(Collections.PROJECTS).document(projectId)
+            .snapshots()
+            .map { s ->
+                s.toObject(Project::class.java)
             }
-        return project
-    }
+            .filterNotNull()
 
     fun addProject(project: Project) {
 
@@ -70,7 +77,7 @@ object ProjectService {
             "creator" to project.creator,
             "deadline" to project.deadline,
             "description" to project.description,
-            "leaders" to project.leaders,
+            "projectLeader" to project.projectLeader,
             "icon" to project.icon,
             "name" to project.name,
             "maxBadges" to project.maxBadges,
@@ -92,13 +99,13 @@ object ProjectService {
      * Updates the project with the given ID with the new project data. Caution: only updates certain fields.
      */
     fun updateProject(oldProjectId: String, newProject: Project) {
-        val projectHashMap = hashMapOf(
+        val projectHashMap: HashMap<String, Any> = hashMapOf(
             "name" to newProject.name,
             "description" to newProject.description,
             "category" to newProject.categoryEnum.toString(),
             "maxBadges" to newProject.maxBadges,
             "deadline" to newProject.deadline,
-            "leaders" to newProject.leaders,
+            "projectLeader" to newProject.projectLeader,
         )
 
         Firebase.firestore.collection(Collections.PROJECTS).document(oldProjectId)
@@ -111,9 +118,13 @@ object ProjectService {
             }
     }
 
-    fun getProjectsQuery() =
+    fun getAllProjects(): LiveData<List<Project>> =
         Firebase.firestore.collection(Collections.PROJECTS)
-            .orderBy("category", Query.Direction.ASCENDING)
-            .orderBy("name", Query.Direction.ASCENDING)
-
+            .orderBy("category")
+            .orderBy("name")
+            .snapshots()
+            .map { s ->
+                s.toObjects(Project::class.java)
+            }
+            .asLiveData()
 }

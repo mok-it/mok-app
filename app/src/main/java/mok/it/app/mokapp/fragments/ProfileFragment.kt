@@ -9,8 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import mok.it.app.mokapp.composables.ProjectBadgeSummary
-import mok.it.app.mokapp.composables.UserCard
+import mok.it.app.mokapp.compose.ProjectBadgeSummary
+import mok.it.app.mokapp.compose.UserCard
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.fragments.viewmodels.ProfileViewModel
 

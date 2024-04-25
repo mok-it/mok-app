@@ -1,126 +1,189 @@
 package mok.it.app.mokapp.fragments
 
-import android.app.Activity
-import android.content.Context
-import android.icu.text.DateFormat
 import android.icu.text.DateFormat.getDateTimeInstance
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.view.inputmethod.InputMethodManager
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import com.google.firebase.Timestamp
-import mok.it.app.mokapp.databinding.CardCommentBinding
-import mok.it.app.mokapp.databinding.FragmentCommentsBinding
+import coil.compose.AsyncImage
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.service.CommentService.addComment
-import mok.it.app.mokapp.firebase.service.CommentService.getCommentsQuery
 import mok.it.app.mokapp.fragments.viewmodels.CommentsViewModel
-import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.User
-import mok.it.app.mokapp.recyclerview.CommentViewHolder
-import mok.it.app.mokapp.recyclerview.WrapContentLinearLayoutManager
-import mok.it.app.mokapp.utility.Utility
 
 class CommentsFragment : Fragment() {
-    val formatter: DateFormat = getDateTimeInstance()
-
     private val args: DetailsFragmentArgs by navArgs()
-    private lateinit var _binding: FragmentCommentsBinding
-    private val binding get() = _binding
+
     private val viewModel: CommentsViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
-    ): View {
-        _binding = FragmentCommentsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val query = getCommentsQuery(args.projectId)
-        val options =
-            FirestoreRecyclerOptions.Builder<Comment>()
-                .setQuery(query, Comment::class.java)
-                .setLifecycleOwner(this).build()
-        val adapter =
-            object : FirestoreRecyclerAdapter<Comment, CommentViewHolder>(options) {
-                override fun onCreateViewHolder(
-                    parent: ViewGroup,
-                    viewType: Int
-                ) = CommentViewHolder(
-                    CardCommentBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-                )
-
-                override fun onBindViewHolder(
-                    holder: CommentViewHolder, position: Int, comment: Comment
-                ) {
-                    val tvSender = holder.binding.commentSender
-                    val tvTimestamp = holder.binding.commentTimestamp
-                    val tvText = holder.binding.commentText
-                    val ivImg = holder.binding.commentIcon
-                    tvSender.text = comment.uid
-                    tvTimestamp.text = formatter.format(comment.time.toDate())
-                    tvText.text = comment.text
-
-                    viewModel.getUserById(comment.uid).observe(viewLifecycleOwner) { user: User ->
-                        tvSender.text = user.name
-                        Utility.loadImage(ivImg, user.photoURL, requireContext())
-                        holder.binding.root.setOnClickListener {
-                            findNavController().navigate(
-                                CommentsFragmentDirections.actionGlobalMemberFragment(
-                                    user
-                                )
-                            )
-                        }
-                    }
-                    binding.commentsRecyclerView.smoothScrollToPosition(0)
-                }
-            }
-
-        binding.sendCommentFab.setOnClickListener {
-            if (binding.commentEditText.text.isNotEmpty()) {
-                val comment = Comment(
-                    Collections.COMMENTS,
-                    binding.commentEditText.text.toString(),
-                    Timestamp.now(),
-                    userModel.documentId,
-                    userModel.name,
-                )
-
-                addComment(args.projectId, comment)
-
-                binding.commentEditText.text.clear()
-                binding.commentEditText.clearFocus()
-                hideKeyboard()
+    ): View =
+        ComposeView(requireContext()).apply {
+            setContent {
+                CommentsScreen()
             }
         }
 
-        binding.commentsRecyclerView.adapter = adapter
-        val layoutManager = WrapContentLinearLayoutManager(this.context)
-            .apply {
-                stackFromEnd = true
-                reverseLayout = true
+    @Composable
+    fun CommentsScreen() {
+        val comments by viewModel.getComments(args.projectId)
+            .observeAsState(initial = emptyList())
+
+        Scaffold(
+            bottomBar = {
+                var text by remember { mutableStateOf("") }
+                CommentInputBox(text,
+                    onSendComment = {
+                        addComment(
+                            args.projectId, Comment(
+                                text = text,
+                                uid = userModel.documentId,
+                                userName = userModel.name
+                            )
+                        )
+                        text = ""
+                    },
+                    onEditText = {
+                        text = it
+                    })
             }
-
-        binding.commentsRecyclerView.layoutManager = layoutManager
+        ) { padding ->
+            Column {
+                if (comments.isEmpty()) {
+                    Text(
+                        text = "Itt nincsenek még kommentek. Írj egyet most!",
+                        style = MaterialTheme.typography.headlineSmall,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        textAlign = TextAlign.Center
+                    )
+                } else {
+                    LazyColumn(modifier = Modifier.weight(1f)) {
+                        items(comments) { comment ->
+                            CommentCard(comment = comment)
+                        }
+                    }
+                }
+            }
+        }
     }
 
-    private fun Fragment.hideKeyboard() {
-        view?.let { activity?.hideKeyboard(it) }
+    @Composable
+    fun CommentCard(comment: Comment) {
+
+        fun navigate(user: User) = findNavController().navigate(
+            CommentsFragmentDirections.actionGlobalMemberFragment(user)
+        )
+
+        val user by viewModel.getUserById(comment.uid).observeAsState(initial = User())
+
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+        ) {
+            Column(modifier = Modifier.padding(8.dp)) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    AsyncImage(
+                        model = user.photoURL,
+                        contentDescription = "User profile picture",
+                        modifier = Modifier
+                            .padding(8.dp)
+                            .size(40.dp)
+                            .clip(CircleShape)
+                            .clickable { navigate(user) },
+                    )
+
+                    Text(
+                        text = user.name,
+                        style = MaterialTheme.typography.bodyMedium,
+                        modifier = Modifier
+                            .weight(1f)
+                            .clickable { navigate(user) },
+                    )
+
+                    Text(
+                        text = getDateTimeInstance().format(comment.time.toDate()),
+                        style = MaterialTheme.typography.bodySmall,
+                        textAlign = TextAlign.End
+                    )
+                }
+
+                Text(
+                    text = comment.text,
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(8.dp)
+                )
+            }
+        }
     }
 
-    private fun Context.hideKeyboard(view: View) {
-        val inputMethodManager =
-            getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
+    @Composable
+    fun CommentInputBox(text: String, onEditText: (String) -> Unit, onSendComment: () -> Unit) {
+        val focusRequester = remember { FocusRequester() }
+        val focusManager = LocalFocusManager.current
+        Row(
+            modifier = Modifier.padding(8.dp)
+
+        ) {
+            TextField(
+                value = text,
+                onValueChange = { onEditText(it) },
+                modifier = Modifier
+                    .padding(8.dp)
+                    .weight(1f)
+                    .focusRequester(focusRequester),
+            )
+            IconButton(
+                modifier = Modifier.padding(8.dp),
+                onClick = {
+                    if (text.isNotEmpty()) {
+                        onSendComment()
+                        focusManager.clearFocus()
+                    }
+                }) {
+                Icon(Icons.AutoMirrored.Default.Send, contentDescription = "Send Comment")
+            }
+        }
     }
 }

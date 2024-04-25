@@ -3,21 +3,25 @@ package mok.it.app.mokapp.firebase.service
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.firestore.firestore
+import com.google.firebase.firestore.snapshots
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import mok.it.app.mokapp.firebase.FirebaseUserObject
-import mok.it.app.mokapp.model.Category
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.model.enums.Category
 import mok.it.app.mokapp.utility.Utility.TAG
 import kotlin.math.min
 
@@ -354,17 +358,14 @@ object UserService {
             }.addOnFailureListener { e -> Log.d(TAG, e.message.toString()) }
     }
 
-    fun getUser(userId: String): LiveData<User> {
-        val user = MutableLiveData<User>()
+    fun getUser(userId: String): Flow<User> =
         Firebase.firestore.collection(Collections.USERS).document(userId)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    user.value = document.toObject(User::class.java)
-                }
+            .snapshots()
+            .map { s ->
+                s.toObject(User::class.java)
             }
-        return user
-    }
+            .filterNotNull()
+
 
     fun getAllUsers(): LiveData<List<User>> {
         val usersLiveData = MutableLiveData<List<User>>()

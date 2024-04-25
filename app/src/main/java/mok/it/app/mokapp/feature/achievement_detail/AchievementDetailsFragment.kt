@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.fragments
+package mok.it.app.mokapp.feature.achievement_detail
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,8 +12,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import mok.it.app.mokapp.compose.achievements.AchievementDetails
-import mok.it.app.mokapp.fragments.viewmodels.AchievementDetailsViewModel
-import mok.it.app.mokapp.fragments.viewmodels.AchievementDetailsViewModelFactory
 import mok.it.app.mokapp.model.User
 
 class AchievementDetailsFragment : Fragment() {

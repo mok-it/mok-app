@@ -33,7 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.fragments.viewmodels.AchievementDetailsViewModel
+import mok.it.app.mokapp.feature.achievement_detail.AchievementDetailsViewModel
 import mok.it.app.mokapp.model.Achievement
 import mok.it.app.mokapp.model.User
 

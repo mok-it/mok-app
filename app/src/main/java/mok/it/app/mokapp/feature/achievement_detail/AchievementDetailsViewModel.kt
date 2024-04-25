@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.fragments.viewmodels
+package mok.it.app.mokapp.feature.achievement_detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider

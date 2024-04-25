@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.fragments
+package mok.it.app.mokapp.feature.achievement_list
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -14,7 +14,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import mok.it.app.mokapp.compose.achievements.AchievementCard
-import mok.it.app.mokapp.fragments.viewmodels.AchievementListViewModel
 
 class AchievementsFragment : Fragment() {
     private val viewModel: AchievementListViewModel by viewModels()

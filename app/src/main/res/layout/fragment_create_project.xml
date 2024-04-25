@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         app:layout_constrainedHeight="true"
         app:layout_constraintHeight_max="0dp"
-        tools:context=".fragments.CreateProjectFragment">
+        tools:context=".feature.project_create.CreateProjectFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/linearLayout2"

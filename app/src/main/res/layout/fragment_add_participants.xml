@@ -5,7 +5,7 @@
     android:id="@+id/frameLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragments.AdminPanelFragment">
+    tools:context=".feature.project_give_badge.AdminPanelFragment">
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/nonParticipantsList"
@@ -17,8 +17,7 @@
         app:layout_constraintWidth_min="300dp"
         android:layout_marginTop="8dp"
         android:layout_marginBottom="100dp"
-        tools:listitem="@layout/card_select_member"
-        />
+        tools:listitem="@layout/card_select_member" />
 
     <Button
         android:id="@+id/btnAddParticipants"
@@ -28,7 +27,6 @@
         app:layout_constraintTop_toBottomOf="@+id/nonParticipantsList"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-         />
+        app:layout_constraintEnd_toEndOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

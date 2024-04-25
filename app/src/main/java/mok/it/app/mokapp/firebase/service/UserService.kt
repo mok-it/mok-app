@@ -13,6 +13,8 @@ import com.google.firebase.firestore.snapshots
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
 import mok.it.app.mokapp.firebase.FirebaseUserObject
@@ -357,17 +359,14 @@ object UserService {
             }.addOnFailureListener { e -> Log.d(TAG, e.message.toString()) }
     }
 
-    fun getUser(userId: String): LiveData<User> {
-        val user = MutableLiveData<User>()
+    fun getUser(userId: String): Flow<User> =
         Firebase.firestore.collection(Collections.USERS).document(userId)
-            .get()
-            .addOnSuccessListener { document ->
-                if (document != null) {
-                    user.value = document.toObject(User::class.java)
-                }
+            .snapshots()
+            .map { s ->
+                s.toObject(User::class.java)
             }
-        return user
-    }
+            .filterNotNull()
+
 
     fun getAllUsers(): LiveData<List<User>> {
         val usersLiveData = MutableLiveData<List<User>>()

@@ -33,9 +33,11 @@ Jelenleg az alábbi jogosultságok léteznek az appban:
 - **Admin**: Az elmökség és néhány fő appfejlesztő jogosultsága ez. Mindent csinálhat, bármit
   szerkeszthet, még az ajándékokat is. Küldhet értesítéseket a tagoknak
 - **Területvezető**: A terület összes projektjét szerkesztheti, hozhat létre mancsokat
-- **Projektvezető**: A saját projektjeit szerkesztheti
 - **Tag**: Ez az alap jogosultsága mindenkinek. A premökösöket és a mökösöket nem különböztetjük
   meg, mindkettő csoport tagjainak ezt jelenítjük meg
+
+Ezen kívül az adott projekttel kapcsolatos jogai valakinek akkor lehetnek még, ha a projektvezetője
+a projektnek.
 
 ## Disztributálás
 

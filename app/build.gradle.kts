@@ -1,3 +1,5 @@
+import java.util.Date
+
 @Suppress("S6624")
 plugins {
     id("com.android.application")
@@ -18,8 +20,8 @@ android {
         applicationId = "mok.it.app.mokapp"
         minSdk = 26
         targetSdk = 34
-        versionCode = 5
-        versionName = "4.1.1"
+        versionCode = (((Date().time / 1000) - 1451606400) / 10).toInt()
+        versionName = "5.0.0"
 
         testInstrumentationRunner =
             "androidx.test.runner.AndroidJUnitRunner"

@@ -11,7 +11,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
-import mok.it.app.mokapp.composables.achievements.AchievementDetails
+import mok.it.app.mokapp.compose.achievements.AchievementDetails
 import mok.it.app.mokapp.fragments.viewmodels.AchievementDetailsViewModel
 import mok.it.app.mokapp.fragments.viewmodels.AchievementDetailsViewModelFactory
 import mok.it.app.mokapp.model.User
@@ -38,6 +38,7 @@ class AchievementDetailsFragment : Fragment() {
                         achievement!!,
                         owned,
                         owners,
+                        viewModel
                     ) //TODO: he shot me down bang bang
                 }
             }

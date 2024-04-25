@@ -33,7 +33,7 @@ data class User(
     val fcmToken: String = "",
     val nickname: String = "",
     val projectBadges: MutableMap<String, Int> = HashMap(),
-    val achievements: List<String> = ArrayList(),
+    val achievements: MutableMap<String, Int> = HashMap(),
     @Deprecated("Use roleEnum instead")
     var role: String = "",
 ) : Parcelable {

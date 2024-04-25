@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.composables.achievements
+package mok.it.app.mokapp.compose.achievements
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -6,8 +6,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -18,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import mok.it.app.mokapp.R
@@ -69,7 +66,7 @@ fun AchievementCard(owned: Boolean, achievement: Achievement, onClick: () -> Uni
                     }
                 }
                 Text(
-                    text = achievement.description,
+                    text = achievement.levelDescriptions[1] ?: "A leírás nem elérhető",
                     softWrap = true,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis
@@ -77,33 +74,4 @@ fun AchievementCard(owned: Boolean, achievement: Achievement, onClick: () -> Uni
             }
         }
     }
-}
-
-@Preview
-@Composable
-fun cards() {
-    val achievements = listOf(
-        Achievement(
-            name = "Önkéntesség",
-            description = "Önkénteskedj 2 szabadtéri Medve matekversenyen",
-            mandatory = true
-        ),
-        Achievement(
-            name = "Feladatbeküldés",
-            description = "Küldj be legalább 3 feladatot",
-            mandatory = true
-        ),
-        Achievement(
-            name = "Acsi",
-            description = "Ez egy összetetteb acsi, aminek a megszerzéséhez több feladatot kell teljesítend. Először is",
-            mandatory = false
-        ),
-    )
-    LazyColumn {
-        items(achievements) { achievement ->
-            AchievementCard(owned = false, achievement = achievement, onClick = {})
-        }
-        item { AchievementCard(owned = true, achievement = achievements[0], onClick = {}) }
-    }
-
 }

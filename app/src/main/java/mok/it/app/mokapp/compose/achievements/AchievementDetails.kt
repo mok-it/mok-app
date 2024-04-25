@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.composables.achievements
+package mok.it.app.mokapp.compose.achievements
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -32,6 +33,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.fragments.viewmodels.AchievementDetailsViewModel
 import mok.it.app.mokapp.model.Achievement
 import mok.it.app.mokapp.model.User
 
@@ -40,6 +42,7 @@ fun AchievementDetails(
     achievement: Achievement,
     owned: Boolean,
     owners: List<User>,
+    vm: AchievementDetailsViewModel //TODO delete
 ) {
     Surface {
         Column(modifier = Modifier.padding(8.dp)) {
@@ -54,10 +57,10 @@ fun AchievementDetails(
                 )
                 Text(text = achievement.name, style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.weight(1f))
-                TopIcon(owned, achievement.mandatory)
+                TopIcon(owned, achievement.mandatory) { vm.grant(achievement) }
             }
             Text(
-                text = achievement.description,
+                text = achievement.levelDescriptions[1] ?: "A leírás nem elérhető",
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(8.dp)
             )
@@ -71,22 +74,33 @@ fun AchievementDetails(
     }
 }
 
-@Composable
-private fun TopIcon(owned: Boolean, mandatory: Boolean) {
-    if (owned) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_check_mark),
-            contentDescription = "megszerezve",
-            tint = colorResource(id = R.color.green_dark),
-            modifier = Modifier.size(40.dp)
-        )
-    } else if (mandatory) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_exclamation_mark),
-            contentDescription = "kötelező",
-            tint = colorResource(id = R.color.red_dark),
-            modifier = Modifier.size(40.dp)
-        )
+@Composable //TODO delete végtelen gány
+private fun TopIcon(owned: Boolean, mandatory: Boolean, onClick: () -> Unit) {
+    IconButton(onClick = onClick) {
+        if (owned) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_check_mark),
+                contentDescription = "megszerezve",
+                tint = colorResource(id = R.color.green_dark),
+                modifier = Modifier.size(40.dp),
+
+                )
+        } else if (mandatory) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_exclamation_mark),
+                contentDescription = "kötelező",
+                tint = colorResource(id = R.color.red_dark),
+                modifier = Modifier.size(40.dp)
+            )
+        } else {
+            Icon(
+                painter = painterResource(id = R.drawable.about_icon_email),
+                contentDescription = "megszerezve",
+                tint = colorResource(id = R.color.green_dark),
+                modifier = Modifier.size(40.dp)
+            )
+
+        }
     }
 }
 
@@ -183,33 +197,38 @@ private fun MandatoryStatusCard() {
 private fun OwnersGrid(owners: List<User>) {
     LazyVerticalGrid(columns = GridCells.Adaptive(150.dp)) {
         items(owners) { owner ->
-            Card(
+            OwnerCard(owner)
+        }
+    }
+}
+
+@Composable
+private fun OwnerCard(owner: User) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+            .padding(4.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            AsyncImage(
+                model = owner.photoURL,
+                contentDescription = "User's profile picture",
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(4.dp)
-            ) {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.Start
-                ) {
-                    AsyncImage(
-                        model = owner.photoURL,
-                        contentDescription = "Owner's profile picture",
-                        modifier = Modifier
-                            .size(50.dp)
-                            .padding(6.dp)
-                            .clip(CircleShape)
-                    )
-                    Text(
-                        text = owner.name,
-                        softWrap = false,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
+                    .size(50.dp)
+                    .padding(6.dp)
+                    .clip(CircleShape)
+            )
+            Text(
+                text = owner.name,
+                softWrap = false,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleMedium
+            )
         }
     }
 }

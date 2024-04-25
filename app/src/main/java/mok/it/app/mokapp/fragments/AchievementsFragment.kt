@@ -13,7 +13,7 @@ import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
-import mok.it.app.mokapp.composables.achievements.AchievementCard
+import mok.it.app.mokapp.compose.achievements.AchievementCard
 import mok.it.app.mokapp.fragments.viewmodels.AchievementListViewModel
 
 class AchievementsFragment : Fragment() {

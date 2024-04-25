@@ -34,13 +34,12 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.feature.achievement_detail.AchievementDetailsViewModel
-import mok.it.app.mokapp.model.Achievement
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.ui.model.AchievementUi
 
 @Composable
 fun AchievementDetails(
-    achievement: Achievement,
-    owned: Boolean,
+    achievement: AchievementUi,
     owners: List<User>,
     vm: AchievementDetailsViewModel //TODO delete
 ) {
@@ -57,15 +56,15 @@ fun AchievementDetails(
                 )
                 Text(text = achievement.name, style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.weight(1f))
-                TopIcon(owned, achievement.mandatory) { vm.grant(achievement) }
+                TopIcon(achievement) { vm.grant(achievement.id) }
             }
             Text(
-                text = achievement.levelDescriptions[1] ?: "A leírás nem elérhető",
+                text = achievement.description,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(8.dp)
             )
-            if (owned) {
-                OwnedStatusCard()
+            if (achievement.ownedLevel > 0) {
+                OwnedStatusCard(achievement)
                 OwnersGrid(owners)
             } else if (achievement.mandatory) {
                 MandatoryStatusCard()
@@ -75,9 +74,9 @@ fun AchievementDetails(
 }
 
 @Composable //TODO delete végtelen gány
-private fun TopIcon(owned: Boolean, mandatory: Boolean, onClick: () -> Unit) {
+private fun TopIcon(achievement: AchievementUi, onClick: () -> Unit) {
     IconButton(onClick = onClick) {
-        if (owned) {
+        if (achievement.ownedLevel == achievement.maxLevel) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_check_mark),
                 contentDescription = "megszerezve",
@@ -85,7 +84,13 @@ private fun TopIcon(owned: Boolean, mandatory: Boolean, onClick: () -> Unit) {
                 modifier = Modifier.size(40.dp),
 
                 )
-        } else if (mandatory) {
+        } else if (achievement.ownedLevel > 0) {
+            Text(
+                text = "${achievement.ownedLevel}/${achievement.maxLevel}",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(2.dp)
+            )
+        } else if (achievement.mandatory) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_exclamation_mark),
                 contentDescription = "kötelező",
@@ -144,7 +149,7 @@ private fun StatusCard(
 }
 
 @Composable
-private fun OwnedStatusCard() { //TODO: delete param
+private fun OwnedStatusCard(achievement: AchievementUi) { //TODO: delete param
     StatusCard(
         colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.green_light)),
         icon = {
@@ -157,7 +162,16 @@ private fun OwnedStatusCard() { //TODO: delete param
                     .padding(2.dp)
             )
         },
-        text = "Szép munka! Ezt az acsit már megszerezted."
+        text = when {
+            (achievement.ownedLevel == achievement.maxLevel && achievement.maxLevel == 1) ->
+                "Szép munka! Ezt az acsit már megszerezted."
+
+            (achievement.ownedLevel == achievement.maxLevel && achievement.maxLevel > 1) ->
+                "Szép munka! Ennek az acsinak mind a(z) ${achievement.maxLevel} szintjét megszerezted."
+
+            else ->
+                "Az acsi ${achievement.maxLevel} szintjéből már ${achievement.ownedLevel} szintet sikerült megszerezned. Csak így tovább!"
+        }
     )
 //    Card(
 //        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.green_light)),

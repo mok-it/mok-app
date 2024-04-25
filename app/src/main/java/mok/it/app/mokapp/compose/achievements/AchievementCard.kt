@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -19,10 +20,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.model.Achievement
+import mok.it.app.mokapp.ui.model.AchievementUi
 
 @Composable
-fun AchievementCard(owned: Boolean, achievement: Achievement, onClick: () -> Unit) {
+fun AchievementCard(achievement: AchievementUi, onClick: () -> Unit) {
     Card(onClick = onClick, modifier = Modifier.padding(8.dp, 4.dp)) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
@@ -47,7 +48,7 @@ fun AchievementCard(owned: Boolean, achievement: Achievement, onClick: () -> Uni
                         style = MaterialTheme.typography.titleLarge,
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
-                    if (owned) {
+                    if (achievement.ownedLevel == achievement.maxLevel) {
                         Spacer(modifier = Modifier.weight(1f))
                         Icon(
                             painter = painterResource(id = R.drawable.ic_check_mark),
@@ -55,6 +56,19 @@ fun AchievementCard(owned: Boolean, achievement: Achievement, onClick: () -> Uni
                             tint = colorResource(id = R.color.green_dark),
                             modifier = Modifier.size(40.dp)
                         )
+                    } else if (achievement.ownedLevel > 0) {
+                        Spacer(modifier = Modifier.weight(1f))
+                        Card(
+                            modifier = Modifier
+                                .wrapContentSize()
+                                .padding(6.dp)
+                        ) {
+                            Text(
+                                text = "${achievement.ownedLevel}/${achievement.maxLevel}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(2.dp)
+                            )
+                        }
                     } else if (achievement.mandatory) {
                         Spacer(modifier = Modifier.weight(1f))
                         Icon(
@@ -66,7 +80,7 @@ fun AchievementCard(owned: Boolean, achievement: Achievement, onClick: () -> Uni
                     }
                 }
                 Text(
-                    text = achievement.levelDescriptions[1] ?: "A leírás nem elérhető",
+                    text = achievement.description,
                     softWrap = true,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis

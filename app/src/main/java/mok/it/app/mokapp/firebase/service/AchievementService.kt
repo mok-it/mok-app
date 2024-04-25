@@ -7,6 +7,7 @@ import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import mok.it.app.mokapp.model.Achievement
+import mok.it.app.mokapp.model.AchievementEntity
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 
@@ -15,7 +16,7 @@ object AchievementService {
         return Firebase.firestore.collection(Collections.ACHIEVMENTS)
             .snapshots()
             .map { s ->
-                s.toObjects(Achievement::class.java)
+                s.toObjects(AchievementEntity::class.java).map { it.toAchievement() }
             }
     }
 
@@ -23,18 +24,18 @@ object AchievementService {
         return Firebase.firestore.collection(Collections.ACHIEVMENTS).document(id)
             .snapshots()
             .map { s ->
-                s.toObject(Achievement::class.java)
-                    ?: Achievement() //TODO: more sophisticated error handling
+                s.toObject(AchievementEntity::class.java)?.toAchievement()
+                    ?: AchievementEntity().toAchievement() //TODO: more sophisticated error handling
             }
     }
 
-    fun grantAchievement(achievement: Achievement, user: User, level: Int) {
+    fun grantAchievement(achievementId: String, user: User, level: Int) {
         val userDocRef = Firebase.firestore.collection(Collections.USERS).document(user.documentId)
         userDocRef.get()
             .addOnSuccessListener { document ->
                 val ownedAchievements =
                     document.get("achievements") as? MutableMap<String, Int> ?: mutableMapOf()
-                ownedAchievements[achievement.id] = level
+                ownedAchievements[achievementId] = level
                 userDocRef.update("achievements", ownedAchievements)
             }
     }

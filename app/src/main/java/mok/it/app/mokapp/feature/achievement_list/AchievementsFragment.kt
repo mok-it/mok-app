@@ -27,9 +27,9 @@ class AchievementsFragment : Fragment() {
                 Column {
                     LazyColumn {
                         items(achievements) { achievement ->
-                            val owned by viewModel.isOwned(achievement).collectAsState(false)
+//                            val owned by viewModel.isOwned(achievement).collectAsState(false)
                             AchievementCard(
-                                owned = owned,
+//                                owned = owned,
                                 achievement = achievement,
                                 onClick = {
                                     findNavController().navigate(

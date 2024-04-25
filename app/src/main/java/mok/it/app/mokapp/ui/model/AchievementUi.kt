@@ -1,10 +1,11 @@
 package mok.it.app.mokapp.ui.model
 
 data class AchievementUi(
-    var id: String,
-    var name: String = "",
-    var description: String = "",
-    var icon: String = "",
-    var owned: Boolean = false,
+    val id: String,
+    val name: String = "",
+    val description: String = "",
+    val icon: String = "",
+    val ownedLevel: Int = 0,
+    val maxLevel: Int = 1,
     val mandatory: Boolean = false,
 )

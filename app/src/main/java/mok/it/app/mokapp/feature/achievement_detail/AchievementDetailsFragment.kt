@@ -34,7 +34,6 @@ class AchievementDetailsFragment : Fragment() {
                 } else {
                     AchievementDetails(
                         achievement!!,
-                        owned,
                         owners,
                         viewModel
                     ) //TODO: he shot me down bang bang

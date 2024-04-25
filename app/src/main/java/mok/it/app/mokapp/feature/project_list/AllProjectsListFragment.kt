@@ -45,13 +45,13 @@ import com.dokar.chiptextfield.Chip
 import com.dokar.chiptextfield.ChipTextFieldState
 import com.dokar.chiptextfield.rememberChipTextFieldState
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.compose.BadgeIcon
-import mok.it.app.mokapp.compose.SearchField
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.enums.Role
+import mok.it.app.mokapp.ui.compose.BadgeIcon
+import mok.it.app.mokapp.ui.compose.SearchField
 import mok.it.app.mokapp.utility.Utility.unaccent
 
 class AllProjectsListFragment : Fragment() {

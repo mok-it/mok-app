@@ -225,7 +225,7 @@ class DetailsFragment : Fragment() {
                     ) {
                         DataBlock("Kategória", project.categoryEnum)
                         DataBlock(
-                            "Készítő",
+                            "Projektvezető",
                             projectLeader.name
                         )
                         DataBlock(

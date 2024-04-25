@@ -82,7 +82,6 @@ object ProjectService {
             "name" to project.name,
             "maxBadges" to project.maxBadges,
             "overall_progress" to project.overallProgress,
-            "mandatory" to project.mandatory,
         )
 
         Firebase.firestore.collection(Collections.PROJECTS)

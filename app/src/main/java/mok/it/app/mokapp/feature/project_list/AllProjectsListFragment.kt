@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.fragments
+package mok.it.app.mokapp.feature.project_list
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -50,7 +50,6 @@ import mok.it.app.mokapp.compose.SearchField
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
-import mok.it.app.mokapp.fragments.viewmodels.AllProjectsListViewModel
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.enums.Role
 import mok.it.app.mokapp.utility.Utility.unaccent

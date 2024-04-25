@@ -35,7 +35,7 @@
     </fragment>
     <fragment
         android:id="@+id/allProjectsListFragment"
-        android:name="mok.it.app.mokapp.fragments.AllProjectsListFragment"
+        android:name="mok.it.app.mokapp.feature.project_list.AllProjectsListFragment"
         android:label="Az összes Projekt">
         <action
             android:id="@+id/action_allProjectsListFragment_to_detailsFragment"

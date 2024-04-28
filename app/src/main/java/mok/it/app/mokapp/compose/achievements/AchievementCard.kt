@@ -80,7 +80,7 @@ fun AchievementCard(achievement: AchievementUi, onClick: () -> Unit) {
                     }
                 }
                 Text(
-                    text = achievement.description,
+                    text = achievement.currentDescription,
                     softWrap = true,
                     maxLines = 2,
                     overflow = TextOverflow.Ellipsis

@@ -75,13 +75,13 @@ fun AchievementDetails(
                 TopIcon(achievement) { vm.grant(achievement.id) }
             }
             Text(
-                text = achievement.description,
+                text = achievement.currentDescription,
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(8.dp)
             )
             if (achievement.ownedLevel > 0) {
                 OwnedStatusCard(achievement)
-                OwnersGrid(owners)
+                OwnersGrid(achievement, owners)
             } else if (achievement.mandatory) {
                 MandatoryStatusCard()
             }
@@ -203,7 +203,7 @@ private fun MandatoryStatusCard() {
 }
 
 @Composable
-private fun OwnersGrid(ownersByLevel: SortedMap<Int, List<User>>) {
+private fun OwnersGrid(achievement: AchievementUi, ownersByLevel: SortedMap<Int, List<User>>) {
     val dropdownStates = remember {
         mutableStateMapOf<Int, Boolean>().apply {
             ownersByLevel.keys.forEach { key ->
@@ -218,7 +218,12 @@ private fun OwnersGrid(ownersByLevel: SortedMap<Int, List<User>>) {
             ) {
                 Card(onClick = { dropdownStates[level] = !dropdownStates[level]!! }) {
                     Text(
-                        text = "Level $level",
+                        text = "$level. Szint",
+                        style = MaterialTheme.typography.titleSmall,
+                    )
+                    Text(
+                        text = achievement.levelDescriptions[level] ?: "A leírás nem található",
+                        style = MaterialTheme.typography.bodySmall,
                     )
                 }
             }

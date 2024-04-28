@@ -22,7 +22,7 @@ data class Achievement(
             name = name,
             ownedLevel = ownedLevel,
             maxLevel = maxLevel,
-            description = when {
+            currentDescription = when {
                 (levelDescriptions.isEmpty()) -> "pusztulat"
 
                 (ownedLevel == maxLevel) ->
@@ -34,6 +34,7 @@ data class Achievement(
                 else ->
                     levelDescriptions[ownedLevel + 1] ?: "förmedvény"
             },
+            levelDescriptions = levelDescriptions,
             icon = icon,
             mandatory = mandatory,
         )

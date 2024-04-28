@@ -6,30 +6,38 @@ import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapMerge
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.transform
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModelFlow
 import mok.it.app.mokapp.firebase.service.AchievementService
 import mok.it.app.mokapp.model.Achievement
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.ui.model.AchievementUi
+import java.util.SortedMap
 
 class AchievementDetailsViewModel(private val achievementId: String) : ViewModel() {
     fun grant(achievementId: String) {
         AchievementService.grantAchievement(achievementId, userModel, 1)
     }
 
-    private var _achievement: Flow<Achievement> = AchievementService.getAchievement(achievementId)
+    private val _achievement: Flow<Achievement> = AchievementService.getAchievement(achievementId)
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    public val achievement: Flow<AchievementUi>
-        get() = userModelFlow.flatMapMerge { user ->
-            _achievement.map {
-                it.toAchievementUi(user)
-            }
+    val achievement: Flow<AchievementUi> = userModelFlow.flatMapMerge { user ->
+        _achievement.map {
+            it.toAchievementUi(user)
         }
-    private var _owners: Flow<List<User>> = AchievementService.getOwners(achievementId)
-    public val owners: Flow<List<User>> get() = _owners
-    public val owned = userModelFlow.map { it.achievements.contains(achievementId) }
+    }
+
+    private val _owners: Flow<List<User>> = AchievementService.getOwners(achievementId)
+    val owners: Flow<SortedMap<Int, List<User>>> = _owners.transform { users ->
+        val o = sortedMapOf<Int, List<User>>()
+        users.onEach { user ->
+            val level = user.achievements[achievementId] ?: 0
+            o[level] = o[level]?.plus(user) ?: listOf(user)
+        }
+        emit(o)
+    }
 }
 
 class AchievementDetailsViewModelFactory(private val achievementId: String) :

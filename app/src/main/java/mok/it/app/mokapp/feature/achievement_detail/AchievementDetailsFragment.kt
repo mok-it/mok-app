@@ -13,6 +13,7 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import mok.it.app.mokapp.compose.achievements.AchievementDetails
 import mok.it.app.mokapp.model.User
+import java.util.SortedMap
 
 class AchievementDetailsFragment : Fragment() {
     private val args: AchievementDetailsFragmentArgs by navArgs()
@@ -26,9 +27,10 @@ class AchievementDetailsFragment : Fragment() {
     ): View =
         ComposeView(requireContext()).apply {
             setContent {
-                val owners: List<User> by viewModel.owners.collectAsState(emptyList())
+                val owners: SortedMap<Int, List<User>> by viewModel.owners.collectAsState(
+                    sortedMapOf()
+                )
                 val achievement by viewModel.achievement.collectAsState(initial = null)
-                val owned by viewModel.owned.collectAsState(false)
                 if (achievement == null) {
                     Text("Loading...") //TODO show loading screen
                 } else {

@@ -13,37 +13,37 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
-import mok.it.app.mokapp.model.Achievement
+import mok.it.app.mokapp.feature.achievement_create.EditAchievementEvent
+import mok.it.app.mokapp.feature.achievement_create.EditAchievementViewModel
 
 @Composable
-fun EditAchievement(achievement: MutableState<Achievement>) { //TODO: move data and business logic to viewmodel
-    val a by remember { //TODO maybe possible to move up
-        achievement
+fun EditAchievement(viewModel: EditAchievementViewModel) {
+    val achievement by remember { //TODO maybe possible to move up
+        viewModel.achievement
     }
     val levelDescriptions = remember {
         mutableStateListOf("")
     }
     EditRow(
         "Név",
-        a.name,
-        onValueChange = { s -> achievement.value = achievement.value.copy(name = s) }
+        achievement.name,
+        onValueChange = { viewModel.onEvent(EditAchievementEvent.ChangeName(it)) }
     )
     EditListRow(
         levelDescriptions,
     )
     EditRow(
         "Ikon URL-je",
-        achievement.value.icon,
-        onValueChange = { s -> achievement.value = achievement.value.copy(icon = s) }
+        achievement.icon,
+        onValueChange = { viewModel.onEvent(EditAchievementEvent.ChangeIcon(it)) }
     )
     EditBoolean(
         "Kötelező",
-        achievement.value.mandatory,
-        onValueChange = { b -> achievement.value = achievement.value.copy(mandatory = b) }
+        achievement.mandatory,
+        onValueChange = { viewModel.onEvent(EditAchievementEvent.ChangeMandatory(it)) }
     )
 
 }

@@ -39,6 +39,4 @@ data class Achievement(
             mandatory = mandatory,
         )
     }
-
-
 }

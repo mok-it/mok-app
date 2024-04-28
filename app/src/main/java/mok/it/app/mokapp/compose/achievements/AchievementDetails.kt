@@ -1,26 +1,20 @@
 package mok.it.app.mokapp.compose.achievements
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -31,16 +25,11 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateMapOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -51,7 +40,6 @@ import mok.it.app.mokapp.feature.achievement_detail.AchievementDetailsViewModel
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.ui.model.AchievementUi
 import java.util.SortedMap
-import kotlin.math.roundToInt
 
 @Composable
 fun AchievementDetails(
@@ -206,13 +194,14 @@ private fun MandatoryStatusCard() {
 private fun OwnersGrid(achievement: AchievementUi, ownersByLevel: SortedMap<Int, List<User>>) {
     val dropdownStates = remember {
         mutableStateMapOf<Int, Boolean>().apply {
-            ownersByLevel.keys.forEach { key ->
+            achievement.levelDescriptions.keys.forEach { key ->
                 this[key] = false
             }
         }
     }
     LazyVerticalGrid(columns = GridCells.Adaptive(150.dp)) {
-        for ((level, owners) in ownersByLevel) {
+//        for ((level, owners) in ownersByLevel) {
+        for ((level, description) in achievement.levelDescriptions) {
             item(
                 span = { GridItemSpan(maxLineSpan) },
             ) {
@@ -222,14 +211,23 @@ private fun OwnersGrid(achievement: AchievementUi, ownersByLevel: SortedMap<Int,
                         style = MaterialTheme.typography.titleSmall,
                     )
                     Text(
-                        text = achievement.levelDescriptions[level] ?: "A leírás nem található",
+                        text = description,
                         style = MaterialTheme.typography.bodySmall,
                     )
                 }
             }
             if (dropdownStates[level] == true) { //comparing with true because value is nullable
-                items(owners) { user ->
-                    OwnerCard(user)
+                if (ownersByLevel[level].isNullOrEmpty()) {
+                    item(span = { GridItemSpan(maxLineSpan) }) {
+                        Text(
+                            text = "Az egyik tag sem tart ezen a szinten.",
+                            style = MaterialTheme.typography.bodyLarge,
+                        )
+                    }
+                } else {
+                    items(ownersByLevel[level] ?: listOf()) { user ->
+                        OwnerCard(user)
+                    }
                 }
             }
         }
@@ -263,58 +261,6 @@ private fun OwnerCard(owner: User) {
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleMedium
             )
-        }
-    }
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-fun Layout() {
-    val cardOpenStatus = remember { mutableStateOf(List(5) { false }) }
-
-    LazyColumn {
-        itemsIndexed(cardOpenStatus.value) { index, isOpen ->
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        cardOpenStatus.value =
-                            cardOpenStatus.value.mapIndexed { i, b -> if (i == index) !b else b }
-                    }
-                    .padding(4.dp)
-            ) {
-                Column {
-                    Text(text = "Card ${index + 1}", modifier = Modifier.padding(8.dp))
-
-
-                    if (isOpen) {
-                        val padding = 8
-                        val x = LocalContext.current.resources.displayMetrics
-                        val columns by remember { mutableIntStateOf((x.widthPixels / x.density).roundToInt() / 150) }
-                        val width by remember { mutableIntStateOf(((x.widthPixels / x.density).roundToInt() - 24 - (padding * (columns + 1))) / columns) }
-                        FlowRow(
-                            maxItemsInEachRow = columns,
-                            modifier = Modifier
-                                .padding(0.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
-                        ) {
-                            repeat(20) { boxIndex ->
-                                Box(
-                                    modifier = Modifier
-                                        .width(width.dp)
-                                        .padding(padding.dp)
-                                        .background(Color.LightGray)
-                                ) {
-                                    Text(
-                                        text = "Box #${boxIndex + 1}",
-                                        modifier = Modifier.padding(4.dp)
-                                    )
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         }
     }
 }

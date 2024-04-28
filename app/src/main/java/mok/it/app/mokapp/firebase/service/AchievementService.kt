@@ -1,5 +1,6 @@
 package mok.it.app.mokapp.firebase.service
 
+import android.util.Log
 import com.google.firebase.firestore.Filter
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.snapshots
@@ -10,6 +11,7 @@ import mok.it.app.mokapp.model.Achievement
 import mok.it.app.mokapp.model.AchievementEntity
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.utility.Utility.TAG
 
 object AchievementService {
     fun getAchievements(): Flow<List<Achievement>> {
@@ -46,6 +48,18 @@ object AchievementService {
             .snapshots()
             .map { s ->
                 s.toObjects(User::class.java)
+            }
+    }
+
+    fun insertAchievement(achievement: AchievementEntity) {
+        val achievement = achievement.copy(id = "")
+        Firebase.firestore.collection(Collections.ACHIEVMENTS)
+            .add(achievement)
+            .addOnSuccessListener { documentReference ->
+                Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error adding document", e)
             }
     }
 }

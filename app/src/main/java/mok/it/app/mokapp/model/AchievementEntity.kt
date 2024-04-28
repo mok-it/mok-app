@@ -6,7 +6,7 @@ data class AchievementEntity(
     @DocumentId
     val id: String = "",
     val name: String = "",
-    val levelDescriptions: HashMap<String, String> = hashMapOf("1" to "Az acsi betöltése nem sikerült. Kérlek próbáld újra később!"),
+    val levelDescriptions: Map<String, String> = mapOf("1" to "Az acsi betöltése nem sikerült. Kérlek próbáld újra később!"),
     val icon: String = "",
     val mandatory: Boolean = false,
 ) {

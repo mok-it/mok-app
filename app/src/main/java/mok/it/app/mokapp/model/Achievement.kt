@@ -1,5 +1,6 @@
 package mok.it.app.mokapp.model
 
+import android.util.Log
 import com.google.firebase.firestore.DocumentId
 import mok.it.app.mokapp.ui.model.AchievementUi
 import java.util.SortedMap
@@ -38,5 +39,20 @@ data class Achievement(
             icon = icon,
             mandatory = mandatory,
         )
+    }
+
+    fun toAchievementEntity(): AchievementEntity {
+        val r = AchievementEntity(
+            id = id,
+            name = name,
+            levelDescriptions = levelDescriptions.mapKeys { it.key.toString() },
+            icon = icon,
+            mandatory = mandatory,
+        )
+        Log.e(
+            "TAG",
+            "original achievement desc: $levelDescriptions. \ncreated AchievementEntitiy with desc: ${r.levelDescriptions}",
+        )
+        return r
     }
 }

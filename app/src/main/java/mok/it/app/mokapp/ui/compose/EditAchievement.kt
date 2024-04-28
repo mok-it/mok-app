@@ -21,7 +21,7 @@ import mok.it.app.mokapp.feature.achievement_create.EditAchievementViewModel
 
 @Composable
 fun EditAchievement(viewModel: EditAchievementViewModel) {
-    val achievement by remember { //TODO maybe possible to move up
+    val achievement by remember {
         viewModel.achievement
     }
     val levelDescriptions = remember {
@@ -34,6 +34,7 @@ fun EditAchievement(viewModel: EditAchievementViewModel) {
     )
     EditListRow(
         levelDescriptions,
+        onValueChange = { viewModel.onEvent(EditAchievementEvent.ChangeLevelDescriptions(it)) }
     )
     EditRow(
         "Ikon URL-je",
@@ -64,16 +65,16 @@ fun <T> EditRow(
 }
 
 @Composable
-fun <T> EditListRow(values: MutableList<T>) {
+fun <T> EditListRow(values: MutableList<T>, onValueChange: (List<String>) -> Unit) {
     Column {
         values.forEachIndexed { i, t ->
             EditRow("${i + 1}. Szint leírása", t, iconButton = {
                 if (values.size > 1) {
                     IconButton(onClick = {
-                        values.removeAt(i); Log.e(
-                        "TAG",
-                        "EditMapRow: ${values.size}"
-                    )
+                        values.removeAt(i)
+                        onValueChange(values as List<String>)
+                        Log.e("TAG", "EditMapRow: ${values.size}")
+
                     }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
@@ -81,7 +82,7 @@ fun <T> EditListRow(values: MutableList<T>) {
                         )
                     }
                 }
-            }) { s -> values[i] = s as T }
+            }) { values[i] = it as T; onValueChange(values as List<String>) }
         }
 
     }

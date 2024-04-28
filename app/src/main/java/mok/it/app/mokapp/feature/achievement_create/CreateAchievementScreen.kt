@@ -12,7 +12,7 @@ fun CreateAchievementScreen(viewModel: EditAchievementViewModel) {
     Column {
         EditAchievement(viewModel)
         Row {
-            Button(onClick = { viewModel.onEvent(EditAchievementEvent.Create) }) {
+            Button(onClick = { viewModel.onEvent(EditAchievementEvent.Insert) }) {
                 Text(text = "Létrehozás")
             }
             Button(onClick = { /*TODO*/ }) {

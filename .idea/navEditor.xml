@@ -20,6 +20,39 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="achievementDetailsFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="256" />
+                            <option name="y" value="12" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
+                  <entry key="achievementsFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="12" />
+                            <option name="y" value="12" />
+                          </Point>
+                        </option>
+                        <option name="myPositions">
+                          <map>
+                            <entry key="action_achievementsFragment_to_achievementDetailsFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                          </map>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="action_global_loginFragment">
                     <value>
                       <LayoutPositions />
@@ -74,17 +107,17 @@
                         </option>
                         <option name="myPositions">
                           <map>
+                            <entry key="action_allProjectsListFragment_to_achievementsFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
                             <entry key="action_allProjectsListFragment_to_createProjectFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
                             </entry>
                             <entry key="action_allProjectsListFragment_to_detailsFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
-                            <entry key="action_allProjectsListFragment_to_filterDialogFragment">
                               <value>
                                 <LayoutPositions />
                               </value>
@@ -154,11 +187,6 @@
                                 <LayoutPositions />
                               </value>
                             </entry>
-                            <entry key="action_detailsFragment_to_projectMembersDialogFragment">
-                              <value>
-                                <LayoutPositions />
-                              </value>
-                            </entry>
                             <entry key="badge_deeplink">
                               <value>
                                 <LayoutPositions />
@@ -176,18 +204,6 @@
                           <Point>
                             <option name="x" value="884" />
                             <option name="y" value="385" />
-                          </Point>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
-                  <entry key="filterDialogFragment">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="448" />
-                            <option name="y" value="1436" />
                           </Point>
                         </option>
                       </LayoutPositions>
@@ -268,18 +284,6 @@
                       </LayoutPositions>
                     </value>
                   </entry>
-                  <entry key="notificationAdminFragment">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="12" />
-                            <option name="y" value="12" />
-                          </Point>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
                   <entry key="phoneBookFragment">
                     <value>
                       <LayoutPositions>
@@ -299,18 +303,6 @@
                           <Point>
                             <option name="x" value="12" />
                             <option name="y" value="12" />
-                          </Point>
-                        </option>
-                      </LayoutPositions>
-                    </value>
-                  </entry>
-                  <entry key="projectMembersDialogFragment">
-                    <value>
-                      <LayoutPositions>
-                        <option name="myPosition">
-                          <Point>
-                            <option name="x" value="884" />
-                            <option name="y" value="1453" />
                           </Point>
                         </option>
                       </LayoutPositions>

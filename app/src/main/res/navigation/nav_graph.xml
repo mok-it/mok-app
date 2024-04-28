@@ -161,7 +161,7 @@
     <fragment
         android:id="@+id/achievementsFragment"
         android:name="mok.it.app.mokapp.feature.achievement_list.AchievementsFragment"
-        android:label="AchievementsFragment">
+        android:label="Acsik">
         <action
             android:id="@+id/action_achievementsFragment_to_achievementDetailsFragment"
             app:destination="@id/achievementDetailsFragment" />
@@ -169,7 +169,7 @@
     <fragment
         android:id="@+id/achievementDetailsFragment"
         android:name="mok.it.app.mokapp.feature.achievement_detail.AchievementDetailsFragment"
-        android:label="AchievementDetailsFragment">
+        android:label="Acsi adatai">
         <argument
             android:name="achievementId"
             app:argType="string" />

@@ -165,6 +165,9 @@
         <action
             android:id="@+id/action_achievementsFragment_to_achievementDetailsFragment"
             app:destination="@id/achievementDetailsFragment" />
+        <action
+            android:id="@+id/action_achievementsFragment_to_createAchievementFragment"
+            app:destination="@id/createAchievementFragment" />
     </fragment>
     <fragment
         android:id="@+id/achievementDetailsFragment"
@@ -174,4 +177,8 @@
             android:name="achievementId"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/createAchievementFragment"
+        android:name="mok.it.app.mokapp.feature.achievement_create.CreateAchievementFragment"
+        android:label="Acsi létrehozása" />
 </navigation>

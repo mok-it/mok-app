@@ -192,15 +192,15 @@ private fun MandatoryStatusCard() {
 
 @Composable
 private fun OwnersGrid(achievement: AchievementUi, ownersByLevel: SortedMap<Int, List<User>>) {
-    val dropdownStates = remember {
-        mutableStateMapOf<Int, Boolean>().apply {
-            achievement.levelDescriptions.keys.forEach { key ->
-                this[key] = false
+    val dropdownStates =
+        remember { //TODO: move state handling to the card instead of creating a map
+            mutableStateMapOf<Int, Boolean>().apply {
+                achievement.levelDescriptions.keys.forEach { key ->
+                    this[key] = false
+                }
             }
         }
-    }
     LazyVerticalGrid(columns = GridCells.Adaptive(150.dp)) {
-//        for ((level, owners) in ownersByLevel) {
         for ((level, description) in achievement.levelDescriptions) {
             item(
                 span = { GridItemSpan(maxLineSpan) },

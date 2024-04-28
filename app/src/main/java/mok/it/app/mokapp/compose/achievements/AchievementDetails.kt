@@ -33,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -203,17 +204,28 @@ private fun MandatoryStatusCard() {
 
 @Composable
 private fun OwnersGrid(ownersByLevel: SortedMap<Int, List<User>>) {
+    val dropdownStates = remember {
+        mutableStateMapOf<Int, Boolean>().apply {
+            ownersByLevel.keys.forEach { key ->
+                this[key] = false
+            }
+        }
+    }
     LazyVerticalGrid(columns = GridCells.Adaptive(150.dp)) {
         for ((level, owners) in ownersByLevel) {
             item(
                 span = { GridItemSpan(maxLineSpan) },
             ) {
-                Text(
-                    text = "Level $level",
-                )
+                Card(onClick = { dropdownStates[level] = !dropdownStates[level]!! }) {
+                    Text(
+                        text = "Level $level",
+                    )
+                }
             }
-            items(owners) { user ->
-                OwnerCard(user)
+            if (dropdownStates[level] == true) { //comparing with true because value is nullable
+                items(owners) { user ->
+                    OwnerCard(user)
+                }
             }
         }
     }

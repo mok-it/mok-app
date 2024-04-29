@@ -63,6 +63,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.compose.AsyncImage
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.service.CloudMessagingService
@@ -93,16 +94,21 @@ class DetailsFragment : Fragment() {
     ): View {
         setupTopMenu()
         return ComposeView(requireContext()).apply {
-            if (userModel.documentId.isEmpty()) {
-                refreshCurrentUserAndUserModel(requireContext()) {
-                    setContent {
-                        DetailsScreen()
-                    }
-                }
-            } else {
+            loginOrLoad {
                 setContent {
                     DetailsScreen()
                 }
+            }
+        }
+    }
+
+    //hotfix, ezt majd a FirebaseUserObject refaktorálásával ki kéne venni (amúgy is 2 van belőle)
+    private fun loginOrLoad(setComposeContent: () -> Unit) {
+        if (FirebaseUserObject.currentUser == null) {
+            findNavController().navigate(R.id.action_global_loginFragment)
+        } else {
+            refreshCurrentUserAndUserModel(requireContext()) {
+                setComposeContent()
             }
         }
     }

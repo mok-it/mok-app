@@ -64,6 +64,17 @@ class AllProjectsListFragment : Fragment() {
     //    var joined: Boolean = false,
     //    var edited: Boolean = false,
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = ComposeView(requireContext()).apply {
+        loginOrLoad {
+            setContent {
+                AllProjectsListScreen()
+            }
+        }
+    }
+
     @Composable
     fun AllProjectsListScreen() {
         val lazyListState = rememberLazyListState()
@@ -196,17 +207,6 @@ class AllProjectsListFragment : Fragment() {
                 BadgeIcon(
                     badgeNumberText = project.maxBadges.toString(),
                 )
-            }
-        }
-    }
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View = ComposeView(requireContext()).apply {
-        loginOrLoad {
-            setContent {
-                AllProjectsListScreen()
             }
         }
     }

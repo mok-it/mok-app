@@ -93,8 +93,16 @@ class DetailsFragment : Fragment() {
     ): View {
         setupTopMenu()
         return ComposeView(requireContext()).apply {
-            setContent {
-                DetailsScreen()
+            if (userModel.documentId.isEmpty()) {
+                refreshCurrentUserAndUserModel(requireContext()) {
+                    setContent {
+                        DetailsScreen()
+                    }
+                }
+            } else {
+                setContent {
+                    DetailsScreen()
+                }
             }
         }
     }
@@ -157,7 +165,6 @@ class DetailsFragment : Fragment() {
                         JoinAlertDialog(
                             onConfirm = {
                                 joinProject(project)
-                                refreshCurrentUserAndUserModel(requireContext())
                             },
                             onDismiss = {
                                 showDialog = DialogType.NONE
@@ -225,7 +232,7 @@ class DetailsFragment : Fragment() {
                     ) {
                         DataBlock("Kategória", project.categoryEnum)
                         DataBlock(
-                            "Készítő",
+                            "Projektvezető",
                             projectLeader.name
                         )
                         DataBlock(
@@ -354,7 +361,7 @@ class DetailsFragment : Fragment() {
         },
         confirmButton = {
             Button(onClick = { onDismiss() }) {
-                Text("Close")
+                Text(stringResource(R.string.back))
             }
         }
     )
@@ -512,7 +519,6 @@ class DetailsFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
                 refreshCurrentUserAndUserModel(requireContext())
-                UserService.getMembersForProject(args.projectId)
             },
             {
                 Toast.makeText(
@@ -542,7 +548,6 @@ class DetailsFragment : Fragment() {
                 Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT)
                     .show()
                 refreshCurrentUserAndUserModel(requireContext())
-                UserService.getMembersForProject(args.projectId)
             },
             {
                 Toast.makeText(

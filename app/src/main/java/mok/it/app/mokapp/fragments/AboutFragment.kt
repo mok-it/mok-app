@@ -14,7 +14,7 @@ class AboutFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
-        super.onCreate(savedInstanceState)
+        super.onCreateView(inflater, container, savedInstanceState)
         return AboutPage(context)
             .setImage(R.drawable.ic_app_icon)
             .setDescription(getString(R.string.about_description))

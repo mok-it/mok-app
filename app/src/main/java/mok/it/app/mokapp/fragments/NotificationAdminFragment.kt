@@ -82,10 +82,9 @@ class NotificationAdminFragment : Fragment() {
         val projects by viewModel.projects.observeAsState(initial = emptyList())
         val users by viewModel.users.observeAsState(initial = emptyList())
 
-        val usersToSendNotificationTo = viewModel.getUsersToSendNotificationTo()
+        val usersToSendNotificationTo by viewModel.getUsersToSendNotificationTo.observeAsState()
 
-        //TODO data is loaded, but
-        //1 - - the button's text does not change for projects, only for users
+        //TODO the button's text is correctly loading, but it does not change, no matter what
 
         if (uiState.showDialog) {
             AlertDialog(
@@ -107,7 +106,7 @@ class NotificationAdminFragment : Fragment() {
                     Text(
                         stringResource(
                             R.string.notification_confirmation,
-                            usersToSendNotificationTo
+                            usersToSendNotificationTo?.size ?: 0
                         )
                     )
                 })
@@ -179,15 +178,12 @@ class NotificationAdminFragment : Fragment() {
                 ) {
                     Text(
                         "Küldés ennyi embernek: ${
-                            usersToSendNotificationTo.size
-                            //TODO ez nem livedata, ezért biztosan nem fog frissülni a szám, amíg nincs recomposition
-                            // -> mindig, amikor a viewModel.users VAGY a selectedProjects változik, ennek is újra kéne hívódnia (ezért lenne jó a livedata)
+                            usersToSendNotificationTo?.size ?: 0
                         }"
                     )
                 }
             }
         }
-
     }
 
     @Composable

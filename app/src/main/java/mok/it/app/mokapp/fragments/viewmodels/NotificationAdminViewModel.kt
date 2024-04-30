@@ -2,6 +2,7 @@ package mok.it.app.mokapp.fragments.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.asFlow
 import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -35,24 +36,30 @@ class NotificationAdminViewModel : ViewModel() {
         TODO("do not send while developing")
         MyFirebaseMessagingService.sendNotificationToUsers(
             uiState.value.notificationTitle, uiState.value.notificationText,
-            getUsersToSendNotificationTo().toList()
+            getUsersToSendNotificationTo.value?.toList() ?: emptyList()
         )
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getUsersToSendNotificationTo(): MutableSet<User> {
-        return when (uiState.value.selectedOption) {
+    val getUsersToSendNotificationTo: LiveData<List<User>> =
+        when (uiState.value.selectedOption) {
             RadioOption.EVERYONE -> {
-                users.value?.toMutableSet() ?: mutableSetOf()
+                users
             }
 
             RadioOption.EVERYONE_EXCEPT -> {
-                users.value?.toMutableSet()
-                    ?.apply { removeAll(uiState.value.selectedUsers.toSet()) } ?: mutableSetOf()
+                users.asFlow()
+                    .flatMapConcat { allUsers ->
+                        flow {
+                            emit(allUsers.filter { user ->
+                                !uiState.value.selectedUsers.contains(user)
+                            })
+                        }
+                    }.asLiveData()
             }
 
             RadioOption.SPECIFIC_PEOPLE -> {
-                uiState.value.selectedUsers.toMutableSet()
+                flowOf(uiState.value.selectedUsers).asLiveData()
             }
 
             RadioOption.PROJECT_MEMBERS -> {
@@ -65,10 +72,9 @@ class NotificationAdminViewModel : ViewModel() {
                         } else {
                             flowOf(emptyList()) // emit empty list for empty projects
                         }
-                    }.asLiveData().value?.toMutableSet() ?: mutableSetOf()
+                    }.asLiveData()
             }
         }
-    }
 
     fun setNotificationTitle(title: String) {
         _uiState.value = _uiState.value.copy(notificationTitle = title)

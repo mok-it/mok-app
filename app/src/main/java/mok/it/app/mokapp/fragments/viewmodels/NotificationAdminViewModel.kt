@@ -1,11 +1,13 @@
 package mok.it.app.mokapp.fragments.viewmodels
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
@@ -19,35 +21,42 @@ import mok.it.app.mokapp.service.UserService
 
 class NotificationAdminViewModel : ViewModel() {
 
+    private val _uiState = MutableStateFlow(NotificationAdminUiState())
+    val uiState: StateFlow<NotificationAdminUiState> = _uiState.asStateFlow()
+
     val projects: LiveData<List<Project>> = ProjectService.getAllProjects()
     val users: LiveData<List<User>> = UserService.getAllUsers()
-    val selectedProjects = mutableStateListOf<Project>()
 
-    fun sendNotification(title: String, text: String, users: Set<User>) {
-        MyFirebaseMessagingService.sendNotificationToUsers(title, text, users.toList())
+    fun setDialogState(showDialog: Boolean) {
+        _uiState.value = _uiState.value.copy(showDialog = showDialog)
+    }
+
+    fun sendNotification() {
+        TODO("do not send while developing")
+        MyFirebaseMessagingService.sendNotificationToUsers(
+            uiState.value.notificationTitle, uiState.value.notificationText,
+            getUsersToSendNotificationTo().toList()
+        )
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    fun getUsersToSendNotificationTo(
-        selectedOption: RadioOption,
-        selectedUsers: List<User>,
-    ): MutableSet<User> {
-        return when (selectedOption) {
+    fun getUsersToSendNotificationTo(): MutableSet<User> {
+        return when (uiState.value.selectedOption) {
             RadioOption.EVERYONE -> {
                 users.value?.toMutableSet() ?: mutableSetOf()
             }
 
             RadioOption.EVERYONE_EXCEPT -> {
                 users.value?.toMutableSet()
-                    ?.apply { removeAll(selectedUsers.toSet()) } ?: mutableSetOf()
+                    ?.apply { removeAll(uiState.value.selectedUsers.toSet()) } ?: mutableSetOf()
             }
 
             RadioOption.SPECIFIC_PEOPLE -> {
-                selectedUsers.toMutableSet()
+                uiState.value.selectedUsers.toMutableSet()
             }
 
             RadioOption.PROJECT_MEMBERS -> {
-                selectedProjects.asFlow()
+                uiState.value.selectedProjects.asFlow()
                     .flatMapConcat { project ->
                         if (project.members.isNotEmpty()) {
                             flow {
@@ -59,5 +68,37 @@ class NotificationAdminViewModel : ViewModel() {
                     }.asLiveData().value?.toMutableSet() ?: mutableSetOf()
             }
         }
+    }
+
+    fun setNotificationTitle(title: String) {
+        _uiState.value = _uiState.value.copy(notificationTitle = title)
+    }
+
+    fun setNotificationText(text: String) {
+        _uiState.value = _uiState.value.copy(notificationText = text)
+    }
+
+    fun selectedUserClicked(user: User) {
+        val selectedUsers = uiState.value.selectedUsers.toMutableList()
+        if (selectedUsers.contains(user)) {
+            selectedUsers.remove(user)
+        } else {
+            selectedUsers.add(user)
+        }
+        _uiState.value = _uiState.value.copy(selectedUsers = selectedUsers)
+    }
+
+    fun selectedProjectClicked(project: Project) {
+        val selectedProjects = uiState.value.selectedProjects.toMutableList()
+        if (selectedProjects.contains(project)) {
+            selectedProjects.remove(project)
+        } else {
+            selectedProjects.add(project)
+        }
+        _uiState.value = _uiState.value.copy(selectedProjects = selectedProjects)
+    }
+
+    fun onRadioOptionSelected(radioOption: RadioOption) {
+        _uiState.value = _uiState.value.copy(selectedOption = radioOption)
     }
 }

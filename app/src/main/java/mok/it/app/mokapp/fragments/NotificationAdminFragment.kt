@@ -1,7 +1,6 @@
 package mok.it.app.mokapp.fragments
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -29,9 +28,9 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -42,7 +41,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.viewmodel.compose.viewModel
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.fragments.viewmodels.NotificationAdminViewModel
 import mok.it.app.mokapp.model.Project
@@ -66,11 +65,9 @@ class NotificationAdminFragment : Fragment() {
         }
     }
 
-    private val viewModel: NotificationAdminViewModel by viewModels()
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View =
         ComposeView(requireContext()).apply {
             setContent {
@@ -78,44 +75,31 @@ class NotificationAdminFragment : Fragment() {
             }
         }
 
-    //@Preview(showSystemUi = false, showBackground = false, apiLevel = 34)
     @Composable
-    fun BasicForm() {
-        var showDialog by remember { mutableStateOf(false) }
-        var title by remember { mutableStateOf("") }
-        var text by remember { mutableStateOf("") }
-        val selectedUsers = remember { mutableStateListOf<User>() }
-        val selectedProjects = remember { viewModel.selectedProjects }
+    fun BasicForm(viewModel: NotificationAdminViewModel = viewModel()) {
+        val uiState by viewModel.uiState.collectAsState()
 
         val projects by viewModel.projects.observeAsState(initial = emptyList())
         val users by viewModel.users.observeAsState(initial = emptyList())
 
+        val usersToSendNotificationTo = viewModel.getUsersToSendNotificationTo()
+
         //TODO data is loaded, but
         //1 - - the button's text does not change for projects, only for users
 
-        val (selectedOption, onOptionSelected) = remember { mutableStateOf(RadioOption.EVERYONE) }
-
-        if (showDialog) {
-            val usersToSendNotificationTo = viewModel.getUsersToSendNotificationTo(
-                selectedOption,
-                selectedUsers
-            )
+        if (uiState.showDialog) {
             AlertDialog(
-                onDismissRequest = { showDialog = false },
+                onDismissRequest = { viewModel.setDialogState(false) },
                 confirmButton = {
                     Button(onClick = {
-                        viewModel.sendNotification(
-                            title,
-                            text,
-                            usersToSendNotificationTo
-                        )
-                        showDialog = false
+                        viewModel.sendNotification()
+                        viewModel.setDialogState(false)
                     }) {
                         Text(stringResource(R.string.ok))
                     }
                 },
                 dismissButton = {
-                    OutlinedButton(onClick = { showDialog = false }) {
+                    OutlinedButton(onClick = { viewModel.setDialogState(false) }) {
                         Text(stringResource(R.string.cancel))
                     }
                 },
@@ -130,16 +114,16 @@ class NotificationAdminFragment : Fragment() {
         }
         Column(modifier = Modifier.padding(16.dp)) {
             OutlinedTextField(
-                value = title,
-                onValueChange = { title = it },
+                value = uiState.notificationTitle,
+                onValueChange = { viewModel.setNotificationTitle(it) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Cím") },
             )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
-                value = text,
-                onValueChange = { text = it },
+                value = uiState.notificationText,
+                onValueChange = { viewModel.setNotificationText(it) },
                 singleLine = true,
                 modifier = Modifier.fillMaxWidth(),
                 label = { Text("Szöveg") }
@@ -151,44 +135,32 @@ class NotificationAdminFragment : Fragment() {
             ) {
                 RadioOption.entries.forEach { radioOption ->
                     RadioButtonRow(
-                        selectedOption = selectedOption,
+                        selectedOption = uiState.selectedOption,
                         radioOption = radioOption,
-                        onOptionSelected = onOptionSelected
+                        onOptionSelected = viewModel::onRadioOptionSelected
                     )
                 }
                 // if the selected option deals with users
-                if (selectedOption == RadioOption.EVERYONE_EXCEPT
-                    || selectedOption == RadioOption.SPECIFIC_PEOPLE
+                if (uiState.selectedOption == RadioOption.EVERYONE_EXCEPT
+                    || uiState.selectedOption == RadioOption.SPECIFIC_PEOPLE
                 ) {
                     if (users.isNotEmpty()) {
                         MultiSelectList(
                             users as List<Searchable>,
-                            selectedUsers.toMutableSet()
+                            uiState.selectedUsers.toMutableSet()
                         ) { item ->
-                            if (selectedUsers.contains(item)) {
-                                selectedUsers.remove(item)
-                            } else {
-                                selectedUsers.add(item as User)
-                            }
+                            viewModel.selectedUserClicked(item as User)
                         }
                     } else {
                         Text("Nincs elérhető felhasználó")
                     }
-                } else if (selectedOption == RadioOption.PROJECT_MEMBERS) {
+                } else if (uiState.selectedOption == RadioOption.PROJECT_MEMBERS) {
                     if (projects.isNotEmpty()) {
                         MultiSelectList(
                             projects as List<Searchable>,
-                            selectedProjects.toMutableSet()
+                            uiState.selectedProjects.toMutableSet()
                         ) { item ->
-                            if (viewModel.selectedProjects.contains(item)) {
-                                viewModel.selectedProjects.remove(item)
-                            } else {
-                                viewModel.selectedProjects.add(item as Project)
-                            }
-                            Log.d(
-                                "NotificationAdminFragment",
-                                "selectedProjects: ${viewModel.selectedProjects.count()}"
-                            )
+                            viewModel.selectedProjectClicked(item as Project)
                         }
                     } else {
                         Text("Nincs elérhető projekt")
@@ -199,7 +171,7 @@ class NotificationAdminFragment : Fragment() {
                     onClick = {
                         //TODO check the validness of the form fields, i.e. title and text are not empty
 
-                        showDialog = true
+                        viewModel.setDialogState(true)
                     },
                     modifier = Modifier
                         .fillMaxWidth()
@@ -207,10 +179,7 @@ class NotificationAdminFragment : Fragment() {
                 ) {
                     Text(
                         "Küldés ennyi embernek: ${
-                            viewModel.getUsersToSendNotificationTo(
-                                selectedOption,
-                                selectedUsers
-                            ).size
+                            usersToSendNotificationTo.size
                             //TODO ez nem livedata, ezért biztosan nem fog frissülni a szám, amíg nincs recomposition
                             // -> mindig, amikor a viewModel.users VAGY a selectedProjects változik, ennek is újra kéne hívódnia (ezért lenne jó a livedata)
                         }"
@@ -225,7 +194,7 @@ class NotificationAdminFragment : Fragment() {
     fun <T : Searchable> MultiSelectList(
         items: List<T>,
         selectedItems: MutableSet<T>,
-        onItemSelected: (T) -> Unit
+        onItemSelected: (T) -> Unit,
     ) {
         var searchQuery by remember { mutableStateOf("") }
 
@@ -270,7 +239,7 @@ class NotificationAdminFragment : Fragment() {
     private fun <T : Searchable> RadioButtonRow(
         onItemSelected: (T) -> Unit,
         item: T,
-        selectedItems: MutableSet<T>
+        selectedItems: MutableSet<T>,
     ) {
         Row(
             modifier = Modifier
@@ -304,7 +273,7 @@ class NotificationAdminFragment : Fragment() {
     fun RadioButtonRow(
         selectedOption: RadioOption,
         radioOption: RadioOption,
-        onOptionSelected: (RadioOption) -> Unit
+        onOptionSelected: (RadioOption) -> Unit,
     ) {
         Row(
             Modifier

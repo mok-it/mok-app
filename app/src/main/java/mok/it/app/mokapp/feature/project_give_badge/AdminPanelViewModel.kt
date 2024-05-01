@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
-import com.google.firebase.firestore.Query
 import mok.it.app.mokapp.firebase.service.CloudMessagingService
 import mok.it.app.mokapp.firebase.service.ProjectService
 import mok.it.app.mokapp.firebase.service.UserService
@@ -44,14 +43,9 @@ class AdminPanelViewModel(projectId: String) : ViewModel() {
         )
     }
 
-    fun participantsQuery(): Query {
-        return UserService.getParticipantsQuery(
-            project.value!!.members
-        )
-    }
-
+    val members: LiveData<List<User>> = UserService.getMembersForProject(projectId)
     val project: LiveData<Project> = ProjectService.getProjectData(projectId).asLiveData()
-    val userBadges: LiveData<MutableMap<String, Int>> =
+    private val userBadges: LiveData<MutableMap<String, Int>> =
         UserService.getProjectUsersAndBadges(projectId)
 }
 

@@ -32,7 +32,4 @@ object MiscService {
         return linksLiveData
     }
 
-    fun getLinksQuery() =
-        Firebase.firestore.collection(Collections.LINKS)
-            .orderBy("title")
 }

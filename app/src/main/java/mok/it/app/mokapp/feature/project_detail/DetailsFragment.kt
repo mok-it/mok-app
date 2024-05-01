@@ -90,7 +90,7 @@ class DetailsFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         setupTopMenu()
         return ComposeView(requireContext()).apply {
@@ -279,7 +279,7 @@ class DetailsFragment : Fragment() {
                     onClick = {
                         findNavController().navigate(
                             DetailsFragmentDirections.actionDetailsFragmentToAdminPanelFragment(
-                                project
+                                project.id
                             )
                         )
                     }
@@ -309,7 +309,7 @@ class DetailsFragment : Fragment() {
     private fun AdminButton(
         modifier: Modifier, imageVector: ImageVector,
         contentDescription: String,
-        onClick: () -> Unit
+        onClick: () -> Unit,
     ) {
         IconButton(
             modifier = modifier
@@ -331,7 +331,7 @@ class DetailsFragment : Fragment() {
     private fun ProjectMembersDialog(
         members: List<User>,
         onDismiss: () -> Unit,
-        onMemberClick: (User) -> Unit
+        onMemberClick: (User) -> Unit,
     ) = AlertDialog(
         onDismissRequest = { onDismiss() },
         title = { Text("Projekttagok") },
@@ -465,7 +465,7 @@ class DetailsFragment : Fragment() {
     @Composable
     fun ProjectMembers(
         members: List<User>,
-        onMembersClick: () -> Unit
+        onMembersClick: () -> Unit,
     ) {
         val membersToShow = 5
         val displayMembers = members.take(membersToShow)

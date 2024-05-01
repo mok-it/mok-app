@@ -421,14 +421,6 @@ object UserService {
             }
     }
 
-    fun getParticipantsQuery(members: List<String>): Query =
-        Firebase.firestore.collection(Collections.USERS)
-            .orderBy("name", Query.Direction.ASCENDING)
-            .whereIn(
-                FieldPath.documentId(),
-                members
-            ) //NOTE: can not handle lists of size greater than 30
-
     fun getUsersQuery(): Query =
         Firebase.firestore.collection(Collections.USERS)
             .orderBy("name", Query.Direction.ASCENDING)

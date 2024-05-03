@@ -1,10 +1,13 @@
 package mok.it.app.mokapp.model
 
+import android.os.Parcelable
 import android.util.Log
 import com.google.firebase.firestore.DocumentId
+import kotlinx.parcelize.Parcelize
 import mok.it.app.mokapp.ui.model.AchievementUi
 import java.util.SortedMap
 
+@Parcelize
 data class Achievement(
     @DocumentId
     val id: String = "",
@@ -12,7 +15,7 @@ data class Achievement(
     val levelDescriptions: SortedMap<Int, String> = sortedMapOf(1 to "Az acsi betöltése nem sikerült. Kérlek próbáld újra később!"),
     val icon: String = "",
     val mandatory: Boolean = false,
-) {
+) : Parcelable {
     fun toAchievementUi(user: User): AchievementUi {
 
 

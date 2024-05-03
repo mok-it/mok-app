@@ -1,6 +1,5 @@
 package mok.it.app.mokapp.ui.compose
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material.icons.Icons
@@ -25,7 +24,7 @@ fun EditAchievement(viewModel: EditAchievementViewModel) {
         viewModel.achievement
     }
     val levelDescriptions = remember {
-        mutableStateListOf("")
+        mutableStateListOf(*achievement.levelDescriptions.values.toTypedArray())
     }
     EditRow(
         "Név",
@@ -50,22 +49,20 @@ fun EditAchievement(viewModel: EditAchievementViewModel) {
 }
 
 @Composable
-fun <T> EditRow(
+fun EditRow(
     title: String,
-    value: T,
+    value: String,
     iconButton: @Composable (() -> Unit)? = null,
     onValueChange: (String) -> Unit
 ) {
     Row {
-        TextField(value.toString(), onValueChange = onValueChange, label = { Text(text = title) })
-        if (iconButton != null) {
-            iconButton()
-        }
+        TextField(value, onValueChange = onValueChange, label = { Text(text = title) })
+        iconButton?.invoke()
     }
 }
 
 @Composable
-fun <T> EditListRow(values: MutableList<T>, onValueChange: (List<String>) -> Unit) {
+fun EditListRow(values: MutableList<String>, onValueChange: (List<String>) -> Unit) {
     Column {
         values.forEachIndexed { i, t ->
             EditRow("${i + 1}. Szint leírása", t, iconButton = {
@@ -73,8 +70,6 @@ fun <T> EditListRow(values: MutableList<T>, onValueChange: (List<String>) -> Uni
                     IconButton(onClick = {
                         values.removeAt(i)
                         onValueChange(values as List<String>)
-                        Log.e("TAG", "EditMapRow: ${values.size}")
-
                     }) {
                         Icon(
                             imageVector = Icons.Default.Delete,
@@ -82,16 +77,12 @@ fun <T> EditListRow(values: MutableList<T>, onValueChange: (List<String>) -> Uni
                         )
                     }
                 }
-            }) { values[i] = it as T; onValueChange(values as List<String>) }
+            }) { values[i] = it; onValueChange(values as List<String>) }
         }
-
     }
     Button(onClick = {
-        values.add("" as T);
-        Log.e(
-            "TAG", "EditMapRow: ${values.size}",
-        )
-    }) {//TODO: remove unchecked cast
+        values.add("");
+    }) {
         Icon(imageVector = Icons.Default.Add, contentDescription = "Szint hoazzáadása")
     }
 }
@@ -103,7 +94,6 @@ fun EditBoolean(
     onValueChange: (Boolean) -> Unit
 ) {
     Row {
-
         Checkbox(checked = value, onCheckedChange = onValueChange)
         Text(text = title)
     }

@@ -20,6 +20,9 @@ class AchievementDetailsViewModel(private val achievementId: String) : ViewModel
         AchievementService.grantAchievement(achievementId, userModel, 1)
     }
 
+    fun navigateToUpdate() {
+    }
+
     private val _achievement: Flow<Achievement> = AchievementService.getAchievement(achievementId)
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -28,6 +31,7 @@ class AchievementDetailsViewModel(private val achievementId: String) : ViewModel
             it.toAchievementUi(user)
         }
     }
+    val achievementModel: Flow<Achievement> get() = _achievement
 
     private val _owners: Flow<List<User>> = AchievementService.getOwners(achievementId)
     val owners: Flow<SortedMap<Int, List<User>>> = _owners.transform { users ->

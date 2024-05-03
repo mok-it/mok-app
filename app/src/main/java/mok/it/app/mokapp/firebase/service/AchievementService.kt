@@ -62,4 +62,48 @@ object AchievementService {
                 Log.e(TAG, "Error adding document", e)
             }
     }
+
+    fun updateAchievement(achievement: AchievementEntity) { //TODO: update achievements and users in a single transaction
+        Firebase.firestore.collection(Collections.ACHIEVMENTS).document(achievement.id)
+            .set(achievement)
+            .addOnSuccessListener {
+                val maxLevel = achievement.levelDescriptions.keys.maxOrNull()?.toInt()
+                    ?: throw IllegalArgumentException("Achievement has no levels, which should not be possible.")
+                Firebase.firestore.collection(Collections.USERS)
+                    .where(Filter.greaterThan("achievements.${achievement.id}", maxLevel))
+                    .get()
+                    .addOnSuccessListener { querySnapshot ->
+                        val batch = Firebase.firestore.batch()
+                        for (document in querySnapshot.documents) {
+                            val userRef = Firebase.firestore.collection(Collections.USERS)
+                                .document(document.id)
+                            batch.update(userRef, "achievements.${achievement.id}", maxLevel)
+                        }
+                        batch.commit()
+                            .addOnSuccessListener {
+                                Log.d(TAG, "Achievement ${achievement.id} successfully updated!")
+                            }
+                            .addOnFailureListener { e ->
+                                Log.e(TAG, "Error updating Achievement ${achievement.id}", e)
+                            }
+                    }
+                    .addOnFailureListener { e ->
+                        Log.e(TAG, "Error getting users for Achievement ${achievement.id}", e)
+                    }
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error updating Achievement ${achievement.id}", e)
+            }
+    }
+
+    fun deleteAchievement(id: String) {
+        Firebase.firestore.collection(Collections.ACHIEVMENTS).document(id)
+            .delete()
+            .addOnSuccessListener {
+                Log.d(TAG, "Achievement $id successfully deleted!")
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error deleting Achievement $id", e)
+            }
+    }
 }

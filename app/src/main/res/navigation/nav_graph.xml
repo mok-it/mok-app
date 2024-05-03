@@ -176,9 +176,20 @@
         <argument
             android:name="achievementId"
             app:argType="string" />
+        <action
+            android:id="@+id/action_achievementDetailsFragment_to_updateAchievementFragment"
+            app:destination="@id/updateAchievementFragment" />
     </fragment>
     <fragment
         android:id="@+id/createAchievementFragment"
         android:name="mok.it.app.mokapp.feature.achievement_create.CreateAchievementFragment"
         android:label="Acsi létrehozása" />
+    <fragment
+        android:id="@+id/updateAchievementFragment"
+        android:name="mok.it.app.mokapp.feature.achievement_update.UpdateAchievementFragment"
+        android:label="UpdateAchievementFragment">
+        <argument
+            android:name="achievement"
+            app:argType="mok.it.app.mokapp.model.Achievement" />
+    </fragment>
 </navigation>

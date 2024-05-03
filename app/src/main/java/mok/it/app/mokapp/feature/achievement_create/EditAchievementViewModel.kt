@@ -1,16 +1,22 @@
 package mok.it.app.mokapp.feature.achievement_create
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import mok.it.app.mokapp.firebase.service.AchievementService
 import mok.it.app.mokapp.model.Achievement
+import mok.it.app.mokapp.utility.Utility.TAG
 import java.util.SortedMap
 
 class EditAchievementViewModel(
     achievement: Achievement = Achievement(levelDescriptions = sortedMapOf(1 to ""))
 ) : ViewModel() {
     val achievement = mutableStateOf(achievement)
+
+    init {
+        Log.e(TAG, "Created EditAchievementViewModel with $achievement")
+    }
 
     fun onEvent(event: EditAchievementEvent) {
         when (event) {
@@ -29,6 +35,14 @@ class EditAchievementViewModel(
             is EditAchievementEvent.Insert -> {
                 AchievementService.insertAchievement(achievement.value.toAchievementEntity())
             }
+
+            is EditAchievementEvent.Update -> {
+                AchievementService.updateAchievement(achievement.value.toAchievementEntity())
+            }
+
+            is EditAchievementEvent.Delete -> {
+                AchievementService.deleteAchievement(achievement.value.id)
+            }
         }
     }
 }
@@ -40,6 +54,8 @@ sealed class EditAchievementEvent {
     data class ChangeIcon(val icon: String) : EditAchievementEvent()
     data class ChangeMandatory(val mandatory: Boolean) : EditAchievementEvent()
     data object Insert : EditAchievementEvent()
+    data object Update : EditAchievementEvent()
+    data object Delete : EditAchievementEvent()
 }
 
 class EditAchievementViewModelFactory(private val achievement: Achievement) :

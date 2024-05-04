@@ -27,16 +27,10 @@ data class Achievement(
             ownedLevel = ownedLevel,
             maxLevel = maxLevel,
             currentDescription = when {
-                (levelDescriptions.isEmpty()) -> "pusztulat"
-
-                (ownedLevel == maxLevel) ->
-                    levelDescriptions[maxLevel] ?: "dögrovás"
-
-                (ownedLevel == 0) ->
-                    levelDescriptions[1] ?: "rettenet"
-
-                else ->
-                    levelDescriptions[ownedLevel + 1] ?: "förmedvény"
+                (levelDescriptions.isEmpty()) -> null
+                (ownedLevel == maxLevel) -> levelDescriptions[maxLevel]
+                (ownedLevel == 0) -> levelDescriptions[1]
+                else -> levelDescriptions[ownedLevel + 1]
             },
             levelDescriptions = levelDescriptions,
             icon = icon,

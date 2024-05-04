@@ -97,13 +97,40 @@ object AchievementService {
     }
 
     fun deleteAchievement(id: String) {
-        Firebase.firestore.collection(Collections.ACHIEVMENTS).document(id)
-            .delete()
-            .addOnSuccessListener {
-                Log.d(TAG, "Achievement $id successfully deleted!")
-            }
-            .addOnFailureListener { e ->
-                Log.e(TAG, "Error deleting Achievement $id", e)
-            }
+        Firebase.firestore.runTransaction { transaction ->
+            // Get all users who have the achievement
+            Firebase.firestore.collection(Collections.USERS)
+                .whereGreaterThanOrEqualTo("achievements.$id", 0)
+                .get()
+                .addOnSuccessListener {
+                    // For each user, remove the achievement from their achievements map
+                    for (document in it.documents) {
+                        val userRef =
+                            Firebase.firestore.collection(Collections.USERS).document(document.id)
+                        val user = transaction.get(userRef).toObject(User::class.java)
+                        user?.achievements?.remove(id)
+                        transaction.set(userRef, user!!)
+                    }
+                }
+            // Delete the achievement
+            val achievementRef = Firebase.firestore.collection(Collections.ACHIEVMENTS).document(id)
+            transaction.delete(achievementRef)
+        }.addOnSuccessListener {
+            Log.d(TAG, "Achievement $id successfully deleted!")
+        }.addOnFailureListener { e ->
+            Log.e(TAG, "Error deleting Achievement $id", e)
+        }
     }
+
+
+//    fun deleteAchievement(id: String) {
+//        Firebase.firestore.collection(Collections.ACHIEVMENTS).document(id)
+//            .delete()
+//            .addOnSuccessListener {
+//                Log.d(TAG, "Achievement $id successfully deleted!")
+//            }
+//            .addOnFailureListener { e ->
+//                Log.e(TAG, "Error deleting Achievement $id", e)
+//            }
+//    }
 }

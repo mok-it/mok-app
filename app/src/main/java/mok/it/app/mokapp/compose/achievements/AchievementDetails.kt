@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -63,7 +64,8 @@ fun AchievementDetails(
                 TopIcon(achievement) { vm.grant(achievement.id) }
             }
             Text(
-                text = achievement.currentDescription,
+                text = achievement.currentDescription
+                    ?: LocalContext.current.getString(R.string.achievement_missing_description),
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(8.dp)
             )

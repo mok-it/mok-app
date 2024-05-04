@@ -5,7 +5,7 @@ import java.util.SortedMap
 data class AchievementUi(
     val id: String,
     val name: String = "",
-    val currentDescription: String = "Az acsi betöltése nem sikerült. Kérlek próbáld újra később!",
+    val currentDescription: String? = null,
     val levelDescriptions: SortedMap<Int, String> = sortedMapOf(1 to "Az acsi betöltése nem sikerült. Kérlek próbáld újra később!"),
     val icon: String = "",
     val ownedLevel: Int = 0,

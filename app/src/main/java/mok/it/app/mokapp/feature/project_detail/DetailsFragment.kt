@@ -74,6 +74,7 @@ import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.model.enums.Role
 import mok.it.app.mokapp.ui.compose.BadgeIcon
 import mok.it.app.mokapp.ui.compose.DataBlock
+import mok.it.app.mokapp.ui.compose.UserIcon
 import mok.it.app.mokapp.utility.Utility.TAG
 import java.text.DateFormat
 
@@ -345,16 +346,14 @@ class DetailsFragment : Fragment() {
                             .clickable { onMemberClick(member) }
                     ) {
                         Row {
-                            AsyncImage(
-                                // jelenleg nincs elcache-elve ez a kép sem, szóval újra letöltődik, amikor rányomunk a ProjetMembersre
-                                model = member.photoURL,
-                                placeholder = painterResource(id = R.drawable.no_image_icon),
-                                contentDescription = "Member icon",
+                            // jelenleg nincs elcache-elve ez a kép sem, szóval újra letöltődik, amikor rányomunk a ProjetMembersre
+                            UserIcon(
+                                navController = findNavController(),
+                                user = member,
                                 modifier = Modifier
                                     .size(40.dp)
-                                    .clip(CircleShape),
-                                contentScale = ContentScale.Crop,
                             )
+
                             Text(
                                 text = member.name,
                                 style = MaterialTheme.typography.bodyMedium,
@@ -480,15 +479,11 @@ class DetailsFragment : Fragment() {
             horizontalArrangement = Arrangement.spacedBy((-16).dp)
         ) {
             displayMembers.forEach { member ->
-                AsyncImage(
-                    // jelenleg nincs elcache-elve ez a kép, szóval újra letöltődik, amikor átjövünk ide a listázós fragmentből
-                    model = member.photoURL,
-                    placeholder = painterResource(id = R.drawable.no_image_icon),
-                    contentDescription = "Member icon",
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop,
+                // jelenleg nincs elcache-elve ez a kép, szóval újra letöltődik, amikor átjövünk ide a listázós fragmentből
+                UserIcon(
+                    navController = findNavController(), user = member, modifier = Modifier
+                        .size(40.dp),
+                    enableOnClick = false
                 )
             }
 

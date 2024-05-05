@@ -149,4 +149,7 @@
             android:name="projectId"
             app:argType="string" />
     </fragment>
+    <action
+        android:id="@+id/action_global_profileFragment"
+        app:destination="@id/profileFragment" />
 </navigation>

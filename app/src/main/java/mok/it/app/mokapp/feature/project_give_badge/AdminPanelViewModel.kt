@@ -5,6 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import mok.it.app.mokapp.firebase.service.CloudMessagingService
 import mok.it.app.mokapp.firebase.service.ProjectService
 import mok.it.app.mokapp.firebase.service.UserService
@@ -12,7 +15,11 @@ import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.utility.Utility.TAG
 
+data class AdminPanelUiState(val stateModified: Boolean = false)
 class AdminPanelViewModel(projectId: String) : ViewModel() {
+
+    private val _uiState = MutableStateFlow(AdminPanelUiState())
+    val uiState: StateFlow<AdminPanelUiState> = _uiState.asStateFlow()
     fun addBadges(user: User, badgeValue: Int, onException: (Exception) -> Unit) {
         UserService.addBadges(user.documentId,
             project.value!!.id,

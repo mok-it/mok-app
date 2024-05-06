@@ -26,7 +26,7 @@ import kotlin.math.min
 
 object UserService {
     private const val USERDOCNOTFOUND = "User document not found"
-    fun addBadges(
+    fun setProjectBadgesOfUser(
         userId: String,
         badgeId: String,
         badgeAmount: Int,
@@ -57,6 +57,21 @@ object UserService {
             .addOnFailureListener { e ->
                 onFailure.invoke(e)
             }
+    }
+
+    fun setProjectBadgesOfMultipleUsers(
+        userIdToBadgeValueMap: Map<String, Int>,
+        projectId: String,
+    ) {
+        val db = Firebase.firestore
+        val batch = db.batch()
+
+        userIdToBadgeValueMap.forEach { (userId, badgeValue) ->
+            val userDocumentRef = db.collection(Collections.USERS).document(userId)
+            batch.update(userDocumentRef, "projectBadges.$projectId", badgeValue)
+        }
+
+        batch.commit()
     }
 
     fun getBadgeAmountSum(
@@ -109,35 +124,26 @@ object UserService {
             }
     }
 
-    fun getProjectUsersAndBadges(
-        projectId: String,
-    ): LiveData<MutableMap<String, Int>> {
-        val usersAndBadges = MutableLiveData<MutableMap<String, Int>>()
-        val usersCollectionRef = Firebase.firestore.collection(Collections.USERS)
-
-        usersCollectionRef.whereGreaterThan("projectBadges.$projectId", 0)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                val result = mutableMapOf<String, Int>()
-
-                for (document in querySnapshot.documents) {
+    /**
+     * Returns a Flow containing a map of userIds and the amount of badges they collected on the project with the specified projectId.
+     * */
+    fun getProjectUsersAndBadges(projectId: String): Flow<Map<String, Int>> =
+        Firebase.firestore.collection(Collections.USERS)
+            .whereGreaterThanOrEqualTo("projectBadges.$projectId", 0)
+            .snapshots()
+            .map { querySnapshot ->
+                querySnapshot.documents.mapNotNull { document ->
                     val projectBadges = document["projectBadges"] as? Map<String, Long>
-
-                    // Find the badgeAmount for the specified projectId
+                    Log.d(TAG, "projectBadges: $projectBadges of user: ${document["name"]}")
                     val badgeAmount = projectBadges?.get(projectId)?.toInt()
-
-                    // Check if badgeAmount is greater than 0
-                    if (badgeAmount != null && badgeAmount > 0) {
-                        result[document.id] = badgeAmount
+                    if (badgeAmount != null) {
+                        document.id to badgeAmount
+                    } else {
+                        null
                     }
-                }
-                usersAndBadges.value = result
+                }.toMap()
             }
-            .addOnFailureListener { e ->
-                Log.d(TAG, e.message.toString())
-            }
-        return usersAndBadges
-    }
+            .filterNotNull()
 
     fun addUsersToProject(
         projectId: String,

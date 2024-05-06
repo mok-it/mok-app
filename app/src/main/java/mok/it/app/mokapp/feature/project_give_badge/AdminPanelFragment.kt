@@ -5,18 +5,27 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Replay
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.OutlinedIconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
@@ -24,15 +33,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
@@ -61,16 +69,12 @@ class AdminPanelFragment : Fragment() {
         val members by viewModel.members.observeAsState(initial = emptyList())
         val uiState by viewModel.uiState.collectAsState()
 
-        Column(modifier = Modifier.fillMaxSize()) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceEvenly,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(8.dp)
-            ) {
+        Scaffold(
+            bottomBar = {
                 Button(
                     modifier = Modifier
-                        .weight(1f),
+                        .padding(8.dp)
+                        .fillMaxWidth(),
                     onClick = {
                         findNavController().navigate(
                             AdminPanelFragmentDirections
@@ -78,44 +82,73 @@ class AdminPanelFragment : Fragment() {
                         )
                     },
                 ) {
-                    Text(text = "Projekttag hozzáadása")
-                }
-                Button(
-                    modifier = Modifier
-                        .weight(0.5f),
-                    enabled = uiState.stateModified,
-                    onClick = {
-//                    saveEveryUser()
-                    },
-                ) {
-                    Text(text = "Mentés")
-                }
-                OutlinedButton(
-                    modifier = Modifier
-                        .weight(0.5f),
-                    enabled = uiState.stateModified,
-                    onClick = {
-//                    resetEveryUser()
-                    },
-                ) {
-                    Text(text = "Visszaállítás")
+                    Text(text = "Tag hozzáadása")
                 }
             }
-            LazyColumn {
-                items(members) { member ->
-                    MemberSliderCard(member, project)
+        )
+        { padding ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            ) {
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .height(IntrinsicSize.Min),
+                ) {
+                    OutlinedIconButton(
+                        modifier = Modifier
+                            .height(50.dp)
+                            .padding(horizontal = 4.dp)
+                            .weight(0.5f)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(MaterialTheme.colorScheme.surface),
+                        enabled = uiState.stateModified,
+                        onClick = {
+                            viewModel.saveAllUserBadges()
+                            Toast.makeText(
+                                requireContext(),
+                                "Módosítások sikeresen mentve!",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Save,
+                            contentDescription = "Save modifications",
+                        )
+                    }
+                    OutlinedIconButton(
+                        modifier = Modifier
+                            .height(50.dp)
+                            .padding(horizontal = 4.dp)
+                            .weight(0.5f)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(MaterialTheme.colorScheme.surface),
+                        enabled = uiState.stateModified,
+                        onClick = {
+                            viewModel.resetSliderValues()
+                        },
+                    ) {
+                        Icon(
+                            imageVector = Icons.Filled.Replay,
+                            contentDescription = "Reset modifications"
+                        )
+                    }
+                }
+                LazyColumn {
+                    items(members) { member ->
+                        MemberSliderCard(member, project, uiState)
+                    }
                 }
             }
         }
     }
 
     @Composable
-    fun MemberSliderCard(user: User, project: Project) {
-        var sliderValue by remember {
-            mutableFloatStateOf(
-                user.projectBadges[args.projectId]?.toFloat() ?: 0f
-            ) //ez most így elveszik configuration change-eknél, vm-be kéne
-        }
+    fun MemberSliderCard(user: User, project: Project, uiState: AdminPanelUiState) {
         Card(
             modifier = Modifier
                 .fillMaxWidth()
@@ -135,8 +168,10 @@ class AdminPanelFragment : Fragment() {
                 )
 
                 Slider(
-                    value = sliderValue,
-                    onValueChange = { sliderValue = it },
+                    value = uiState.sliderValues.getOrDefault(user.documentId, 0).toFloat(),
+                    onValueChange = {
+                        viewModel.updateSliderValue(user.documentId, it.roundToInt())
+                    },
                     valueRange = 0f..project.maxBadges.toFloat(),
                     steps = project.maxBadges,
                     modifier = Modifier
@@ -150,31 +185,10 @@ class AdminPanelFragment : Fragment() {
                 )
 
                 Text(
-                    text = sliderValue.toInt().toString(),
+                    text = uiState.sliderValues.getOrDefault(user.documentId, 0).toString(),
                     modifier = Modifier.padding(end = 8.dp)
                 )
             }
         }
-    }
-
-    fun saveEveryUser(user: User, value: Float) {
-        //TODO: save every user's badge count
-        viewModel.addBadges(user, value.roundToInt()) {
-            //on error, reset the slider's value to represent the actual value stored
-//            slBadge.setValues(
-//                viewModel.userBadges.value?.get(user.documentId)?.toFloat() ?: 0f
-//            )
-            Toast.makeText(
-                context,
-                "Mancsok módosítása sikertelen. Kérlek, ellenőrizd a kapcsolatot, " +
-                        " vagy próbáld újra később.",
-                Toast.LENGTH_LONG
-            )
-                .show()
-        }
-    }
-
-    fun completed(userId: String, project: Project) { //TODO this should be used somewhere
-        viewModel.projectCompleted(userId, project)
     }
 }

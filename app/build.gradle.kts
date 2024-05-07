@@ -1,6 +1,5 @@
 import java.util.Date
 
-@Suppress("S6624")
 plugins {
     id("com.android.application")
     id("kotlin-android")
@@ -11,6 +10,9 @@ plugins {
 }
 
 android {
+    lint {
+        abortOnError = true
+    }
     signingConfigs {
 
     }
@@ -30,7 +32,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

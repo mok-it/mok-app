@@ -79,7 +79,4 @@ object RewardsService {
             }
     }
 
-    fun getRewardsQuery() =
-        Firebase.firestore.collection(Collections.REWARDS)
-            .orderBy("price", Query.Direction.ASCENDING)
 }

@@ -133,14 +133,13 @@
     <fragment
         android:id="@+id/adminPanelFragment"
         android:name="mok.it.app.mokapp.feature.project_give_badge.AdminPanelFragment"
-        android:label="Adminisztráció"
-        tools:layout="@layout/fragment_admin_panel">
-        <argument
-            android:name="project"
-            app:argType="mok.it.app.mokapp.model.Project" />
+        android:label="Adminisztráció">
         <action
             android:id="@+id/action_adminPanelFragment_to_addParticipantsDialogFragment"
             app:destination="@id/addParticipantsDialogFragment" />
+        <argument
+            android:name="projectId"
+            app:argType="string" />
     </fragment>
     <fragment
         android:id="@+id/addParticipantsDialogFragment"
@@ -150,4 +149,7 @@
             android:name="projectId"
             app:argType="string" />
     </fragment>
+    <action
+        android:id="@+id/action_global_profileFragment"
+        app:destination="@id/profileFragment" />
 </navigation>

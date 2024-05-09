@@ -17,10 +17,6 @@ import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.utility.Utility.TAG
 
 object ProjectService {
-    fun getProjectsQuery() =
-        Firebase.firestore.collection(Collections.PROJECTS)
-            .orderBy("category", Query.Direction.ASCENDING)
-            .orderBy("name", Query.Direction.ASCENDING)
 
     fun getProjectsByIds(
         projectIds: List<String>

@@ -5,7 +5,9 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.asLiveData
-import com.google.firebase.firestore.Query
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import mok.it.app.mokapp.firebase.service.CloudMessagingService
 import mok.it.app.mokapp.firebase.service.ProjectService
 import mok.it.app.mokapp.firebase.service.UserService
@@ -13,46 +15,71 @@ import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.utility.Utility.TAG
 
-class AdminPanelViewModel(projectId: String) : ViewModel() {
-    fun addBadges(user: User, badgeValue: Int, onException: (Exception) -> Unit) {
-        UserService.addBadges(user.documentId,
-            project.value!!.id,
-            badgeValue,
-            {
-                Log.i(
-                    TAG,
-                    "Badge count of user ${user.documentId} on viewModel.project.value!! ${project.value!!.id} was set to $badgeValue"
-                )
-                userBadges.value?.set(user.documentId, badgeValue)
-            },
-            {
-                Log.e(
-                    TAG, "Could not set badge count " +
-                            "on project ${project.value!!.id} for user ${user.documentId}"
-                )
-                onException.invoke(it)
-            })
-    }
+data class AdminPanelUiState(
+    val stateModified: Boolean = false,
+    /**
+     * userId -> badgeValue (on the current project) mapping
+     */
+    val sliderValues: Map<String, Int> = emptyMap(),
+)
 
-    fun projectCompleted(userId: String, project: Project) {
-        UserService.markProjectAsCompletedForUser(project, userId)
+class AdminPanelViewModel(val projectId: String) : ViewModel() {
 
-        CloudMessagingService.sendNotificationToUsersById(
-            "Projekt teljesítve!",
-            "A(z) \"${project.name}\" nevű mancsot sikeresen teljesítetted!",
-            listOf(userId)
-        )
-    }
+    private val _uiState = MutableStateFlow(AdminPanelUiState())
+    val uiState: StateFlow<AdminPanelUiState> = _uiState.asStateFlow()
 
-    fun participantsQuery(): Query {
-        return UserService.getParticipantsQuery(
-            project.value!!.members
-        )
-    }
-
+    val members: LiveData<List<User>> = UserService.getMembersForProject(projectId)
     val project: LiveData<Project> = ProjectService.getProjectData(projectId).asLiveData()
-    val userBadges: LiveData<MutableMap<String, Int>> =
-        UserService.getProjectUsersAndBadges(projectId)
+    private val userBadges: LiveData<Map<String, Int>> =
+        UserService.getProjectUsersAndBadges(projectId).asLiveData()
+
+    init {
+        // Ha egy user megszerzett mancsainak értéke megváltozik, miközben valamelyik slider módosítva lett,
+        // akkor a "reset" gomb furcsán viselkedhet (enabled, de ha rányomsz, a jelenlegi állapotra resetel).
+        // Ez viszont annyira edge case és apróság, hogy jelenleg nem foglalkozunk vele.
+        userBadges.observeForever {
+            _uiState.value = _uiState.value.copy(sliderValues = it)
+            updateStateModified()
+        }
+    }
+
+    private fun updateStateModified() {
+        val isModified = _uiState.value.sliderValues.any { (userId, value) ->
+            userBadges.value?.get(userId) != value
+        } // if any of the of the sliders' value is different from the user's badge count
+        _uiState.value = _uiState.value.copy(stateModified = isModified)
+    }
+
+    fun updateSliderValue(userId: String, value: Int) {
+        _uiState.value = _uiState.value.copy(
+            sliderValues = _uiState.value.sliderValues + (userId to value)
+        )
+        updateStateModified()
+    }
+
+    fun resetSliderValues() {
+        _uiState.value = _uiState.value.copy(
+            sliderValues = userBadges.value ?: emptyMap()
+        )
+        updateStateModified()
+    }
+
+    fun saveAllUserBadges() {
+        UserService.setProjectBadgesOfMultipleUsers(
+            projectId = projectId,
+            userIdToBadgeValueMap = _uiState.value.sliderValues
+        )
+
+        members.value?.let { membersList ->
+            CloudMessagingService.sendNotificationToUsers(
+                title = "Mancso(ka)t kaptál",
+                messageBody = "Gratulálunk! A(z) ${project.value?.name ?: "Ismeretlen nevű"}" +
+                        " projektben ${membersList.size} db mancsot szereztél!",
+                adresseeUserList = membersList
+            )
+        } ?: Log.e(TAG, "Members is null when trying to send notification")
+    }
+
 }
 
 class AdminPanelViewModelFactory(private val projectId: String) : ViewModelProvider.Factory {

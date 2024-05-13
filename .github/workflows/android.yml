@@ -3,7 +3,7 @@ name: Android build & deploy to Play Console CI
 env:
   main_project_module: app
   playstore_name: Mök App
-  keystore_path: ${{ github.workspace }}/keystore.jks
+  keystore_path: ${{ github.workspace }}/mokapp_keystore.jks
   key_props_path: ${{ github.workspace }}/key.properties
 
 on:

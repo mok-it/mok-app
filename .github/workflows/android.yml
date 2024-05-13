@@ -46,22 +46,26 @@ jobs:
       #      - name: Run gradle tests
       #        run: ./gradlew test
 
-      # Decode Android env variables
-      - name: Decode Android keystore
-        run: echo "${{ secrets.ANDROID_KEYSTORE }}" | base64 --decode > ${{ env.keystore_path }}
-
-      - name: Decode Android key properties
-        run: echo "${{ secrets.ANDROID_KEY_PROPERTIES }}" | base64 --decode > ${{ env.key_props_path }}
-
-      # debug: echo the path of the keystore
-      - name: echo keystore path
-        run: echo ${{ env.keystore_path }} ${{ env.key_props_path }}
-        # itt keresi: /home/runner/work/mok-app/mok-app/keystore.properties
-
       # Create Bundle AAB Release
       # Noted for main module build [main_project_module]:bundleRelease
       - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module
         run: ./gradlew ${{ env.main_project_module }}:bundleRelease
+
+      - name: Sign Release
+        uses: r0adkll/sign-android-release@v1.0.4
+        with:
+          releaseDirectory: app/build/outputs/bundle/release
+          signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE }}
+          alias: ${{ secrets.ALIAS }}
+          keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
+
+      - name: Tag Release
+        run: |
+          version_name=${GITHUB_REF##*/}
+          echo "Tagging release with tag $version_name"
+          git tag $version_name release/$version_name
+          git push origin --tags
 
       - name: Upload to Google Play
         uses: r0adkll/upload-google-play@v1.1.3

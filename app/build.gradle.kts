@@ -16,18 +16,6 @@ android {
         abortOnError = true
     }
     signingConfigs {
-        create("release") {
-            try {
-                val keystorePropertiesFile = rootProject.file("keystore.properties")
-                val keystoreProperties = Properties()
-                keystoreProperties.load(FileInputStream(keystorePropertiesFile))
-                keyAlias = keystoreProperties["keyAlias"] as String
-                keyPassword = keystoreProperties["keyPassword"] as String
-                storeFile = file(keystoreProperties["storeFile"] as String)
-                storePassword = keystoreProperties["storePassword"] as String
-            } catch (_: Exception) {
-            }
-        }
     }
     compileSdk = 34
 
@@ -50,7 +38,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {

@@ -53,10 +53,6 @@ jobs:
       - name: Decode Android key properties
         run: echo "${{ secrets.ANDROID_KEY_PROPERTIES }}" | base64 --decode > ${{ env.key_props_path }}
 
-      # Run Build Project
-      - name: Build gradle project
-        run: ./gradlew build
-
       # Create Bundle AAB Release
       # Noted for main module build [main_project_module]:bundleRelease
       - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module

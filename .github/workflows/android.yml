@@ -48,24 +48,17 @@ jobs:
 
       # Create Bundle AAB Release
       # Noted for main module build [main_project_module]:bundleRelease
-      #      - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module
-      #        run: ./gradlew ${{ env.main_project_module }}:bundleRelease
+      - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module
+        run: ./gradlew ${{ env.main_project_module }}:bundleRelease
 
       - name: Sign Release
         uses: r0adkll/sign-android-release@v1.0.4
         with:
-          releaseDirectory: . #app/build/outputs/bundle/release
+          releaseDirectory: app/build/outputs/bundle/release
           signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          #keyPassword: ${{ secrets.KEY_PASSWORD }}
-
-      - name: Tag Release
-        run: |
-          version_name=${GITHUB_REF##*/}
-          echo "Tagging release with tag $version_name"
-          git tag $version_name $version_name
-          git push origin --tags
+          keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Upload to Google Play
         uses: r0adkll/upload-google-play@v1.1.3

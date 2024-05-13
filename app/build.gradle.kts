@@ -1,6 +1,4 @@
-import java.io.FileInputStream
 import java.util.Date
-import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -28,7 +26,6 @@ android {
 
         testInstrumentationRunner =
             "androidx.test.runner.AndroidJUnitRunner"
-        signingConfig = signingConfigs.getByName("debug")
     }
 
     buildTypes {

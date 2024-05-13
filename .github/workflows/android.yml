@@ -58,7 +58,7 @@ jobs:
           signingKeyBase64: ${{ secrets.ANDROID_KEYSTORE }}
           alias: ${{ secrets.ALIAS }}
           keyStorePassword: ${{ secrets.KEY_STORE_PASSWORD }}
-          keyPassword: ${{ secrets.KEY_PASSWORD }}
+          #keyPassword: ${{ secrets.KEY_PASSWORD }}
 
       - name: Tag Release
         run: |

@@ -53,6 +53,11 @@ jobs:
       - name: Decode Android key properties
         run: echo "${{ secrets.ANDROID_KEY_PROPERTIES }}" | base64 --decode > ${{ env.key_props_path }}
 
+      # debug: echo the path of the keystore
+      - name: echo keystore path
+        run: echo ${{ env.keystore_path }} ${{ env.key_props_path }}
+        # itt keresi: /home/runner/work/mok-app/mok-app/keystore.properties
+
       # Create Bundle AAB Release
       # Noted for main module build [main_project_module]:bundleRelease
       - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module

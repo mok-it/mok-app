@@ -34,20 +34,19 @@ exports.createUser = functions.auth.user().onCreate((user) => {
       (result && /MOK/.test(result.mok_status))
     ) {
       // Email is valid, create the user.
-      log("user created", user.email, user.uid);
       db.collection("users")
         .doc(user.uid)
         .set({
           email: user.email,
           name: user.displayName,
-          isCreator: false,
-          admin: false,
           photoURL: user.photoURL,
-          joinedBadges: [],
-          collectedBadges: [],
-          categories: ["Univerzális"],
           phoneNumber: result.phone ? result.phone : "",
+          allBadges: 0,
+          remainingBadges: 0,
+          role: "BASIC_USER",
+          projectBadges: {},
         });
+      log("user created", user.email, user.uid);
     } else {
       // Email is not valid, delete the user.
       return admin.auth().deleteUser(user.uid);

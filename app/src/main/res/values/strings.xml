@@ -124,5 +124,6 @@
     <string name="handle_rewards">Jutalmak kezelése</string>
     <string name="request_reward_contentdescription">Request reward</string>
     <string name="achievement_missing_description">Az acsi leírása nem elérhető, Kérlek próbáld újra később.</string>
+    <string name="delete">törlés</string>
 
 </resources>

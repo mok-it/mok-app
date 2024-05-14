@@ -2,6 +2,8 @@ package mok.it.app.mokapp.ui.compose
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -15,6 +17,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import mok.it.app.mokapp.feature.achievement_create.EditAchievementEvent
 import mok.it.app.mokapp.feature.achievement_create.EditAchievementViewModel
 
@@ -55,15 +60,26 @@ fun EditRow(
     iconButton: @Composable (() -> Unit)? = null,
     onValueChange: (String) -> Unit
 ) {
-    Row {
-        TextField(value, onValueChange = onValueChange, label = { Text(text = title) })
+    Row(
+        modifier = Modifier
+            .padding(6.dp)
+            .fillMaxWidth()
+    )
+    {
+        TextField(
+            value,
+            onValueChange = onValueChange,
+            label = { Text(text = title) },
+            modifier = Modifier
+                .weight(1f)
+        )
         iconButton?.invoke()
     }
 }
 
 @Composable
 fun EditListRow(values: MutableList<String>, onValueChange: (List<String>) -> Unit) {
-    Column {
+    Column(modifier = Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
         values.forEachIndexed { i, t ->
             EditRow("${i + 1}. Szint leírása", t, iconButton = {
                 if (values.size > 1) {
@@ -79,11 +95,11 @@ fun EditListRow(values: MutableList<String>, onValueChange: (List<String>) -> Un
                 }
             }) { values[i] = it; onValueChange(values as List<String>) }
         }
-    }
-    Button(onClick = {
-        values.add("");
-    }) {
-        Icon(imageVector = Icons.Default.Add, contentDescription = "Szint hoazzáadása")
+        Button(onClick = {
+            values.add("");
+        }) {
+            Icon(imageVector = Icons.Default.Add, contentDescription = "Szint hoazzáadása")
+        }
     }
 }
 

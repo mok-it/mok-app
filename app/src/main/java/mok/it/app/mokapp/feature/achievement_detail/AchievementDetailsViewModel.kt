@@ -12,6 +12,7 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.userModelFlow
 import mok.it.app.mokapp.firebase.service.AchievementService
 import mok.it.app.mokapp.model.Achievement
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.model.enums.Role
 import mok.it.app.mokapp.ui.model.AchievementUi
 import java.util.SortedMap
 
@@ -20,9 +21,8 @@ class AchievementDetailsViewModel(private val achievementId: String) : ViewModel
         AchievementService.grantAchievement(achievementId, userModel, 1)
     }
 
-    fun navigateToUpdate() {
-    }
-
+    val isUserAdmin: Boolean
+        get() = userModel.roleAtLeast(Role.ADMIN)
     private val _achievement: Flow<Achievement> = AchievementService.getAchievement(achievementId)
 
     @OptIn(ExperimentalCoroutinesApi::class)

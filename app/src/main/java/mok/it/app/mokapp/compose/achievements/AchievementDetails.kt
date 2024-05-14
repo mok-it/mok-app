@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -46,6 +47,8 @@ import java.util.SortedMap
 fun AchievementDetails(
     achievement: AchievementUi,
     owners: SortedMap<Int, List<User>>,
+    canModify: Boolean,
+    onEditClick: () -> Unit,
     vm: AchievementDetailsViewModel //TODO delete
 ) {
     Surface {
@@ -69,6 +72,17 @@ fun AchievementDetails(
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(8.dp)
             )
+            if (canModify) {
+
+                Button(
+                    onClick = onEditClick,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                ) {
+                    Text(text = "Módosítás")
+                }
+            }
             if (achievement.ownedLevel > 0) {
                 OwnedStatusCard(achievement)
                 OwnersGrid(achievement, owners)

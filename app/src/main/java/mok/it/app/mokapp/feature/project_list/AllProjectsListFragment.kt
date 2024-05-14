@@ -56,6 +56,17 @@ class AllProjectsListFragment : Fragment() {
     //    var joined: Boolean = false,
     //    var edited: Boolean = false,
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View = ComposeView(requireContext()).apply {
+        loginOrLoad {
+            setContent {
+                AllProjectsListScreen()
+            }
+        }
+    }
+
     @Composable
     fun AllProjectsListScreen() {
         val lazyListState = rememberLazyListState()
@@ -156,18 +167,6 @@ class AllProjectsListFragment : Fragment() {
             ),
             onClick = { onClick(project) }
         )
-    }
-
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View = ComposeView(requireContext()).apply {
-        loginOrLoad {
-            setContent {
-                AllProjectsListScreen()
-            }
-        }
     }
 
     private fun loginOrLoad(setComposeContent: () -> Unit) {

@@ -1,15 +1,15 @@
 package mok.it.app.mokapp.model
 
 import android.os.Parcelable
+import android.util.Log
 import com.google.firebase.firestore.DocumentId
 import kotlinx.parcelize.Parcelize
 import mok.it.app.mokapp.model.enums.Role
+import mok.it.app.mokapp.utility.Utility.TAG
 
 /**
  * The user object that is stored in the Firestore database.
  * The fields of the class should exactly match the fields in Firestore DB.
- *
- * @param categories Can't be marked private, but do not use it, use [categoryList] instead.
  */
 @Suppress("DEPRECATION")
 @Parcelize
@@ -38,7 +38,12 @@ data class User(
     var role: String = "",
 ) : Parcelable {
     var roleEnum: Role
-        get() = Role.valueOf(role)
+        get() = try {
+            Role.valueOf(role)
+        } catch (e: IllegalArgumentException) {
+            Log.e(TAG, "Invalid role: $role")
+            Role.BASIC_USER
+        }
         set(value) {
             role = value.name
         }

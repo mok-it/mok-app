@@ -28,22 +28,25 @@ exports.sendNotification = functions.https.onCall(async (data, context) => {
 exports.createUser = functions.auth.user().onCreate((user) => {
   // Check if the user's email matches your desired criteria.
   GetMokMember(user.email).then((result) => {
-    if (result && /MOK/.test(result.mok_status)) {
+    //mokapp71 is a test account required for Google Play
+    if (
+      user.email == "mokapp71@gmail.com" ||
+      (result && /MOK/.test(result.mok_status))
+    ) {
       // Email is valid, create the user.
-      log("user created", user.email, user.uid);
       db.collection("users")
         .doc(user.uid)
         .set({
           email: user.email,
           name: user.displayName,
-          isCreator: false,
-          admin: false,
           photoURL: user.photoURL,
-          joinedBadges: [],
-          collectedBadges: [],
-          categories: ["Univerzális"],
           phoneNumber: result.phone ? result.phone : "",
+          allBadges: 0,
+          remainingBadges: 0,
+          role: "BASIC_USER",
+          projectBadges: {},
         });
+      log("user created", user.email, user.uid);
     } else {
       // Email is not valid, delete the user.
       return admin.auth().deleteUser(user.uid);
@@ -82,7 +85,10 @@ exports.updateOnBadgeCollectionChange = functions.firestore
     const newUser = change.after.data();
 
     // Only update fields if the user got/lost some badges or requested a reward
-    if (oldUser.projectBadges === newUser.projectBadges && oldUser.requestedRewards === newUser.requestedRewards) {
+    if (
+      oldUser.projectBadges === newUser.projectBadges &&
+      oldUser.requestedRewards === newUser.requestedRewards
+    ) {
       return null;
     }
 
@@ -104,7 +110,7 @@ exports.updateOnBadgeCollectionChange = functions.firestore
           .collection("rewards")
           .doc(rewardId)
           .get();
-        
+
         remainingBadges -= rewardDoc.data().price;
       }
       functions.logger.log(

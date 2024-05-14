@@ -93,5 +93,7 @@ lint/tmp/
 .idea/copilot/
 .idea/copilot/chatSessions/
 
+.idea/deploymentTargetSelector.xml
+.idea/sonarlint.xml
 
-.idea/appInsightsSettings.xml
+.idea/other.xml

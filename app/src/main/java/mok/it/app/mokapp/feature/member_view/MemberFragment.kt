@@ -44,7 +44,7 @@ class MemberFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View =
         ComposeView(requireContext()).apply {
             setContent {
@@ -57,7 +57,7 @@ class MemberFragment : Fragment() {
         val viewModel: MemberViewModel by viewModels()
 
         Column {
-            UserCard(args.user)
+            UserCard(args.user, findNavController())
             MutualProjectsOfUsers(userModel, args.user, viewModel) {
                 findNavController().navigate(
                     MemberFragmentDirections.actionMemberFragmentToDetailsFragment(
@@ -73,7 +73,7 @@ class MemberFragment : Fragment() {
         thisUser: User,
         otherUser: User,
         viewModel: MemberViewModel,
-        onProjectClick: (Project) -> Unit
+        onProjectClick: (Project) -> Unit,
     ) {
         val mutualProjectIds =
             thisUser.projectBadges.keys.intersect(otherUser.projectBadges.keys.toSet()).toList()

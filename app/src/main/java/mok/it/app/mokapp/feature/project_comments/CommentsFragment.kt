@@ -10,10 +10,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.Card
@@ -31,7 +29,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.ComposeView
@@ -42,12 +39,12 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import coil.compose.AsyncImage
 import mok.it.app.mokapp.feature.project_detail.DetailsFragmentArgs
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.service.CommentService.addComment
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.ui.compose.UserIcon
 
 class CommentsFragment : Fragment() {
     private val args: DetailsFragmentArgs by navArgs()
@@ -55,7 +52,7 @@ class CommentsFragment : Fragment() {
     private val viewModel: CommentsViewModel by viewModels()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View =
         ComposeView(requireContext()).apply {
             setContent {
@@ -124,14 +121,9 @@ class CommentsFragment : Fragment() {
         ) {
             Column(modifier = Modifier.padding(8.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    AsyncImage(
-                        model = user.photoURL,
-                        contentDescription = "User profile picture",
-                        modifier = Modifier
+                    UserIcon(
+                        navController = findNavController(), user = user, modifier = Modifier
                             .padding(8.dp)
-                            .size(40.dp)
-                            .clip(CircleShape)
-                            .clickable { navigate(user) },
                     )
 
                     Text(

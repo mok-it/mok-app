@@ -6,7 +6,6 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldPath
-import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.snapshots
 import kotlinx.coroutines.flow.Flow
@@ -17,13 +16,9 @@ import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.utility.Utility.TAG
 
 object ProjectService {
-    fun getProjectsQuery() =
-        Firebase.firestore.collection(Collections.PROJECTS)
-            .orderBy("category", Query.Direction.ASCENDING)
-            .orderBy("name", Query.Direction.ASCENDING)
 
     fun getProjectsByIds(
-        projectIds: List<String>
+        projectIds: List<String>,
     ): LiveData<List<Project>> {
         val projectsLiveData = MutableLiveData<List<Project>>()
 
@@ -82,7 +77,6 @@ object ProjectService {
             "name" to project.name,
             "maxBadges" to project.maxBadges,
             "overall_progress" to project.overallProgress,
-            "mandatory" to project.mandatory,
         )
 
         Firebase.firestore.collection(Collections.PROJECTS)

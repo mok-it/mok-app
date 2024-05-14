@@ -50,7 +50,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -64,6 +63,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.compose.AsyncImage
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.service.CloudMessagingService
@@ -74,6 +74,7 @@ import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.model.enums.Role
 import mok.it.app.mokapp.ui.compose.BadgeIcon
 import mok.it.app.mokapp.ui.compose.DataBlock
+import mok.it.app.mokapp.ui.compose.UserIcon
 import mok.it.app.mokapp.utility.Utility.TAG
 import java.text.DateFormat
 
@@ -90,12 +91,25 @@ class DetailsFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         setupTopMenu()
         return ComposeView(requireContext()).apply {
-            setContent {
-                DetailsScreen()
+            loginOrLoad {
+                setContent {
+                    DetailsScreen()
+                }
+            }
+        }
+    }
+
+    //hotfix, ezt majd a FirebaseUserObject refaktorálásával ki kéne venni (amúgy is 2 van belőle)
+    private fun loginOrLoad(setComposeContent: () -> Unit) {
+        if (FirebaseUserObject.currentUser == null) {
+            findNavController().navigate(R.id.action_global_loginFragment)
+        } else {
+            refreshCurrentUserAndUserModel(requireContext()) {
+                setComposeContent()
             }
         }
     }
@@ -105,24 +119,10 @@ class DetailsFragment : Fragment() {
 
     @Composable
     private fun DetailsScreen() {
-        val isPreview = LocalInspectionMode.current
-
         val project by viewModel.project.observeAsState(initial = Project())
-        val creator by viewModel.creatorUser.observeAsState(initial = User())
+        val projectLeader by viewModel.projectLeader.observeAsState(initial = User())
         var showDialog by remember { mutableStateOf(DialogType.NONE) }
-        val members =
-            if (LocalInspectionMode.current) {
-                listOf(
-                    User(name = "Teszt Ödön"),
-                    User(name = "Teszt József"),
-                    User(name = "Teszt Béla"),
-                    User(name = "Teszt Jenő"),
-                    User(name = "Teszt József"),
-                    User(name = "Teszt Béla")
-                )
-            } else {
-                viewModel.members.observeAsState(initial = emptyList()).value
-            }
+        val members = viewModel.members.observeAsState(initial = emptyList()).value
 
         Scaffold(
             bottomBar = {
@@ -133,14 +133,14 @@ class DetailsFragment : Fragment() {
                     onClick = {
 
                         showDialog =
-                            if (isPreview || userModel.projectBadges.contains(args.projectId)) {
+                            if (userModel.projectBadges.contains(args.projectId)) {
                                 DialogType.LEAVE
                             } else {
                                 DialogType.JOIN
                             }
 
                     }) {
-                    if (isPreview || userModel.projectBadges.contains(args.projectId)) {
+                    if (userModel.projectBadges.contains(args.projectId)) {
                         Text("Lecsatlakozás")
                     } else {
                         Text("Csatlakozás")
@@ -172,7 +172,6 @@ class DetailsFragment : Fragment() {
                         JoinAlertDialog(
                             onConfirm = {
                                 joinProject(project)
-                                refreshCurrentUserAndUserModel(requireContext())
                             },
                             onDismiss = {
                                 showDialog = DialogType.NONE
@@ -240,12 +239,8 @@ class DetailsFragment : Fragment() {
                     ) {
                         DataBlock("Kategória", project.categoryEnum)
                         DataBlock(
-                            "Készítő",
-                            if (isPreview) {
-                                "Teszt Jenő"
-                            } else {
-                                creator.name
-                            }
+                            "Projektvezető",
+                            projectLeader.name
                         )
                         DataBlock(
                             "Határidő",
@@ -285,7 +280,7 @@ class DetailsFragment : Fragment() {
                     onClick = {
                         findNavController().navigate(
                             DetailsFragmentDirections.actionDetailsFragmentToAdminPanelFragment(
-                                project
+                                project.id
                             )
                         )
                     }
@@ -315,7 +310,7 @@ class DetailsFragment : Fragment() {
     private fun AdminButton(
         modifier: Modifier, imageVector: ImageVector,
         contentDescription: String,
-        onClick: () -> Unit
+        onClick: () -> Unit,
     ) {
         IconButton(
             modifier = modifier
@@ -337,7 +332,7 @@ class DetailsFragment : Fragment() {
     private fun ProjectMembersDialog(
         members: List<User>,
         onDismiss: () -> Unit,
-        onMemberClick: (User) -> Unit
+        onMemberClick: (User) -> Unit,
     ) = AlertDialog(
         onDismissRequest = { onDismiss() },
         title = { Text("Projekttagok") },
@@ -351,16 +346,14 @@ class DetailsFragment : Fragment() {
                             .clickable { onMemberClick(member) }
                     ) {
                         Row {
-                            AsyncImage(
-                                // jelenleg nincs elcache-elve ez a kép sem, szóval újra letöltődik, amikor rányomunk a ProjetMembersre
-                                model = member.photoURL,
-                                placeholder = painterResource(id = R.drawable.no_image_icon),
-                                contentDescription = "Member icon",
+                            // jelenleg nincs elcache-elve ez a kép sem, szóval újra letöltődik, amikor rányomunk a ProjetMembersre
+                            UserIcon(
+                                navController = findNavController(),
+                                user = member,
                                 modifier = Modifier
                                     .size(40.dp)
-                                    .clip(CircleShape),
-                                contentScale = ContentScale.Crop,
                             )
+
                             Text(
                                 text = member.name,
                                 style = MaterialTheme.typography.bodyMedium,
@@ -373,7 +366,7 @@ class DetailsFragment : Fragment() {
         },
         confirmButton = {
             Button(onClick = { onDismiss() }) {
-                Text("Close")
+                Text(stringResource(R.string.back))
             }
         }
     )
@@ -471,7 +464,7 @@ class DetailsFragment : Fragment() {
     @Composable
     fun ProjectMembers(
         members: List<User>,
-        onMembersClick: () -> Unit
+        onMembersClick: () -> Unit,
     ) {
         val membersToShow = 5
         val displayMembers = members.take(membersToShow)
@@ -486,15 +479,11 @@ class DetailsFragment : Fragment() {
             horizontalArrangement = Arrangement.spacedBy((-16).dp)
         ) {
             displayMembers.forEach { member ->
-                AsyncImage(
-                    // jelenleg nincs elcache-elve ez a kép, szóval újra letöltődik, amikor átjövünk ide a listázós fragmentből
-                    model = member.photoURL,
-                    placeholder = painterResource(id = R.drawable.no_image_icon),
-                    contentDescription = "Member icon",
-                    modifier = Modifier
-                        .size(40.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop,
+                // jelenleg nincs elcache-elve ez a kép, szóval újra letöltődik, amikor átjövünk ide a listázós fragmentből
+                UserIcon(
+                    navController = findNavController(), user = member, modifier = Modifier
+                        .size(40.dp),
+                    enableOnClick = false
                 )
             }
 
@@ -531,7 +520,6 @@ class DetailsFragment : Fragment() {
                     Toast.LENGTH_SHORT
                 ).show()
                 refreshCurrentUserAndUserModel(requireContext())
-                UserService.getMembersForProject(args.projectId)
             },
             {
                 Toast.makeText(
@@ -561,7 +549,6 @@ class DetailsFragment : Fragment() {
                 Toast.makeText(context, "Sikeresen lecsatlakoztál!", Toast.LENGTH_SHORT)
                     .show()
                 refreshCurrentUserAndUserModel(requireContext())
-                UserService.getMembersForProject(args.projectId)
             },
             {
                 Toast.makeText(

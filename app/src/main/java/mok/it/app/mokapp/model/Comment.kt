@@ -10,7 +10,6 @@ data class Comment(
     val collectionId: String = "",
 
     val time: Timestamp = Timestamp.now(),
-
     val userName: String = "",
     val uid: String = "",
     val text: String = "",

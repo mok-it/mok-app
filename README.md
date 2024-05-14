@@ -6,6 +6,11 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=mok-it_mok-app&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=mok-it_mok-app)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=mok-it_mok-app&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=mok-it_mok-app)
 
+## Adatbázisséma
+
+Az adatbázis sémájának leírását a következő fájlban
+találod: [database_scheme.md](database_scheme.md)
+
 ## Mental Model
 
 - Mancs = badge. Mancsnak mondjuk a Mökön belül, de a kódban badge-et használunk (mert a hunglish

@@ -5,7 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import com.google.firebase.Firebase
-import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
@@ -28,12 +27,12 @@ import kotlin.math.min
 
 object UserService {
     private const val USERDOCNOTFOUND = "User document not found"
-    fun addBadges(
+    fun setProjectBadgesOfUser(
         userId: String,
         badgeId: String,
         badgeAmount: Int,
         onComplete: () -> Unit,
-        onFailure: (Exception) -> Unit
+        onFailure: (Exception) -> Unit,
     ) {
         val userDocumentRef = Firebase.firestore.collection(Collections.USERS)
             .document(userId)
@@ -61,10 +60,25 @@ object UserService {
             }
     }
 
+    fun setProjectBadgesOfMultipleUsers(
+        userIdToBadgeValueMap: Map<String, Int>,
+        projectId: String,
+    ) {
+        val db = Firebase.firestore
+        val batch = db.batch()
+
+        userIdToBadgeValueMap.forEach { (userId, badgeValue) ->
+            val userDocumentRef = db.collection(Collections.USERS).document(userId)
+            batch.update(userDocumentRef, "projectBadges.$projectId", badgeValue)
+        }
+
+        batch.commit()
+    }
+
     fun getBadgeAmountSum(
         userId: String,
         onComplete: (Int) -> Unit,
-        onFailure: (Exception) -> Unit
+        onFailure: (Exception) -> Unit,
     ) {
         val userDocumentRef = Firebase.firestore.collection(Collections.USERS)
             .document(userId)
@@ -91,7 +105,7 @@ object UserService {
     fun getProjectBadges(
         userId: String,
         onComplete: (Map<String, Int>) -> Unit,
-        onFailure: (Exception) -> Unit
+        onFailure: (Exception) -> Unit,
     ) {
         val userDocumentRef = Firebase.firestore.collection(Collections.USERS)
             .document(userId)
@@ -111,41 +125,32 @@ object UserService {
             }
     }
 
-    fun getProjectUsersAndBadges(
-        projectId: String,
-    ): LiveData<MutableMap<String, Int>> {
-        val usersAndBadges = MutableLiveData<MutableMap<String, Int>>()
-        val usersCollectionRef = Firebase.firestore.collection(Collections.USERS)
-
-        usersCollectionRef.whereGreaterThan("projectBadges.$projectId", 0)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                val result = mutableMapOf<String, Int>()
-
-                for (document in querySnapshot.documents) {
+    /**
+     * Returns a Flow containing a map of userIds and the amount of badges they collected on the project with the specified projectId.
+     * */
+    fun getProjectUsersAndBadges(projectId: String): Flow<Map<String, Int>> =
+        Firebase.firestore.collection(Collections.USERS)
+            .whereGreaterThanOrEqualTo("projectBadges.$projectId", 0)
+            .snapshots()
+            .map { querySnapshot ->
+                querySnapshot.documents.mapNotNull { document ->
                     val projectBadges = document["projectBadges"] as? Map<String, Long>
-
-                    // Find the badgeAmount for the specified projectId
+                    Log.d(TAG, "projectBadges: $projectBadges of user: ${document["name"]}")
                     val badgeAmount = projectBadges?.get(projectId)?.toInt()
-
-                    // Check if badgeAmount is greater than 0
-                    if (badgeAmount != null && badgeAmount > 0) {
-                        result[document.id] = badgeAmount
+                    if (badgeAmount != null) {
+                        document.id to badgeAmount
+                    } else {
+                        null
                     }
-                }
-                usersAndBadges.value = result
+                }.toMap()
             }
-            .addOnFailureListener { e ->
-                Log.d(TAG, e.message.toString())
-            }
-        return usersAndBadges
-    }
+            .filterNotNull()
 
     fun addUsersToProject(
         projectId: String,
         userIds: List<String>,
         onComplete: () -> Unit,
-        onFailure: (Exception) -> Unit
+        onFailure: (Exception) -> Unit,
     ) {
         val batch = Firebase.firestore.batch()
         val projectDocumentRef = Firebase.firestore
@@ -153,7 +158,6 @@ object UserService {
 
         for (userId in userIds) {
             val userDocumentRef = Firebase.firestore.collection(Collections.USERS).document(userId)
-            batch.update(userDocumentRef, "joinedBadges", FieldValue.arrayUnion(projectId))
             batch.update(projectDocumentRef, "members", FieldValue.arrayUnion(userId))
             batch.update(userDocumentRef, "projectBadges.$projectId", 0)
         }
@@ -171,7 +175,7 @@ object UserService {
         projectId: String,
         userId: String,
         onComplete: () -> Unit,
-        onFailure: (Exception) -> Unit
+        onFailure: (Exception) -> Unit,
     ) {
         val batch = Firebase.firestore.batch()
         val projectDocumentRef = Firebase.firestore
@@ -185,7 +189,6 @@ object UserService {
                 batch.update(userDocumentRef, "projectBadges.$projectId", FieldValue.delete())
                 Log.d(TAG, "Project badges remove from user")
 
-                batch.update(userDocumentRef, "joinedBadges", FieldValue.arrayRemove(projectId))
                 batch.update(projectDocumentRef, "members", FieldValue.arrayRemove(userId))
 
                 batch.commit()
@@ -205,7 +208,7 @@ object UserService {
     data class BadgeData(
         var finishedProjectCount: Int,
         var finishedProjectBadgeSum: Int,
-        var category: Category
+        var category: Category,
     )
 
     fun getBadgeSumForUserInEachCategory(
@@ -270,7 +273,7 @@ object UserService {
     private fun isProjectInCategory(
         projectId: String,
         category: String,
-        onComplete: (Boolean) -> Unit
+        onComplete: (Boolean) -> Unit,
     ) {
         val projectDocumentRef = Firebase.firestore.collection(Collections.PROJECTS)
             .document(projectId)
@@ -331,32 +334,6 @@ object UserService {
                 }
             }
         return mostRecentComment
-    }
-
-    /**
-     * Mark a project as completed for a user
-     * 1. Remove the project from the user's joinedBadges
-     * 2. Add the project to the user's collectedBadges
-     * 3. Remove the user from the project's members
-     * @param project: the project to be marked as completed
-     * @param userId: the user who completed the project
-     */
-    fun markProjectAsCompletedForUser(project: Project, userId: String) {
-        val userRef = Firebase.firestore.collection(Collections.USERS).document(userId)
-        userRef.update("joinedBadges", FieldValue.arrayRemove(project.id))
-            .addOnSuccessListener {
-                userRef.update("collectedBadges", FieldValue.arrayUnion(project.id))
-                    .addOnSuccessListener {
-                        Firebase.firestore.collection(Collections.PROJECTS).document(project.id)
-                            .update("members", FieldValue.arrayRemove(userId))
-                            .addOnCompleteListener {
-                                Log.d(TAG, "member removed from badge's collection")
-                            }
-                            .addOnFailureListener { e ->
-                                Log.d(TAG, e.message.toString())
-                            }
-                    }
-            }.addOnFailureListener { e -> Log.d(TAG, e.message.toString()) }
     }
 
     fun getUser(userId: String): Flow<User> =
@@ -421,14 +398,6 @@ object UserService {
                 Log.d(TAG, "onNewToken: token upload failed", exception)
             }
     }
-
-    fun getParticipantsQuery(members: List<String>): Query =
-        Firebase.firestore.collection(Collections.USERS)
-            .orderBy("name", Query.Direction.ASCENDING)
-            .whereIn(
-                FieldPath.documentId(),
-                members
-            ) //NOTE: can not handle lists of size greater than 30
 
     fun getUsersQuery(): Query =
         Firebase.firestore.collection(Collections.USERS)

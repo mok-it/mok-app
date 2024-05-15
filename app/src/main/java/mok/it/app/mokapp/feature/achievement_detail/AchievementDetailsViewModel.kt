@@ -17,10 +17,6 @@ import mok.it.app.mokapp.ui.model.AchievementUi
 import java.util.SortedMap
 
 class AchievementDetailsViewModel(private val achievementId: String) : ViewModel() {
-    fun grant(achievementId: String) {
-        AchievementService.grantAchievement(achievementId, userModel, 1)
-    }
-
     val isUserAdmin: Boolean
         get() = userModel.roleAtLeast(Role.ADMIN)
     private val _achievement: Flow<Achievement> = AchievementService.getAchievement(achievementId)

@@ -39,18 +39,25 @@ class AchievementDetailsFragment : Fragment() {
                     val achievementModel by viewModel.achievementModel.collectAsState(null)
                     Column { //TODO: delete
                         AchievementDetails(
-                            achievement!!,
+                            achievement!!, //TODO: he shot me down bang bang
                             owners,
                             viewModel.isUserAdmin,
-                            {
+
+                            onEditClick = {
                                 findNavController().navigate(
                                     AchievementDetailsFragmentDirections.actionAchievementDetailsFragmentToUpdateAchievementFragment(
                                         achievementModel!! //TODO he shot me down bang bang, use let block
                                     )
                                 )
                             },
-                            viewModel
-                        ) //TODO: he shot me down bang bang
+                            onGrantClick = {
+                                findNavController().navigate(
+                                    AchievementDetailsFragmentDirections.actionAchievementDetailsFragmentToGrantAchievementFragment(
+                                        achievementModel!!.id //TODO he shot me down bang bang, use let block
+                                    )
+                                )
+                            }
+                        )
                     }
                 }
             }

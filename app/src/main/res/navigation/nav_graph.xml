@@ -173,6 +173,9 @@
         <action
             android:id="@+id/action_achievementDetailsFragment_to_updateAchievementFragment"
             app:destination="@id/updateAchievementFragment" />
+        <action
+            android:id="@+id/action_achievementDetailsFragment_to_grantAchievementFragment"
+            app:destination="@id/grantAchievementFragment" />
     </fragment>
     <fragment
         android:id="@+id/createAchievementFragment"
@@ -189,4 +192,12 @@
     <action
         android:id="@+id/action_global_profileFragment"
         app:destination="@id/profileFragment" />
+    <fragment
+        android:id="@+id/grantAchievementFragment"
+        android:name="mok.it.app.mokapp.feature.achievement_grant.GrantAchievementFragment"
+        android:label="GrantAchievementFragment">
+        <argument
+            android:name="achievementId"
+            app:argType="string" />
+    </fragment>
 </navigation>

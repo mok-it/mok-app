@@ -16,12 +16,13 @@ import androidx.compose.foundation.lazy.grid.GridItemSpan
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -38,8 +39,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.feature.achievement_detail.AchievementDetailsViewModel
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.ui.compose.AdminButton
 import mok.it.app.mokapp.ui.model.AchievementUi
 import java.util.SortedMap
 
@@ -49,22 +50,21 @@ fun AchievementDetails(
     owners: SortedMap<Int, List<User>>,
     canModify: Boolean,
     onEditClick: () -> Unit,
-    vm: AchievementDetailsViewModel //TODO delete
+    onGrantClick: () -> Unit,
 ) {
     Surface {
         Column(modifier = Modifier.padding(8.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 AsyncImage(
-                    //TODO: use achievement.icon instead
-                    model = "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/appfejleszt%C3%A9s.png?alt=media&token=5a404797-8139-4928-85db-f4c69d042db1",
-                    contentDescription = "under construction",
+                    model = achievement.icon,
+                    contentDescription = "Acsi ikonja",
                     modifier = Modifier
                         .size(100.dp)
                         .padding(end = 18.dp)
                 )
                 Text(text = achievement.name, style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.weight(1f))
-                TopIcon(achievement) { vm.grant(achievement.id) }
+                TopIcon(achievement)
             }
             Text(
                 text = achievement.currentDescription
@@ -72,17 +72,9 @@ fun AchievementDetails(
                 style = MaterialTheme.typography.bodyMedium,
                 modifier = Modifier.padding(8.dp)
             )
-            if (canModify) {
 
-                Button(
-                    onClick = onEditClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentHeight()
-                ) {
-                    Text(text = "Módosítás")
-                }
-            }
+            AdminButtonRow(canModify, onEditClick, onGrantClick)
+
             if (achievement.ownedLevel > 0) {
                 OwnedStatusCard(achievement)
                 OwnersGrid(achievement, owners)
@@ -93,39 +85,56 @@ fun AchievementDetails(
     }
 }
 
-@Composable //TODO delete végtelen gány
-private fun TopIcon(achievement: AchievementUi, onClick: () -> Unit) {
-    IconButton(onClick = onClick) {
-        if (achievement.ownedLevel == achievement.maxLevel) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_check_mark),
-                contentDescription = "megszerezve",
-                tint = colorResource(id = R.color.green_dark),
-                modifier = Modifier.size(40.dp),
 
-                )
-        } else if (achievement.ownedLevel > 0) {
-            Text(
-                text = "${achievement.ownedLevel}/${achievement.maxLevel}",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(2.dp)
+@Composable
+private fun AdminButtonRow(canModify: Boolean, onEditClick: () -> Unit, onGrantClick: () -> Unit) {
+    if (canModify) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp)
+        ) {
+            AdminButton(
+                modifier = Modifier.weight(1f),
+                imageVector = Icons.Default.People,
+                contentDescription = "Edit levels",
+                onClick = onGrantClick
             )
-        } else if (achievement.mandatory) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_exclamation_mark),
-                contentDescription = "kötelező",
-                tint = colorResource(id = R.color.red_dark),
-                modifier = Modifier.size(40.dp)
+            AdminButton(
+                modifier = Modifier.weight(1f),
+                imageVector = Icons.Default.Edit,
+                contentDescription = "Edit achievement",
+                onClick = onEditClick
             )
-        } else {
-            Icon(
-                painter = painterResource(id = R.drawable.about_icon_email),
-                contentDescription = "megszerezve",
-                tint = colorResource(id = R.color.green_dark),
-                modifier = Modifier.size(40.dp)
-            )
-
         }
+
+    }
+}
+
+@Composable
+private fun TopIcon(achievement: AchievementUi) {
+    if (achievement.ownedLevel == achievement.maxLevel) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_check_mark),
+            contentDescription = "megszerezve",
+            tint = colorResource(id = R.color.green_dark),
+            modifier = Modifier.size(40.dp),
+
+            )
+    } else if (achievement.ownedLevel > 0) {
+        Text(
+            text = "${achievement.ownedLevel}/${achievement.maxLevel}",
+            style = MaterialTheme.typography.bodyMedium,
+            modifier = Modifier.padding(2.dp)
+        )
+    } else if (achievement.mandatory) {
+        Icon(
+            painter = painterResource(id = R.drawable.ic_exclamation_mark),
+            contentDescription = "kötelező",
+            tint = colorResource(id = R.color.red_dark),
+            modifier = Modifier.size(40.dp)
+        )
     }
 }
 
@@ -163,7 +172,7 @@ private fun StatusCard(
 }
 
 @Composable
-private fun OwnedStatusCard(achievement: AchievementUi) { //TODO: delete param
+private fun OwnedStatusCard(achievement: AchievementUi) {
     StatusCard(
         colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.green_light)),
         icon = {

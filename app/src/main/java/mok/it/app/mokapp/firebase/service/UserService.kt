@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.asLiveData
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
@@ -344,8 +345,7 @@ object UserService {
             }
             .filterNotNull()
 
-
-    fun getAllUsers(): LiveData<List<User>> {
+    fun getAllUsers(): LiveData<List<User>> { //TODO: remove, use getUsers() instead
         val usersLiveData = MutableLiveData<List<User>>()
         Firebase.firestore.collection(Collections.USERS).orderBy("name", Query.Direction.ASCENDING)
             .get()
@@ -360,6 +360,13 @@ object UserService {
                 usersLiveData.value = users
             }
         return usersLiveData
+    }
+
+    fun getUsers(): Flow<List<User>> {
+        return Firebase.firestore.collection(Collections.USERS)
+            .orderBy("name", Query.Direction.ASCENDING)
+            .snapshots()
+            .map { s -> s.toObjects(User::class.java) }
     }
 
     fun updateFcmTokenIfEmptyOrOutdated() {

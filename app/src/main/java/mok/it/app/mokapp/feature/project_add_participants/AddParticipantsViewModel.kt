@@ -11,6 +11,7 @@ class AddParticipantsViewModel(projectId: String) : ViewModel() {
     val project: LiveData<Project> = ProjectService.getProjectData(projectId).asLiveData()
 }
 
+@Suppress("UNCHECKED_CAST")
 class AddParticipantsViewModelFactory(private val projectId: String) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AddParticipantsViewModel::class.java)) {

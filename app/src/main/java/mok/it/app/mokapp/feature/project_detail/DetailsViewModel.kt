@@ -25,6 +25,7 @@ class DetailsViewModel(projectId: String) : ViewModel() {
     val mostRecentComment = UserService.getMostRecentComment(projectId)
 }
 
+@Suppress("UNCHECKED_CAST")
 class DetailsViewModelFactory(private val projectId: String) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(DetailsViewModel::class.java)) {

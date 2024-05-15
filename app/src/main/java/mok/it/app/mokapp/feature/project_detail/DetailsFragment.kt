@@ -31,8 +31,6 @@ import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -47,7 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
@@ -72,6 +69,7 @@ import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.model.enums.Role
+import mok.it.app.mokapp.ui.compose.AdminButton
 import mok.it.app.mokapp.ui.compose.BadgeIcon
 import mok.it.app.mokapp.ui.compose.DataBlock
 import mok.it.app.mokapp.ui.compose.UserIcon
@@ -306,27 +304,6 @@ class DetailsFragment : Fragment() {
         userModel.roleAtLeast(Role.AREA_MANAGER)
                 || project.projectLeader == userModel.documentId
 
-    @Composable
-    private fun AdminButton(
-        modifier: Modifier, imageVector: ImageVector,
-        contentDescription: String,
-        onClick: () -> Unit,
-    ) {
-        IconButton(
-            modifier = modifier
-                .padding(horizontal = 8.dp, vertical = 8.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.primary),
-            onClick = {
-                onClick()
-            }) {
-            Icon(
-                imageVector = imageVector,
-                contentDescription = contentDescription,
-                tint = MaterialTheme.colorScheme.inversePrimary,
-            )
-        }
-    }
 
     @Composable
     private fun ProjectMembersDialog(

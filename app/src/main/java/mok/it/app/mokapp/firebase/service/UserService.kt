@@ -3,7 +3,9 @@ package mok.it.app.mokapp.firebase.service
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.asLiveData
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
@@ -343,22 +345,11 @@ object UserService {
             }
             .filterNotNull()
 
-
-    fun getAllUsers(): LiveData<List<User>> {
-        val usersLiveData = MutableLiveData<List<User>>()
-        Firebase.firestore.collection(Collections.USERS).orderBy("name", Query.Direction.ASCENDING)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                val users = mutableListOf<User>()
-                for (document in querySnapshot.documents) {
-                    val user = document.toObject(User::class.java)
-                    if (user != null) {
-                        users.add(user)
-                    }
-                }
-                usersLiveData.value = users
-            }
-        return usersLiveData
+    fun getUsers(): Flow<List<User>> {
+        return Firebase.firestore.collection(Collections.USERS)
+            .orderBy("name", Query.Direction.ASCENDING)
+            .snapshots()
+            .map { s -> s.toObjects(User::class.java) }
     }
 
     fun updateFcmTokenIfEmptyOrOutdated() {
@@ -402,4 +393,12 @@ object UserService {
         Firebase.firestore.collection(Collections.USERS)
             .orderBy("name", Query.Direction.ASCENDING)
 
+    fun getUsers(userIds: List<String>): LiveData<List<User>> {
+        val ids = userIds.ifEmpty { listOf("_") }
+        return Firebase.firestore.collection(Collections.USERS)
+            .whereIn(FieldPath.documentId(), ids)
+            .snapshots()
+            .map { s -> s.toObjects(User::class.java) }
+            .asLiveData()
+    }
 }

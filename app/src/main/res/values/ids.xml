@@ -9,4 +9,5 @@
     <item name="avatar_imagebutton" type="id" />
     <item name="filter" type="id" />
     <item name="share" type="id" />
+    <item name="delete" type="id" />
 </resources>

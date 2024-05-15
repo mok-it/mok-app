@@ -17,11 +17,14 @@
     <color name="red_dark">#CC1010</color>
     <color name="red_light">#FF6666</color>
 
+    <color name="green_dark">#00AE00</color>
+    <color name="green_light">#7AFA7A</color>
+
     <!-- Medves szinek -->
     <color name="blue">#135FAA</color>
     <color name="blue_dark">#193F90</color>
-    <color name="green">#5ABB9F</color>
-    <color name="green_light">#AADBCF</color>
+    <color name="teal">#5ABB9F</color>
+    <color name="teal_light">#AADBCF</color>
     <color name="yellow">#FFCB00</color>
     <color name="orange">#FF8000</color>
 </resources>

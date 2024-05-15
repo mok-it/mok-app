@@ -5,17 +5,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
@@ -29,18 +24,14 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import coil.compose.AsyncImage
 import com.dokar.chiptextfield.Chip
 import com.dokar.chiptextfield.ChipTextFieldState
 import com.dokar.chiptextfield.rememberChipTextFieldState
@@ -51,6 +42,7 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.enums.Role
 import mok.it.app.mokapp.ui.compose.BadgeIcon
+import mok.it.app.mokapp.ui.compose.ImageItemCard
 import mok.it.app.mokapp.ui.compose.SearchField
 import mok.it.app.mokapp.utility.Utility.unaccent
 
@@ -158,12 +150,12 @@ class AllProjectsListFragment : Fragment() {
 
     @Composable
     fun ProjectItem(project: Project, onClick: (Project) -> Unit) {
-        Card(
-            onClick = { onClick(project) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            shape = RoundedCornerShape(8.dp),
+        ImageItemCard(
+            asyncImageModel = project.icon,
+            asyncImageContentDescription = "Projekt ikon",
+            mainText = project.name,
+            subText = project.description,
+            icon = { BadgeIcon(badgeNumberText = project.maxBadges.toString()) },
             colors = CardColors(
                 containerColor = if (userModel.projectBadges.contains(project.id))
                     Color(0xFF00FF00)
@@ -172,43 +164,9 @@ class AllProjectsListFragment : Fragment() {
                 contentColor = CardDefaults.cardColors().contentColor,
                 disabledContainerColor = CardDefaults.cardColors().disabledContainerColor,
                 disabledContentColor = CardDefaults.cardColors().disabledContentColor,
-            )
-        ) {
-            Row(
-                modifier = Modifier.padding(end = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                AsyncImage(
-                    model = project.icon,
-                    contentDescription = "Project icon",
-                    modifier = Modifier
-                        .size(80.dp)
-                        .padding(8.dp),
-                    contentScale = ContentScale.Fit
-                )
-                Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp)
-                ) {
-                    Text(
-                        text = project.name,
-                        style = MaterialTheme.typography.titleMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                    Text(
-                        text = project.description,
-                        style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-                BadgeIcon(
-                    badgeNumberText = project.maxBadges.toString(),
-                )
-            }
-        }
+            ),
+            onClick = { onClick(project) }
+        )
     }
 
     private fun loginOrLoad(setComposeContent: () -> Unit) {

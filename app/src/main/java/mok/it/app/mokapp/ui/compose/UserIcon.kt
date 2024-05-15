@@ -22,11 +22,6 @@ fun UserIcon(
     modifier: Modifier = Modifier,
     enableOnClick: Boolean = true,
 ) {
-    val navigationDestination = if (userModel.documentId == user.documentId)
-        DetailsFragmentDirections.actionGlobalProfileFragment()
-    else
-        DetailsFragmentDirections.actionGlobalMemberFragment(user)
-
     AsyncImage(
         model = user.photoURL,
         contentDescription = "User Profile Picture",
@@ -34,6 +29,15 @@ fun UserIcon(
         modifier = modifier
             .size(30.dp)
             .clip(CircleShape)
-            .let { if (enableOnClick) it.clickable { navController.navigate(navigationDestination) } else it }
+            .let { if (enableOnClick) it.clickable { navigateToUser(user, navController) } else it }
     )
+}
+
+fun navigateToUser(user: User, navController: NavController) {
+    val navigationDestination = if (userModel.documentId == user.documentId)
+        DetailsFragmentDirections.actionGlobalProfileFragment()
+    else
+        DetailsFragmentDirections.actionGlobalMemberFragment(user)
+
+    navController.navigate(navigationDestination)
 }

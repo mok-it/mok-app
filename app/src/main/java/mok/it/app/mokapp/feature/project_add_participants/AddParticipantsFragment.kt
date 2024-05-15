@@ -1,37 +1,49 @@
 package mok.it.app.mokapp.feature.project_add_participants
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
+import androidx.compose.material3.Checkbox
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import androidx.recyclerview.widget.RecyclerView
-import com.firebase.ui.firestore.FirestoreRecyclerAdapter
-import com.firebase.ui.firestore.FirestoreRecyclerOptions
-import mok.it.app.mokapp.databinding.CardSelectMemberBinding
-import mok.it.app.mokapp.databinding.FragmentAddParticipantsBinding
-import mok.it.app.mokapp.firebase.FirebaseUserObject
-import mok.it.app.mokapp.firebase.service.UserService
-import mok.it.app.mokapp.firebase.service.UserService.getUsersQuery
+import com.dokar.chiptextfield.Chip
+import com.dokar.chiptextfield.ChipTextFieldState
+import com.dokar.chiptextfield.rememberChipTextFieldState
 import mok.it.app.mokapp.model.User
-import mok.it.app.mokapp.ui.recyclerview.SelectMemberViewHolder
-import mok.it.app.mokapp.ui.recyclerview.WrapContentLinearLayoutManager
-import mok.it.app.mokapp.utility.Utility.TAG
-import mok.it.app.mokapp.utility.Utility.loadImage
+import mok.it.app.mokapp.ui.compose.SearchField
+import mok.it.app.mokapp.ui.compose.UserIcon
+import mok.it.app.mokapp.utility.Utility.unaccent
 
 class AddParticipantsFragment : DialogFragment() {
 
     private val args: AddParticipantsFragmentArgs by navArgs()
-    private var selectedUsers: MutableList<String> = mutableListOf()
-    private lateinit var binding: FragmentAddParticipantsBinding
 
     private val viewModel: AddParticipantsViewModel by viewModels {
         AddParticipantsViewModelFactory(args.projectId)
@@ -39,108 +51,126 @@ class AddParticipantsFragment : DialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
-        binding = FragmentAddParticipantsBinding.inflate(inflater, container, false)
-        return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        viewModel.project.observe(viewLifecycleOwner) {
-            FirebaseUserObject.refreshCurrentUserAndUserModel(requireContext()) {
-                initLayout()
-                initRecyclerView()
-            }
+        savedInstanceState: Bundle?,
+    ): View = ComposeView(requireContext()).apply {
+        setContent {
+            AddParticipantsScreen(viewModel)
         }
     }
 
-    private fun showToastMessage(message: String) {
-        Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
-    }
+    @Composable
+    fun AddParticipantsScreen(viewModel: AddParticipantsViewModel) {
+        val uiState by viewModel.uiState.collectAsState()
 
-    private fun handleUserJoiningError(exception: Exception) {
-        Log.e(TAG, "Error adding users to project ${viewModel.project.value!!.id}", exception)
-        showToastMessage("A résztvevők hozzáadása sikertelen, kérlek, próbáld újra később.")
-        binding.btnAddParticipants.isEnabled = true
-    }
+        val chipState = rememberChipTextFieldState<Chip>()
+        var searchQuery by remember { mutableStateOf("") }
+        val filteredUsers = getFilteredUsers(searchQuery, chipState, uiState.selectedUsers)
 
-    private fun handleUserJoiningSuccess() {
-        Log.i(TAG, "Adding ${selectedUsers.size} users to project ${viewModel.project.value!!.id}")
-        showToastMessage("Résztvevők hozzáadva!")
-        findNavController().popBackStack()
-    }
+        Scaffold(
+            bottomBar = {
+                Button(
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth(),
+                    enabled = uiState.selectedUsersChanged, onClick = {
+                        viewModel.setMembersOfProject()
+                        Toast.makeText(context, "Résztvevők listája módosítva!", Toast.LENGTH_SHORT)
+                            .show()
+                    }) {
+                    Text(text = "Mentés")
+                }
+            },
+        ) { padding ->
+            Column(
+                modifier = Modifier.padding(bottom = padding.calculateBottomPadding())
+            ) {
+                SearchField(
+                    searchQuery = searchQuery,
+                    chipState = chipState,
+                    onValueChange = { searchQuery = it },
+                )
 
-    private fun initLayout() {
-        binding.btnAddParticipants.setOnClickListener {
-            if (selectedUsers.isEmpty()) {
-                showToastMessage("Előbb válassz résztvevőket a listából!")
-                return@setOnClickListener
-            }
-            binding.btnAddParticipants.isEnabled = false
-            UserService.addUsersToProject(
-                viewModel.project.value!!.id,
-                selectedUsers,
-                ::handleUserJoiningSuccess,
-                ::handleUserJoiningError
-            )
-        }
-    }
-
-    private fun setViewHolderData(holder: SelectMemberViewHolder, user: User) {
-        val tvName: TextView = holder.binding.memberName
-        val ivImg: ImageView = holder.binding.memberPicture
-        val cbSelect: CheckBox = holder.binding.memberSelect
-        tvName.text = user.name
-        loadImage(ivImg, user.photoURL, requireContext())
-        cbSelect.setOnCheckedChangeListener(null)
-        if (user.projectBadges.contains(viewModel.project.value?.id)) {
-            cbSelect.isEnabled = false
-            cbSelect.isChecked = true
-        } else {
-            cbSelect.isEnabled = true
-            cbSelect.isChecked = selectedUsers.contains(user.documentId)
-            cbSelect.setOnCheckedChangeListener { _, enabled ->
-                if (enabled) {
-                    selectedUsers.add(user.documentId)
+                if (filteredUsers.isNotEmpty()) {
+                    LazyColumn {
+                        items(filteredUsers) { user ->
+                            UserRow(
+                                user,
+                                uiState.selectedUsers.contains(user.documentId),
+                            ) { _ ->
+                                viewModel.userSelectionClicked(user)
+                            }
+                        }
+                    }
                 } else {
-                    selectedUsers.remove(user.documentId)
+                    Text(
+                        text = "Nincsenek a feltételeknek megfelelő tagok",
+                        modifier = Modifier.padding(16.dp),
+                        style = MaterialTheme.typography.headlineSmall,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
                 }
             }
         }
     }
 
-    private fun getAdapter(): FirestoreRecyclerAdapter<User, SelectMemberViewHolder> {
-        val query = getUsersQuery()
-        val options =
-            FirestoreRecyclerOptions.Builder<User>().setQuery(query, User::class.java)
-                .setLifecycleOwner(this).build()
-        return object : FirestoreRecyclerAdapter<User, SelectMemberViewHolder>(options) {
-            override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-                SelectMemberViewHolder(
-                    CardSelectMemberBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent,
-                        false
-                    )
-                )
-
-            override fun onBindViewHolder(
-                holder: SelectMemberViewHolder,
-                position: Int,
-                user: User
-            ) {
-                setViewHolderData(holder, user)
-            }
+    @Composable
+    fun UserRow(
+        user: User,
+        isSelected: Boolean,
+        onCheckedChange: (Boolean) -> Unit,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+                .clickable
+                {
+                    onCheckedChange(!isSelected)
+                }
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            UserIcon(user = user, navController = findNavController())
+            Text(
+                text = user.name,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                    .padding(start = 16.dp)
+                    .weight(1f)
+            )
+            Checkbox(
+                checked = isSelected,
+                onCheckedChange = null // Accessibility: 'selectable' handles state
+            )
         }
     }
 
-    private fun initRecyclerView() {
-        val adapter = getAdapter()
-        adapter.stateRestorationPolicy =
-            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+    @Composable
+    private fun getFilteredUsers(
+        searchQuery: String,
+        chipState: ChipTextFieldState<Chip>,
+        selectedUserIds: List<String>,
+    ) = viewModel.users.observeAsState().value?.filter { user ->
+        isUserMatched(
+            user, searchQuery, chipState
+        )
+    }.orEmpty()
+        // we put selected users first, then alphabetically
+        .sortedWith(compareBy({ !selectedUserIds.contains(it.documentId) }, { it.name }))
 
-        binding.nonParticipantsList.adapter = adapter
-        binding.nonParticipantsList.layoutManager = WrapContentLinearLayoutManager(context)
+    private fun isUserMatched(
+        user: User,
+        cleanSearchQuery: String,
+        chipState: ChipTextFieldState<Chip>,
+    ): Boolean {
+        val cleanSearchWords =
+            chipState.chips.map { it.text.trim().unaccent() } + cleanSearchQuery.trim().unaccent()
+
+        // users are searchable by name or nickname
+        return cleanSearchWords.all {
+            user.name.unaccent().contains(it, ignoreCase = true) || user.nickname.unaccent()
+                .contains(it, ignoreCase = true)
+        }
     }
+
 }

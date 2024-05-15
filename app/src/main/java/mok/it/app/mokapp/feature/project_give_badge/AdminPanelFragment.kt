@@ -67,6 +67,7 @@ class AdminPanelFragment : Fragment() {
     fun AdminPanelScreen() {
         val project by viewModel.project.observeAsState(initial = Project())
         val members by viewModel.members.observeAsState(initial = emptyList())
+
         val uiState by viewModel.uiState.collectAsState()
 
         Scaffold(
@@ -82,7 +83,7 @@ class AdminPanelFragment : Fragment() {
                         )
                     },
                 ) {
-                    Text(text = "Tag hozzáadása")
+                    Text(text = "Projekttaglista módosítása")
                 }
             }
         )

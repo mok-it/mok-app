@@ -42,6 +42,21 @@ object AchievementService {
             }
     }
 
+    fun grantAchievement(achievementId: String, levels: Map<String, Int>) {
+        val batch = Firebase.firestore.batch()
+        levels.forEach { (userId, level) ->
+            val userRef = Firebase.firestore.collection(Collections.USERS).document(userId)
+            batch.update(userRef, "achievements.$achievementId", level)
+        }
+        batch.commit()
+            .addOnSuccessListener {
+                Log.d(TAG, "Achievement $achievementId successfully granted!")
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error granting Achievement $achievementId", e)
+            }
+    }
+
     fun getOwners(achievementId: String): Flow<List<User>> {
         return Firebase.firestore.collection(Collections.USERS)
             .where(Filter.greaterThan("achievements.$achievementId", 0))

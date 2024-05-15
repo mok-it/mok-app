@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.lazy.LazyColumn
@@ -21,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.compose.AsyncImage
 import mok.it.app.mokapp.ui.model.UserAchievementLevelUi
@@ -37,15 +39,23 @@ class GrantAchievementFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-//                val editUsers = viewModel.users
                 val maxLevel by viewModel.maxLevel.collectAsState(1)
-                LazyColumn {
-                    items(viewModel.users) { user ->
-                        UserAmountCard(user, maxLevel) { amount ->
-                            viewModel.onEvent(
-                                EditAchievementEvent.SetAmount(amount, user)
-                            )
+                val users by viewModel.users.collectAsState()
+                Column {
+                    LazyColumn(modifier = Modifier.weight(1f)) {
+                        items(users) { user ->
+                            UserAmountCard(user, maxLevel) { amount ->
+                                viewModel.onEvent(
+                                    EditAchievementEvent.SetAmount(amount, user)
+                                )
+                            }
                         }
+                    }
+                    Button(onClick = {
+                        viewModel.onEvent(EditAchievementEvent.Save)
+                        findNavController().popBackStack()
+                    }) {
+                        Text(text = "Mentés")
                     }
                 }
             }

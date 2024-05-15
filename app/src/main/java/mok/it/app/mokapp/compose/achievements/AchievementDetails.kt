@@ -32,6 +32,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.snapshots.SnapshotStateMap
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -40,10 +41,12 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.ui.compose.AdminButton
+import mok.it.app.mokapp.ui.compose.navigateToUser
 import mok.it.app.mokapp.ui.model.AchievementUi
 import java.util.SortedMap
 
@@ -52,6 +55,7 @@ fun AchievementDetails(
     achievement: AchievementUi,
     owners: SortedMap<Int, List<User>>,
     canModify: Boolean,
+    navController: NavController,
     onEditClick: () -> Unit,
     onGrantClick: () -> Unit,
 ) {
@@ -80,7 +84,7 @@ fun AchievementDetails(
 
             if (achievement.ownedLevel > 0) {
                 OwnedStatusCard(achievement)
-                OwnersGrid(achievement, owners)
+                OwnersGrid(achievement, owners, navController)
             } else if (achievement.mandatory) {
                 MandatoryStatusCard()
             }
@@ -219,9 +223,13 @@ private fun MandatoryStatusCard() {
 }
 
 @Composable
-private fun OwnersGrid(achievement: AchievementUi, ownersByLevel: SortedMap<Int, List<User>>) {
+private fun OwnersGrid(
+    achievement: AchievementUi,
+    ownersByLevel: SortedMap<Int, List<User>>,
+    navController: NavController
+) {
     val dropdownStates =
-        remember { //TODO: move state handling to the card instead of creating a map
+        remember {
             mutableStateMapOf<Int, Boolean>().apply {
                 achievement.levelDescriptions.keys.forEach { key ->
                     this[key] = false
@@ -232,49 +240,8 @@ private fun OwnersGrid(achievement: AchievementUi, ownersByLevel: SortedMap<Int,
         for ((level, description) in achievement.levelDescriptions) {
             item(
                 span = { GridItemSpan(maxLineSpan) },
-            ) {
-                Card(
-                    onClick = { dropdownStates[level] = !dropdownStates[level]!! },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(4.dp)
-                ) {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Column {
-                            Text(
-                                text = "$level. Szint",
-                                style = MaterialTheme.typography.titleMedium,
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
-                            )
-                            Text(
-                                text = description,
-                                style = MaterialTheme.typography.bodySmall,
-                                modifier = Modifier.padding(horizontal = 8.dp)
-                            )
-                        }
-                        Spacer(modifier = Modifier.weight(1f))
-                        when (dropdownStates[level]) {
-                            true -> Icon(
-                                imageVector = Icons.Default.KeyboardArrowUp,
-                                contentDescription = "dropdown",
-                                tint = colorResource(id = R.color.black),
-                                modifier = Modifier.size(30.dp)
-                            )
+            ) { LevelCard(dropdownStates, level, achievement.name, description) }
 
-                            false -> Icon(
-                                imageVector = Icons.Default.KeyboardArrowDown,
-                                contentDescription = "dropdown",
-                                tint = colorResource(id = R.color.black),
-                                modifier = Modifier.size(30.dp)
-                            )
-
-                            else -> {
-                                Log.wtf("AchievementDetails", "Dropdown state is null")
-                            }
-                        }
-                    }
-                }
-            }
             if (dropdownStates[level] == true) { //comparing with true because value is nullable
                 if (ownersByLevel[level].isNullOrEmpty()) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
@@ -285,7 +252,7 @@ private fun OwnersGrid(achievement: AchievementUi, ownersByLevel: SortedMap<Int,
                     }
                 } else {
                     items(ownersByLevel[level] ?: listOf()) { user ->
-                        OwnerCard(user)
+                        OwnerCard(user, navController)
                     }
                 }
             }
@@ -294,8 +261,60 @@ private fun OwnersGrid(achievement: AchievementUi, ownersByLevel: SortedMap<Int,
 }
 
 @Composable
-private fun OwnerCard(owner: User) {
+fun LevelCard(
+    dropdownStates: SnapshotStateMap<Int, Boolean>,
+    level: Int,
+    name: String,
+    description: String
+) {
+
     Card(
+        onClick = { dropdownStates[level] = !dropdownStates[level]!! },
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(4.dp)
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column {
+                Text(
+                    text = if (dropdownStates.size == 1) name else "$level. Szint",
+                    style = MaterialTheme.typography.titleMedium,
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                )
+                Text(
+                    text = description,
+                    style = MaterialTheme.typography.bodySmall,
+                    modifier = Modifier.padding(horizontal = 8.dp)
+                )
+            }
+            Spacer(modifier = Modifier.weight(1f))
+            when (dropdownStates[level]) {
+                true -> Icon(
+                    imageVector = Icons.Default.KeyboardArrowUp,
+                    contentDescription = "dropdown",
+                    tint = colorResource(id = R.color.black),
+                    modifier = Modifier.size(30.dp)
+                )
+
+                false -> Icon(
+                    imageVector = Icons.Default.KeyboardArrowDown,
+                    contentDescription = "dropdown",
+                    tint = colorResource(id = R.color.black),
+                    modifier = Modifier.size(30.dp)
+                )
+
+                else -> {
+                    Log.wtf("AchievementDetails", "Dropdown state is null")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun OwnerCard(owner: User, navController: NavController) {
+    Card(
+        onClick = { navigateToUser(owner, navController) },
         modifier = Modifier
             .fillMaxWidth()
             .wrapContentHeight()

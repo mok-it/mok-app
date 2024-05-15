@@ -1,11 +1,12 @@
 package mok.it.app.mokapp.feature.achievement_detail
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.compose.foundation.layout.Column
-import androidx.compose.material3.Text
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.ComposeView
@@ -15,6 +16,8 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import mok.it.app.mokapp.compose.achievements.AchievementDetails
 import mok.it.app.mokapp.model.User
+import mok.it.app.mokapp.ui.compose.LoadingScreen
+import mok.it.app.mokapp.utility.Utility.TAG
 import java.util.SortedMap
 
 class AchievementDetailsFragment : Fragment() {
@@ -33,34 +36,45 @@ class AchievementDetailsFragment : Fragment() {
                     sortedMapOf()
                 )
                 val achievement by viewModel.achievement.collectAsState(initial = null)
-                if (achievement == null) {
-                    Text("Betöltés ...") //TODO show loading screen
-                } else {
+                achievement?.let { achievement ->
                     val achievementModel by viewModel.achievementModel.collectAsState(null)
                     Column {
                         AchievementDetails(
-                            achievement!!, //TODO: he shot me down bang bang
+                            achievement,
                             owners,
                             viewModel.isUserAdmin,
-
+                            navController = findNavController(),
                             onEditClick = {
-                                findNavController().navigate(
-                                    AchievementDetailsFragmentDirections.actionAchievementDetailsFragmentToUpdateAchievementFragment(
-                                        achievementModel!! //TODO he shot me down bang bang, use let block
+                                achievementModel?.let {
+                                    findNavController().navigate(
+                                        AchievementDetailsFragmentDirections.actionAchievementDetailsFragmentToUpdateAchievementFragment(
+                                            it
+                                        )
                                     )
-                                )
+                                } ?: run { handleNullAchievement() }
                             },
                             onGrantClick = {
-                                findNavController().navigate(
-                                    AchievementDetailsFragmentDirections.actionAchievementDetailsFragmentToGrantAchievementFragment(
-                                        achievementModel!!.id //TODO he shot me down bang bang, use let block
+                                achievementModel?.let {
+                                    findNavController().navigate(
+                                        AchievementDetailsFragmentDirections.actionAchievementDetailsFragmentToGrantAchievementFragment(
+                                            it.id
+                                        )
                                     )
-                                )
+                                } ?: run { handleNullAchievement() }
                             }
                         )
                     }
-                }
+                } ?: run { LoadingScreen() }
             }
         }
+    }
+
+    private fun handleNullAchievement() {
+        Toast.makeText(
+            context,
+            "Hiba történt. Kérlek próbáld újra később.",
+            Toast.LENGTH_SHORT
+        ).show()
+        Log.wtf(TAG, "Achievement model is null")
     }
 }

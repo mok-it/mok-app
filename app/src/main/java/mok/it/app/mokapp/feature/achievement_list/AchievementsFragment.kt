@@ -34,7 +34,7 @@ class AchievementsFragment : Fragment() {
         ComposeView(requireContext()).apply {
             setContent {
                 val achievements by viewModel.achievements.collectAsState(emptyList())
-                Scaffold( //TODO: code duplication. Create a common scaffold.
+                Scaffold(
                     floatingActionButton = {
                         if (FirebaseUserObject.userModel.roleAtLeast(Role.ADMIN)) {
                             FloatingActionButton(

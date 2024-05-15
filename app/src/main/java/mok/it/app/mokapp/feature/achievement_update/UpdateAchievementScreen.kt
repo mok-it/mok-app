@@ -45,11 +45,5 @@ fun UpdateAchievementScreen(viewModel: EditAchievementViewModel, onNavigateBack:
                 Text(text = "Mégse")
             }
         }
-//        Button(onClick = {
-//            viewModel.onEvent(EditAchievementEvent.Delete)
-//        }) {
-//            Text(text = "Törlés")
-//        }
-
     }
 }

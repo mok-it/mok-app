@@ -8,14 +8,17 @@ import androidx.compose.runtime.Composable
 import mok.it.app.mokapp.ui.compose.EditAchievement
 
 @Composable
-fun CreateAchievementScreen(viewModel: EditAchievementViewModel) {
+fun CreateAchievementScreen(viewModel: EditAchievementViewModel, onNavigateBack: () -> Unit) {
     Column {
         EditAchievement(viewModel)
         Row {
-            Button(onClick = { viewModel.onEvent(EditAchievementEvent.Insert) }) {
+            Button(onClick = {
+                viewModel.onEvent(EditAchievementEvent.Insert)
+                onNavigateBack()
+            }) {
                 Text(text = "Létrehozás")
             }
-            Button(onClick = { /*TODO*/ }) {
+            Button(onClick = onNavigateBack) {
                 Text(text = "Mégse")
             }
         }

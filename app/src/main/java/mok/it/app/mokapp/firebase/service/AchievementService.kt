@@ -27,7 +27,10 @@ object AchievementService {
             .snapshots()
             .map { s ->
                 s.toObject(AchievementEntity::class.java)?.toAchievement()
-                    ?: AchievementEntity().toAchievement() //TODO: more sophisticated error handling
+                    ?: run {
+                        Log.e(TAG, "Error getting Achievement $id")
+                        AchievementEntity().toAchievement()
+                    }
             }
     }
 
@@ -78,7 +81,7 @@ object AchievementService {
             }
     }
 
-    fun updateAchievement(achievement: AchievementEntity) { //TODO: update achievements and users in a single transaction
+    fun updateAchievement(achievement: AchievementEntity) {
         Firebase.firestore.collection(Collections.ACHIEVMENTS).document(achievement.id)
             .set(achievement)
             .addOnSuccessListener {
@@ -111,36 +114,10 @@ object AchievementService {
             }
     }
 
-//    fun deleteAchievement(id: String) {
-//        val batch = Firebase.firestore.batch()
-//            // Get all users who have the achievement
-//            Firebase.firestore.collection(Collections.USERS)
-//                .whereGreaterThanOrEqualTo("achievements.$id", 0)
-//                .get()
-//                .addOnSuccessListener {
-//                    // For each user, remove the achievement from their achievements map
-//                    for (document in it.documents) {
-//                        val userRef =
-//                            Firebase.firestore.collection(Collections.USERS).document(document.id)
-//                        val user = Firebase.firestore.collection(Collections.USERS).get(userRef).toObject(User::class.java)
-//                        user?.achievements?.remove(id)
-//                        transaction.set(userRef, user!!)
-//                    }
-//                }
-//            // Delete the achievement
-//            val achievementRef = Firebase.firestore.collection(Collections.ACHIEVMENTS).document(id)
-//            transaction.delete(achievementRef)
-//        }.addOnSuccessListener {
-//            Log.d(TAG, "Achievement $id successfully deleted!")
-//        }.addOnFailureListener { e ->
-//            Log.e(TAG, "Error deleting Achievement $id", e)
-//        }
 
     fun deleteAchievement(id: String) {
-        // Create a new batch
         val batch = Firebase.firestore.batch()
 
-        // Get all users who have the achievement
         Firebase.firestore.collection(Collections.USERS)
             .whereGreaterThanOrEqualTo("achievements.$id", 0)
             .get()

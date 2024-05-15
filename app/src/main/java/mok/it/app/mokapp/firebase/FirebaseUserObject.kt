@@ -19,6 +19,7 @@ import mok.it.app.mokapp.utility.Utility.TAG
 private const val FIREBASE_USER_NULL_MESSAGE = "FirebaseAuth user is null"
 
 object FirebaseUserObject {
+    @Deprecated("Use userModelFlow instead")
     lateinit var userModel: User
     var currentUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
     lateinit var userModelFlow: Flow<User>

@@ -18,11 +18,13 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.People
+import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
 import androidx.compose.material3.CardDefaults
@@ -39,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -125,7 +126,7 @@ private fun TopIcon(achievement: AchievementUi) {
     when {
         achievement.ownedLevel == achievement.maxLevel -> {
             Icon(
-                painter = painterResource(id = R.drawable.ic_check_mark),
+                imageVector = Icons.Filled.Done,
                 contentDescription = "megszerezve",
                 tint = colorResource(id = R.color.green_dark),
                 modifier = Modifier.size(40.dp),
@@ -143,7 +144,7 @@ private fun TopIcon(achievement: AchievementUi) {
 
         achievement.mandatory -> {
             Icon(
-                painter = painterResource(id = R.drawable.ic_exclamation_mark),
+                imageVector = Icons.Filled.PriorityHigh,
                 contentDescription = "kötelező",
                 tint = colorResource(id = R.color.red_dark),
                 modifier = Modifier.size(40.dp)
@@ -218,7 +219,7 @@ private fun MandatoryStatusCard() {
         colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.red_light)),
         icon = {
             Icon(
-                painter = painterResource(id = R.drawable.ic_exclamation_mark),
+                imageVector = Icons.Filled.PriorityHigh,
                 contentDescription = "Kötelező acsi",
                 tint = colorResource(id = R.color.red_dark),
                 modifier = Modifier

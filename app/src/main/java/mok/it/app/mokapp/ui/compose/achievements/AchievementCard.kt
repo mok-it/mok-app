@@ -3,6 +3,9 @@ package mok.it.app.mokapp.ui.compose.achievements
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
+import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -11,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.ui.compose.ImageItemCard
@@ -29,7 +31,7 @@ fun AchievementCard(achievement: AchievementUi, onClick: () -> Unit) {
             when {
                 achievement.ownedLevel == achievement.maxLevel -> {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_check_mark),
+                        imageVector = Icons.Filled.Done,
                         contentDescription = "megszerezve",
                         tint = colorResource(id = R.color.green_dark),
                         modifier = Modifier.size(40.dp)
@@ -52,7 +54,7 @@ fun AchievementCard(achievement: AchievementUi, onClick: () -> Unit) {
 
                 achievement.mandatory -> {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_exclamation_mark),
+                        imageVector = Icons.Filled.PriorityHigh,
                         contentDescription = "kötelező",
                         tint = colorResource(id = R.color.red_dark),
                         modifier = Modifier.size(40.dp)

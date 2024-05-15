@@ -7,7 +7,6 @@ import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -91,8 +90,7 @@ fun UserAmountCard(user: UserAchievementLevelUi, maxAmount: Int, onAmountChange:
                     .height(50.dp)
                     .clip(CircleShape)
             )
-            Text(text = user.name)
-            Spacer(modifier = Modifier.weight(1f))
+            Text(text = user.name, modifier = Modifier.weight(1f))
             if (maxAmount == 1) {
                 Checkbox(
                     checked = user.ownedLevel == 1,

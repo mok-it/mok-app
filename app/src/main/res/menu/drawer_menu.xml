@@ -12,7 +12,6 @@
             android:id="@+id/myBadgesFragment"
             android:icon="@drawable/paw_solid"
             android:title="@string/my_badges" />
-        <!-- TODO: get a better icon -->
         <item
             android:id="@+id/achievementsFragment"
             android:icon="@drawable/ic_trophy"

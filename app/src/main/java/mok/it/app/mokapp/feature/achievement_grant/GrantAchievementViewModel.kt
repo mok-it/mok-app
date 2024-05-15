@@ -11,10 +11,9 @@ import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.ui.model.UserAchievementLevelUi
 import mok.it.app.mokapp.ui.model.toAchievementLevelUi
 
-class GrantAchievementViewModel(val achievementId: String) : ViewModel() {
+class GrantAchievementViewModel(private val achievementId: String) : ViewModel() {
     private val _achevement = AchievementService.getAchievement(achievementId)
 
-    //    val maxLevel = _achevement.map { it.levelDescriptions.size }
     private val _maxLevel = MutableStateFlow(2)
     val maxLevel = _maxLevel.asStateFlow()
 

@@ -16,7 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import mok.it.app.mokapp.feature.achievement_create.EditAchievementEvent
 import mok.it.app.mokapp.feature.achievement_create.EditAchievementViewModel
-import mok.it.app.mokapp.ui.compose.EditAchievement
+import mok.it.app.mokapp.ui.compose.achievements.EditAchievement
 
 @Composable
 fun UpdateAchievementScreen(viewModel: EditAchievementViewModel, onNavigateBack: () -> Unit) {

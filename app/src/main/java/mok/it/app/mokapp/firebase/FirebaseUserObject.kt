@@ -16,6 +16,7 @@ import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.utility.Utility.TAG
 
+private const val FIREBASE_USER_NULL_MESSAGE = "FirebaseAuth user is null"
 
 object FirebaseUserObject {
     lateinit var userModel: User
@@ -35,7 +36,7 @@ object FirebaseUserObject {
         userModelFlow = Firebase.firestore.collection(Collections.USERS)
             .document(
                 FirebaseAuth.getInstance().currentUser?.uid
-                    ?: throw NullPointerException("FirebaseAuth user is null")
+                    ?: throw NullPointerException(FIREBASE_USER_NULL_MESSAGE)
             )
             .snapshots()
             .map { s ->
@@ -54,7 +55,7 @@ object FirebaseUserObject {
         Firebase.firestore.collection(Collections.USERS)
             .document(
                 FirebaseAuth.getInstance().currentUser?.uid
-                    ?: throw Exception("FirebaseAuth user is null")
+                    ?: throw Exception(FIREBASE_USER_NULL_MESSAGE)
             )
             .get()
             .addOnSuccessListener { document ->
@@ -63,7 +64,7 @@ object FirebaseUserObject {
                 if (userToBe != null) {
                     userModel = userToBe
                     currentUser = FirebaseAuth.getInstance().currentUser
-                        ?: throw Exception("FirebaseAuth user is null")
+                        ?: throw Exception(FIREBASE_USER_NULL_MESSAGE)
                     Log.d(TAG, "refreshCurrentUser(): user refreshed")
                     onSuccessFunction?.invoke()
                 } else if (numberOfConsecutiveCalls <= numberOfMaxTries) {

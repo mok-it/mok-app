@@ -14,9 +14,9 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
-import mok.it.app.mokapp.compose.achievements.AchievementDetails
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.ui.compose.LoadingScreen
+import mok.it.app.mokapp.ui.compose.achievements.AchievementDetails
 import mok.it.app.mokapp.utility.Utility.TAG
 import java.util.SortedMap
 

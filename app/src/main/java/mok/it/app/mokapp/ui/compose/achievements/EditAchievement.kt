@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.ui.compose
+package mok.it.app.mokapp.ui.compose.achievements
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues

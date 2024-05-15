@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.compose.achievements
+package mok.it.app.mokapp.ui.compose.achievements
 
 import android.util.Log
 import androidx.compose.foundation.background
@@ -19,6 +19,7 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.EmojiEvents
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.People
@@ -121,27 +122,33 @@ private fun AdminButtonRow(canModify: Boolean, onEditClick: () -> Unit, onGrantC
 
 @Composable
 private fun TopIcon(achievement: AchievementUi) {
-    if (achievement.ownedLevel == achievement.maxLevel) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_check_mark),
-            contentDescription = "megszerezve",
-            tint = colorResource(id = R.color.green_dark),
-            modifier = Modifier.size(40.dp),
+    when {
+        achievement.ownedLevel == achievement.maxLevel -> {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_check_mark),
+                contentDescription = "megszerezve",
+                tint = colorResource(id = R.color.green_dark),
+                modifier = Modifier.size(40.dp),
 
+                )
+        }
+
+        achievement.ownedLevel > 0 -> {
+            Text(
+                text = "${achievement.ownedLevel}/${achievement.maxLevel}",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(2.dp)
             )
-    } else if (achievement.ownedLevel > 0) {
-        Text(
-            text = "${achievement.ownedLevel}/${achievement.maxLevel}",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(2.dp)
-        )
-    } else if (achievement.mandatory) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_exclamation_mark),
-            contentDescription = "kötelező",
-            tint = colorResource(id = R.color.red_dark),
-            modifier = Modifier.size(40.dp)
-        )
+        }
+
+        achievement.mandatory -> {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_exclamation_mark),
+                contentDescription = "kötelező",
+                tint = colorResource(id = R.color.red_dark),
+                modifier = Modifier.size(40.dp)
+            )
+        }
     }
 }
 
@@ -184,7 +191,7 @@ private fun OwnedStatusCard(achievement: AchievementUi) {
         colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.green_light)),
         icon = {
             Icon(
-                painter = painterResource(id = R.drawable.ic_trophy),
+                imageVector = Icons.Filled.EmojiEvents,
                 contentDescription = "Acsi megszerezve",
                 tint = colorResource(id = R.color.green_dark),
                 modifier = Modifier
@@ -284,7 +291,7 @@ fun LevelCard(
                 Text(
                     text = description,
                     style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(horizontal = 8.dp)
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                 )
             }
             Spacer(modifier = Modifier.weight(1f))

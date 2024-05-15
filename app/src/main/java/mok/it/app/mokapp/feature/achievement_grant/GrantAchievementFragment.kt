@@ -100,6 +100,7 @@ fun UserAmountCard(user: UserAchievementLevelUi, maxAmount: Int, onAmountChange:
             } else {
                 Button(
                     onClick = { onAmountChange(user.ownedLevel - 1) },
+                    enabled = user.ownedLevel > 0,
                     shape = CircleShape,
                     modifier = Modifier.size(40.dp),
                     contentPadding = PaddingValues(0.dp)
@@ -116,6 +117,7 @@ fun UserAmountCard(user: UserAchievementLevelUi, maxAmount: Int, onAmountChange:
                 )
                 Button(
                     onClick = { onAmountChange(user.ownedLevel + 1) },
+                    enabled = user.ownedLevel < maxAmount,
                     shape = CircleShape,
                     modifier = Modifier
                         .padding(end = 6.dp)

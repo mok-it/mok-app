@@ -34,9 +34,9 @@ class GrantAchievementViewModel(val achievementId: String) : ViewModel() {
 
     val users = _users.asStateFlow()
 
-    fun onEvent(event: EditAchievementEvent) {
+    fun onEvent(event: GrantAchievementEvent) {
         when (event) {
-            is EditAchievementEvent.SetAmount -> {
+            is GrantAchievementEvent.SetAmount -> {
                 val u = _users.value.find { it.userId == event.user.userId }
                 if (u != null) {
                     _users.value =
@@ -52,7 +52,7 @@ class GrantAchievementViewModel(val achievementId: String) : ViewModel() {
                 }
             }
 
-            is EditAchievementEvent.Save -> {
+            is GrantAchievementEvent.Save -> {
                 val levels = _users.value.map { it.userId to it.ownedLevel }.toMap()
                 AchievementService.grantAchievement(achievementId, levels)
             }
@@ -60,9 +60,11 @@ class GrantAchievementViewModel(val achievementId: String) : ViewModel() {
     }
 }
 
-sealed class EditAchievementEvent {
-    data class SetAmount(val amount: Int, val user: UserAchievementLevelUi) : EditAchievementEvent()
-    data object Save : EditAchievementEvent()
+sealed class GrantAchievementEvent {
+    data class SetAmount(val amount: Int, val user: UserAchievementLevelUi) :
+        GrantAchievementEvent()
+
+    data object Save : GrantAchievementEvent()
 }
 
 

@@ -1,5 +1,6 @@
 package mok.it.app.mokapp.compose.achievements
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -18,6 +19,8 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardColors
@@ -230,15 +233,46 @@ private fun OwnersGrid(achievement: AchievementUi, ownersByLevel: SortedMap<Int,
             item(
                 span = { GridItemSpan(maxLineSpan) },
             ) {
-                Card(onClick = { dropdownStates[level] = !dropdownStates[level]!! }) {
-                    Text(
-                        text = "$level. Szint",
-                        style = MaterialTheme.typography.titleSmall,
-                    )
-                    Text(
-                        text = description,
-                        style = MaterialTheme.typography.bodySmall,
-                    )
+                Card(
+                    onClick = { dropdownStates[level] = !dropdownStates[level]!! },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(4.dp)
+                ) {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Column {
+                            Text(
+                                text = "$level. Szint",
+                                style = MaterialTheme.typography.titleMedium,
+                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                            )
+                            Text(
+                                text = description,
+                                style = MaterialTheme.typography.bodySmall,
+                                modifier = Modifier.padding(horizontal = 8.dp)
+                            )
+                        }
+                        Spacer(modifier = Modifier.weight(1f))
+                        when (dropdownStates[level]) {
+                            true -> Icon(
+                                imageVector = Icons.Default.KeyboardArrowUp,
+                                contentDescription = "dropdown",
+                                tint = colorResource(id = R.color.black),
+                                modifier = Modifier.size(30.dp)
+                            )
+
+                            false -> Icon(
+                                imageVector = Icons.Default.KeyboardArrowDown,
+                                contentDescription = "dropdown",
+                                tint = colorResource(id = R.color.black),
+                                modifier = Modifier.size(30.dp)
+                            )
+
+                            else -> {
+                                Log.wtf("AchievementDetails", "Dropdown state is null")
+                            }
+                        }
+                    }
                 }
             }
             if (dropdownStates[level] == true) { //comparing with true because value is nullable

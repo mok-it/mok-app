@@ -37,7 +37,7 @@ class AchievementDetailsFragment : Fragment() {
                     Text("Betöltés ...") //TODO show loading screen
                 } else {
                     val achievementModel by viewModel.achievementModel.collectAsState(null)
-                    Column { //TODO: delete
+                    Column {
                         AchievementDetails(
                             achievement!!, //TODO: he shot me down bang bang
                             owners,

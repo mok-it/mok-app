@@ -184,7 +184,7 @@
     <fragment
         android:id="@+id/updateAchievementFragment"
         android:name="mok.it.app.mokapp.feature.achievement_update.UpdateAchievementFragment"
-        android:label="UpdateAchievementFragment">
+        android:label="Acsi módosítása">
         <argument
             android:name="achievement"
             app:argType="mok.it.app.mokapp.model.Achievement" />
@@ -195,7 +195,7 @@
     <fragment
         android:id="@+id/grantAchievementFragment"
         android:name="mok.it.app.mokapp.feature.achievement_grant.GrantAchievementFragment"
-        android:label="GrantAchievementFragment">
+        android:label="Acsi megadása">
         <argument
             android:name="achievementId"
             app:argType="string" />

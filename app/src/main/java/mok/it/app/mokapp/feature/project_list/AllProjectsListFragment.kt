@@ -169,18 +169,6 @@ class AllProjectsListFragment : Fragment() {
         )
     }
 
-
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View = ComposeView(requireContext()).apply {
-        loginOrLoad {
-            setContent {
-                AllProjectsListScreen()
-            }
-        }
-    }
-
     private fun loginOrLoad(setComposeContent: () -> Unit) {
         if (currentUser == null) {
             findNavController().navigate(R.id.action_global_loginFragment)

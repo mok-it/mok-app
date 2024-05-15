@@ -345,23 +345,6 @@ object UserService {
             }
             .filterNotNull()
 
-    fun getAllUsers(): LiveData<List<User>> { //TODO: remove, use getUsers() instead
-        val usersLiveData = MutableLiveData<List<User>>()
-        Firebase.firestore.collection(Collections.USERS).orderBy("name", Query.Direction.ASCENDING)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                val users = mutableListOf<User>()
-                for (document in querySnapshot.documents) {
-                    val user = document.toObject(User::class.java)
-                    if (user != null) {
-                        users.add(user)
-                    }
-                }
-                usersLiveData.value = users
-            }
-        return usersLiveData
-    }
-
     fun getUsers(): Flow<List<User>> {
         return Firebase.firestore.collection(Collections.USERS)
             .orderBy("name", Query.Direction.ASCENDING)

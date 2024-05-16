@@ -56,13 +56,14 @@ class AchievementsFragment : Fragment() {
                             items(achievements) { achievement ->
                                 AchievementCard(
                                     achievement = achievement,
-                                    onClick = {
-                                        findNavController().navigate(
-                                            AchievementsFragmentDirections.actionAchievementsFragmentToAchievementDetailsFragment(
-                                                achievement.id
-                                            )
+                                    showCompleteOnFirstLevel = false
+                                ) {
+                                    findNavController().navigate(
+                                        AchievementsFragmentDirections.actionAchievementsFragmentToAchievementDetailsFragment(
+                                            achievement.id
                                         )
-                                    })
+                                    )
+                                }
                             }
                         }
                     }

@@ -11,8 +11,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.CardColors
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,7 +23,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
@@ -41,9 +38,8 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserMo
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.enums.Role
-import mok.it.app.mokapp.ui.compose.BadgeIcon
-import mok.it.app.mokapp.ui.compose.ImageItemCard
 import mok.it.app.mokapp.ui.compose.SearchField
+import mok.it.app.mokapp.ui.compose.projects.ProjectCard
 import mok.it.app.mokapp.utility.Utility.unaccent
 
 class AllProjectsListFragment : Fragment() {
@@ -109,7 +105,7 @@ class AllProjectsListFragment : Fragment() {
                 } else {
                     LazyColumn(state = lazyListState) {
                         items(filteredProjects) { project ->
-                            ProjectItem(project = project, onClick = {
+                            ProjectCard(project = project, onClick = {
                                 val action =
                                     AllProjectsListFragmentDirections.actionAllProjectsListFragmentToDetailsFragment(
                                         project.id
@@ -148,26 +144,6 @@ class AllProjectsListFragment : Fragment() {
         }
     }
 
-    @Composable
-    fun ProjectItem(project: Project, onClick: (Project) -> Unit) {
-        ImageItemCard(
-            asyncImageModel = project.icon,
-            asyncImageContentDescription = "Projekt ikon",
-            mainText = project.name,
-            subText = project.description,
-            icon = { BadgeIcon(badgeNumberText = project.maxBadges.toString()) },
-            colors = CardColors(
-                containerColor = if (userModel.projectBadges.contains(project.id))
-                    Color(0xFF00FF00)
-                else
-                    CardDefaults.cardColors().containerColor,
-                contentColor = CardDefaults.cardColors().contentColor,
-                disabledContainerColor = CardDefaults.cardColors().disabledContainerColor,
-                disabledContentColor = CardDefaults.cardColors().disabledContentColor,
-            ),
-            onClick = { onClick(project) }
-        )
-    }
 
     private fun loginOrLoad(setComposeContent: () -> Unit) {
         if (currentUser == null) {

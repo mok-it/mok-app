@@ -20,16 +20,21 @@ import mok.it.app.mokapp.ui.compose.ImageItemCard
 import mok.it.app.mokapp.ui.model.AchievementUi
 
 @Composable
-fun AchievementCard(achievement: AchievementUi, onClick: () -> Unit) {
+fun AchievementCard(
+    achievement: AchievementUi,
+    showCompleteOnFirstLevel: Boolean,
+    onClick: (AchievementUi) -> Unit
+) {
     ImageItemCard(
         asyncImageModel = achievement.icon,
         asyncImageContentDescription = "acsi ikon",
         mainText = achievement.name,
-        subText = achievement.currentDescription
+        subText = (if (showCompleteOnFirstLevel) achievement.firstDescription else achievement.currentDescription)
             ?: LocalContext.current.getString(R.string.achievement_missing_description),
         icon = {
             when {
-                achievement.ownedLevel == achievement.maxLevel -> {
+                achievement.ownedLevel == achievement.maxLevel ||
+                        (achievement.ownedLevel >= 1 && showCompleteOnFirstLevel) -> {
                     Icon(
                         imageVector = Icons.Filled.Done,
                         contentDescription = "megszerezve",
@@ -62,6 +67,6 @@ fun AchievementCard(achievement: AchievementUi, onClick: () -> Unit) {
                 }
             }
         },
-        onClick = onClick
+        onClick = { onClick(achievement) }
     )
 }

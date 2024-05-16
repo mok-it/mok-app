@@ -200,4 +200,15 @@
             android:name="achievementId"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/tasksFragment"
+        android:name="mok.it.app.mokapp.feature.tasks.TasksFragment"
+        android:label="Feladataim">
+        <action
+            android:id="@+id/action_tasksFragment_to_achievementDetailsFragment"
+            app:destination="@id/achievementDetailsFragment" />
+        <action
+            android:id="@+id/action_tasksFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
+    </fragment>
 </navigation>

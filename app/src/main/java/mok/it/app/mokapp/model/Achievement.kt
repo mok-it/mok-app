@@ -4,6 +4,7 @@ import android.os.Parcelable
 import android.util.Log
 import com.google.firebase.firestore.DocumentId
 import kotlinx.parcelize.Parcelize
+import mok.it.app.mokapp.firebase.model.AchievementEntity
 import mok.it.app.mokapp.ui.model.AchievementUi
 import java.util.SortedMap
 
@@ -26,6 +27,7 @@ data class Achievement(
             name = name,
             ownedLevel = ownedLevel,
             maxLevel = maxLevel,
+            firstDescription = levelDescriptions[1],
             currentDescription = when {
                 (levelDescriptions.isEmpty()) -> null
                 (ownedLevel == maxLevel) -> levelDescriptions[maxLevel]

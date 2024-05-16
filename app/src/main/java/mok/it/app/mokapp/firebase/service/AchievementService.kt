@@ -7,8 +7,8 @@ import com.google.firebase.firestore.snapshots
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import mok.it.app.mokapp.firebase.model.AchievementEntity
 import mok.it.app.mokapp.model.Achievement
-import mok.it.app.mokapp.model.AchievementEntity
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.utility.Utility.TAG
@@ -16,6 +16,15 @@ import mok.it.app.mokapp.utility.Utility.TAG
 object AchievementService {
     fun getAchievements(): Flow<List<Achievement>> {
         return Firebase.firestore.collection(Collections.ACHIEVMENTS)
+            .snapshots()
+            .map { s ->
+                s.toObjects(AchievementEntity::class.java).map { it.toAchievement() }
+            }
+    }
+
+    fun getMandatoryAchievements(): Flow<List<Achievement>> {
+        return Firebase.firestore.collection(Collections.ACHIEVMENTS)
+            .whereEqualTo("mandatory", true)
             .snapshots()
             .map { s ->
                 s.toObjects(AchievementEntity::class.java).map { it.toAchievement() }

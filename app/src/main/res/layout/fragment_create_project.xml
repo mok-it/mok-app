@@ -35,7 +35,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/textViewTitle"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/red_dark" />
+                app:tint="@color/md_theme_error" />
 
             <TextView
                 android:id="@+id/textViewTitle"
@@ -183,20 +183,17 @@
                     android:id="@+id/icon_select_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/darker_gray"
                     app:cardCornerRadius="@dimen/design_corner_radius">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/lighter_gray"
                         android:visibility="gone">
 
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/choose_icon"
-                            android:textColor="@color/blue_dark"
                             app:layout_constraintBottom_toBottomOf="@+id/imageView"
                             app:layout_constraintEnd_toStartOf="@+id/imageView"
                             app:layout_constraintStart_toStartOf="parent"
@@ -240,8 +237,7 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/lighter_gray">
+                        android:layout_height="wrap_content">
 
                         <TextView
                             android:id="@+id/textView5"
@@ -252,7 +248,6 @@
                             android:layout_marginEnd="8dp"
                             android:layout_marginBottom="8dp"
                             android:text="@string/choose_project_leader"
-                            android:textColor="@color/blue_dark"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -270,7 +265,6 @@
                         android:id="@+id/create_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@color/blue_dark"
                         android:text="@string/create"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

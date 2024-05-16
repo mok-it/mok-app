@@ -550,6 +550,8 @@ class DetailsFragment : Fragment() {
                 menu.add(R.id.share, R.id.share, 0, R.string.share)
                     .setIcon(R.drawable.ic_share)
                     .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                menu.getItem(0).icon?.mutate()
+                    ?.setTint(resources.getColor(R.color.md_theme_onPrimary))
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {

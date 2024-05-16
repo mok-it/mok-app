@@ -49,6 +49,8 @@ class UpdateAchievementFragment : Fragment() {
                 menu.add(R.id.delete, R.id.delete, 0, R.string.delete)
                     .setIcon(R.drawable.ic_delete)
                     .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                menu.getItem(0).icon?.mutate()
+                    ?.setTint(resources.getColor(R.color.md_theme_onPrimary))
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {

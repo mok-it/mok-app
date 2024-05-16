@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
@@ -45,6 +46,7 @@ import mok.it.app.mokapp.firebase.service.CommentService.addComment
 import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.ui.compose.UserIcon
+import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 
 class CommentsFragment : Fragment() {
     private val args: DetailsFragmentArgs by navArgs()
@@ -56,7 +58,9 @@ class CommentsFragment : Fragment() {
     ): View =
         ComposeView(requireContext()).apply {
             setContent {
-                CommentsScreen()
+                MokAppTheme {
+                    CommentsScreen()
+                }
             }
         }
 
@@ -84,20 +88,23 @@ class CommentsFragment : Fragment() {
                     })
             }
         ) { padding ->
-            Column {
-                if (comments.isEmpty()) {
-                    Text(
-                        text = "Itt nincsenek még kommentek. Írj egyet most!",
-                        style = MaterialTheme.typography.headlineSmall,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        textAlign = TextAlign.Center
-                    )
-                } else {
-                    LazyColumn(modifier = Modifier.weight(1f)) {
-                        items(comments) { comment ->
-                            CommentCard(comment = comment)
+            Surface {
+
+                Column {
+                    if (comments.isEmpty()) {
+                        Text(
+                            text = "Itt nincsenek még kommentek. Írj egyet most!",
+                            style = MaterialTheme.typography.headlineSmall,
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                            textAlign = TextAlign.Center
+                        )
+                    } else {
+                        LazyColumn(modifier = Modifier.weight(1f)) {
+                            items(comments) { comment ->
+                                CommentCard(comment = comment)
+                            }
                         }
                     }
                 }

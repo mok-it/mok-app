@@ -15,6 +15,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -40,6 +41,7 @@ import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.enums.Role
 import mok.it.app.mokapp.ui.compose.SearchField
 import mok.it.app.mokapp.ui.compose.projects.ProjectCard
+import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 import mok.it.app.mokapp.utility.Utility.unaccent
 
 class AllProjectsListFragment : Fragment() {
@@ -58,7 +60,9 @@ class AllProjectsListFragment : Fragment() {
     ): View = ComposeView(requireContext()).apply {
         loginOrLoad {
             setContent {
-                AllProjectsListScreen()
+                MokAppTheme {
+                    AllProjectsListScreen()
+                }
             }
         }
     }
@@ -88,30 +92,32 @@ class AllProjectsListFragment : Fragment() {
                 }
             }
         }) { padding ->
-            Column {
-                SearchField(
-                    searchQuery = searchQuery,
-                    chipState = chipState,
-                    onValueChange = { searchQuery = it },
-                )
-                if (filteredProjects.isEmpty()) {
-                    Text(
-                        text = "Nincsenek a feltételeknek megfelelő projektek",
-                        modifier = Modifier
-                            .padding(16.dp),
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+            Surface {
+                Column {
+                    SearchField(
+                        searchQuery = searchQuery,
+                        chipState = chipState,
+                        onValueChange = { searchQuery = it },
                     )
-                } else {
-                    LazyColumn(state = lazyListState) {
-                        items(filteredProjects) { project ->
-                            ProjectCard(project = project, onClick = {
-                                val action =
-                                    AllProjectsListFragmentDirections.actionAllProjectsListFragmentToDetailsFragment(
-                                        project.id
-                                    )
-                                findNavController().navigate(action)
-                            })
+                    if (filteredProjects.isEmpty()) {
+                        Text(
+                            text = "Nincsenek a feltételeknek megfelelő projektek",
+                            modifier = Modifier
+                                .padding(16.dp),
+                            style = MaterialTheme.typography.headlineSmall,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                        )
+                    } else {
+                        LazyColumn(state = lazyListState) {
+                            items(filteredProjects) { project ->
+                                ProjectCard(project = project, onClick = {
+                                    val action =
+                                        AllProjectsListFragmentDirections.actionAllProjectsListFragmentToDetailsFragment(
+                                            project.id
+                                        )
+                                    findNavController().navigate(action)
+                                })
+                            }
                         }
                     }
                 }

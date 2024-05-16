@@ -20,6 +20,7 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.feature.achievement_create.EditAchievementEvent
 import mok.it.app.mokapp.feature.achievement_create.EditAchievementViewModel
 import mok.it.app.mokapp.feature.achievement_create.EditAchievementViewModelFactory
+import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 
 class UpdateAchievementFragment : Fragment() {
     private val args: UpdateAchievementFragmentArgs by navArgs()
@@ -34,7 +35,9 @@ class UpdateAchievementFragment : Fragment() {
         setupTopMenu()
         return ComposeView(requireContext()).apply {
             setContent {
-                UpdateAchievementScreen(viewModel) { findNavController().popBackStack() }
+                MokAppTheme {
+                    UpdateAchievementScreen(viewModel) { findNavController().popBackStack() }
+                }
             }
         }
     }

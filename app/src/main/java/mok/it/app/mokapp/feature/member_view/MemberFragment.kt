@@ -18,6 +18,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -37,6 +38,7 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.ui.compose.UserCard
+import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 
 class MemberFragment : Fragment() {
 
@@ -48,7 +50,9 @@ class MemberFragment : Fragment() {
     ): View =
         ComposeView(requireContext()).apply {
             setContent {
-                MembersScreen()
+                MokAppTheme {
+                    MembersScreen()
+                }
             }
         }
 
@@ -56,14 +60,17 @@ class MemberFragment : Fragment() {
     private fun MembersScreen() {
         val viewModel: MemberViewModel by viewModels()
 
-        Column {
-            UserCard(args.user, findNavController())
-            MutualProjectsOfUsers(userModel, args.user, viewModel) {
-                findNavController().navigate(
-                    MemberFragmentDirections.actionMemberFragmentToDetailsFragment(
-                        it.id
+        Surface {
+
+            Column {
+                UserCard(args.user, findNavController())
+                MutualProjectsOfUsers(userModel, args.user, viewModel) {
+                    findNavController().navigate(
+                        MemberFragmentDirections.actionMemberFragmentToDetailsFragment(
+                            it.id
+                        )
                     )
-                )
+                }
             }
         }
     }

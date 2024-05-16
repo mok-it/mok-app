@@ -40,7 +40,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -49,6 +48,7 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.ui.compose.AdminButton
 import mok.it.app.mokapp.ui.compose.navigateToUser
+import mok.it.app.mokapp.ui.compose.theme.ExtendedTheme
 import mok.it.app.mokapp.ui.model.AchievementUi
 import java.util.SortedMap
 
@@ -128,7 +128,7 @@ private fun TopIcon(achievement: AchievementUi) {
             Icon(
                 imageVector = Icons.Filled.Done,
                 contentDescription = "megszerezve",
-                tint = colorResource(id = R.color.green_dark),
+                tint = ExtendedTheme.colorScheme.success.color,
                 modifier = Modifier.size(40.dp),
 
                 )
@@ -146,7 +146,7 @@ private fun TopIcon(achievement: AchievementUi) {
             Icon(
                 imageVector = Icons.Filled.PriorityHigh,
                 contentDescription = "kötelező",
-                tint = colorResource(id = R.color.red_dark),
+                tint = ExtendedTheme.colorScheme.warning.color,
                 modifier = Modifier.size(40.dp)
             )
         }
@@ -189,12 +189,15 @@ private fun StatusCard(
 @Composable
 private fun OwnedStatusCard(achievement: AchievementUi) {
     StatusCard(
-        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.green_light)),
+        colors = CardDefaults.cardColors(
+            containerColor = ExtendedTheme.colorScheme.success.colorContainer,
+            contentColor = ExtendedTheme.colorScheme.success.onColorContainer
+        ),
         icon = {
             Icon(
                 imageVector = Icons.Filled.EmojiEvents,
                 contentDescription = "Acsi megszerezve",
-                tint = colorResource(id = R.color.green_dark),
+                tint = ExtendedTheme.colorScheme.success.color,
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(2.dp)
@@ -216,12 +219,15 @@ private fun OwnedStatusCard(achievement: AchievementUi) {
 @Composable
 private fun MandatoryStatusCard() {
     StatusCard(
-        colors = CardDefaults.cardColors(containerColor = colorResource(id = R.color.red_light)),
+        colors = CardDefaults.cardColors(
+            containerColor = ExtendedTheme.colorScheme.warning.colorContainer,
+            contentColor = ExtendedTheme.colorScheme.warning.onColorContainer
+        ),
         icon = {
             Icon(
                 imageVector = Icons.Filled.PriorityHigh,
                 contentDescription = "Kötelező acsi",
-                tint = colorResource(id = R.color.red_dark),
+                tint = ExtendedTheme.colorScheme.warning.color,
                 modifier = Modifier
                     .fillMaxSize()
             )
@@ -300,14 +306,12 @@ fun LevelCard(
                 true -> Icon(
                     imageVector = Icons.Default.KeyboardArrowUp,
                     contentDescription = "dropdown",
-                    tint = colorResource(id = R.color.black),
                     modifier = Modifier.size(30.dp)
                 )
 
                 false -> Icon(
                     imageVector = Icons.Default.KeyboardArrowDown,
                     contentDescription = "dropdown",
-                    tint = colorResource(id = R.color.black),
                     modifier = Modifier.size(30.dp)
                 )
 

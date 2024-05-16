@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -20,29 +21,31 @@ import mok.it.app.mokapp.ui.compose.achievements.EditAchievement
 
 @Composable
 fun UpdateAchievementScreen(viewModel: EditAchievementViewModel, onNavigateBack: () -> Unit) {
-    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
-        EditAchievement(viewModel)
-        Row(
-            horizontalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Button(
-                onClick = {
-                    viewModel.onEvent(EditAchievementEvent.Update)
-                    onNavigateBack()
-                },
-                modifier = Modifier
-                    .width(120.dp)
-                    .padding()
+    Surface {
+        Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+            EditAchievement(viewModel)
+            Row(
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
             ) {
-                Text(text = "Módosítás")
-            }
-            Spacer(modifier = Modifier.width(20.dp))
-            Button(
-                onClick = onNavigateBack,
-                modifier = Modifier.width(120.dp)
-            ) {
-                Text(text = "Mégse")
+                Button(
+                    onClick = {
+                        viewModel.onEvent(EditAchievementEvent.Update)
+                        onNavigateBack()
+                    },
+                    modifier = Modifier
+                        .width(120.dp)
+                        .padding()
+                ) {
+                    Text(text = "Módosítás")
+                }
+                Spacer(modifier = Modifier.width(20.dp))
+                Button(
+                    onClick = onNavigateBack,
+                    modifier = Modifier.width(120.dp)
+                ) {
+                    Text(text = "Mégse")
+                }
             }
         }
     }

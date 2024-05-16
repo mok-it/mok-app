@@ -23,6 +23,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -44,6 +45,7 @@ import com.dokar.chiptextfield.rememberChipTextFieldState
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Link
 import mok.it.app.mokapp.ui.compose.SearchField
+import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 import mok.it.app.mokapp.utility.Utility.unaccent
 import java.util.Locale
 
@@ -55,7 +57,9 @@ class LinksFragment : Fragment() {
     ): View =
         ComposeView(requireContext()).apply {
             setContent {
-                LinksFragment()
+                MokAppTheme {
+                    LinksFragment()
+                }
             }
         }
 
@@ -66,28 +70,31 @@ class LinksFragment : Fragment() {
         var searchQuery by remember { mutableStateOf("") }
         val filteredLinks = getFilteredLinks(searchQuery, chipState)
 
-        Column {
-            SearchField(
-                searchQuery = searchQuery,
-                chipState = chipState,
-                onValueChange = { searchQuery = it },
-            )
-            if (filteredLinks.isEmpty()) {
-                Text(
-                    text = "Nincsenek a feltételeknek megfelelő linkek",
-                    modifier = Modifier
-                        .padding(16.dp),
-                    style = MaterialTheme.typography.headlineSmall,
-                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
+        Surface {
+
+            Column {
+                SearchField(
+                    searchQuery = searchQuery,
+                    chipState = chipState,
+                    onValueChange = { searchQuery = it },
                 )
-            } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(filteredLinks) { link ->
-                        LinkCard(link = link, onLinkClick = {
-                            val openURL = Intent(Intent.ACTION_VIEW)
-                            openURL.data = Uri.parse(link.url)
-                            context?.startActivity(openURL)
-                        })
+                if (filteredLinks.isEmpty()) {
+                    Text(
+                        text = "Nincsenek a feltételeknek megfelelő linkek",
+                        modifier = Modifier
+                            .padding(16.dp),
+                        style = MaterialTheme.typography.headlineSmall,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                } else {
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(filteredLinks) { link ->
+                            LinkCard(link = link, onLinkClick = {
+                                val openURL = Intent(Intent.ACTION_VIEW)
+                                openURL.data = Uri.parse(link.url)
+                                context?.startActivity(openURL)
+                            })
+                        }
                     }
                 }
             }

@@ -19,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -35,6 +36,7 @@ import androidx.navigation.findNavController
 import androidx.navigation.fragment.navArgs
 import coil.compose.AsyncImage
 import mok.it.app.mokapp.R
+import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 import mok.it.app.mokapp.ui.model.UserAchievementLevelUi
 
 class GrantAchievementFragment : Fragment() {
@@ -49,25 +51,29 @@ class GrantAchievementFragment : Fragment() {
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
-                val maxLevel by viewModel.maxLevel.collectAsState(1)
-                val users by viewModel.users.collectAsState()
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    LazyColumn(modifier = Modifier.weight(1f)) {
-                        items(users) { user ->
-                            UserAmountCard(user, maxLevel) { amount ->
-                                viewModel.onEvent(
-                                    GrantAchievementEvent.SetAmount(amount, user)
-                                )
+                MokAppTheme {
+                    val maxLevel by viewModel.maxLevel.collectAsState(1)
+                    val users by viewModel.users.collectAsState()
+                    Surface {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            LazyColumn(modifier = Modifier.weight(1f)) {
+                                items(users) { user ->
+                                    UserAmountCard(user, maxLevel) { amount ->
+                                        viewModel.onEvent(
+                                            GrantAchievementEvent.SetAmount(amount, user)
+                                        )
+                                    }
+                                }
+                            }
+                            Button(
+                                onClick = {
+                                    viewModel.onEvent(GrantAchievementEvent.Save)
+                                    findNavController().popBackStack()
+                                },
+                            ) {
+                                Text(text = "Mentés")
                             }
                         }
-                    }
-                    Button(
-                        onClick = {
-                            viewModel.onEvent(GrantAchievementEvent.Save)
-                            findNavController().popBackStack()
-                        },
-                    ) {
-                        Text(text = "Mentés")
                     }
                 }
             }

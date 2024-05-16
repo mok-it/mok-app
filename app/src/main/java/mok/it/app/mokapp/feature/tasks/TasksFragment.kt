@@ -157,14 +157,13 @@ fun AllBadgesCard(earnedBadges: Int, requiredBadges: Int) {
                 contentDescription = "Mancs",
                 modifier = Modifier.size(50.dp)
             )
-//            Spacer(modifier = Modifier.size(10.dp))
             Icon(
                 painter = painterResource(id = R.drawable.paw_solid),
                 tint = colorResource(id = R.color.blue_dark),
                 contentDescription = "Mancs",
                 modifier = Modifier
-                    .size(50.dp)
                     .padding(start = 10.dp)
+                    .size(50.dp)
             )
         }
     }

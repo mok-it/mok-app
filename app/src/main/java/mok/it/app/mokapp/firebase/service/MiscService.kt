@@ -3,11 +3,13 @@ package mok.it.app.mokapp.service
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.firestore.firestore
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Link
 import mok.it.app.mokapp.utility.Utility.TAG
+
+private const val REQUIREMENTS_DOCUMENT = "requirements"
 
 object MiscService {
 
@@ -31,5 +33,4 @@ object MiscService {
             }
         return linksLiveData
     }
-
 }

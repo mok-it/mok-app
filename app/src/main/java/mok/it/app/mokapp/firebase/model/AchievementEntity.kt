@@ -1,6 +1,7 @@
-package mok.it.app.mokapp.model
+package mok.it.app.mokapp.firebase.model
 
 import com.google.firebase.firestore.DocumentId
+import mok.it.app.mokapp.model.Achievement
 
 data class AchievementEntity(
     @DocumentId

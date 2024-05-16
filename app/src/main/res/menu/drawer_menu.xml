@@ -13,6 +13,10 @@
             android:icon="@drawable/paw_solid"
             android:title="@string/my_badges" />
         <item
+            android:id="@+id/tasksFragment"
+            android:icon="@drawable/ic_checklist"
+            android:title="@string/tasks" />
+        <item
             android:id="@+id/achievementsFragment"
             android:icon="@drawable/ic_trophy"
             android:title="@string/achievements" />

@@ -126,6 +126,7 @@
     <string name="back">Vissza</string>
     <string name="achievement_missing_description">Az acsi leírása nem elérhető, Kérlek próbáld újra később.</string>
     <string name="delete">törlés</string>
+    <string name="tasks">Feladataim</string>
 
 
 </resources>

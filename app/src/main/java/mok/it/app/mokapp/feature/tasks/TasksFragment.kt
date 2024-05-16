@@ -52,18 +52,18 @@ class TasksFragment : Fragment() {
                 val requiredBadges = viewModel.requiredBadges
                 TasksScreen(
                     achievements,
-                    { a: AchievementUi ->
+                    { achievement ->
                         findNavController().navigate(
                             TasksFragmentDirections.actionTasksFragmentToAchievementDetailsFragment(
-                                a.id
+                                achievement.id
                             )
                         )
                     },
                     projects,
-                    { p: Project ->
+                    { project ->
                         findNavController().navigate(
                             TasksFragmentDirections.actionTasksFragmentToDetailsFragment(
-                                p.id
+                                project.id
                             )
                         )
                     },

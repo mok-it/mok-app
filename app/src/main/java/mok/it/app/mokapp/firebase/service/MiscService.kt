@@ -33,14 +33,4 @@ object MiscService {
             }
         return linksLiveData
     }
-
-//    fun getRequiredBadgeCount(): Flow<Int> {
-//        return Firebase.firestore.collection(Collections.MISC).document(REQUIREMENTS_DOCUMENT)
-//            .snapshots()
-//            .map {
-//                (it.toObject(RequirementsEntity::class.java) ?: RequirementsEntity()).requiredBadges
-//            }
-//
-//    }
-
 }

@@ -5,10 +5,6 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.firestore
-import com.google.firebase.firestore.snapshots
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
-import mok.it.app.mokapp.firebase.model.RequirementsEntity
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Link
 import mok.it.app.mokapp.utility.Utility.TAG
@@ -38,13 +34,13 @@ object MiscService {
         return linksLiveData
     }
 
-    fun getRequiredBadgeCount(): Flow<Int> {
-        return Firebase.firestore.collection(Collections.MISC).document(REQUIREMENTS_DOCUMENT)
-            .snapshots()
-            .map {
-                (it.toObject(RequirementsEntity::class.java) ?: RequirementsEntity()).requiredBadges
-            }
-
-    }
+//    fun getRequiredBadgeCount(): Flow<Int> {
+//        return Firebase.firestore.collection(Collections.MISC).document(REQUIREMENTS_DOCUMENT)
+//            .snapshots()
+//            .map {
+//                (it.toObject(RequirementsEntity::class.java) ?: RequirementsEntity()).requiredBadges
+//            }
+//
+//    }
 
 }

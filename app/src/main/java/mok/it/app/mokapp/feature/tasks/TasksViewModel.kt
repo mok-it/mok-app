@@ -1,6 +1,8 @@
 package mok.it.app.mokapp.feature.tasks
 
 import androidx.lifecycle.ViewModel
+import com.google.firebase.Firebase
+import com.google.firebase.remoteconfig.remoteConfig
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapMerge
@@ -9,7 +11,6 @@ import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.firebase.service.AchievementService
 import mok.it.app.mokapp.firebase.service.ProjectService
 import mok.it.app.mokapp.model.Project
-import mok.it.app.mokapp.service.MiscService
 import mok.it.app.mokapp.ui.model.AchievementUi
 
 class TasksViewModel : ViewModel() {
@@ -35,5 +36,6 @@ class TasksViewModel : ViewModel() {
             it.allBadges
         }
 
-    val requiredBadges get() = MiscService.getRequiredBadgeCount()
+    private val _requiredBadges = Firebase.remoteConfig.getLong("requiredBadges").toInt()
+    val requiredBadges get() = _requiredBadges
 }

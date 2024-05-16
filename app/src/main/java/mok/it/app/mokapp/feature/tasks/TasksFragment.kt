@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -50,7 +49,7 @@ class TasksFragment : Fragment() {
                 val achievements by viewModel.achievements.collectAsState(initial = emptyList())
                 val projects by viewModel.projects.collectAsState(initial = emptyList())
                 val earnedBadges by viewModel.earnedBadges.collectAsState(initial = 0)
-                val requiredBadges by viewModel.requiredBadges.collectAsState(initial = 0)
+                val requiredBadges = viewModel.requiredBadges
                 TasksScreen(
                     achievements,
                     { a: AchievementUi ->
@@ -158,12 +157,14 @@ fun AllBadgesCard(earnedBadges: Int, requiredBadges: Int) {
                 contentDescription = "Mancs",
                 modifier = Modifier.size(50.dp)
             )
-            Spacer(modifier = Modifier.size(10.dp))
+//            Spacer(modifier = Modifier.size(10.dp))
             Icon(
                 painter = painterResource(id = R.drawable.paw_solid),
                 tint = colorResource(id = R.color.blue_dark),
                 contentDescription = "Mancs",
-                modifier = Modifier.size(50.dp)
+                modifier = Modifier
+                    .size(50.dp)
+                    .padding(start = 10.dp)
             )
         }
     }

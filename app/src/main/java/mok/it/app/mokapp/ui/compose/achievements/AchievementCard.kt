@@ -13,10 +13,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.dp
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.ui.compose.ImageItemCard
+import mok.it.app.mokapp.ui.compose.theme.ExtendedTheme
 import mok.it.app.mokapp.ui.model.AchievementUi
 
 @Composable
@@ -38,7 +38,7 @@ fun AchievementCard(
                     Icon(
                         imageVector = Icons.Filled.Done,
                         contentDescription = "megszerezve",
-                        tint = colorResource(id = R.color.green_dark),
+                        tint = ExtendedTheme.colorScheme.success.color,
                         modifier = Modifier.size(40.dp)
                     )
                 }
@@ -61,7 +61,7 @@ fun AchievementCard(
                     Icon(
                         imageVector = Icons.Filled.PriorityHigh,
                         contentDescription = "kötelező",
-                        tint = colorResource(id = R.color.red_dark),
+                        tint = ExtendedTheme.colorScheme.warning.color,
                         modifier = Modifier.size(40.dp)
                     )
                 }

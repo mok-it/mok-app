@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.service
+package mok.it.app.mokapp.firebase.service
 
 import android.util.Log
 import androidx.lifecycle.LiveData
@@ -8,8 +8,6 @@ import com.google.firebase.firestore.firestore
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Link
 import mok.it.app.mokapp.utility.Utility.TAG
-
-private const val REQUIREMENTS_DOCUMENT = "requirements"
 
 object MiscService {
 

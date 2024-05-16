@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -22,7 +23,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -36,6 +36,8 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.ui.compose.achievements.AchievementCard
 import mok.it.app.mokapp.ui.compose.projects.ProjectCard
+import mok.it.app.mokapp.ui.compose.theme.ExtendedTheme
+import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 import mok.it.app.mokapp.ui.model.AchievementUi
 
 class TasksFragment : Fragment() {
@@ -50,26 +52,28 @@ class TasksFragment : Fragment() {
                 val projects by viewModel.projects.collectAsState(initial = emptyList())
                 val earnedBadges by viewModel.earnedBadges.collectAsState(initial = 0)
                 val requiredBadges = viewModel.requiredBadges
-                TasksScreen(
-                    achievements,
-                    { achievement ->
-                        findNavController().navigate(
-                            TasksFragmentDirections.actionTasksFragmentToAchievementDetailsFragment(
-                                achievement.id
+                MokAppTheme {
+                    TasksScreen(
+                        achievements,
+                        { achievement ->
+                            findNavController().navigate(
+                                TasksFragmentDirections.actionTasksFragmentToAchievementDetailsFragment(
+                                    achievement.id
+                                )
                             )
-                        )
-                    },
-                    projects,
-                    { project ->
-                        findNavController().navigate(
-                            TasksFragmentDirections.actionTasksFragmentToDetailsFragment(
-                                project.id
+                        },
+                        projects,
+                        { project ->
+                            findNavController().navigate(
+                                TasksFragmentDirections.actionTasksFragmentToDetailsFragment(
+                                    project.id
+                                )
                             )
-                        )
-                    },
-                    earnedBadges,
-                    requiredBadges
-                )
+                        },
+                        earnedBadges,
+                        requiredBadges
+                    )
+                }
             }
         }
 }
@@ -83,38 +87,39 @@ fun TasksScreen(
     earnedBadges: Int,
     requiredBadges: Int
 ) {
-    LazyColumn {
-        item { AllBadgesCard(earnedBadges, requiredBadges) }
-        item {
-            Text(
-                text = "Kötelező acsik:",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(start = 8.dp, top = 16.dp)
-            )
-        }
-        items(achievements) { achievement ->
-            AchievementCard(achievement, true, onAchievementClck)
-        }
-        item {
-            Text(
-                text = "Projektjeim:",
-                style = MaterialTheme.typography.titleLarge,
-                modifier = Modifier.padding(start = 8.dp, top = 16.dp)
-            )
-        }
-        items(projects) { project ->
-            ProjectCard(project, onProjectClick)
-        }
+    Surface {
+        LazyColumn {
+            item { AllBadgesCard(earnedBadges, requiredBadges) }
+            item {
+                Text(
+                    text = "Kötelező acsik:",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(start = 8.dp, top = 16.dp)
+                )
+            }
+            items(achievements) { achievement ->
+                AchievementCard(achievement, true, onAchievementClck)
+            }
+            item {
+                Text(
+                    text = "Projektjeim:",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(start = 8.dp, top = 16.dp)
+                )
+            }
+            items(projects) { project ->
+                ProjectCard(project, onProjectClick)
+            }
 
+        }
     }
 }
 
 @Composable
 fun AllBadgesCard(earnedBadges: Int, requiredBadges: Int) {
     val color =
-        if (earnedBadges >= requiredBadges) colorResource(id = R.color.green_dark) else colorResource(
-            id = R.color.red_dark
-        )
+        if (earnedBadges >= requiredBadges) ExtendedTheme.colorScheme.success.color
+        else ExtendedTheme.colorScheme.warning.colorContainer
     val text = buildAnnotatedString {
         withStyle(style = SpanStyle(color = color)) {
             append(
@@ -153,13 +158,13 @@ fun AllBadgesCard(earnedBadges: Int, requiredBadges: Int) {
             }
             Icon(
                 painter = painterResource(id = R.drawable.paw_solid),
-                tint = colorResource(id = R.color.green_dark),
+                tint = ExtendedTheme.colorScheme.success.colorContainer,
                 contentDescription = "Mancs",
                 modifier = Modifier.size(50.dp)
             )
             Icon(
                 painter = painterResource(id = R.drawable.paw_solid),
-                tint = colorResource(id = R.color.blue_dark),
+                tint = MaterialTheme.colorScheme.primary,
                 contentDescription = "Mancs",
                 modifier = Modifier
                     .padding(start = 10.dp)

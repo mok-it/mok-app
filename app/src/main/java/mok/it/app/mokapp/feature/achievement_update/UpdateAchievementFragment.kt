@@ -20,6 +20,7 @@ import mok.it.app.mokapp.R
 import mok.it.app.mokapp.feature.achievement_create.EditAchievementEvent
 import mok.it.app.mokapp.feature.achievement_create.EditAchievementViewModel
 import mok.it.app.mokapp.feature.achievement_create.EditAchievementViewModelFactory
+import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 
 class UpdateAchievementFragment : Fragment() {
     private val args: UpdateAchievementFragmentArgs by navArgs()
@@ -34,7 +35,9 @@ class UpdateAchievementFragment : Fragment() {
         setupTopMenu()
         return ComposeView(requireContext()).apply {
             setContent {
-                UpdateAchievementScreen(viewModel) { findNavController().popBackStack() }
+                MokAppTheme {
+                    UpdateAchievementScreen(viewModel) { findNavController().popBackStack() }
+                }
             }
         }
     }
@@ -46,6 +49,8 @@ class UpdateAchievementFragment : Fragment() {
                 menu.add(R.id.delete, R.id.delete, 0, R.string.delete)
                     .setIcon(R.drawable.ic_delete)
                     .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                menu.getItem(0).icon?.mutate()
+                    ?.setTint(resources.getColor(R.color.md_theme_onPrimary))
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {

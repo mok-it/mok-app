@@ -18,6 +18,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 
 @Composable
 fun ImageItemCard(
@@ -29,45 +30,48 @@ fun ImageItemCard(
     colors: CardColors = CardDefaults.cardColors(),
     onClick: () -> Unit
 ) {
-    Card(
-        onClick = onClick,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        shape = RoundedCornerShape(8.dp),
-        colors = colors
-    ) {
-        Row(
-            modifier = Modifier.padding(end = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+    MokAppTheme {
+
+        Card(
+            onClick = onClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
+            shape = RoundedCornerShape(8.dp),
+            colors = colors
         ) {
-            AsyncImage(
-                model = asyncImageModel,
-                contentDescription = asyncImageContentDescription,
-                modifier = Modifier
-                    .size(80.dp)
-                    .padding(8.dp),
-                contentScale = ContentScale.Fit
-            )
-            Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(8.dp)
+            Row(
+                modifier = Modifier.padding(end = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = mainText,
-                    style = MaterialTheme.typography.titleMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                AsyncImage(
+                    model = asyncImageModel,
+                    contentDescription = asyncImageContentDescription,
+                    modifier = Modifier
+                        .size(80.dp)
+                        .padding(8.dp),
+                    contentScale = ContentScale.Fit
                 )
-                Text(
-                    text = subText,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
-                )
+                Column(
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(8.dp)
+                ) {
+                    Text(
+                        text = mainText,
+                        style = MaterialTheme.typography.titleMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                    Text(
+                        text = subText,
+                        style = MaterialTheme.typography.bodyMedium,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                icon()
             }
-            icon()
         }
     }
 }

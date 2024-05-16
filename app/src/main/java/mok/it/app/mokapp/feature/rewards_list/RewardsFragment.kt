@@ -29,6 +29,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -61,6 +62,7 @@ import mok.it.app.mokapp.model.Reward
 import mok.it.app.mokapp.model.enums.Role
 import mok.it.app.mokapp.ui.compose.BadgeIcon
 import mok.it.app.mokapp.ui.compose.EditNumericValue
+import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 
 class RewardsFragment : Fragment() {
     override fun onCreateView(
@@ -69,7 +71,9 @@ class RewardsFragment : Fragment() {
     ): View =
         ComposeView(requireContext()).apply {
             setContent {
-                RewardsScreen()
+                MokAppTheme {
+                    RewardsScreen()
+                }
             }
         }
 
@@ -78,34 +82,36 @@ class RewardsFragment : Fragment() {
         val viewModel: RewardsViewModel by viewModels()
         val rewards = viewModel.rewards.collectAsState(initial = emptyList())
 
-        Column {
-            Card(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
-                shape = RoundedCornerShape(8.dp)
-            ) {
-                Row(
+        Surface {
+            Column {
+                Card(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(8.dp),
-                    horizontalArrangement = Arrangement.SpaceAround
+                    shape = RoundedCornerShape(8.dp)
                 ) {
-                    Text(
-                        text = "Mancsaid száma",
-                        style = MaterialTheme.typography.headlineSmall,
+                    Row(
                         modifier = Modifier
-                            .padding(16.dp)
-                    )
-                    BadgeIcon(
-                        badgeNumberText = userModel.remainingBadges.toString(),
-                        modifier = Modifier.padding(8.dp)
-                    )
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        horizontalArrangement = Arrangement.SpaceAround
+                    ) {
+                        Text(
+                            text = "Mancsaid száma",
+                            style = MaterialTheme.typography.headlineSmall,
+                            modifier = Modifier
+                                .padding(16.dp)
+                        )
+                        BadgeIcon(
+                            badgeNumberText = userModel.remainingBadges.toString(),
+                            modifier = Modifier.padding(8.dp)
+                        )
+                    }
                 }
-            }
-            LazyColumn {
-                items(rewards.value) { reward ->
-                    RewardItem(reward, ::canBeBoughtByCurrentUser, viewModel)
+                LazyColumn {
+                    items(rewards.value) { reward ->
+                        RewardItem(reward, ::canBeBoughtByCurrentUser, viewModel)
+                    }
                 }
             }
         }

@@ -25,40 +25,6 @@ object ProjectService {
             }
             .filterNotNull()
 
-//    fun getProjectsByIds(
-//        projectIds: List<String>,
-//    ): LiveData<List<Project>> {
-//        val projectsLiveData = MutableLiveData<List<Project>>()
-//
-//        // an empty list would crash the query
-//        if (projectIds.isEmpty()) {
-//            projectsLiveData.value = emptyList()
-//            return projectsLiveData
-//        }
-//
-//        Firebase.firestore.collection(Collections.PROJECTS)
-//            .whereIn(FieldPath.documentId(), projectIds)
-//            .get()
-//            .addOnSuccessListener { querySnapshot ->
-//                val projectsList = mutableListOf<Project>()
-//
-//                for (document in querySnapshot.documents) {
-//                    val project = document.toObject(Project::class.java)
-//                    project?.let {
-//                        projectsList.add(it)
-//                    }
-//                }
-//
-//                projectsLiveData.value = projectsList
-//
-//            }
-//            .addOnFailureListener { exception ->
-//                Log.e(TAG, "Error getting documents: ", exception)
-//            }
-//
-//        return projectsLiveData
-//    }
-
     fun getProjectData(projectId: String): Flow<Project> =
         Firebase.firestore.collection(Collections.PROJECTS).document(projectId)
             .snapshots()

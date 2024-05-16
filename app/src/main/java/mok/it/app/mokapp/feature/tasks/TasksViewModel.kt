@@ -30,9 +30,10 @@ class TasksViewModel : ViewModel() {
             ProjectService.getProjectsByIds(user.projectBadges.keys.toList())
         }
 
-    val earnedBadges = FirebaseUserObject.userModelFlow.map {
-        it.allBadges
-    }
+    val earnedBadges
+        get() = FirebaseUserObject.userModelFlow.map {
+            it.allBadges
+        }
 
-    val requiredBadges = MiscService.getRequiredBadgeCount()
+    val requiredBadges get() = MiscService.getRequiredBadgeCount()
 }

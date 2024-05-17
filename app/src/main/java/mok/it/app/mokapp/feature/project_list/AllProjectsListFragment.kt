@@ -2,6 +2,9 @@ package mok.it.app.mokapp.feature.project_list
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
@@ -26,8 +29,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.dokar.chiptextfield.Chip
@@ -57,11 +63,14 @@ class AllProjectsListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = ComposeView(requireContext()).apply {
-        loginOrLoad {
-            setContent {
-                MokAppTheme {
-                    AllProjectsListScreen()
+    ): View {
+        setupTopMenu()
+        return ComposeView(requireContext()).apply {
+            loginOrLoad {
+                setContent {
+                    MokAppTheme {
+                        AllProjectsListScreen()
+                    }
                 }
             }
         }
@@ -150,6 +159,31 @@ class AllProjectsListFragment : Fragment() {
         }
     }
 
+
+    private fun setupTopMenu() {
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menu.add(R.id.menu, R.id.menu, 0, R.string.delete)
+                    .setIcon(R.drawable.ic_three_dots)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                menu.getItem(0).icon?.mutate()
+                    ?.setTint(resources.getColor(R.color.md_theme_onPrimary))
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.menu -> {
+                        findNavController().navigate(AllProjectsListFragmentDirections.actionAllProjectsListFragmentToProjectImportExportFragment())
+
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
 
     private fun loginOrLoad(setComposeContent: () -> Unit) {
         if (currentUser == null) {

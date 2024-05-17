@@ -22,7 +22,7 @@ android {
         minSdk = 26
         targetSdk = 34
         versionCode = (((Date().time / 1000) - 1451606400) / 10).toInt()
-        versionName = "5.0.1"
+        versionName = "5.0.2"
 
         testInstrumentationRunner =
             "androidx.test.runner.AndroidJUnitRunner"
@@ -30,7 +30,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false //TODO: investigate why minify breaks the app in release build
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"

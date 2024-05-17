@@ -1,6 +1,7 @@
 package mok.it.app.mokapp
 
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
@@ -18,6 +19,13 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.bumptech.glide.request.RequestOptions
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
+import com.google.android.play.core.ktx.isFlexibleUpdateAllowed
+import com.google.android.play.core.ktx.isImmediateUpdateAllowed
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
@@ -28,6 +36,7 @@ import mok.it.app.mokapp.databinding.NavHeaderBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.service.UserService.updateFcmTokenIfEmptyOrOutdated
+import mok.it.app.mokapp.utility.Utility.TAG
 
 
 class MainActivity : AppCompatActivity() {
@@ -42,8 +51,14 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private lateinit var appUpdateManager: AppUpdateManager
+    private val updateType = AppUpdateType.IMMEDIATE
+    //TODO: should be something like if (BuildConfig.VERSION_CODE >= Firebase.remoteConfig.getLong("latestStable")) AppUpdateType.IMMEDIATE else AppUpdateType.FLEXIBLE
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        appUpdateManager = AppUpdateManagerFactory.create(applicationContext)
+        checkForUpdates()
         binding = ActivityMainBinding.inflate(layoutInflater)
         navHeaderBinding = NavHeaderBinding.bind(binding.navView.getHeaderView(0))
         setContentView(binding.root)
@@ -129,6 +144,18 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        if (updateType == AppUpdateType.IMMEDIATE) {
+            appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
+                if (info.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
+                    val appUpdateOptions = AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE)
+                        .setAllowAssetPackDeletion(true)
+                        .build()
+                    appUpdateManager.startUpdateFlow(info, this, appUpdateOptions)
+                        .addOnSuccessListener { Log.e(TAG, "app updated succesfully") }
+                        .addOnFailureListener { Log.e(TAG, "app update failed") }
+                }
+            }
+        }
         if (currentUser != null) refreshCurrentUserAndUserModel(this) {
             loadApp()
         }
@@ -199,5 +226,24 @@ class MainActivity : AppCompatActivity() {
         )
             .signOut()
             .addOnSuccessListener { navController.navigate(R.id.action_global_loginFragment) }
+    }
+
+    private fun checkForUpdates() {
+        appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
+            val isUpdateAvailable = info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+            val isUpdateAllowed = when (updateType) {
+                AppUpdateType.FLEXIBLE -> info.isFlexibleUpdateAllowed
+                AppUpdateType.IMMEDIATE -> info.isImmediateUpdateAllowed
+                else -> false
+            }
+            if (isUpdateAllowed && isUpdateAvailable) {
+                val appUpdateOptions = AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE)
+                    .setAllowAssetPackDeletion(true)
+                    .build()
+                appUpdateManager.startUpdateFlow(info, this, appUpdateOptions)
+                    .addOnSuccessListener { Log.e(TAG, "app updated succesfully") }
+                    .addOnFailureListener { Log.e(TAG, "app update failed") }
+            }
+        }
     }
 }

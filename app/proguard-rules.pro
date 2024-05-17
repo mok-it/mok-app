@@ -19,3 +19,13 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+-keep class mok.it.app.mokapp.model.enums.Category {*;}
+-keep class mok.it.app.mokapp.model.User {*;}
+-keep class mok.it.app.mokapp.model.Project {*;}
+
+-keep class mok.it.app.mokapp.model.enums.Role {*;}
+-keep class mok.it.app.mokapp.model.Reward {*;}
+-keep class mok.it.app.mokapp.model.Link {*;}
+-keep class mok.it.app.mokapp.model.RewardRequest {*;}
+-keep class mok.it.app.mokapp.model.Comment {*;}
+-keep class mok.it.app.mokapp.model.Achievement {*;}

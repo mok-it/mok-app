@@ -1,8 +1,6 @@
 package mok.it.app.mokapp.firebase.service
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.asLiveData
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.firestore
@@ -86,7 +84,7 @@ object ProjectService {
             }
     }
 
-    fun getAllProjects(): LiveData<List<Project>> =
+    fun getAllProjects(): Flow<List<Project>> =
         Firebase.firestore.collection(Collections.PROJECTS)
             .orderBy("category")
             .orderBy("name")
@@ -94,5 +92,5 @@ object ProjectService {
             .map { s ->
                 s.toObjects(Project::class.java)
             }
-            .asLiveData()
+            .filterNotNull()
 }

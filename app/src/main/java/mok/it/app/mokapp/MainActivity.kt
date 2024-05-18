@@ -41,8 +41,6 @@ import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 
 
 class MainActivity : AppCompatActivity() {
-    private var toasted = false //todo: remove
-
     val firestore = Firebase.firestore
     private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
@@ -55,9 +53,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var appUpdateManager: AppUpdateManager
-//    private var updateType = -1
-    //TODO: should be something like if (BuildConfig.VERSION_CODE >= Firebase.remoteConfig.getLong("latestStable")) AppUpdateType.IMMEDIATE else AppUpdateType.FLEXIBLE
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appUpdateManager = AppUpdateManagerFactory.create(applicationContext)
@@ -77,7 +72,7 @@ class MainActivity : AppCompatActivity() {
     private fun getDataFromRemoteConfig() {
         val remoteConfig = Firebase.remoteConfig
         val configSettings = remoteConfigSettings {
-            minimumFetchIntervalInSeconds = 3//00
+            minimumFetchIntervalInSeconds = 300
         }
         remoteConfig.setConfigSettingsAsync(configSettings)
         remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)

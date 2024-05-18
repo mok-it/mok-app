@@ -8,6 +8,11 @@ interface UpdateStrategy {
     fun shouldUpdate(info: AppUpdateInfo): Boolean
     abstract val installStateUpdatedListener: InstallStateUpdatedListener
     abstract fun startUpdate(info: AppUpdateInfo, binding: ActivityMainBinding)
-    fun onResume() {}
-    fun onDestory() {}
+    fun onResume() {
+        //only needed in Immediate updates
+    }
+
+    fun onDestory() {
+        //only needed in Flexible updates
+    }
 }

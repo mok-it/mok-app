@@ -1,10 +1,11 @@
 package mok.it.app.mokapp
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import android.widget.Toast
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.ui.platform.ComposeView
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout.DrawerListener
 import androidx.navigation.NavController
@@ -21,11 +22,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.play.core.appupdate.AppUpdateManager
 import com.google.android.play.core.appupdate.AppUpdateManagerFactory
-import com.google.android.play.core.appupdate.AppUpdateOptions
-import com.google.android.play.core.install.model.AppUpdateType
 import com.google.android.play.core.install.model.UpdateAvailability
-import com.google.android.play.core.ktx.isFlexibleUpdateAllowed
-import com.google.android.play.core.ktx.isImmediateUpdateAllowed
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
@@ -36,15 +33,21 @@ import mok.it.app.mokapp.databinding.NavHeaderBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
 import mok.it.app.mokapp.firebase.service.UserService.updateFcmTokenIfEmptyOrOutdated
-import mok.it.app.mokapp.utility.Utility.TAG
+import mok.it.app.mokapp.model.updates.strategy.FlexibleUpdateStrategy
+import mok.it.app.mokapp.model.updates.strategy.ImmediateUpdateStrategy
+import mok.it.app.mokapp.model.updates.strategy.UpdateStrategy
+import mok.it.app.mokapp.ui.compose.LoadingScreen
+import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 
 
 class MainActivity : AppCompatActivity() {
+    private var toasted = false //todo: remove
 
     val firestore = Firebase.firestore
     private lateinit var navController: NavController
     private lateinit var binding: ActivityMainBinding
     private lateinit var navHeaderBinding: NavHeaderBinding
+    private lateinit var strategy: UpdateStrategy
     private val backDrawerCallback = object : OnBackPressedCallback(false) {
         override fun handleOnBackPressed() {
             binding.drawerLayout.closeDrawer(GravityCompat.START)
@@ -52,31 +55,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     private lateinit var appUpdateManager: AppUpdateManager
-    private val updateType = AppUpdateType.IMMEDIATE
+//    private var updateType = -1
     //TODO: should be something like if (BuildConfig.VERSION_CODE >= Firebase.remoteConfig.getLong("latestStable")) AppUpdateType.IMMEDIATE else AppUpdateType.FLEXIBLE
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         appUpdateManager = AppUpdateManagerFactory.create(applicationContext)
-        checkForUpdates()
+        getDataFromRemoteConfig()
         binding = ActivityMainBinding.inflate(layoutInflater)
         navHeaderBinding = NavHeaderBinding.bind(binding.navView.getHeaderView(0))
-        setContentView(binding.root)
+        setContentView(
+            ComposeView(this).apply { setContent { MokAppTheme { LoadingScreen() } } }
+        )
         setupNavigation()
         setupBackPressed()
 
-        getDataFromRemoteConfig()
     }
+
 
     /**Get config data from Firebase, e.g. season*/
     private fun getDataFromRemoteConfig() {
         val remoteConfig = Firebase.remoteConfig
         val configSettings = remoteConfigSettings {
-            minimumFetchIntervalInSeconds = 300
+            minimumFetchIntervalInSeconds = 3//00
         }
         remoteConfig.setConfigSettingsAsync(configSettings)
         remoteConfig.setDefaultsAsync(R.xml.remote_config_defaults)
-        remoteConfig.fetchAndActivate()
+        remoteConfig.fetchAndActivate().addOnSuccessListener {
+            checkForUpdates()
+        }
     }
 
     private fun setupNavigation() {
@@ -144,17 +151,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        if (updateType == AppUpdateType.IMMEDIATE) {
-            appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
-                if (info.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
-                    val appUpdateOptions = AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE)
-                        .setAllowAssetPackDeletion(true)
-                        .build()
-                    appUpdateManager.startUpdateFlow(info, this, appUpdateOptions)
-                        .addOnSuccessListener { Log.e(TAG, "app updated succesfully") }
-                        .addOnFailureListener { Log.e(TAG, "app update failed") }
-                }
-            }
+        if (this::strategy.isInitialized) {
+            strategy.onResume()
         }
         if (currentUser != null) refreshCurrentUserAndUserModel(this) {
             loadApp()
@@ -229,21 +227,35 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkForUpdates() {
+        strategy =
+            if (Firebase.remoteConfig.getLong("latestBreakingVersion").toInt() >
+                BuildConfig.VERSION_CODE
+            )
+                ImmediateUpdateStrategy(appUpdateManager, this)
+            else
+                FlexibleUpdateStrategy(appUpdateManager, this)
+        appUpdateManager.registerListener(strategy.installStateUpdatedListener)
+
         appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
-            val isUpdateAvailable = info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
-            val isUpdateAllowed = when (updateType) {
-                AppUpdateType.FLEXIBLE -> info.isFlexibleUpdateAllowed
-                AppUpdateType.IMMEDIATE -> info.isImmediateUpdateAllowed
-                else -> false
-            }
-            if (isUpdateAllowed && isUpdateAvailable) {
-                val appUpdateOptions = AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE)
-                    .setAllowAssetPackDeletion(true)
-                    .build()
-                appUpdateManager.startUpdateFlow(info, this, appUpdateOptions)
-                    .addOnSuccessListener { Log.e(TAG, "app updated succesfully") }
-                    .addOnFailureListener { Log.e(TAG, "app update failed") }
+            if (strategy.shouldUpdate(info)) {
+                strategy.startUpdate(
+                    info,
+                    binding
+                )
+            } else if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && Firebase.remoteConfig.getLong(
+                    "latestBreakingVersion"
+                ).toInt() > BuildConfig.VERSION_CODE
+            ) {
+                Toast.makeText(this, "Frissítés szükséges, de hiba történt.", Toast.LENGTH_LONG)
+                    .show()
+            } else {
+                setContentView(binding.root)
             }
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        strategy.onDestory()
     }
 }

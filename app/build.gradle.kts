@@ -33,7 +33,8 @@ android {
             isMinifyEnabled = false //TODO: investigate why minify breaks the app in release build
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro" //contents were edited by trial and error to fix release build
+                //modify the file so that it minimizes app size while keeping the app functional
             )
         }
     }

@@ -54,7 +54,7 @@ enum class Category {
         fun String.toCategory() = Category.valueOf(this.replace(" ", "").unaccent().uppercase())
         fun toList(): ArrayList<String> {
             val categoryList = ArrayList<String>()
-            Category.values().forEach {
+            Category.entries.forEach {
                 categoryList.add(it.toString())
             }
             return categoryList

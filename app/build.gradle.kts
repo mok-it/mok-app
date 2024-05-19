@@ -22,7 +22,7 @@ android {
         minSdk = 26
         targetSdk = 34
         versionCode = (((Date().time / 1000) - 1451606400) / 10).toInt()
-        versionName = "5.0.1"
+        versionName = "5.0.2"
 
         testInstrumentationRunner =
             "androidx.test.runner.AndroidJUnitRunner"
@@ -30,10 +30,11 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false //TODO: investigate why minify breaks the app in release build
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
+                "proguard-rules.pro" //contents were edited by trial and error to fix release build
+                //modify the file so that it minimizes app size while keeping the app functional
             )
         }
     }
@@ -81,6 +82,7 @@ val materialDialogVersion = "2.2.3"
 val lottieVersion = "6.4.0"
 val androidxFragmentVersion = "1.7.0-alpha10"
 val chiptextfieldVersion = "0.7.0-alpha02"
+val playUpdateVersion = "2.1.0"
 
 dependencies {
     // Androidx
@@ -121,6 +123,10 @@ dependencies {
 
     //Coil
     implementation("io.coil-kt:coil-compose:$coilComposeVersion")
+
+    //Play store updates
+    implementation("com.google.android.play:app-update:$playUpdateVersion")
+    implementation("com.google.android.play:app-update-ktx:$playUpdateVersion")
 
     //Firebase SDK
     implementation(platform("com.google.firebase:firebase-bom:$firebaseBomVersion"))

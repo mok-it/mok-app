@@ -81,6 +81,7 @@ val materialDialogVersion = "2.2.3"
 val lottieVersion = "6.4.0"
 val androidxFragmentVersion = "1.7.0-alpha10"
 val chiptextfieldVersion = "0.7.0-alpha02"
+val csvVersion = "1.8"
 
 dependencies {
     // Androidx
@@ -169,5 +170,8 @@ dependencies {
 
     // Chip text field
     implementation("io.github.dokar3:chiptextfield-m3:$chiptextfieldVersion")
+
+    //Parse csv
+    implementation("org.apache.commons:commons-csv:$csvVersion")
 }
 apply(plugin = "com.google.gms.google-services")

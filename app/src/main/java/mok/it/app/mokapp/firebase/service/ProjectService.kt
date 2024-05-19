@@ -86,6 +86,16 @@ object ProjectService {
             }
     }
 
+    fun getProjects(): Flow<List<Project>> =
+        Firebase.firestore.collection(Collections.PROJECTS)
+            .orderBy("category")
+            .orderBy("name")
+            .snapshots()
+            .map { s ->
+                s.toObjects(Project::class.java)
+            }
+
+    @Deprecated("Use getProjects() instead")
     fun getAllProjects(): LiveData<List<Project>> =
         Firebase.firestore.collection(Collections.PROJECTS)
             .orderBy("category")

@@ -3,7 +3,6 @@ package mok.it.app.mokapp.firebase.service
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
@@ -393,12 +392,11 @@ object UserService {
         Firebase.firestore.collection(Collections.USERS)
             .orderBy("name", Query.Direction.ASCENDING)
 
-    fun getUsers(userIds: List<String>): LiveData<List<User>> {
+    fun getUsers(userIds: List<String>): Flow<List<User>> {
         val ids = userIds.ifEmpty { listOf("_") }
         return Firebase.firestore.collection(Collections.USERS)
             .whereIn(FieldPath.documentId(), ids)
             .snapshots()
             .map { s -> s.toObjects(User::class.java) }
-            .asLiveData()
     }
 }

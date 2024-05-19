@@ -39,6 +39,7 @@ import com.dokar.chiptextfield.ChipTextFieldState
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModelFlow
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
@@ -106,6 +107,9 @@ class AllProjectsListFragment : Fragment() {
     }
 
     private fun setupTopMenu() {
+        if (!userModel.roleAtLeast(Role.AREA_MANAGER)) {
+            return
+        }
         val menuHost: MenuHost = requireActivity()
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {

@@ -25,7 +25,7 @@ class ProjectImportExportViewModel : ViewModel() {
     @OptIn(ExperimentalCoroutinesApi::class)
     val existingProjects: Flow<List<ExportProject>>
         get() {
-            return ProjectService.getProjects().flatMapLatest { projects ->
+            return ProjectService.getAllProjects().flatMapLatest { projects ->
                 val xd = projects.map { project ->
                     UserService.getUsers(project.members).map { users ->
                         project.toExportProject(users)

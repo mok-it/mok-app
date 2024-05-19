@@ -1,3 +1,4 @@
+//new
 package mok.it.app.mokapp.feature.project_list
 
 import android.os.Bundle
@@ -21,11 +22,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
@@ -38,17 +36,16 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.dokar.chiptextfield.Chip
 import com.dokar.chiptextfield.ChipTextFieldState
-import com.dokar.chiptextfield.rememberChipTextFieldState
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
-import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModelFlow
 import mok.it.app.mokapp.model.Project
+import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.model.enums.Role
 import mok.it.app.mokapp.ui.compose.SearchField
 import mok.it.app.mokapp.ui.compose.projects.ProjectCard
 import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
-import mok.it.app.mokapp.utility.Utility.unaccent
 
 class AllProjectsListFragment : Fragment() {
 
@@ -68,97 +65,45 @@ class AllProjectsListFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             loginOrLoad {
                 setContent {
+                    val searchQuery by viewModel.searchQuery
+                    val chipState by viewModel.chipState
+                    val filteredProjects by viewModel.filteredProjects.collectAsState(initial = emptyList())
                     MokAppTheme {
-                        AllProjectsListScreen()
-                    }
-                }
-            }
-        }
-    }
-
-    @Composable
-    fun AllProjectsListScreen() {
-        val lazyListState = rememberLazyListState()
-
-        val chipState = rememberChipTextFieldState<Chip>()
-        var searchQuery by remember { mutableStateOf("") }
-        val filteredProjects = getFilteredProjects(searchQuery, chipState)
-
-        Scaffold(floatingActionButton = {
-            if (userModel.roleAtLeast(Role.AREA_MANAGER)) {
-                FloatingActionButton(
-                    onClick = {
-                        findNavController().navigate(
-                            AllProjectsListFragmentDirections.actionAllProjectsListFragmentToCreateProjectFragment(
-                                args.category
-                            )
-                        )
-                    },
-                    modifier = Modifier
-                        .padding(16.dp),
-                ) {
-                    Icon(Icons.Filled.Add, contentDescription = "Add Project")
-                }
-            }
-        }) { padding ->
-            Surface {
-                Column {
-                    SearchField(
-                        searchQuery = searchQuery,
-                        chipState = chipState,
-                        onValueChange = { searchQuery = it },
-                    )
-                    if (filteredProjects.isEmpty()) {
-                        Text(
-                            text = "Nincsenek a feltételeknek megfelelő projektek",
-                            modifier = Modifier
-                                .padding(16.dp),
-                            style = MaterialTheme.typography.headlineSmall,
-                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                        )
-                    } else {
-                        LazyColumn(state = lazyListState) {
-                            items(filteredProjects) { project ->
-                                ProjectCard(project = project, onClick = {
-                                    val action =
-                                        AllProjectsListFragmentDirections.actionAllProjectsListFragmentToDetailsFragment(
-                                            project.id
-                                        )
-                                    findNavController().navigate(action)
-                                })
+                        AllProjectsListScreen(
+                            searchQuery = searchQuery,
+                            chipState = chipState,
+                            filteredProjects = filteredProjects,
+                            onCreateProject = {
+                                findNavController().navigate(
+                                    AllProjectsListFragmentDirections.actionAllProjectsListFragmentToCreateProjectFragment(
+                                        args.category
+                                    )
+                                )
+                            },
+                            onSearchValueChange = { viewModel.onSearchValueChange(it) },
+                            onNavigateToProject = { project ->
+                                val action =
+                                    AllProjectsListFragmentDirections.actionAllProjectsListFragmentToDetailsFragment(
+                                        project.id
+                                    )
+                                findNavController().navigate(action)
                             }
-                        }
+                        )
                     }
                 }
             }
         }
     }
 
-    @Composable
-    private fun getFilteredProjects(
-        searchQuery: String,
-        chipState: ChipTextFieldState<Chip>
-    ) = viewModel.projects.observeAsState().value
-        ?.filter { project -> isProjectMatched(project, searchQuery, chipState) }
-        .orEmpty()
-        .sortedWith(compareBy({ it.categoryEnum }, { it.name }))
-
-    private fun isProjectMatched(
-        project: Project,
-        cleanSearchQuery: String,
-        chipState: ChipTextFieldState<Chip>
-    ): Boolean {
-        val cleanSearchWords =
-            chipState.chips.map { it.text.trim().unaccent() } + cleanSearchQuery.trim().unaccent()
-
-        return cleanSearchWords.all {
-            project.name.unaccent().contains(it, ignoreCase = true)
-                    || project.description.unaccent().contains(it, ignoreCase = true)
-                    || project.categoryEnum.toString().contains(it, ignoreCase = true)
-                    || it == project.maxBadges.toString()
+    private fun loginOrLoad(setComposeContent: () -> Unit) {
+        if (currentUser == null) {
+            findNavController().navigate(R.id.action_global_loginFragment)
+        } else {
+            refreshCurrentUserAndUserModel(requireContext()) {
+                setComposeContent()
+            }
         }
     }
-
 
     private fun setupTopMenu() {
         val menuHost: MenuHost = requireActivity()
@@ -185,12 +130,55 @@ class AllProjectsListFragment : Fragment() {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
-    private fun loginOrLoad(setComposeContent: () -> Unit) {
-        if (currentUser == null) {
-            findNavController().navigate(R.id.action_global_loginFragment)
-        } else {
-            refreshCurrentUserAndUserModel(requireContext()) {
-                setComposeContent()
+}
+
+@Composable
+fun AllProjectsListScreen(
+    searchQuery: String,
+    chipState: ChipTextFieldState<Chip>,
+    filteredProjects: List<Project>,
+    onCreateProject: () -> Unit,
+    onSearchValueChange: (String) -> Unit,
+    onNavigateToProject: (Project) -> Unit
+) {
+    val lazyListState = rememberLazyListState()
+
+    Scaffold(floatingActionButton = {
+        val user by userModelFlow.collectAsState(initial = User())
+        if (user.roleAtLeast(Role.AREA_MANAGER)) {
+            FloatingActionButton(
+                onClick = onCreateProject,
+                modifier = Modifier
+                    .padding(16.dp),
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = "Add Project")
+            }
+        }
+    }) { padding ->
+        Surface {
+            Column {
+                SearchField(
+                    searchQuery = searchQuery,
+                    chipState = chipState,
+                    onValueChange = onSearchValueChange,
+                )
+                if (filteredProjects.isEmpty()) {
+                    Text(
+                        text = "Nincsenek a feltételeknek megfelelő projektek",
+                        modifier = Modifier
+                            .padding(16.dp),
+                        style = MaterialTheme.typography.headlineSmall,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                    )
+                } else {
+                    LazyColumn(state = lazyListState) {
+                        items(filteredProjects) { project ->
+                            ProjectCard(
+                                project = project, onClick = onNavigateToProject
+                            )
+                        }
+                    }
+                }
             }
         }
     }

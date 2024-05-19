@@ -6,23 +6,45 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Button
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Replay
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material.icons.filled.Upload
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardColors
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.findNavController
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 import mok.it.app.mokapp.model.ExportProject
 import mok.it.app.mokapp.model.Project
-import mok.it.app.mokapp.ui.compose.projects.ProjectCard
+import mok.it.app.mokapp.ui.compose.AdminButton
+import mok.it.app.mokapp.ui.compose.projects.ImportProjectCard
+import mok.it.app.mokapp.ui.compose.theme.ExtendedTheme
 import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 import mok.it.app.mokapp.utility.Utility.TAG
 import org.apache.commons.csv.CSVFormat
@@ -37,28 +59,14 @@ class ProjectImportExportFragment : Fragment() {
             Log.e(TAG, uri?.path ?: "null")
             uri?.let { uri ->
                 requireContext().contentResolver.openInputStream(uri)?.use {
-                    val projects =
+                    Log.e(TAG, "Reading CSV")
+                    viewModel.selectImport(
                         try {
-                            Log.e(TAG, "Reading CSV")
                             readCsv(it)
                         } catch (_: Exception) {
-                            Log.e(TAG, "Error reading CSV, using dummy data")
-                            listOf(
-                                Project(
-                                    id = "1",
-                                    category = "category",
-                                    created = Date(0),
-                                    creator = "creator",
-                                    deadline = Date(0),
-                                    description = "description",
-                                    icon = "icon",
-                                    name = "name",
-                                    maxBadges = 1,
-                                    projectLeader = "projectLeader"
-                                )
-                            )
+                            null
                         }
-                    viewModel.onEvent(ImportExportEvent.Import(projects))
+                    )
                 }
             }
         }
@@ -90,10 +98,13 @@ class ProjectImportExportFragment : Fragment() {
     ): View = ComposeView(requireContext()).apply {
         Log.d(TAG, "onCreateView")
         setContent {
+            val importError by viewModel.importError
             MokAppTheme {
                 ImportExportScreen(
                     viewModel.importedProjects,
+                    importError,
                     { selectFile.launch("*/*") },
+                    { viewModel.saveImport(); findNavController().popBackStack() },
                     { createFile.launch("projects.csv") },
                 )
             }
@@ -103,23 +114,22 @@ class ProjectImportExportFragment : Fragment() {
 
 private fun readCsv(inputStream: InputStream): List<Project> =
     CSVParser(inputStream.reader(), CSVFormat.DEFAULT)
-        .drop(1) // Dropping the header
         .map {
             Project(
-                id = it[0],
-                category = it[1],
-                created = Date.valueOf(it[2]),
-                creator = it[3],
-                deadline = Date.valueOf(it[4]),
-                description = it[5],
-                icon = it[6],
-                name = it[7],
-                maxBadges = it[8].toInt(),
-                projectLeader = it[9]
+                category = it[0],
+                deadline = try {
+                    Date.valueOf(it[1])
+                } catch (_: Exception) {
+                    Date(0)
+                },
+                description = it[2],
+                icon = it[3],
+                name = it[4],
+                maxBadges = it[5].toInt(),
             )
         }
 
-fun Writer.writeCsv(projects: List<ExportProject>) {
+private fun Writer.writeCsv(projects: List<ExportProject>) {
     CSVFormat.DEFAULT.print(this).apply {
         printRecord(
             "név",
@@ -158,25 +168,124 @@ fun Writer.writeCsv(projects: List<ExportProject>) {
 
 @Composable
 fun ImportExportScreen(
-    projects: List<Project>,
+    importedProjects: List<Project>,
+    importError: Boolean,
     selectFile: () -> Unit,
+    saveImport: () -> Unit,
     createFile: () -> Unit,
 ) {
-    val projects = remember { projects }
     Surface {
-        if (projects.isEmpty()) {
-            Column {
-                Button(onClick = selectFile) {
-                    Text("Importálás")
+        LazyColumn {
+            if (importedProjects.isEmpty()) {
+                item {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    ) {
+                        AdminButton(
+                            modifier = Modifier.weight(1f),
+                            imageVector = Icons.Default.Upload,
+                            contentDescription = "Importálás",
+                            onClick = selectFile
+                        )
+                        AdminButton(
+                            modifier = Modifier.weight(1f),
+                            imageVector = Icons.Default.Download,
+                            contentDescription = "Exportálás",
+                            onClick = createFile
+                        )
+                    }
                 }
-                Button(onClick = createFile) {
-                    Text("Exportálás")
+                if (importError) {
+                    item {
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight()
+                                .padding(8.dp),
+                            colors = CardColors(
+                                containerColor = ExtendedTheme.colorScheme.warning.colorContainer,
+                                contentColor = ExtendedTheme.colorScheme.warning.onColorContainer,
+                                disabledContainerColor = CardDefaults.cardColors().disabledContainerColor,
+                                disabledContentColor = CardDefaults.cardColors().disabledContentColor
+                            )
+                        ) {
+                            Column(modifier = Modifier.padding(8.dp)) {
+                                Text(
+                                    text = "Hiba történt az importálás során!",
+                                    style = MaterialTheme.typography.titleLarge,
+                                )
+                                Text(
+                                    text = "Ellenőrizd a fájl formátumát és próbáld újra.",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                )
+                            }
+
+                        }
+                    }
                 }
-            }
-        } else {
-            LazyColumn {
-                items(projects) { project ->
-                    ProjectCard(project, {})
+
+                item {
+                    Card(modifier = Modifier.padding(8.dp)) {
+                        Column {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.Info,
+                                    contentDescription = "Infó",
+                                    modifier = Modifier
+                                        .padding(8.dp)
+                                        .size(30.dp),
+                                    tint = MaterialTheme.colorScheme.primary
+                                )
+                                Text(
+                                    text = "Formátum",
+                                    style = MaterialTheme.typography.titleLarge,
+                                )
+                            }
+                            Text(
+                                text = "A fájl formátuma:\n" +
+                                        "név1, kategória1, határidő1, leírás1, ikonUrl1, maxMancsok1\n" +
+                                        "név2, kategória2, határidő2, leírás2, ikonUrl2, maxMancsok2\n...\n\n" +
+                                        "Az összetartozó értékek vesszővel vannak elválasztva," +
+                                        " a különböző projektek adatai pedig új sorban kezdődnek." +
+                                        " (.csv formátum, a legtöbb táblázatkezelő programból exportálható).\n\n" +
+                                        "A kategória mező értékei: Univerzális, Szervezetfejlesztés, Feladatsor," +
+                                        " Média és DIY, IT, Pedagógia, Nyári tábori előkészítés, Évközi tábori előkészítés." +
+                                        "Hibás éték esetén az importált projekt Univerzális lesz." +
+                                        " A határidő mező értékei: ÉÉÉÉ-[H]H-[N]N\n" +
+                                        "0-val kezdődő hó vagy nap esetén a 0 elhagyható.",
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(6.dp)
+                            )
+                        }
+                    }
+                }
+            } else {
+                item {
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                    ) {
+                        AdminButton(
+                            modifier = Modifier.weight(1f),
+                            imageVector = Icons.Default.Replay,
+                            contentDescription = "Importálás",
+                            onClick = selectFile
+                        )
+                        AdminButton(
+                            modifier = Modifier.weight(1f),
+                            imageVector = Icons.Default.Save,
+                            contentDescription = "Mentés",
+                            onClick = saveImport
+                        )
+                    }
+                }
+                items(importedProjects) { project ->
+                    ImportProjectCard(project)
                 }
             }
         }

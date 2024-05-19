@@ -217,5 +217,5 @@
     <fragment
         android:id="@+id/projectImportExportFragment"
         android:name="mok.it.app.mokapp.feature.project_import_export.ProjectImportExportFragment"
-        android:label="Projektek importálása és exportálása" />
+        android:label="CSV import / export" />
 </navigation>

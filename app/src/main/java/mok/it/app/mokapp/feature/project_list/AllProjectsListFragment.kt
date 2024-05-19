@@ -32,14 +32,16 @@ import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.dokar.chiptextfield.Chip
 import com.dokar.chiptextfield.ChipTextFieldState
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
-import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModelFlow
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
@@ -62,8 +64,8 @@ class AllProjectsListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        setupTopMenu()
         return ComposeView(requireContext()).apply {
+            lifecycleScope.launch { setupTopMenu() }
             loginOrLoad {
                 setContent {
                     val searchQuery by viewModel.searchQuery
@@ -106,8 +108,8 @@ class AllProjectsListFragment : Fragment() {
         }
     }
 
-    private fun setupTopMenu() {
-        if (!userModel.roleAtLeast(Role.AREA_MANAGER)) {
+    private suspend fun setupTopMenu() {
+        if (!userModelFlow.first().roleAtLeast(Role.AREA_MANAGER)) {
             return
         }
         val menuHost: MenuHost = requireActivity()

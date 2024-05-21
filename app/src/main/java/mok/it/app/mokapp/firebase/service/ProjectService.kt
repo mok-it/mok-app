@@ -86,8 +86,6 @@ object ProjectService {
 
     fun getAllProjects(): Flow<List<Project>> =
         Firebase.firestore.collection(Collections.PROJECTS)
-            .orderBy("category")
-            .orderBy("name")
             .snapshots()
             .map { s ->
                 s.toObjects(Project::class.java)

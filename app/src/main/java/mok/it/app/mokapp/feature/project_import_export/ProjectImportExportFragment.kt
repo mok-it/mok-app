@@ -253,7 +253,7 @@ fun ImportExportScreen(
                                         " (.csv formátum, a legtöbb táblázatkezelő programból exportálható).\n\n" +
                                         "A kategória mező értékei: Univerzális, Szervezetfejlesztés, Feladatsor," +
                                         " Média és DIY, IT, Pedagógia, Nyári tábori előkészítés, Évközi tábori előkészítés." +
-                                        "Hibás éték esetén az importált projekt Univerzális lesz." +
+                                        "Hibás érték esetén az importált projekt Univerzális lesz." +
                                         " A határidő mező értékei: ÉÉÉÉ-[H]H-[N]N\n" +
                                         "0-val kezdődő hó vagy nap esetén a 0 elhagyható.",
                                 style = MaterialTheme.typography.bodyMedium,

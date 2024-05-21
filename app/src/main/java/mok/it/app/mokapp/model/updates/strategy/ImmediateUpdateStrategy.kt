@@ -74,11 +74,11 @@ class ImmediateUpdateStrategy(
         appUpdateManager.startUpdateFlow(info, context, appUpdateOptions)
             .addOnSuccessListener {
                 if (it == RESULT_OK) {
-                    Log.e(TAG, "Az app frissítése sikeres.")
+                    Log.i(TAG, "Az app frissítése sikeres.")
                     context.setContentView(binding.root)
                 } else {
                     if (it == 0) {
-                        Log.e(TAG, "Update declined by user.")
+                        Log.w(TAG, "Update declined by user.")
                         Toast.makeText(
                             context,
                             "Az alkalmazás használatához frissítés szükséges.",
@@ -109,7 +109,7 @@ class ImmediateUpdateStrategy(
                     .build()
                 appUpdateManager.startUpdateFlow(info, context, appUpdateOptions)
                     .addOnCanceledListener {
-                        Log.e(TAG, "app update cancelled")
+                        Log.w(TAG, "app update cancelled")
                         Toast.makeText(
                             context,
                             "Frissítés megszakítva. Az alkalmazás használatához frissítés szükséges.",
@@ -117,7 +117,7 @@ class ImmediateUpdateStrategy(
                         ).show()
                         showMandatoryScreen()
                     }
-                    .addOnCompleteListener { Log.e(TAG, "app updated succesfully") }
+                    .addOnCompleteListener { Log.i(TAG, "app updated succesfully") }
                     .addOnFailureListener { Log.e(TAG, "app update failed") }
             }
         }

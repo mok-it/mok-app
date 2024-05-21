@@ -10,4 +10,5 @@
     <item name="filter" type="id" />
     <item name="share" type="id" />
     <item name="delete" type="id" />
+    <item name="menu" type="id" />
 </resources>

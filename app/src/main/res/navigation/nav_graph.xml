@@ -56,6 +56,9 @@
         <action
             android:id="@+id/action_allProjectsListFragment_to_achievementsFragment"
             app:destination="@id/achievementsFragment" />
+        <action
+            android:id="@+id/action_allProjectsListFragment_to_projectImportExportFragment"
+            app:destination="@id/projectImportExportFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -211,4 +214,8 @@
             android:id="@+id/action_tasksFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/projectImportExportFragment"
+        android:name="mok.it.app.mokapp.feature.project_import_export.ProjectImportExportFragment"
+        android:label="CSV import / export" />
 </navigation>

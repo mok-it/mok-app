@@ -356,6 +356,18 @@
                       </LayoutPositions>
                     </value>
                   </entry>
+                  <entry key="projectImportExportFragment">
+                    <value>
+                      <LayoutPositions>
+                        <option name="myPosition">
+                          <Point>
+                            <option name="x" value="1093" />
+                            <option name="y" value="-24" />
+                          </Point>
+                        </option>
+                      </LayoutPositions>
+                    </value>
+                  </entry>
                   <entry key="rewardsFragment">
                     <value>
                       <LayoutPositions>
@@ -380,6 +392,11 @@
                         <option name="myPositions">
                           <map>
                             <entry key="action_tasksFragment_to_achievementDetailsFragment">
+                              <value>
+                                <LayoutPositions />
+                              </value>
+                            </entry>
+                            <entry key="action_tasksFragment_to_detailsFragment">
                               <value>
                                 <LayoutPositions />
                               </value>

@@ -1,22 +1,16 @@
 package mok.it.app.mokapp.feature.achievement_create
 
-import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import mok.it.app.mokapp.firebase.service.AchievementService
 import mok.it.app.mokapp.model.Achievement
-import mok.it.app.mokapp.utility.Utility.TAG
 import java.util.SortedMap
 
 class EditAchievementViewModel(
     achievement: Achievement = Achievement(levelDescriptions = sortedMapOf(1 to ""))
 ) : ViewModel() {
     val achievement = mutableStateOf(achievement)
-
-    init {
-        Log.e(TAG, "Created EditAchievementViewModel with $achievement")
-    }
 
     fun onEvent(event: EditAchievementEvent) {
         when (event) {

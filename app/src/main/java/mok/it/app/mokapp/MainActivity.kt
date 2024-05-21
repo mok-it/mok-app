@@ -222,6 +222,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun checkForUpdates() {
+        if (BuildConfig.DEBUG) {
+            setContentView(binding.root)
+            return
+        }
         strategy =
             if (Firebase.remoteConfig.getLong("latestBreakingVersion").toInt() >
                 BuildConfig.VERSION_CODE

@@ -1,7 +1,11 @@
+//new
 package mok.it.app.mokapp.feature.project_list
 
 import android.os.Bundle
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
@@ -23,12 +27,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.unit.dp
+import androidx.core.view.MenuHost
+import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.dokar.chiptextfield.Chip
 import com.dokar.chiptextfield.ChipTextFieldState
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
@@ -53,33 +63,36 @@ class AllProjectsListFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View = ComposeView(requireContext()).apply {
-        loginOrLoad {
-            setContent {
-                val searchQuery by viewModel.searchQuery
-                val chipState by viewModel.chipState
-                val filteredProjects by viewModel.filteredProjects.collectAsState(initial = emptyList())
-                MokAppTheme {
-                    AllProjectsListScreen(
-                        searchQuery = searchQuery,
-                        chipState = chipState,
-                        filteredProjects = filteredProjects,
-                        onCreateProject = {
-                            findNavController().navigate(
-                                AllProjectsListFragmentDirections.actionAllProjectsListFragmentToCreateProjectFragment(
-                                    args.category
+    ): View {
+        return ComposeView(requireContext()).apply {
+            lifecycleScope.launch { setupTopMenu() }
+            loginOrLoad {
+                setContent {
+                    val searchQuery by viewModel.searchQuery
+                    val chipState by viewModel.chipState
+                    val filteredProjects by viewModel.filteredProjects.collectAsState(initial = emptyList())
+                    MokAppTheme {
+                        AllProjectsListScreen(
+                            searchQuery = searchQuery,
+                            chipState = chipState,
+                            filteredProjects = filteredProjects,
+                            onCreateProject = {
+                                findNavController().navigate(
+                                    AllProjectsListFragmentDirections.actionAllProjectsListFragmentToCreateProjectFragment(
+                                        args.category
+                                    )
                                 )
-                            )
-                        },
-                        onSearchValueChange = { viewModel.onSearchValueChange(it) },
-                        onNavigateToProject = { project ->
-                            val action =
-                                AllProjectsListFragmentDirections.actionAllProjectsListFragmentToDetailsFragment(
-                                    project.id
-                                )
-                            findNavController().navigate(action)
-                        }
-                    )
+                            },
+                            onSearchValueChange = { viewModel.onSearchValueChange(it) },
+                            onNavigateToProject = { project ->
+                                val action =
+                                    AllProjectsListFragmentDirections.actionAllProjectsListFragmentToDetailsFragment(
+                                        project.id
+                                    )
+                                findNavController().navigate(action)
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -94,6 +107,35 @@ class AllProjectsListFragment : Fragment() {
             }
         }
     }
+
+    private suspend fun setupTopMenu() {
+        if (!userModelFlow.first().roleAtLeast(Role.AREA_MANAGER)) {
+            return
+        }
+        val menuHost: MenuHost = requireActivity()
+        menuHost.addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menu.add(R.id.menu, R.id.menu, 0, R.string.delete)
+                    .setIcon(R.drawable.ic_three_dots)
+                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                menu.getItem(0).icon?.mutate()
+                    ?.setTint(resources.getColor(R.color.md_theme_onPrimary))
+            }
+
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                return when (menuItem.itemId) {
+                    R.id.menu -> {
+                        findNavController().navigate(AllProjectsListFragmentDirections.actionAllProjectsListFragmentToProjectImportExportFragment())
+
+                        true
+                    }
+
+                    else -> false
+                }
+            }
+        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+    }
+
 }
 
 @Composable

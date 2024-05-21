@@ -1,7 +1,6 @@
 package mok.it.app.mokapp.model
 
 import android.os.Parcelable
-import android.util.Log
 import com.google.firebase.firestore.DocumentId
 import kotlinx.parcelize.Parcelize
 import mok.it.app.mokapp.firebase.model.AchievementEntity
@@ -47,10 +46,6 @@ data class Achievement(
             levelDescriptions = levelDescriptions.mapKeys { it.key.toString() },
             icon = icon,
             mandatory = mandatory,
-        )
-        Log.e(
-            "TAG",
-            "original achievement desc: $levelDescriptions. \ncreated AchievementEntitiy with desc: ${r.levelDescriptions}",
         )
         return r
     }

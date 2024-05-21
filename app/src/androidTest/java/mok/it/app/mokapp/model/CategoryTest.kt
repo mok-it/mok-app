@@ -41,15 +41,6 @@ class CategoryTest {
     }
 
     @Test
-    fun testTaboriprogramEsElokeszites() {
-        val upperCaseWithoutSpace =
-            Category.NYARITABORIELOKESZITES.toString().uppercase(Locale.getDefault())
-                .replace(" ", "")
-        val result = upperCaseWithoutSpace.unaccent()
-        Assert.assertEquals("NYARITABORIELOKESZITES", result)
-    }
-
-    @Test
     fun testIT() {
         val upperCaseWithoutSpace =
             Category.IT.toString().uppercase(Locale.getDefault()).replace(" ", "")

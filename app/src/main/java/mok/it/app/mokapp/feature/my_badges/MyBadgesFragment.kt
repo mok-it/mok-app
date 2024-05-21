@@ -53,7 +53,7 @@ class MyBadgesFragment :
             }
         }
         binding.recyclerView.adapter = ProjectCategoriesAdapter(
-            Category.toList().map { it.toString() },
+            Category.toList(),
             categoryProjects,
             this
         )

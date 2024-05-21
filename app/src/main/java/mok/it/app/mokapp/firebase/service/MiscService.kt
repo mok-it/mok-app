@@ -1,10 +1,10 @@
-package mok.it.app.mokapp.service
+package mok.it.app.mokapp.firebase.service
 
 import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import com.google.firebase.firestore.firestore
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.firestore
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Link
 import mok.it.app.mokapp.utility.Utility.TAG
@@ -31,5 +31,4 @@ object MiscService {
             }
         return linksLiveData
     }
-
 }

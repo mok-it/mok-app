@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.Column
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.ComposeView
 import androidx.fragment.app.Fragment
@@ -13,6 +14,7 @@ import androidx.navigation.fragment.findNavController
 import mok.it.app.mokapp.firebase.FirebaseUserObject.userModel
 import mok.it.app.mokapp.ui.compose.ProjectBadgeSummary
 import mok.it.app.mokapp.ui.compose.UserCard
+import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 
 class ProfileFragment : Fragment() {
     override fun onCreateView(
@@ -21,20 +23,24 @@ class ProfileFragment : Fragment() {
     ): View =
         ComposeView(requireContext()).apply {
             setContent {
-                ProfileScreen()
+                MokAppTheme {
+                    ProfileScreen()
+                }
             }
         }
 
     @Composable
     fun ProfileScreen() {
         val viewModel: ProfileViewModel by viewModels()
-        Column {
-            UserCard(
-                user = userModel,
-                navController = findNavController(),
-                enableOnClick = false,
-            )
-            ProjectBadgeSummary(viewModel)
+        Surface {
+            Column {
+                UserCard(
+                    user = userModel,
+                    navController = findNavController(),
+                    enableOnClick = false,
+                )
+                ProjectBadgeSummary(viewModel)
+            }
         }
     }
 }

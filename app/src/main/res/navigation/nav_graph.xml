@@ -53,6 +53,12 @@
         <action
             android:id="@+id/action_allProjectsListFragment_to_createProjectFragment"
             app:destination="@id/createProjectFragment" />
+        <action
+            android:id="@+id/action_allProjectsListFragment_to_achievementsFragment"
+            app:destination="@id/achievementsFragment" />
+        <action
+            android:id="@+id/action_allProjectsListFragment_to_projectImportExportFragment"
+            app:destination="@id/projectImportExportFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -149,7 +155,67 @@
             android:name="projectId"
             app:argType="string" />
     </fragment>
+    <fragment
+        android:id="@+id/achievementsFragment"
+        android:name="mok.it.app.mokapp.feature.achievement_list.AchievementsFragment"
+        android:label="Acsik">
+        <action
+            android:id="@+id/action_achievementsFragment_to_achievementDetailsFragment"
+            app:destination="@id/achievementDetailsFragment" />
+        <action
+            android:id="@+id/action_achievementsFragment_to_createAchievementFragment"
+            app:destination="@id/createAchievementFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/achievementDetailsFragment"
+        android:name="mok.it.app.mokapp.feature.achievement_detail.AchievementDetailsFragment"
+        android:label="Acsi adatai">
+        <argument
+            android:name="achievementId"
+            app:argType="string" />
+        <action
+            android:id="@+id/action_achievementDetailsFragment_to_updateAchievementFragment"
+            app:destination="@id/updateAchievementFragment" />
+        <action
+            android:id="@+id/action_achievementDetailsFragment_to_grantAchievementFragment"
+            app:destination="@id/grantAchievementFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/createAchievementFragment"
+        android:name="mok.it.app.mokapp.feature.achievement_create.CreateAchievementFragment"
+        android:label="Acsi létrehozása" />
+    <fragment
+        android:id="@+id/updateAchievementFragment"
+        android:name="mok.it.app.mokapp.feature.achievement_update.UpdateAchievementFragment"
+        android:label="Acsi módosítása">
+        <argument
+            android:name="achievement"
+            app:argType="mok.it.app.mokapp.model.Achievement" />
+    </fragment>
     <action
         android:id="@+id/action_global_profileFragment"
         app:destination="@id/profileFragment" />
+    <fragment
+        android:id="@+id/grantAchievementFragment"
+        android:name="mok.it.app.mokapp.feature.achievement_grant.GrantAchievementFragment"
+        android:label="Acsi megadása">
+        <argument
+            android:name="achievementId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/tasksFragment"
+        android:name="mok.it.app.mokapp.feature.tasks.TasksFragment"
+        android:label="Feladataim">
+        <action
+            android:id="@+id/action_tasksFragment_to_achievementDetailsFragment"
+            app:destination="@id/achievementDetailsFragment" />
+        <action
+            android:id="@+id/action_tasksFragment_to_detailsFragment"
+            app:destination="@id/detailsFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/projectImportExportFragment"
+        android:name="mok.it.app.mokapp.feature.project_import_export.ProjectImportExportFragment"
+        android:label="CSV import / export" />
 </navigation>

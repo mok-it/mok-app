@@ -56,10 +56,10 @@ import java.sql.Date
 class ProjectImportExportFragment : Fragment() {
     private val selectFile =
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
-            Log.e(TAG, uri?.path ?: "null")
+            Log.i(TAG, "selected file at path: " + (uri?.path ?: "null"))
             uri?.let { uri ->
                 requireContext().contentResolver.openInputStream(uri)?.use {
-                    Log.e(TAG, "Reading CSV")
+                    Log.i(TAG, "Reading CSV")
                     viewModel.selectImport(
                         try {
                             readCsv(it)
@@ -76,13 +76,8 @@ class ProjectImportExportFragment : Fragment() {
                 lifecycleScope.launch {
                     requireContext().contentResolver.openOutputStream(uri)?.writer()
                         ?.use { writer ->
-                            Log.e(TAG, "Writing CSV")
+                            Log.i(TAG, "Writing CSV")
                             viewModel.existingProjects.collectLatest { projects ->
-                                for (x in projects) {
-                                    Log.e(TAG, "${x.name}, ${x.members}")
-                                }
-                                Log.e(TAG, "${projects.size}")
-
                                 writer.writeCsv(projects)
                             }
                         }
@@ -96,7 +91,6 @@ class ProjectImportExportFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View = ComposeView(requireContext()).apply {
-        Log.d(TAG, "onCreateView")
         setContent {
             val importError by viewModel.importError
             MokAppTheme {

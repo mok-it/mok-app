@@ -30,7 +30,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false //TODO: investigate why minify breaks the app in release build
+            isMinifyEnabled = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro" //contents were edited by trial and error to fix release build
@@ -61,29 +61,29 @@ val androidxAppcompatVersion = "1.6.1"
 val androidxConstraintlayoutVersion = "2.1.4"
 val androidxNavigationVersion = "2.7.7"
 val androidxLegacySupportVersion = "1.0.0"
-val androidxLifecycleVersion = "2.7.0"
+val androidxLifecycleVersion = "2.8.0"
 val androidxComposeRuntimeVersion = "1.6.7"
 val androidxCardviewVersion = "1.0.0"
 val androidxRecyclerviewVersion = "1.3.2"
 val googleMaterialVersion = "1.12.0"
 val googlePlayServicesAuthVersion = "21.1.1"
-val kotlinxCoroutinesVersion = "1.7.3"
-val glideVersion = "4.14.2"
+val kotlinxCoroutinesVersion = "1.8.1"
+val glideVersion = "4.16.0"
 val composeVersion = "1.6.7"
-val coilComposeVersion = "2.5.0"
+val coilComposeVersion = "2.6.0"
 val firebaseBomVersion = "33.0.0"
-val firebaseUiVersion = "8.0.0"
+val firebaseUiVersion = "8.0.2"
 val picassoVersion = "2.71828"
 val circleimageviewVersion = "3.1.0"
-val klaxonVersion = "5.5"
+val klaxonVersion = "5.6"
 val shimmerVersion = "0.5.0"
 val androidAboutPageVersion = "2.0.0"
 val materialDialogVersion = "2.2.3"
 val lottieVersion = "6.4.0"
-val androidxFragmentVersion = "1.7.0-alpha10"
-val chiptextfieldVersion = "0.7.0-alpha02"
+val androidxFragmentVersion = "1.7.1"
+val chiptextfieldVersion = "0.7.0-alpha03"
 val playUpdateVersion = "2.1.0"
-val csvVersion = "1.8"
+val csvVersion = "1.11.0"
 
 dependencies {
     // Androidx

@@ -37,7 +37,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.dokar.chiptextfield.Chip
 import com.dokar.chiptextfield.ChipTextFieldState
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.launch
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
@@ -62,7 +62,7 @@ class AllProjectsListFragment : Fragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         return ComposeView(requireContext()).apply {
             lifecycleScope.launch { setupTopMenu() }
@@ -109,7 +109,7 @@ class AllProjectsListFragment : Fragment() {
     }
 
     private suspend fun setupTopMenu() {
-        if (!userModelFlow.first().roleAtLeast(Role.AREA_MANAGER)) {
+        if (userModelFlow.firstOrNull()?.roleAtLeast(Role.AREA_MANAGER) != true) {
             return
         }
         val menuHost: MenuHost = requireActivity()
@@ -145,7 +145,7 @@ fun AllProjectsListScreen(
     filteredProjects: List<Project>,
     onCreateProject: () -> Unit,
     onSearchValueChange: (String) -> Unit,
-    onNavigateToProject: (Project) -> Unit
+    onNavigateToProject: (Project) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
 

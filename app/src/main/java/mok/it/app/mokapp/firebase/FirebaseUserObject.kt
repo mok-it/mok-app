@@ -11,6 +11,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.snapshots
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.map
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
@@ -22,7 +23,7 @@ object FirebaseUserObject {
     @Deprecated("Use userModelFlow instead")
     lateinit var userModel: User
     var currentUser: FirebaseUser? = FirebaseAuth.getInstance().currentUser
-    lateinit var userModelFlow: Flow<User>
+    var userModelFlow: Flow<User> = emptyFlow()
 
     /**
      * Refreshes the currentUser and userModel objects and invokes the given method on success, if there's one
@@ -49,7 +50,7 @@ object FirebaseUserObject {
     private fun refreshCurrentUserAndUserModelRecursive(
         context: Context,
         onSuccessFunction: (() -> Unit)? = null,
-        numberOfConsecutiveCalls: Int
+        numberOfConsecutiveCalls: Int,
     ) {
         val numberOfMaxTries = 100
         Log.d(TAG, FirebaseAuth.getInstance().currentUser?.uid.toString())

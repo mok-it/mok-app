@@ -13,8 +13,6 @@ android {
     lint {
         abortOnError = true
     }
-    signingConfigs {
-    }
     compileSdk = 34
 
     defaultConfig {
@@ -30,7 +28,7 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = true
+            isMinifyEnabled = false //TODO: investigate why minify breaks the app in release build
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro" //contents were edited by trial and error to fix release build

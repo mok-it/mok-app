@@ -40,7 +40,12 @@ data class User(
 ) : Parcelable {
     var roleEnum: Role
         @Exclude
-        get() = Role.valueOf(role)
+        get() = try {
+            Role.valueOf(role)
+        } catch (e: IllegalArgumentException) {
+            Log.e(TAG, "Invalid role: '$role' of user: $name, setting to ${Role.BASIC_USER}")
+            Role.BASIC_USER
+        }
         set(value) {
             role = value.name
         }

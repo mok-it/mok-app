@@ -53,6 +53,9 @@ android {
     namespace = "mok.it.app.mokapp"
 }
 
+val composeExpandableVersion = "0.1.1"
+
+
 dependencies {
     // Androidx
     implementation("androidx.core:core-ktx:1.12.0")
@@ -141,6 +144,9 @@ dependencies {
 
     // Chip text field
     implementation("io.github.dokar3:chiptextfield-m3:0.7.0-alpha02")
+
+    // Expandable layout
+    implementation("ir.mohammadesteki:compose-expandable:$composeExpandableVersion")
 }
 
 apply(plugin = "com.google.gms.google-services")

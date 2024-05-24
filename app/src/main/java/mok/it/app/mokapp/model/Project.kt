@@ -3,6 +3,7 @@ package mok.it.app.mokapp.model
 import android.os.Parcelable
 import android.util.Log
 import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.Exclude
 import com.google.firebase.firestore.PropertyName
 import kotlinx.parcelize.Parcelize
 import mok.it.app.mokapp.model.enums.Category
@@ -42,6 +43,7 @@ data class Project(
 ) : Parcelable {
 
     val categoryEnum: Category
+        @Exclude
         get() {
             return try {
                 Category.valueOf(category.replace(" ", "").uppercase().unaccent())

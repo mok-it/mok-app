@@ -21,7 +21,7 @@ object ProjectService {
             .orderBy("name", Query.Direction.ASCENDING)
 
     fun getProjectsByIds(
-        projectIds: List<String>
+        projectIds: List<String>,
     ): LiveData<List<Project>> {
         val projectsLiveData = MutableLiveData<List<Project>>()
 
@@ -121,8 +121,6 @@ object ProjectService {
 
     fun getAllProjects(): LiveData<List<Project>> =
         Firebase.firestore.collection(Collections.PROJECTS)
-            .orderBy("category")
-            .orderBy("name")
             .snapshots()
             .map { s ->
                 s.toObjects(Project::class.java)

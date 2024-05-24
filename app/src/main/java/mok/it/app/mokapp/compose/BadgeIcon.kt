@@ -19,7 +19,12 @@ import androidx.compose.ui.unit.dp
 import mok.it.app.mokapp.R
 
 @Composable
-fun BadgeIcon(badgeNumberText: String, modifier: Modifier = Modifier, isEnabled: Boolean = true) {
+fun BadgeIcon(
+    badgeNumberText: String,
+    modifier: Modifier = Modifier,
+    isGreen: Boolean = false,
+    isEnabled: Boolean = true
+) {
     Box(
         contentAlignment = Alignment.Center,
         //modifier = Modifier.align(Alignment.Bottom)
@@ -27,11 +32,14 @@ fun BadgeIcon(badgeNumberText: String, modifier: Modifier = Modifier, isEnabled:
         Image(
             painter = painterResource(id = R.drawable.badgeicon),
             contentDescription = "Badge icon",
-            colorFilter = if (isEnabled) null else ColorFilter.colorMatrix(ColorMatrix().apply {
-                setToSaturation(
-                    0f
-                )
-            }),
+            colorFilter = when {
+                !isEnabled -> ColorFilter.colorMatrix(ColorMatrix().apply {
+                    setToSaturation(0f)
+                })
+
+                isGreen -> ColorFilter.tint(Color.Green)
+                else -> null
+            },
             contentScale = ContentScale.Crop,
             modifier = modifier
                 .clip(RoundedCornerShape(8.dp))

@@ -81,9 +81,7 @@
     <fragment
         android:id="@+id/myBadgesFragment"
         android:name="mok.it.app.mokapp.fragments.MyBadgesFragment"
-        android:label="Saját Mancsaim"
-
-        tools:layout="@layout/fragment_my_badges">
+        android:label="Saját Mancsaim">
         <action
             android:id="@+id/action_myBadgesFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />

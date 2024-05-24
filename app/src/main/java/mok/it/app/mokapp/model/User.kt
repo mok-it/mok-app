@@ -2,6 +2,7 @@ package mok.it.app.mokapp.model
 
 import android.os.Parcelable
 import com.google.firebase.firestore.DocumentId
+import com.google.firebase.firestore.Exclude
 import kotlinx.parcelize.Parcelize
 import mok.it.app.mokapp.model.enums.Role
 
@@ -32,12 +33,13 @@ data class User(
     val remainingBadges: Int = 0,
     val fcmToken: String = "",
     val nickname: String = "",
-    val projectBadges: MutableMap<String, Int> = HashMap(),
+    var projectBadges: MutableMap<String, Int> = HashMap(), //TODO change back to val
 
     @Deprecated("Use roleEnum instead")
     var role: String = "",
 ) : Parcelable {
     var roleEnum: Role
+        @Exclude
         get() = Role.valueOf(role)
         set(value) {
             role = value.name

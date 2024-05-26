@@ -111,7 +111,7 @@ class AddOrRemoveMembersFragment : DialogFragment() {
                         )
                     }
 
-                    DialogType.NONE -> {}
+                    DialogType.NONE -> {} // this is empty on purpose
                 }
                 SearchField(
                     searchQuery = searchQuery,

@@ -197,7 +197,7 @@ class DetailsFragment : Fragment() {
                             )
                         }
 
-                        DialogType.NONE -> {}
+                        DialogType.NONE -> {} // this is empty on purpose
                     }
 
                     Row(

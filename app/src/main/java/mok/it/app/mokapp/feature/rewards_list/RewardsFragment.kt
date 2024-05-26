@@ -188,7 +188,7 @@ class RewardsFragment : Fragment() {
                     onDismiss = { showDialog = DialogType.NONE })
             }
 
-            DialogType.NONE -> {}
+            DialogType.NONE -> {} // this is empty on purpose
         }
         Card(
             onClick = {},

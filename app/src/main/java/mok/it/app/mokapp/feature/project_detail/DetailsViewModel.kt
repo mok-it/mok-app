@@ -13,7 +13,7 @@ import mok.it.app.mokapp.model.User
 
 class DetailsViewModel(projectId: String) : ViewModel() {
     val members: LiveData<List<User>> = UserService.getMembersForProject(projectId)
-    val project: LiveData<Project> = ProjectService.getProjectData(projectId).asLiveData()
+    val project: LiveData<Project> = ProjectService.getProject(projectId).asLiveData()
     val projectLeader: LiveData<User> = project.switchMap { projectParam ->
         if (projectParam.projectLeader.isNotEmpty()) {
             UserService.getUser(projectParam.projectLeader).asLiveData()

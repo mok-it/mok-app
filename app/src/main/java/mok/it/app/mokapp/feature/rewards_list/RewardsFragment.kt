@@ -22,7 +22,6 @@ import androidx.compose.material.icons.filled.AddCircle
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Icon
@@ -35,7 +34,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -61,11 +60,12 @@ import mok.it.app.mokapp.model.Reward
 import mok.it.app.mokapp.model.enums.Role
 import mok.it.app.mokapp.ui.compose.BadgeIcon
 import mok.it.app.mokapp.ui.compose.EditNumericValue
+import mok.it.app.mokapp.ui.compose.OkCancelDialog
 
 class RewardsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View =
         ComposeView(requireContext()).apply {
             setContent {
@@ -124,12 +124,12 @@ class RewardsFragment : Fragment() {
         canBeBought: (Reward) -> Boolean = { true },
         viewModel: RewardsViewModel,
     ) {
-        var cardOpen by remember { mutableStateOf(false) }
+        var cardOpen by rememberSaveable { mutableStateOf(false) }
 
-        var showDialog by remember { mutableStateOf(DialogType.NONE) }
+        var showDialog by rememberSaveable { mutableStateOf(DialogType.NONE) }
 
-        var editingQuantity by remember { mutableIntStateOf(reward.quantity) }
-        var editingPrice by remember { mutableIntStateOf(reward.price) }
+        var editingQuantity by rememberSaveable { mutableIntStateOf(reward.quantity) }
+        var editingPrice by rememberSaveable { mutableIntStateOf(reward.price) }
 
         val lottieComposition by rememberLottieComposition(
             LottieCompositionSpec.RawRes(R.raw.loading)
@@ -141,74 +141,45 @@ class RewardsFragment : Fragment() {
 
         when (showDialog) {
             DialogType.DELETE -> {
-                AlertDialog(
-                    title = { Text("Jutalom törlése") },
-                    onDismissRequest = { showDialog = DialogType.NONE },
-                    confirmButton = {
-                        Button(onClick = {
-                            viewModel.deleteReward(reward)
-                            showDialog = DialogType.NONE
-                        }) {
-                            Text("Törlés")
-                        }
+                OkCancelDialog(
+                    title = "Jutalom törlése",
+                    text = "Biztosan törölni szeretnéd a jutalmat? Azoknak, akik már igényelték a jutalmat, nem fog ezzel eltűnni.",
+                    positiveButtonText = "Törlés",
+                    onConfirm = {
+                        viewModel.deleteReward(reward)
+                        showDialog = DialogType.NONE
                     },
-                    dismissButton = {
-                        OutlinedButton(onClick = { showDialog = DialogType.NONE }) {
-                            Text(stringResource(R.string.cancel))
-                        }
-                    },
-                    text = {
-                        Text("Biztosan törölni szeretnéd a jutalmat? Azoknak, akik már igényelték a jutalmat, nem fog ezzel eltűnni. ")
-                    })
+                    onDismiss = { showDialog = DialogType.NONE })
             }
 
             DialogType.SAVE -> {
-                AlertDialog(
-                    title = { Text("Változtatások mentése") },
-                    onDismissRequest = { showDialog = DialogType.NONE },
-                    confirmButton = {
-                        Button(onClick = {
-                            viewModel.updateReward(
-                                reward.copy(
-                                    quantity = editingQuantity,
-                                    price = editingPrice
-                                )
+                OkCancelDialog(
+                    title = "Változtatások mentése",
+                    text = "Biztosan menteni szeretnéd a változtatásokat? Ha változtattál árat, akkor akik már igényelték a jutalmat, azoknak továbbra is a régi ár lesz érvényben. ",
+                    positiveButtonText = "Mentés",
+                    onConfirm = {
+                        viewModel.updateReward(
+                            reward.copy(
+                                quantity = editingQuantity,
+                                price = editingPrice
                             )
-                            cardOpen = false
-                            showDialog = DialogType.NONE
-                        }) {
-                            Text("Mentés")
-                        }
+                        )
+                        cardOpen = false
+                        showDialog = DialogType.NONE
                     },
-                    dismissButton = {
-                        OutlinedButton(onClick = { showDialog = DialogType.NONE }) {
-                            Text(stringResource(R.string.cancel))
-                        }
-                    },
-                    text = {
-                        Text("Biztosan menteni szeretnéd a változtatásokat? Ha változtattál árat, akkor akik már igényelték a jutalmat, azoknak továbbra is a régi ár lesz érvényben. ")
-                    })
+                    onDismiss = { showDialog = DialogType.NONE })
             }
 
             DialogType.REQUEST -> {
-                AlertDialog(
-                    title = { Text("Biztosan igényelni szeretnéd a jutalmat?") },
-                    text = { Text("${reward.price} mancs kerül majd levonásra tőled. Az igénylés nem visszamondható. ") },
-                    onDismissRequest = { showDialog = DialogType.NONE },
-                    confirmButton = {
-                        Button(onClick = {
-                            viewModel.requestReward(reward)
-                            showDialog = DialogType.NONE
-                        }) {
-                            Text(stringResource(R.string.ok))
-                        }
+                OkCancelDialog(
+                    title = "Jutalom igénylése",
+                    text = "Biztosan igényelni szeretnéd a jutalmat? ${reward.price} mancs kerül majd levonásra tőled. Az igénylés nem visszamondható.",
+                    positiveButtonText = "Törlés",
+                    onConfirm = {
+                        viewModel.requestReward(reward)
+                        showDialog = DialogType.NONE
                     },
-                    dismissButton = {
-                        OutlinedButton(onClick = { showDialog = DialogType.NONE }) {
-                            Text("Mégsem")
-                        }
-                    }
-                )
+                    onDismiss = { showDialog = DialogType.NONE })
             }
 
             DialogType.NONE -> {}

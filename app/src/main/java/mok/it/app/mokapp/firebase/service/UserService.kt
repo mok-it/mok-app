@@ -150,26 +150,6 @@ object UserService {
             }
             .filterNotNull()
 
-    fun setMembersOfProject(projectId: String, users: List<User>) {
-        // we have to set it at the project AND at the user as well
-
-        //TODO if a user was removed, we have to remove the project from the user's project list,
-        // so the current param list is only enough if we megnézzük,hogy jelenleg mi van beírva a projekttagokhoz,
-        // és a különbségeket is figyelembe vesszük
-        val batch = Firebase.firestore.batch()
-        val projectDocumentRef =
-            Firebase.firestore.collection(Collections.PROJECTS).document(projectId)
-
-        for (user in users) {
-            val userDocumentRef =
-                Firebase.firestore.collection(Collections.USERS).document(user.documentId)
-            batch.update(projectDocumentRef, "members", FieldValue.arrayUnion(user.documentId))
-            batch.update(userDocumentRef, "projectBadges.$projectId", 0)
-        }
-
-        batch.commit()
-    }
-
     fun addUsersToProject(
         projectId: String,
         userIds: List<String>,
@@ -420,7 +400,7 @@ object UserService {
                 }
         }
     }
-    
+
     fun getUsers(userIds: List<String>): Flow<List<User>> {
         val ids = userIds.ifEmpty { listOf("_") }
         return Firebase.firestore.collection(Collections.USERS)

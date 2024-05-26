@@ -171,32 +171,33 @@ class DetailsFragment : Fragment() {
                             )
                         }
 
-                    DialogType.JOIN -> {
-                        OkCancelDialog(
-                            title = "Csatlakozás",
-                            text = "Biztos, hogy csatlakozni szeretnél a projekthez?",
-                            positiveButtonText = "Törlés",
-                            onConfirm = {
-                                joinProject(project)
-                            },
-                            onDismiss = {
-                                showDialog = DialogType.NONE
-                            }
-                        )
-                    }
+                        DialogType.JOIN -> {
+                            OkCancelDialog(
+                                text = "Biztos, hogy csatlakozni szeretnél a projekthez?",
+                                onDismiss = {
+                                    showDialog = DialogType.NONE
+                                },
+                                onConfirm = {
+                                    joinProject(project)
+                                    showDialog = DialogType.NONE
+                                },
+                            )
+                        }
 
-                    DialogType.LEAVE -> {
-                        OkCancelDialog(
-                            title = "Lecsatlakozás",
-                            text = "Biztos, hogy le szeretnél csatlakozni a projektről? A projekten szerzett mancsaid ekkor elvesznek.",
-                            positiveButtonText = "Törlés",
-                            onConfirm = {
-                                leaveProject()
-                            },
-                            onDismiss = {
-                                showDialog = DialogType.NONE
-                            }
-                        )
+                        DialogType.LEAVE -> {
+                            OkCancelDialog(
+                                text = "Biztos, hogy le szeretnél csatlakozni a projektről? A projekten szerzett mancsaid ekkor elvesznek.",
+                                onDismiss = {
+                                    showDialog = DialogType.NONE
+                                },
+                                onConfirm = {
+                                    leaveProject()
+                                    showDialog = DialogType.NONE
+                                },
+                            )
+                        }
+
+                        DialogType.NONE -> {}
                     }
 
                     Row(

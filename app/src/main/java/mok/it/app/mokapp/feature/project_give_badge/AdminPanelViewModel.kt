@@ -29,7 +29,7 @@ class AdminPanelViewModel(val projectId: String) : ViewModel() {
     val uiState: StateFlow<AdminPanelUiState> = _uiState.asStateFlow()
 
     val members: LiveData<List<User>> = UserService.getMembersForProject(projectId)
-    val project: LiveData<Project> = ProjectService.getProject(projectId).asLiveData()
+    val project: LiveData<Project> = ProjectService.getProjectData(projectId).asLiveData()
     private val userBadges: LiveData<Map<String, Int>> =
         UserService.getProjectUsersAndBadges(projectId).asLiveData()
 

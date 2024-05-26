@@ -33,7 +33,7 @@ data class User(
     val fcmToken: String = "",
     val nickname: String = "",
     val projectBadges: MutableMap<String, Int> = HashMap(),
-
+    val achievements: MutableMap<String, Int> = HashMap(),
     @Deprecated("Use roleEnum instead")
     var role: String = "",
 ) : Parcelable {
@@ -41,7 +41,7 @@ data class User(
         get() = try {
             Role.valueOf(role)
         } catch (e: IllegalArgumentException) {
-            Log.e(TAG, "Invalid role: $role")
+            Log.e(TAG, "Invalid role: '$role' of user: $name, setting to ${Role.BASIC_USER}")
             Role.BASIC_USER
         }
         set(value) {

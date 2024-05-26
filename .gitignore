@@ -97,5 +97,4 @@ lint/tmp/
 .idea/sonarlint.xml
 
 .idea/other.xml
-
-.idea/deploymentTargetSelector.xml
+.idea/appInsightsSettings.xml

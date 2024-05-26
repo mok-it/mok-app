@@ -130,5 +130,9 @@
     <string name="login">Bejelentkezés</string>
     <string name="my_own_badges">Saját Mancsaim</string>
     <string name="details">Adatok</string>
+    <string name="achievement_missing_description">Az acsi leírása nem elérhető, Kérlek próbáld újra később.</string>
+    <string name="delete">törlés</string>
+    <string name="tasks">Feladataim</string>
+
 
 </resources>

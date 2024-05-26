@@ -31,10 +31,9 @@ import androidx.compose.material.icons.filled.People
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -46,7 +45,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.ComposeView
 import androidx.compose.ui.res.painterResource
@@ -71,10 +69,12 @@ import mok.it.app.mokapp.model.Comment
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.model.enums.Role
+import mok.it.app.mokapp.ui.compose.AdminButton
 import mok.it.app.mokapp.ui.compose.BadgeIcon
 import mok.it.app.mokapp.ui.compose.DataBlock
 import mok.it.app.mokapp.ui.compose.OkCancelDialog
 import mok.it.app.mokapp.ui.compose.UserIcon
+import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 import mok.it.app.mokapp.utility.Utility.TAG
 import java.text.DateFormat
 
@@ -97,7 +97,9 @@ class DetailsFragment : Fragment() {
         return ComposeView(requireContext()).apply {
             loginOrLoad {
                 setContent {
-                    DetailsScreen()
+                    MokAppTheme {
+                        DetailsScreen()
+                    }
                 }
             }
         }
@@ -148,25 +150,26 @@ class DetailsFragment : Fragment() {
                 }
             }
         ) { padding ->
-            Column(
-                modifier = Modifier.padding(padding)
-            ) {
-                when (showDialog) {
-                    DialogType.MEMBERS -> {
-                        ProjectMembersDialog(
-                            members = members,
-                            onMemberClick = { user ->
-                                findNavController().navigate(
-                                    DetailsFragmentDirections.actionGlobalMemberFragment(
-                                        user
+            Surface {
+                Column(
+                    modifier = Modifier.padding(padding)
+                ) {
+                    when (showDialog) {
+                        DialogType.MEMBERS -> {
+                            ProjectMembersDialog(
+                                members = members,
+                                onMemberClick = { user ->
+                                    findNavController().navigate(
+                                        DetailsFragmentDirections.actionGlobalMemberFragment(
+                                            user
+                                        )
                                     )
-                                )
-                            },
-                            onDismiss = {
-                                showDialog = DialogType.NONE
-                            }
-                        )
-                    }
+                                },
+                                onDismiss = {
+                                    showDialog = DialogType.NONE
+                                }
+                            )
+                        }
 
                     DialogType.JOIN -> {
                         OkCancelDialog(
@@ -196,75 +199,73 @@ class DetailsFragment : Fragment() {
                         )
                     }
 
-                    DialogType.NONE -> {}
-                }
-
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 8.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
-                    AsyncImage(
-                        model = project.icon,
-                        placeholder = painterResource(id = R.drawable.no_image_icon),
-                        contentDescription = "Project icon",
+                    Row(
                         modifier = Modifier
-                            .size(100.dp),
-                        contentScale = ContentScale.Fit
-                    )
-                    Column(modifier = Modifier.padding(8.dp)) {
-                        Text(
-                            project.name,
-                            style = MaterialTheme.typography.titleLarge,
-                        )
-                        Row(
+                            .padding(horizontal = 16.dp, vertical = 8.dp)
+                            .fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        AsyncImage(
+                            model = project.icon,
+                            placeholder = painterResource(id = R.drawable.no_image_icon),
+                            contentDescription = "Project icon",
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(4.dp),
-                        ) {
-                            BadgeIcon(project.maxBadges.toString())
-                            ProjectMembers(members = members, onMembersClick = {
-                                showDialog = DialogType.MEMBERS
-                            })
+                                .size(100.dp),
+                            contentScale = ContentScale.Fit
+                        )
+                        Column(modifier = Modifier.padding(8.dp)) {
+                            Text(
+                                project.name,
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(4.dp),
+                            ) {
+                                BadgeIcon(project.maxBadges.toString())
+                                ProjectMembers(members = members, onMembersClick = {
+                                    showDialog = DialogType.MEMBERS
+                                })
+                            }
                         }
                     }
-                }
-                AdminButtonRow(project)
+                    AdminButtonRow(project)
 
-                Card(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .weight(1f)
-                        .verticalScroll(rememberScrollState()),
-                    shape = RoundedCornerShape(16.dp),
+                    Card(
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .weight(1f)
+                            .verticalScroll(rememberScrollState()),
+                        shape = RoundedCornerShape(16.dp),
 
-                    ) {
-                    Column(
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        DataBlock("Kategória", project.categoryEnum)
-                        DataBlock(
-                            "Projektvezető",
-                            projectLeader.name
-                        )
-                        DataBlock(
-                            "Határidő",
-                            DateFormat.getDateInstance().format(project.created)
-                        )
-                        Text(
-                            text = "Leírás", style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(8.dp)
-                        )
-                        Text(
-                            text = project.description,
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(8.dp)
-                        )
+                        ) {
+                        Column(
+                            modifier = Modifier.padding(16.dp)
+                        ) {
+                            DataBlock("Kategória", project.categoryEnum)
+                            DataBlock(
+                                "Projektvezető",
+                                projectLeader.name
+                            )
+                            DataBlock(
+                                "Határidő",
+                                DateFormat.getDateInstance().format(project.created)
+                            )
+                            Text(
+                                text = "Leírás", style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.padding(8.dp)
+                            )
+                            Text(
+                                text = project.description,
+                                style = MaterialTheme.typography.bodyMedium,
+                                modifier = Modifier.padding(8.dp)
+                            )
+                        }
                     }
+                    val comment by viewModel.mostRecentComment.observeAsState(initial = null)
+                    LastCommentCard(comment)
                 }
-                val comment by viewModel.mostRecentComment.observeAsState(initial = null)
-                LastCommentCard(comment)
             }
         }
     }
@@ -312,27 +313,6 @@ class DetailsFragment : Fragment() {
         userModel.roleAtLeast(Role.AREA_MANAGER)
                 || project.projectLeader == userModel.documentId
 
-    @Composable
-    private fun AdminButton(
-        modifier: Modifier, imageVector: ImageVector,
-        contentDescription: String,
-        onClick: () -> Unit,
-    ) {
-        IconButton(
-            modifier = modifier
-                .padding(horizontal = 8.dp, vertical = 8.dp)
-                .clip(RoundedCornerShape(8.dp))
-                .background(MaterialTheme.colorScheme.primary),
-            onClick = {
-                onClick()
-            }) {
-            Icon(
-                imageVector = imageVector,
-                contentDescription = contentDescription,
-                tint = MaterialTheme.colorScheme.inversePrimary,
-            )
-        }
-    }
 
     @Composable
     private fun ProjectMembersDialog(
@@ -530,6 +510,8 @@ class DetailsFragment : Fragment() {
                 menu.add(R.id.share, R.id.share, 0, R.string.share)
                     .setIcon(R.drawable.ic_share)
                     .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                menu.getItem(0).icon?.mutate()
+                    ?.setTint(resources.getColor(R.color.md_theme_onPrimary))
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {

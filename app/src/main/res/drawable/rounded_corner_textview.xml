@@ -7,6 +7,6 @@
     <corners android:radius="10dp" />
 
     <!--- This is the background color -->
-    <solid android:color="@color/blue_dark" />
+    <solid android:color="@color/md_theme_primary" />
 
 </shape>

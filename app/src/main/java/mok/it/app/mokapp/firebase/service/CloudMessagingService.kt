@@ -14,62 +14,64 @@ import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.utility.Utility.TAG
 
-object CloudMessagingService : FirebaseMessagingService() {
+class CloudMessagingService : FirebaseMessagingService() {
 
-    fun sendNotificationToUsersById(
-        title: String,
-        messageBody: String,
-        adresseeUserIdList: List<String>,
-    ) {
-        val adresseeUserIds = adresseeUserIdList.distinct()
+    companion object {
+        fun sendNotificationToUsersById(
+            title: String,
+            messageBody: String,
+            adresseeUserIdList: List<String>,
+        ) {
+            val adresseeUserIds = adresseeUserIdList.distinct()
 
-        require(adresseeUserIds.size <= 10)
-        { "too many users to send notification to (the limit is 10)" }
+            require(adresseeUserIds.size <= 10)
+            { "too many users to send notification to (the limit is 10)" }
 
-        Firebase.firestore.collection(Collections.USERS)
-            .whereIn(FieldPath.documentId(), adresseeUserIds)
-            .get().addOnSuccessListener { documents ->
-                val addresseeUserList = ArrayList<User>()
-                for (document in documents) {
-                    addresseeUserList.add(document.toObject(User::class.java))
-                }
-                sendNotificationToUsers(title, messageBody, addresseeUserList)
-            }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "failed to get users: ", exception)
-            }
-    }
-
-    fun sendNotificationToUsers(
-        title: String,
-        messageBody: String,
-        adresseeUserList: List<User>,
-    ) {
-        adresseeUserList.distinct().forEach { addresseeUser ->
-            Log.d(
-                TAG,
-                "sending notification to ${addresseeUser.name}, FCM token: ${addresseeUser.fcmToken}"
-            )
-            val data = hashMapOf(
-                "message" to hashMapOf(
-                    "title" to title,
-                    "body" to messageBody,
-                    "icon" to "gs://mokapp-51f86.appspot.com/Feladatellenőrzés 16 feladat ellenőrzése.png",
-                    "click_action" to "",
-                ),
-                "fcmToken" to addresseeUser.fcmToken
-            )
-
-            Firebase.functions
-                .getHttpsCallable("sendNotification")
-                .call(data)
-                .continueWith { task ->
-                    if (!task.isSuccessful) {
-                        Log.e(TAG, "Error calling cloud function", task.exception)
-                    } else {
-                        Log.d(TAG, "Notification sent successfully")
+            Firebase.firestore.collection(Collections.USERS)
+                .whereIn(FieldPath.documentId(), adresseeUserIds)
+                .get().addOnSuccessListener { documents ->
+                    val addresseeUserList = ArrayList<User>()
+                    for (document in documents) {
+                        addresseeUserList.add(document.toObject(User::class.java))
                     }
+                    sendNotificationToUsers(title, messageBody, addresseeUserList)
                 }
+                .addOnFailureListener { exception ->
+                    Log.d(TAG, "failed to get users: ", exception)
+                }
+        }
+
+        fun sendNotificationToUsers(
+            title: String,
+            messageBody: String,
+            adresseeUserList: List<User>,
+        ) {
+            adresseeUserList.distinct().forEach { addresseeUser ->
+                Log.d(
+                    TAG,
+                    "sending notification to ${addresseeUser.name}, FCM token: ${addresseeUser.fcmToken}"
+                )
+                val data = hashMapOf(
+                    "message" to hashMapOf(
+                        "title" to title,
+                        "body" to messageBody,
+                        "icon" to "gs://mokapp-51f86.appspot.com/Feladatellenőrzés 16 feladat ellenőrzése.png",
+                        "click_action" to "",
+                    ),
+                    "fcmToken" to addresseeUser.fcmToken
+                )
+
+                Firebase.functions
+                    .getHttpsCallable("sendNotification")
+                    .call(data)
+                    .continueWith { task ->
+                        if (!task.isSuccessful) {
+                            Log.e(TAG, "Error calling cloud function", task.exception)
+                        } else {
+                            Log.d(TAG, "Notification sent successfully")
+                        }
+                    }
+            }
         }
     }
 

@@ -28,6 +28,7 @@ import androidx.compose.material3.OutlinedIconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -45,6 +46,7 @@ import androidx.navigation.fragment.navArgs
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.ui.compose.UserIcon
+import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 import kotlin.math.roundToInt
 
 class AdminPanelFragment : Fragment() {
@@ -59,7 +61,9 @@ class AdminPanelFragment : Fragment() {
         savedInstanceState: Bundle?,
     ): View = ComposeView(requireContext()).apply {
         setContent {
-            AdminPanelScreen()
+            MokAppTheme {
+                AdminPanelScreen()
+            }
         }
     }
 
@@ -88,60 +92,62 @@ class AdminPanelFragment : Fragment() {
             }
         )
         { padding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(padding)
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly,
+            Surface {
+                Column(
                     modifier = Modifier
-                        .padding(8.dp)
-                        .height(IntrinsicSize.Min),
+                        .fillMaxSize()
+                        .padding(padding)
                 ) {
-                    OutlinedIconButton(
+                    Row(
+                        horizontalArrangement = Arrangement.SpaceEvenly,
                         modifier = Modifier
-                            .height(50.dp)
-                            .padding(horizontal = 4.dp)
-                            .weight(0.5f)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(MaterialTheme.colorScheme.surface),
-                        enabled = uiState.stateModified,
-                        onClick = {
-                            viewModel.saveAllUserBadges()
-                            Toast.makeText(
-                                requireContext(),
-                                "Módosítások sikeresen mentve!",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        },
+                            .padding(8.dp)
+                            .height(IntrinsicSize.Min),
                     ) {
-                        Icon(
-                            imageVector = Icons.Filled.Save,
-                            contentDescription = "Save modifications",
-                        )
+                        OutlinedIconButton(
+                            modifier = Modifier
+                                .height(50.dp)
+                                .padding(horizontal = 4.dp)
+                                .weight(0.5f)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(MaterialTheme.colorScheme.surface),
+                            enabled = uiState.stateModified,
+                            onClick = {
+                                viewModel.saveAllUserBadges()
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Módosítások sikeresen mentve!",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Save,
+                                contentDescription = "Save modifications",
+                            )
+                        }
+                        OutlinedIconButton(
+                            modifier = Modifier
+                                .height(50.dp)
+                                .padding(horizontal = 4.dp)
+                                .weight(0.5f)
+                                .clip(RoundedCornerShape(16.dp))
+                                .background(MaterialTheme.colorScheme.surface),
+                            enabled = uiState.stateModified,
+                            onClick = {
+                                viewModel.resetSliderValues()
+                            },
+                        ) {
+                            Icon(
+                                imageVector = Icons.Filled.Replay,
+                                contentDescription = "Reset modifications"
+                            )
+                        }
                     }
-                    OutlinedIconButton(
-                        modifier = Modifier
-                            .height(50.dp)
-                            .padding(horizontal = 4.dp)
-                            .weight(0.5f)
-                            .clip(RoundedCornerShape(16.dp))
-                            .background(MaterialTheme.colorScheme.surface),
-                        enabled = uiState.stateModified,
-                        onClick = {
-                            viewModel.resetSliderValues()
-                        },
-                    ) {
-                        Icon(
-                            imageVector = Icons.Filled.Replay,
-                            contentDescription = "Reset modifications"
-                        )
-                    }
-                }
-                LazyColumn {
-                    items(members) { member ->
-                        MemberSliderCard(member, project, uiState)
+                    LazyColumn {
+                        items(members) { member ->
+                            MemberSliderCard(member, project, uiState)
+                        }
                     }
                 }
             }

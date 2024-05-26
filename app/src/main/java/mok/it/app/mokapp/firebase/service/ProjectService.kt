@@ -1,9 +1,6 @@
 package mok.it.app.mokapp.firebase.service
 
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.asLiveData
 import com.google.firebase.Firebase
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.firestore
@@ -18,40 +15,18 @@ import mok.it.app.mokapp.utility.Utility.TAG
 
 object ProjectService {
 
-    fun getProjectsByIds(
-        projectIds: List<String>,
-    ): LiveData<List<Project>> {
-        val projectsLiveData = MutableLiveData<List<Project>>()
-
-        // an empty list would crash the query
-        if (projectIds.isEmpty()) {
-            projectsLiveData.value = emptyList()
-            return projectsLiveData
-        }
-
+    fun getProjectsByIds(projectIds: List<String>): Flow<List<Project>> =
         Firebase.firestore.collection(Collections.PROJECTS)
-            .whereIn(FieldPath.documentId(), projectIds).get()
-            .addOnSuccessListener { querySnapshot ->
-                val projectsList = mutableListOf<Project>()
-
-                for (document in querySnapshot.documents) {
-                    val project = document.toObject(Project::class.java)
-                    project?.let {
-                        projectsList.add(it)
-                    }
-                }
-
-                projectsLiveData.value = projectsList
-
-            }.addOnFailureListener { exception ->
-                Log.e(TAG, "Error getting documents: ", exception)
+            .whereIn(FieldPath.documentId(), projectIds)
+            .snapshots()
+            .map { s ->
+                s.toObjects(Project::class.java)
             }
+            .filterNotNull()
 
-        return projectsLiveData
-    }
-
-    fun getProject(projectId: String): Flow<Project> =
-        Firebase.firestore.collection(Collections.PROJECTS).document(projectId).snapshots()
+    fun getProjectData(projectId: String): Flow<Project> =
+        Firebase.firestore.collection(Collections.PROJECTS).document(projectId)
+            .snapshots()
             .map { s ->
                 s.toObject(Project::class.java)
             }.filterNotNull()
@@ -106,11 +81,13 @@ object ProjectService {
             }
     }
 
-    fun getAllProjects(): LiveData<List<Project>> =
-        Firebase.firestore.collection(Collections.PROJECTS).orderBy("category").orderBy("name")
-            .snapshots().map { s ->
+    fun getAllProjects(): Flow<List<Project>> =
+        Firebase.firestore.collection(Collections.PROJECTS)
+            .snapshots()
+            .map { s ->
                 s.toObjects(Project::class.java)
-            }.asLiveData()
+            }
+            .filterNotNull()
 
     suspend fun setMembersOfProject(projectId: String, members: List<String>) {
         val originalMembers =

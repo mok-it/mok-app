@@ -25,8 +25,8 @@ class AddOrRemoveParticipantsViewModel(val projectId: String) : ViewModel() {
     private val _uiState = MutableStateFlow(AddParticipantsUiState())
     val uiState: StateFlow<AddParticipantsUiState> = _uiState.asStateFlow()
 
-    val project: LiveData<Project> = ProjectService.getProject(projectId).asLiveData()
-    val users: LiveData<List<User>> = UserService.getAllUsers()
+    val project: LiveData<Project> = ProjectService.getProjectData(projectId).asLiveData()
+    val users: LiveData<List<User>> = UserService.getUsers().asLiveData()
 
     init {
         project.observeForever {

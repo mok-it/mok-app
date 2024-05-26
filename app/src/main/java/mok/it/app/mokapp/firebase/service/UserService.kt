@@ -4,16 +4,21 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.google.firebase.Firebase
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.Query
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.snapshots
 import com.google.firebase.messaging.FirebaseMessaging
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import mok.it.app.mokapp.firebase.FirebaseUserObject
 import mok.it.app.mokapp.model.Collections
@@ -363,22 +368,11 @@ object UserService {
             }
             .filterNotNull()
 
-
-    fun getAllUsers(): LiveData<List<User>> {
-        val usersLiveData = MutableLiveData<List<User>>()
-        Firebase.firestore.collection(Collections.USERS).orderBy("name", Query.Direction.ASCENDING)
-            .get()
-            .addOnSuccessListener { querySnapshot ->
-                val users = mutableListOf<User>()
-                for (document in querySnapshot.documents) {
-                    val user = document.toObject(User::class.java)
-                    if (user != null) {
-                        users.add(user)
-                    }
-                }
-                usersLiveData.value = users
-            }
-        return usersLiveData
+    fun getUsers(): Flow<List<User>> {
+        return Firebase.firestore.collection(Collections.USERS)
+            .orderBy("name", Query.Direction.ASCENDING)
+            .snapshots()
+            .map { s -> s.toObjects(User::class.java) }
     }
 
     fun updateFcmTokenIfEmptyOrOutdated() {
@@ -406,15 +400,32 @@ object UserService {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     fun updateFcmToken(token: String) {
-        Firebase.firestore.collection(Collections.USERS)
-            .document(FirebaseUserObject.userModel.documentId)
-            .update("fcmToken", token)
-            .addOnSuccessListener {
-                Log.d(TAG, "onNewToken: token uploaded to firestore, new token: $token")
+        GlobalScope.launch {
+            val userModel = FirebaseUserObject.userModelFlow.firstOrNull()
+            if (userModel == null) {
+                Log.e(TAG, "userModelFlow is not available yet.")
+                return@launch
             }
-            .addOnFailureListener { exception ->
-                Log.d(TAG, "onNewToken: token upload failed", exception)
-            }
+
+            Firebase.firestore.collection(Collections.USERS)
+                .document(userModel.documentId)
+                .update("fcmToken", token)
+                .addOnSuccessListener {
+                    Log.d(TAG, "onNewToken: token uploaded to firestore, new token: $token")
+                }
+                .addOnFailureListener { exception ->
+                    Log.d(TAG, "onNewToken: token upload failed", exception)
+                }
+        }
+    }
+    
+    fun getUsers(userIds: List<String>): Flow<List<User>> {
+        val ids = userIds.ifEmpty { listOf("_") }
+        return Firebase.firestore.collection(Collections.USERS)
+            .whereIn(FieldPath.documentId(), ids)
+            .snapshots()
+            .map { s -> s.toObjects(User::class.java) }
     }
 }

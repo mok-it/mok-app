@@ -83,7 +83,7 @@ class AdminPanelFragment : Fragment() {
                     onClick = {
                         findNavController().navigate(
                             AdminPanelFragmentDirections
-                                .actionAdminPanelFragmentToAddParticipantsDialogFragment(args.projectId)
+                                .actionAdminPanelFragmentToAddOrRemoveMembersDialogFragment(args.projectId)
                         )
                     },
                 ) {

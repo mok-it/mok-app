@@ -141,15 +141,15 @@
         android:name="mok.it.app.mokapp.feature.project_give_badge.AdminPanelFragment"
         android:label="@string/administration">
         <action
-            android:id="@+id/action_adminPanelFragment_to_addParticipantsDialogFragment"
-            app:destination="@id/addParticipantsDialogFragment" />
+            android:id="@+id/action_adminPanelFragment_to_addOrRemoveMembersDialogFragment"
+            app:destination="@id/addOrRemoveMembersFragment" />
         <argument
             android:name="projectId"
             app:argType="string" />
     </fragment>
     <fragment
-        android:id="@+id/addParticipantsDialogFragment"
-        android:name="mok.it.app.mokapp.feature.project_add_participants.AddOrRemoveMembersFragment"
+        android:id="@+id/addOrRemoveMembersFragment"
+        android:name="mok.it.app.mokapp.feature.project_add_or_remove_members.AddOrRemoveMembersFragment"
         android:label="@string/modify_participants">
         <argument
             android:name="projectId"

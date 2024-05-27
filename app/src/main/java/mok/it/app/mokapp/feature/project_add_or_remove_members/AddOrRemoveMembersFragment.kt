@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.feature.project_add_participants
+package mok.it.app.mokapp.feature.project_add_or_remove_members
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -29,21 +29,17 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
-import com.dokar.chiptextfield.Chip
-import com.dokar.chiptextfield.ChipTextFieldState
-import com.dokar.chiptextfield.rememberChipTextFieldState
-import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.ui.compose.OkCancelDialog
 import mok.it.app.mokapp.ui.compose.SearchField
 import mok.it.app.mokapp.ui.compose.UserRow
-import mok.it.app.mokapp.utility.Utility.unaccent
+import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 
 class AddOrRemoveMembersFragment : DialogFragment() {
 
     private val args: AddOrRemoveMembersFragmentArgs by navArgs()
 
-    private val viewModel: AddOrRemoveParticipantsViewModel by viewModels {
-        AddParticipantsViewModelFactory(args.projectId)
+    private val viewModel: AddOrRemoveMembersViewModel by viewModels {
+        AddOrRemoveMembersViewModelFactory(args.projectId)
     }
 
     enum class DialogType {
@@ -55,23 +51,20 @@ class AddOrRemoveMembersFragment : DialogFragment() {
         savedInstanceState: Bundle?,
     ): View = ComposeView(requireContext()).apply {
         setContent {
-            AddParticipantsScreen(viewModel)
+            MokAppTheme {
+                AddOrRemoveMembersScreen(viewModel)
+            }
         }
     }
 
     @Composable
-    fun AddParticipantsScreen(viewModel: AddOrRemoveParticipantsViewModel) {
+    fun AddOrRemoveMembersScreen(viewModel: AddOrRemoveMembersViewModel) {
         val uiState by viewModel.uiState.collectAsState()
 
-        val chipState =
-            rememberChipTextFieldState<Chip>() // this is not saved at configuration change yet
-        var searchQuery by rememberSaveable { mutableStateOf("") }
-        val filteredUnselectedUsers = getFilteredUsers(
-            searchQuery,
-            chipState,
-            uiState.selectedUserIds
-        ).filter { !uiState.selectedUserIds.contains(it.documentId) }
-        val users = viewModel.users.observeAsState(initial = emptyList()).value
+        val searchQuery by viewModel.searchQuery
+        val chipState by viewModel.chipState
+        val selectedUsers by viewModel.selectedUsers.observeAsState(initial = emptyList())
+        val unselectedFilteredUsers by viewModel.unselectedFilteredUsers.observeAsState(initial = emptyList())
 
         var showDialog by rememberSaveable { mutableStateOf(DialogType.NONE) }
 
@@ -94,15 +87,12 @@ class AddOrRemoveMembersFragment : DialogFragment() {
                 when (showDialog) {
                     DialogType.CONFIRM -> {
                         OkCancelDialog(
-                            text = "Biztos, hogy el szeretnéd menteni a módosításokat? Ha valakit törölsz a projektből, az elveszíti az összes eddig megszerzett mancsát rajta.",
+                            text = "Biztos, hogy el szeretnéd menteni a módosításokat? Ha valakit törölsz a projektből, az elveszíti az eddigi összes rajta megszerzett mancsot.",
                             onConfirm = {
                                 viewModel.updateMembersOfProject()
                                 Toast.makeText(
-                                    context,
-                                    "Résztvevők listája módosítva!",
-                                    Toast.LENGTH_SHORT
-                                )
-                                    .show()
+                                    context, "Résztvevők listája módosítva!", Toast.LENGTH_SHORT
+                                ).show()
                                 showDialog = DialogType.NONE
                             },
                             onDismiss = {
@@ -111,16 +101,17 @@ class AddOrRemoveMembersFragment : DialogFragment() {
                         )
                     }
 
-                    DialogType.NONE -> {} // this is empty on purpose
+                    DialogType.NONE -> { /*do nothing*/
+                    }
                 }
                 SearchField(
                     searchQuery = searchQuery,
                     chipState = chipState,
-                    onValueChange = { searchQuery = it },
+                    onValueChange = { viewModel.onSearchValueChange(it) },
                 )
 
                 LazyColumn {// selected users
-                    items(users.filter { uiState.selectedUserIds.contains(it.documentId) }) { user ->
+                    items(selectedUsers) { user ->
                         UserRow(
                             user,
                             true,
@@ -129,11 +120,11 @@ class AddOrRemoveMembersFragment : DialogFragment() {
                             viewModel.userSelectionClicked(user)
                         }
                     }
-                }
-                HorizontalDivider(modifier = Modifier.padding(8.dp))
-                if (filteredUnselectedUsers.isNotEmpty()) {
-                    LazyColumn {// all users
-                        items(filteredUnselectedUsers) { user ->
+                    if (unselectedFilteredUsers.isNotEmpty()) {
+                        item {
+                            HorizontalDivider(modifier = Modifier.padding(8.dp))
+                        }
+                        items(unselectedFilteredUsers) { user ->// all unselected users matching the search criteria
                             UserRow(
                                 user,
                                 false,
@@ -142,46 +133,18 @@ class AddOrRemoveMembersFragment : DialogFragment() {
                                 viewModel.userSelectionClicked(user)
                             }
                         }
+                    } else {
+                        item {
+                            Text(
+                                text = "Nincsenek a feltételeknek megfelelő tagok",
+                                modifier = Modifier.padding(16.dp),
+                                style = MaterialTheme.typography.headlineSmall,
+                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            )
+                        }
                     }
-                } else {
-                    Text(
-                        text = "Nincsenek a feltételeknek megfelelő tagok",
-                        modifier = Modifier.padding(16.dp),
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                    )
                 }
             }
         }
     }
-
-
-    @Composable
-    private fun getFilteredUsers(
-        searchQuery: String,
-        chipState: ChipTextFieldState<Chip>,
-        selectedUserIds: List<String>,
-    ) = viewModel.users.observeAsState().value?.filter { user ->
-        isUserMatched(
-            user, searchQuery, chipState
-        )
-    }.orEmpty()
-        // we put selected users first, then alphabetically
-        .sortedWith(compareBy({ !selectedUserIds.contains(it.documentId) }, { it.name }))
-
-    private fun isUserMatched(
-        user: User,
-        cleanSearchQuery: String,
-        chipState: ChipTextFieldState<Chip>,
-    ): Boolean {
-        val cleanSearchWords =
-            chipState.chips.map { it.text.trim().unaccent() } + cleanSearchQuery.trim().unaccent()
-
-        // users are searchable by name or nickname
-        return cleanSearchWords.all {
-            user.name.unaccent().contains(it, ignoreCase = true) || user.nickname.unaccent()
-                .contains(it, ignoreCase = true)
-        }
-    }
-
 }

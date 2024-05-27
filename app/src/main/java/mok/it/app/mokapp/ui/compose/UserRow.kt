@@ -39,7 +39,7 @@ fun UserRow(
         )
         Checkbox(
             checked = isSelected,
-            onCheckedChange = null // Accessibility: 'selectable' handles state
+            onCheckedChange = null // click is handled on whole row instead
         )
     }
 }

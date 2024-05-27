@@ -197,7 +197,8 @@ class DetailsFragment : Fragment() {
                             )
                         }
 
-                        DialogType.NONE -> {} // this is empty on purpose
+                        DialogType.NONE -> {/*do nothing*/
+                        }
                     }
 
                     Row(
@@ -511,6 +512,7 @@ class DetailsFragment : Fragment() {
                 menu.add(R.id.share, R.id.share, 0, R.string.share)
                     .setIcon(R.drawable.ic_share)
                     .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                @Suppress("DEPRECATION")
                 menu.getItem(0).icon?.mutate()
                     ?.setTint(resources.getColor(R.color.md_theme_onPrimary))
             }

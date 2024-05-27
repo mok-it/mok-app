@@ -124,6 +124,7 @@ class RewardsFragment : Fragment() {
         NONE
     }
 
+    //TODO too complex, should be refactored at some point
     @Composable
     fun RewardItem(
         reward: Reward,
@@ -188,7 +189,8 @@ class RewardsFragment : Fragment() {
                     onDismiss = { showDialog = DialogType.NONE })
             }
 
-            DialogType.NONE -> {} // this is empty on purpose
+            DialogType.NONE -> {/*do nothing*/
+            }
         }
         Card(
             onClick = {},

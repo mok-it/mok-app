@@ -90,29 +90,47 @@ object ProjectService {
             .filterNotNull()
 
     suspend fun setMembersOfProject(projectId: String, members: List<String>) {
-        val originalMembers =
-            (Firebase.firestore.collection(Collections.PROJECTS).document(projectId)
-                .get().await()["members"] as List<String>).toSet()
+        val db = Firebase.firestore
+        val batch = db.batch()
 
-        val newlyAddedUsers =
-            members - originalMembers
+        try {
+            val originalMembers =
+                (db.collection(Collections.PROJECTS).document(projectId)
+                    .get().await()["members"] as List<String>).toSet()
 
-        //add the project to the newly added users' projectBadges map with 0
-        newlyAddedUsers.forEach { userId ->
-            Firebase.firestore.collection(Collections.USERS).document(userId)
-                .update("projectBadges.$projectId", 0)
+            val newlyAddedUsers =
+                members - originalMembers
+
+            //add the project to the newly added users' projectBadges map with 0
+            newlyAddedUsers.forEach { userId ->
+                batch.update(
+                    db.collection(Collections.USERS).document(userId),
+                    "projectBadges.$projectId",
+                    0
+                )
+            }
+
+            val newlyRemovedUsers = originalMembers - members.toSet()
+
+            //remove the project from the newly removed users' projectBadges map
+            newlyRemovedUsers.forEach { userId ->
+                batch.update(
+                    db.collection(Collections.USERS).document(userId),
+                    "projectBadges.$projectId",
+                    null
+                )
+            }
+
+            // update the project with the new member list
+            batch.update(
+                db.collection(Collections.PROJECTS).document(projectId),
+                "members",
+                members
+            )
+
+            batch.commit()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error updating members of project", e)
         }
-
-        val newlyRemovedUsers = originalMembers - members.toSet()
-
-        //remove the project from the newly removed users' projectBadges map
-        newlyRemovedUsers.forEach { userId ->
-            Firebase.firestore.collection(Collections.USERS).document(userId)
-                .update("projectBadges.$projectId", null)
-        }
-
-        // update the project with the new member list
-        Firebase.firestore.collection(Collections.PROJECTS).document(projectId)
-            .update("members", members)
     }
 }

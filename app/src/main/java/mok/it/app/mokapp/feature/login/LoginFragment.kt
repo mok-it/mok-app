@@ -1,3 +1,5 @@
+@file:Suppress("DEPRECATION")
+
 package mok.it.app.mokapp.feature.login
 
 import android.app.Activity
@@ -30,11 +32,10 @@ class LoginFragment : Fragment() {
 
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var googleAuth: ActivityResultLauncher<Intent>
-    //private lateinit var loadingDialog: LottieDialogFragment
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
@@ -43,7 +44,6 @@ class LoginFragment : Fragment() {
     private fun initializeAuth() {
         FirebaseApp.initializeApp(requireContext())
 
-        //loadingDialog = LoadingDialogManager.getLoadingDialog(requireContext())
         googleSignInClient = GoogleSignIn.getClient(
             requireContext(), GoogleSignInOptions.Builder(
                 GoogleSignInOptions.DEFAULT_SIGN_IN

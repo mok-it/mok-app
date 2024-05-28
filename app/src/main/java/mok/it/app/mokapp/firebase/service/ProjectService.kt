@@ -8,6 +8,7 @@ import com.google.firebase.firestore.snapshots
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.tasks.await
 import mok.it.app.mokapp.model.Collections
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.utility.Utility.TAG
@@ -28,8 +29,8 @@ object ProjectService {
             .snapshots()
             .map { s ->
                 s.toObject(Project::class.java)
-            }
-            .filterNotNull()
+            }.filterNotNull()
+
 
     fun addProject(project: Project) {
 
@@ -51,12 +52,10 @@ object ProjectService {
             "overall_progress" to project.overallProgress,
         )
 
-        Firebase.firestore.collection(Collections.PROJECTS)
-            .add(projectHashMap)
+        Firebase.firestore.collection(Collections.PROJECTS).add(projectHashMap)
             .addOnSuccessListener { documentReference ->
                 Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 Log.e(TAG, "Error adding document", e)
             }
     }
@@ -75,11 +74,9 @@ object ProjectService {
         )
 
         Firebase.firestore.collection(Collections.PROJECTS).document(oldProjectId)
-            .update(projectHashMap)
-            .addOnSuccessListener {
+            .update(projectHashMap).addOnSuccessListener {
                 Log.d(TAG, "DocumentSnapshot successfully updated!")
-            }
-            .addOnFailureListener { e ->
+            }.addOnFailureListener { e ->
                 Log.e(TAG, "Error updating document", e)
             }
     }
@@ -91,4 +88,49 @@ object ProjectService {
                 s.toObjects(Project::class.java)
             }
             .filterNotNull()
+
+    suspend fun setMembersOfProject(projectId: String, members: List<String>) {
+        val db = Firebase.firestore
+        val batch = db.batch()
+
+        try {
+            val originalMembers =
+                (db.collection(Collections.PROJECTS).document(projectId)
+                    .get().await()["members"] as List<String>).toSet()
+
+            val newlyAddedUsers =
+                members - originalMembers
+
+            //add the project to the newly added users' projectBadges map with 0
+            newlyAddedUsers.forEach { userId ->
+                batch.update(
+                    db.collection(Collections.USERS).document(userId),
+                    "projectBadges.$projectId",
+                    0
+                )
+            }
+
+            val newlyRemovedUsers = originalMembers - members.toSet()
+
+            //remove the project from the newly removed users' projectBadges map
+            newlyRemovedUsers.forEach { userId ->
+                batch.update(
+                    db.collection(Collections.USERS).document(userId),
+                    "projectBadges.$projectId",
+                    null
+                )
+            }
+
+            // update the project with the new member list
+            batch.update(
+                db.collection(Collections.PROJECTS).document(projectId),
+                "members",
+                members
+            )
+
+            batch.commit()
+        } catch (e: Exception) {
+            Log.e(TAG, "Error updating members of project", e)
+        }
+    }
 }

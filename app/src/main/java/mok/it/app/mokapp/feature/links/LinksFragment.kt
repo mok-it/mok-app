@@ -28,9 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.ComposeView
@@ -39,21 +36,17 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import com.dokar.chiptextfield.Chip
-import com.dokar.chiptextfield.ChipTextFieldState
-import com.dokar.chiptextfield.rememberChipTextFieldState
 import mok.it.app.mokapp.R
 import mok.it.app.mokapp.model.Link
 import mok.it.app.mokapp.ui.compose.SearchField
 import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
-import mok.it.app.mokapp.utility.Utility.unaccent
 import java.util.Locale
 
 class LinksFragment : Fragment() {
     private val viewModel: LinksViewModel by viewModels()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+        savedInstanceState: Bundle?,
     ): View =
         ComposeView(requireContext()).apply {
             setContent {
@@ -66,17 +59,16 @@ class LinksFragment : Fragment() {
     @SuppressLint("NotConstructor")
     @Composable
     fun LinksFragment() {
-        val chipState = rememberChipTextFieldState<Chip>()
-        var searchQuery by remember { mutableStateOf("") }
-        val filteredLinks = getFilteredLinks(searchQuery, chipState)
+        val chipState by viewModel.chipState
+        val searchQuery by viewModel.searchQuery
+        val filteredLinks by viewModel.filteredLinks.observeAsState(initial = emptyList())
 
         Surface {
-
             Column {
                 SearchField(
                     searchQuery = searchQuery,
                     chipState = chipState,
-                    onValueChange = { searchQuery = it },
+                    onValueChange = { viewModel.onSearchValueChange(it) },
                 )
                 if (filteredLinks.isEmpty()) {
                     Text(
@@ -98,32 +90,6 @@ class LinksFragment : Fragment() {
                     }
                 }
             }
-        }
-    }
-
-    @Composable
-    private fun getFilteredLinks(
-        searchQuery: String,
-        chipState: ChipTextFieldState<Chip>
-    ): List<Link> {
-        val cleanSearchQuery = searchQuery.trim().unaccent()
-        return viewModel.links.observeAsState().value
-            ?.filter { link -> isLinkMatched(link, cleanSearchQuery, chipState) }
-            .orEmpty()
-            .sortedWith(compareBy({ it.category }, { it.title }))
-    }
-
-    private fun isLinkMatched(
-        link: Link,
-        cleanSearchQuery: String,
-        chipState: ChipTextFieldState<Chip>
-    ): Boolean {
-        val cleanSearchWords =
-            chipState.chips.map { it.text.trim().unaccent() } + cleanSearchQuery.trim().unaccent()
-
-        return cleanSearchWords.all {
-            link.title.unaccent().contains(it, ignoreCase = true)
-                    || link.category.unaccent().contains(it, ignoreCase = true)
         }
     }
 

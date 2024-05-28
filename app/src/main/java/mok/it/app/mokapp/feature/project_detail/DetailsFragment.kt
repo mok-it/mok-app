@@ -32,7 +32,6 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -40,7 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -73,6 +72,7 @@ import mok.it.app.mokapp.model.enums.Role
 import mok.it.app.mokapp.ui.compose.AdminButton
 import mok.it.app.mokapp.ui.compose.BadgeIcon
 import mok.it.app.mokapp.ui.compose.DataBlock
+import mok.it.app.mokapp.ui.compose.OkCancelDialog
 import mok.it.app.mokapp.ui.compose.UserIcon
 import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 import mok.it.app.mokapp.utility.Utility.TAG
@@ -123,7 +123,7 @@ class DetailsFragment : Fragment() {
     private fun DetailsScreen() {
         val project by viewModel.project.observeAsState(initial = Project())
         val projectLeader by viewModel.projectLeader.observeAsState(initial = User())
-        var showDialog by remember { mutableStateOf(DialogType.NONE) }
+        var showDialog by rememberSaveable { mutableStateOf(DialogType.NONE) }
         val members = viewModel.members.observeAsState(initial = emptyList()).value
 
         Scaffold(
@@ -172,28 +172,33 @@ class DetailsFragment : Fragment() {
                         }
 
                         DialogType.JOIN -> {
-                            JoinAlertDialog(
-                                onConfirm = {
-                                    joinProject(project)
-                                },
+                            OkCancelDialog(
+                                text = "Biztos, hogy csatlakozni szeretnél a projekthez?",
                                 onDismiss = {
                                     showDialog = DialogType.NONE
-                                }
+                                },
+                                onConfirm = {
+                                    joinProject(project)
+                                    showDialog = DialogType.NONE
+                                },
                             )
                         }
 
                         DialogType.LEAVE -> {
-                            LeaveAlertDIalog(
-                                onConfirm = {
-                                    leaveProject()
-                                },
+                            OkCancelDialog(
+                                text = "Biztos, hogy le szeretnél csatlakozni a projektről? A projekten szerzett mancsaid ekkor elvesznek.",
                                 onDismiss = {
                                     showDialog = DialogType.NONE
-                                }
+                                },
+                                onConfirm = {
+                                    leaveProject()
+                                    showDialog = DialogType.NONE
+                                },
                             )
                         }
 
-                        DialogType.NONE -> {}
+                        DialogType.NONE -> {/*do nothing*/
+                        }
                     }
 
                     Row(
@@ -354,49 +359,6 @@ class DetailsFragment : Fragment() {
         }
     )
 
-    @Composable
-    private fun JoinAlertDialog(onConfirm: () -> Unit, onDismiss: () -> Unit) =
-        AlertDialog(
-            onDismissRequest = { onDismiss() },
-            confirmButton = {
-                Button(onClick = {
-                    onConfirm()
-                    onDismiss()
-                }) {
-                    Text("Csatlakozás")
-                }
-            },
-            dismissButton = {
-                OutlinedButton(onClick = { onDismiss() }) {
-                    Text(stringResource(R.string.cancel))
-                }
-            },
-            text = {
-                Text("Biztos, hogy szeretnél csatlakozni a projekthez?")
-            })
-
-
-    @Composable
-    private fun LeaveAlertDIalog(onConfirm: () -> Unit, onDismiss: () -> Unit) =
-        AlertDialog(
-            onDismissRequest = { onDismiss() },
-            confirmButton = {
-                Button(onClick = {
-                    onConfirm()
-                    onDismiss()
-                }) {
-                    Text("Lecsatlakozás")
-                }
-            },
-            dismissButton = {
-                OutlinedButton(onClick = { onDismiss() }) {
-                    Text(stringResource(R.string.cancel))
-                }
-            },
-            text = {
-                Text("Biztos, hogy le szeretnél csatlakozni a projektről? A projekten szerzett mancsaid ekkor elvesznek.")
-            })
-
 
     @Composable
     private fun LastCommentCard(comment: Comment?) {
@@ -550,6 +512,7 @@ class DetailsFragment : Fragment() {
                 menu.add(R.id.share, R.id.share, 0, R.string.share)
                     .setIcon(R.drawable.ic_share)
                     .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                @Suppress("DEPRECATION")
                 menu.getItem(0).icon?.mutate()
                     ?.setTint(resources.getColor(R.color.md_theme_onPrimary))
             }

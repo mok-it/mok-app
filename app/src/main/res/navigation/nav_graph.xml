@@ -7,7 +7,7 @@
     <fragment
         android:id="@+id/detailsFragment"
         android:name="mok.it.app.mokapp.feature.project_detail.DetailsFragment"
-        android:label="Projekt adatai">
+        android:label="@string/project_details">
         <action
             android:id="@+id/action_detailsFragment_to_commentsFragment"
             app:destination="@id/commentsFragment" />
@@ -28,7 +28,7 @@
     <fragment
         android:id="@+id/commentsFragment"
         android:name="mok.it.app.mokapp.feature.project_comments.CommentsFragment"
-        android:label="Kommentek">
+        android:label="@string/comments">
         <argument
             android:name="projectId"
             app:argType="string" />
@@ -36,7 +36,7 @@
     <fragment
         android:id="@+id/allProjectsListFragment"
         android:name="mok.it.app.mokapp.feature.project_list.AllProjectsListFragment"
-        android:label="Az összes Projekt">
+        android:label="@string/all_projects">
         <action
             android:id="@+id/action_allProjectsListFragment_to_detailsFragment"
             app:destination="@id/detailsFragment" />
@@ -63,7 +63,7 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="mok.it.app.mokapp.feature.login.LoginFragment"
-        android:label="Bejelentkezés"
+        android:label="@string/login"
         tools:layout="@layout/fragment_login">
         <action
             android:id="@+id/action_loginFragment_to_allProjectsListFragment"
@@ -73,11 +73,11 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="mok.it.app.mokapp.feature.profile_view.ProfileFragment"
-        android:label="Profil" />
+        android:label="@string/profile" />
     <fragment
         android:id="@+id/myBadgesFragment"
         android:name="mok.it.app.mokapp.feature.my_badges.MyBadgesFragment"
-        android:label="Saját Mancsaim"
+        android:label="@string/my_own_badges"
 
         tools:layout="@layout/fragment_my_badges">
         <action
@@ -87,23 +87,23 @@
     <fragment
         android:id="@+id/rewardsFragment"
         android:name="mok.it.app.mokapp.feature.rewards_list.RewardsFragment"
-        android:label="Jutalmak" />
+        android:label="@string/rewards" />
     <fragment
         android:id="@+id/phoneBookFragment"
         android:name="mok.it.app.mokapp.feature.phonebook_list.PhoneBookFragment"
-        android:label="Telefonkönyv"
+        android:label="@string/phonebook"
         tools:layout="@layout/fragment_phone_list" />
     <fragment
         android:id="@+id/linksFragment"
         android:name="mok.it.app.mokapp.feature.links.LinksFragment"
-        android:label="Linkek" />
+        android:label="@string/links" />
     <action
         android:id="@+id/action_global_loginFragment"
         app:destination="@id/loginFragment" />
     <fragment
         android:id="@+id/memberFragment"
         android:name="mok.it.app.mokapp.feature.member_view.MemberFragment"
-        android:label="Adatok">
+        android:label="@string/details">
         <argument
             android:name="user"
             app:argType="mok.it.app.mokapp.model.User" />
@@ -139,18 +139,18 @@
     <fragment
         android:id="@+id/adminPanelFragment"
         android:name="mok.it.app.mokapp.feature.project_give_badge.AdminPanelFragment"
-        android:label="Adminisztráció">
+        android:label="@string/administration">
         <action
-            android:id="@+id/action_adminPanelFragment_to_addParticipantsDialogFragment"
-            app:destination="@id/addParticipantsDialogFragment" />
+            android:id="@+id/action_adminPanelFragment_to_addOrRemoveMembersDialogFragment"
+            app:destination="@id/addOrRemoveMembersFragment" />
         <argument
             android:name="projectId"
             app:argType="string" />
     </fragment>
     <fragment
-        android:id="@+id/addParticipantsDialogFragment"
-        android:name="mok.it.app.mokapp.feature.project_add_participants.AddParticipantsFragment"
-        android:label="Résztvevők felvétele">
+        android:id="@+id/addOrRemoveMembersFragment"
+        android:name="mok.it.app.mokapp.feature.project_add_or_remove_members.AddOrRemoveMembersFragment"
+        android:label="@string/modify_participants">
         <argument
             android:name="projectId"
             app:argType="string" />

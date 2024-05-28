@@ -153,8 +153,8 @@ object UserService {
     fun addUsersToProject(
         projectId: String,
         userIds: List<String>,
-        onComplete: () -> Unit,
-        onFailure: (Exception) -> Unit,
+        onComplete: () -> Unit = {},
+        onFailure: (Exception) -> Unit = {},
     ) {
         val batch = Firebase.firestore.batch()
         val projectDocumentRef = Firebase.firestore
@@ -400,10 +400,6 @@ object UserService {
                 }
         }
     }
-
-    fun getUsersQuery(): Query =
-        Firebase.firestore.collection(Collections.USERS)
-            .orderBy("name", Query.Direction.ASCENDING)
 
     fun getUsers(userIds: List<String>): Flow<List<User>> {
         val ids = userIds.ifEmpty { listOf("_") }

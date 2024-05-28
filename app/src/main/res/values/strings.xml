@@ -103,9 +103,9 @@
     <string name="no_notifications">Oké, nem fogunk értesítéseket küldeni :/</string>
     <string name="participant">Résztvevő</string>
     <string name="badge_reward">Mancs jutalom</string>
-    <string name="add_participant">résztvevő felvétele</string>
     <string name="add_description">Hozzáadás</string>
     <string name="add_participants">Résztvevők felvétele</string>
+    <string name="modify_participants">Résztvevők felvétele vagy törlése</string>
     <string name="add">Hozzáadás</string>
     <string name="no_results">A keresésre egyetlen eredmény sem található</string>
     <string name="collectedBadgesSummary">Megszerzett mancsok: %1$d</string>
@@ -124,6 +124,12 @@
     <string name="handle_rewards">Jutalmak kezelése</string>
     <string name="request_reward_contentdescription">Request reward</string>
     <string name="back">Vissza</string>
+    <string name="project_details">Projekt adatai</string>
+    <string name="comments">Kommentek</string>
+    <string name="all_projects">Az összes projekt</string>
+    <string name="login">Bejelentkezés</string>
+    <string name="my_own_badges">Saját Mancsaim</string>
+    <string name="details">Adatok</string>
     <string name="achievement_missing_description">Az acsi leírása nem elérhető, Kérlek próbáld újra később.</string>
     <string name="delete">törlés</string>
     <string name="tasks">Feladataim</string>

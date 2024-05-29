@@ -17,29 +17,29 @@ import mok.it.app.mokapp.model.User
 
 @Composable
 fun UserRow(
-    user: User,
-    isSelected: Boolean,
-    navController: NavController,
-    onCheckedChange: (Boolean) -> Unit,
+        user: User,
+        isSelected: Boolean,
+        navController: NavController,
+        onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(modifier = Modifier
-        .fillMaxWidth()
-        .height(48.dp)
-        .clickable {
-            onCheckedChange(!isSelected)
-        }
-        .padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
+            .fillMaxWidth()
+            .height(48.dp)
+            .clickable {
+                onCheckedChange(!isSelected)
+            }
+            .padding(horizontal = 16.dp), verticalAlignment = Alignment.CenterVertically) {
         UserIcon(user = user, navController = navController)
         Text(
-            text = user.name,
-            style = MaterialTheme.typography.bodyLarge,
-            modifier = Modifier
-                .padding(start = 16.dp)
-                .weight(1f)
+                text = user.name,
+                style = MaterialTheme.typography.bodyLarge,
+                modifier = Modifier
+                        .padding(start = 16.dp)
+                        .weight(1f)
         )
         Checkbox(
-            checked = isSelected,
-            onCheckedChange = null // click is handled on whole row instead
+                checked = isSelected,
+                onCheckedChange = null // click is handled on whole row instead
         )
     }
 }

@@ -8,5 +8,5 @@ import mok.it.app.mokapp.firebase.service.ProjectService
 class MyBadgesViewModel : ViewModel() {
 
     val projectsByIds =
-        ProjectService.getProjectsByIds(userModel.projectBadges.keys.toList()).asLiveData()
+            ProjectService.getProjectsByIds(userModel.projectBadges.keys.toList()).asLiveData()
 }

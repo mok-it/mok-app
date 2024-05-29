@@ -57,8 +57,8 @@ class AdminPanelFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?,
     ): View = ComposeView(requireContext()).apply {
         setContent {
             MokAppTheme {
@@ -75,72 +75,72 @@ class AdminPanelFragment : Fragment() {
         val uiState by viewModel.uiState.collectAsState()
 
         Scaffold(
-            bottomBar = {
-                Button(
-                    modifier = Modifier
-                        .padding(8.dp)
-                        .fillMaxWidth(),
-                    onClick = {
-                        findNavController().navigate(
-                            AdminPanelFragmentDirections
-                                .actionAdminPanelFragmentToAddOrRemoveMembersDialogFragment(args.projectId)
-                        )
-                    },
-                ) {
-                    Text(text = "Projekttaglista módosítása")
+                bottomBar = {
+                    Button(
+                            modifier = Modifier
+                                    .padding(8.dp)
+                                    .fillMaxWidth(),
+                            onClick = {
+                                findNavController().navigate(
+                                        AdminPanelFragmentDirections
+                                                .actionAdminPanelFragmentToAddOrRemoveMembersDialogFragment(args.projectId)
+                                )
+                            },
+                    ) {
+                        Text(text = "Projekttaglista módosítása")
+                    }
                 }
-            }
         )
         { padding ->
             Surface {
                 Column(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .padding(padding)
+                        modifier = Modifier
+                                .fillMaxSize()
+                                .padding(padding)
                 ) {
                     Row(
-                        horizontalArrangement = Arrangement.SpaceEvenly,
-                        modifier = Modifier
-                            .padding(8.dp)
-                            .height(IntrinsicSize.Min),
+                            horizontalArrangement = Arrangement.SpaceEvenly,
+                            modifier = Modifier
+                                    .padding(8.dp)
+                                    .height(IntrinsicSize.Min),
                     ) {
                         OutlinedIconButton(
-                            modifier = Modifier
-                                .height(50.dp)
-                                .padding(horizontal = 4.dp)
-                                .weight(0.5f)
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(MaterialTheme.colorScheme.surface),
-                            enabled = uiState.stateModified,
-                            onClick = {
-                                viewModel.saveAllUserBadges()
-                                Toast.makeText(
-                                    requireContext(),
-                                    "Módosítások sikeresen mentve!",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            },
+                                modifier = Modifier
+                                        .height(50.dp)
+                                        .padding(horizontal = 4.dp)
+                                        .weight(0.5f)
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(MaterialTheme.colorScheme.surface),
+                                enabled = uiState.stateModified,
+                                onClick = {
+                                    viewModel.saveAllUserBadges()
+                                    Toast.makeText(
+                                            requireContext(),
+                                            "Módosítások sikeresen mentve!",
+                                            Toast.LENGTH_SHORT
+                                    ).show()
+                                },
                         ) {
                             Icon(
-                                imageVector = Icons.Filled.Save,
-                                contentDescription = "Save modifications",
+                                    imageVector = Icons.Filled.Save,
+                                    contentDescription = "Save modifications",
                             )
                         }
                         OutlinedIconButton(
-                            modifier = Modifier
-                                .height(50.dp)
-                                .padding(horizontal = 4.dp)
-                                .weight(0.5f)
-                                .clip(RoundedCornerShape(16.dp))
-                                .background(MaterialTheme.colorScheme.surface),
-                            enabled = uiState.stateModified,
-                            onClick = {
-                                viewModel.resetSliderValues()
-                            },
+                                modifier = Modifier
+                                        .height(50.dp)
+                                        .padding(horizontal = 4.dp)
+                                        .weight(0.5f)
+                                        .clip(RoundedCornerShape(16.dp))
+                                        .background(MaterialTheme.colorScheme.surface),
+                                enabled = uiState.stateModified,
+                                onClick = {
+                                    viewModel.resetSliderValues()
+                                },
                         ) {
                             Icon(
-                                imageVector = Icons.Filled.Replay,
-                                contentDescription = "Reset modifications"
+                                    imageVector = Icons.Filled.Replay,
+                                    contentDescription = "Reset modifications"
                             )
                         }
                     }
@@ -157,43 +157,43 @@ class AdminPanelFragment : Fragment() {
     @Composable
     fun MemberSliderCard(user: User, project: Project, uiState: AdminPanelUiState) {
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
+                modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp)
         ) {
             Row(
-                modifier = Modifier.padding(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
             ) {
                 UserIcon(user = user, navController = findNavController())
 
                 Text(
-                    text = user.name,
-                    modifier = Modifier
-                        .padding(start = 8.dp)
-                        .weight(1f)
+                        text = user.name,
+                        modifier = Modifier
+                                .padding(start = 8.dp)
+                                .weight(1f)
                 )
 
                 Slider(
-                    value = uiState.sliderValues.getOrDefault(user.documentId, 0).toFloat(),
-                    onValueChange = {
-                        viewModel.updateSliderValue(user.documentId, it.roundToInt())
-                    },
-                    valueRange = 0f..project.maxBadges.toFloat(),
-                    steps = project.maxBadges,
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(end = 12.dp),
-                    colors = SliderDefaults.colors(
-                        thumbColor = MaterialTheme.colorScheme.primary,
-                        activeTrackColor = MaterialTheme.colorScheme.primary,
-                        inactiveTrackColor = MaterialTheme.colorScheme.inversePrimary,
-                    ),
+                        value = uiState.sliderValues.getOrDefault(user.documentId, 0).toFloat(),
+                        onValueChange = {
+                            viewModel.updateSliderValue(user.documentId, it.roundToInt())
+                        },
+                        valueRange = 0f..project.maxBadges.toFloat(),
+                        steps = project.maxBadges,
+                        modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 12.dp),
+                        colors = SliderDefaults.colors(
+                                thumbColor = MaterialTheme.colorScheme.primary,
+                                activeTrackColor = MaterialTheme.colorScheme.primary,
+                                inactiveTrackColor = MaterialTheme.colorScheme.inversePrimary,
+                        ),
                 )
 
                 Text(
-                    text = uiState.sliderValues.getOrDefault(user.documentId, 0).toString(),
-                    modifier = Modifier.padding(end = 8.dp)
+                        text = uiState.sliderValues.getOrDefault(user.documentId, 0).toString(),
+                        modifier = Modifier.padding(end = 8.dp)
                 )
             }
         }

@@ -21,8 +21,8 @@ import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.utility.Utility.unaccent
 
 data class AddOrRemoveMembersUiState(
-    val selectedUserIds: List<String> = emptyList(),
-    val selectedUsersChanged: Boolean = false,
+        val selectedUserIds: List<String> = emptyList(),
+        val selectedUsersChanged: Boolean = false,
 )
 
 class AddOrRemoveMembersViewModel(val projectId: String) : ViewModel() {
@@ -46,7 +46,7 @@ class AddOrRemoveMembersViewModel(val projectId: String) : ViewModel() {
     init {
         project.observeForever {
             _uiState.value =
-                _uiState.value.copy(selectedUserIds = it.members)
+                    _uiState.value.copy(selectedUserIds = it.members)
             updateSelectedUsersChanged()
         }
     }
@@ -61,17 +61,17 @@ class AddOrRemoveMembersViewModel(val projectId: String) : ViewModel() {
     fun userSelectionClicked(user: User) {
         if (_uiState.value.selectedUserIds.contains(user.documentId)) {
             _uiState.value =
-                _uiState.value.copy(selectedUserIds = _uiState.value.selectedUserIds - user.documentId)
+                    _uiState.value.copy(selectedUserIds = _uiState.value.selectedUserIds - user.documentId)
         } else {
             _uiState.value =
-                _uiState.value.copy(selectedUserIds = _uiState.value.selectedUserIds + user.documentId)
+                    _uiState.value.copy(selectedUserIds = _uiState.value.selectedUserIds + user.documentId)
         }
         updateSelectedUsersChanged()
     }
 
     private fun updateSelectedUsersChanged() {
         val selectedUsersChanged =
-            _uiState.value.selectedUserIds != project.value?.members
+                _uiState.value.selectedUserIds != project.value?.members
         _uiState.value = _uiState.value.copy(selectedUsersChanged = selectedUsersChanged)
     }
 
@@ -79,29 +79,29 @@ class AddOrRemoveMembersViewModel(val projectId: String) : ViewModel() {
         get() =
             selectedUsers.map { users ->
                 users
-                    .filter { user ->
-                        isUserMatched(
-                            user, searchQuery.value, chipState.value
+                        .filter { user ->
+                            isUserMatched(
+                                    user, searchQuery.value, chipState.value
+                            )
+                                    && !_uiState.value.selectedUserIds.contains(user.documentId)
+                        }
+                        .sortedWith(
+                                compareBy { it.name }
                         )
-                                && !_uiState.value.selectedUserIds.contains(user.documentId)
-                    }
-                    .sortedWith(
-                        compareBy { it.name }
-                    )
             }
 
     private fun isUserMatched(
-        user: User,
-        cleanSearchQuery: String,
-        chipState: ChipTextFieldState<Chip>,
+            user: User,
+            cleanSearchQuery: String,
+            chipState: ChipTextFieldState<Chip>,
     ): Boolean {
         val cleanSearchWords =
-            chipState.chips.map { it.text.trim().unaccent() } + cleanSearchQuery.trim().unaccent()
+                chipState.chips.map { it.text.trim().unaccent() } + cleanSearchQuery.trim().unaccent()
 
         // users are searchable by name or nickname
         return cleanSearchWords.all {
             user.name.unaccent().contains(it, ignoreCase = true) || user.nickname.unaccent()
-                .contains(it, ignoreCase = true)
+                    .contains(it, ignoreCase = true)
         }
     }
 
@@ -112,7 +112,7 @@ class AddOrRemoveMembersViewModel(val projectId: String) : ViewModel() {
 
 @Suppress("UNCHECKED_CAST")
 class AddOrRemoveMembersViewModelFactory(private val projectId: String) :
-    ViewModelProvider.Factory {
+        ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AddOrRemoveMembersViewModel::class.java)) {
             return AddOrRemoveMembersViewModel(projectId) as T

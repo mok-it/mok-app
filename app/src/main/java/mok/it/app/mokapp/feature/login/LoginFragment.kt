@@ -34,8 +34,8 @@ class LoginFragment : Fragment() {
     private lateinit var googleAuth: ActivityResultLauncher<Intent>
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?,
     ): View {
         binding = FragmentLoginBinding.inflate(inflater, container, false)
         return binding.root
@@ -45,9 +45,9 @@ class LoginFragment : Fragment() {
         FirebaseApp.initializeApp(requireContext())
 
         googleSignInClient = GoogleSignIn.getClient(
-            requireContext(), GoogleSignInOptions.Builder(
+                requireContext(), GoogleSignInOptions.Builder(
                 GoogleSignInOptions.DEFAULT_SIGN_IN
-            ).requestIdToken(getString(R.string.default_web_client_id))
+        ).requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build()
         )
@@ -62,30 +62,30 @@ class LoginFragment : Fragment() {
         }
 
         googleAuth =
-            registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-                if (result.resultCode == Activity.RESULT_OK) {
-                    val googleSignInResult: GoogleSignInResult? = result.data?.let {
-                        Auth.GoogleSignInApi.getSignInResultFromIntent(
-                            it
-                        )
-                    }
-                    if (googleSignInResult!!.isSuccess) {
-                        val idToken = googleSignInResult.signInAccount?.idToken
-                        FirebaseAuth.getInstance()
-                            .signInWithCredential(GoogleAuthProvider.getCredential(idToken, null))
-                            .addOnCompleteListener {
-                                navigateAuthUser()
-                            }
-                    } else {
-                        Toast.makeText(
-                            requireContext(),
-                            "Sikertelen bejelentkezés :(",
-                            Toast.LENGTH_SHORT
-                        )
-                            .show()
+                registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+                    if (result.resultCode == Activity.RESULT_OK) {
+                        val googleSignInResult: GoogleSignInResult? = result.data?.let {
+                            Auth.GoogleSignInApi.getSignInResultFromIntent(
+                                    it
+                            )
+                        }
+                        if (googleSignInResult!!.isSuccess) {
+                            val idToken = googleSignInResult.signInAccount?.idToken
+                            FirebaseAuth.getInstance()
+                                    .signInWithCredential(GoogleAuthProvider.getCredential(idToken, null))
+                                    .addOnCompleteListener {
+                                        navigateAuthUser()
+                                    }
+                        } else {
+                            Toast.makeText(
+                                    requireContext(),
+                                    "Sikertelen bejelentkezés :(",
+                                    Toast.LENGTH_SHORT
+                            )
+                                    .show()
+                        }
                     }
                 }
-            }
 
         binding.signInButton.setOnClickListener {
             googleAuth.launch(googleSignInClient.signInIntent)

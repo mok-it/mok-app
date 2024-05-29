@@ -8,23 +8,23 @@ import mok.it.app.mokapp.model.Achievement
 import java.util.SortedMap
 
 class EditAchievementViewModel(
-    achievement: Achievement = Achievement(levelDescriptions = sortedMapOf(1 to ""))
+        achievement: Achievement = Achievement(levelDescriptions = sortedMapOf(1 to ""))
 ) : ViewModel() {
     val achievement = mutableStateOf(achievement)
 
     fun onEvent(event: EditAchievementEvent) {
         when (event) {
             is EditAchievementEvent.ChangeName -> achievement.value =
-                achievement.value.copy(name = event.name)
+                    achievement.value.copy(name = event.name)
 
             is EditAchievementEvent.ChangeLevelDescriptions -> achievement.value =
-                achievement.value.copy(levelDescriptions = event.descriptions.toLevelDescriptions())
+                    achievement.value.copy(levelDescriptions = event.descriptions.toLevelDescriptions())
 
             is EditAchievementEvent.ChangeIcon -> achievement.value =
-                achievement.value.copy(icon = event.icon)
+                    achievement.value.copy(icon = event.icon)
 
             is EditAchievementEvent.ChangeMandatory -> achievement.value =
-                achievement.value.copy(mandatory = event.mandatory)
+                    achievement.value.copy(mandatory = event.mandatory)
 
             is EditAchievementEvent.Insert -> {
                 AchievementService.insertAchievement(achievement.value.toAchievementEntity())
@@ -53,7 +53,7 @@ sealed class EditAchievementEvent {
 }
 
 class EditAchievementViewModelFactory(private val achievement: Achievement) :
-    ViewModelProvider.Factory {
+        ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(EditAchievementViewModel::class.java)) {
             return EditAchievementViewModel(achievement) as T

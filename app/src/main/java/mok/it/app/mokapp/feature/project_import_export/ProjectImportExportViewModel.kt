@@ -39,12 +39,12 @@ class ProjectImportExportViewModel : ViewModel() {
     fun saveImport() {
         importedProjects.forEach { project ->
             ProjectService.addProject(
-                project.copy(
-                    created = Date(),
-                    creator = userModel.documentId,
-                    projectLeader = userModel.documentId,
-                    overallProgress = 0
-                )
+                    project.copy(
+                            created = Date(),
+                            creator = userModel.documentId,
+                            projectLeader = userModel.documentId,
+                            overallProgress = 0
+                    )
             )
         }
     }

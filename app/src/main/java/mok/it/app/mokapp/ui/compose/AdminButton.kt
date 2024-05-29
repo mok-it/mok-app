@@ -14,22 +14,22 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun AdminButton(
-    modifier: Modifier, imageVector: ImageVector,
-    contentDescription: String,
-    onClick: () -> Unit,
+        modifier: Modifier, imageVector: ImageVector,
+        contentDescription: String,
+        onClick: () -> Unit,
 ) {
     IconButton(
-        modifier = modifier
-            .padding(horizontal = 8.dp, vertical = 8.dp)
-            .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.primary),
-        onClick = {
-            onClick()
-        }) {
+            modifier = modifier
+		            .padding(horizontal = 8.dp, vertical = 8.dp)
+		            .clip(RoundedCornerShape(8.dp))
+		            .background(MaterialTheme.colorScheme.primary),
+            onClick = {
+                onClick()
+            }) {
         Icon(
-            imageVector = imageVector,
-            contentDescription = contentDescription,
-            tint = MaterialTheme.colorScheme.inversePrimary,
+                imageVector = imageVector,
+                contentDescription = contentDescription,
+                tint = MaterialTheme.colorScheme.inversePrimary,
         )
     }
 }

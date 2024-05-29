@@ -54,32 +54,32 @@ import java.util.SortedMap
 
 @Composable
 fun AchievementDetails(
-    achievement: AchievementUi,
-    owners: SortedMap<Int, List<User>>,
-    canModify: Boolean,
-    navController: NavController,
-    onEditClick: () -> Unit,
-    onGrantClick: () -> Unit,
+        achievement: AchievementUi,
+        owners: SortedMap<Int, List<User>>,
+        canModify: Boolean,
+        navController: NavController,
+        onEditClick: () -> Unit,
+        onGrantClick: () -> Unit,
 ) {
     Surface {
         Column(modifier = Modifier.padding(8.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 AsyncImage(
-                    model = achievement.icon,
-                    contentDescription = "Acsi ikonja",
-                    modifier = Modifier
-                        .size(100.dp)
-                        .padding(end = 18.dp)
+                        model = achievement.icon,
+                        contentDescription = "Acsi ikonja",
+                        modifier = Modifier
+		                        .size(100.dp)
+		                        .padding(end = 18.dp)
                 )
                 Text(text = achievement.name, style = MaterialTheme.typography.titleLarge)
                 Spacer(modifier = Modifier.weight(1f))
                 TopIcon(achievement)
             }
             Text(
-                text = achievement.currentDescription
-                    ?: LocalContext.current.getString(R.string.achievement_missing_description),
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(8.dp)
+                    text = achievement.currentDescription
+                            ?: LocalContext.current.getString(R.string.achievement_missing_description),
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(8.dp)
             )
 
             AdminButtonRow(canModify, onEditClick, onGrantClick)
@@ -99,22 +99,22 @@ fun AchievementDetails(
 private fun AdminButtonRow(canModify: Boolean, onEditClick: () -> Unit, onGrantClick: () -> Unit) {
     if (canModify) {
         Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 8.dp)
+                horizontalArrangement = Arrangement.SpaceEvenly,
+                modifier = Modifier
+		                .fillMaxWidth()
+		                .padding(vertical = 8.dp)
         ) {
             AdminButton(
-                modifier = Modifier.weight(1f),
-                imageVector = Icons.Default.People,
-                contentDescription = "Edit levels",
-                onClick = onGrantClick
+                    modifier = Modifier.weight(1f),
+                    imageVector = Icons.Default.People,
+                    contentDescription = "Edit levels",
+                    onClick = onGrantClick
             )
             AdminButton(
-                modifier = Modifier.weight(1f),
-                imageVector = Icons.Default.Edit,
-                contentDescription = "Edit achievement",
-                onClick = onEditClick
+                    modifier = Modifier.weight(1f),
+                    imageVector = Icons.Default.Edit,
+                    contentDescription = "Edit achievement",
+                    onClick = onEditClick
             )
         }
 
@@ -126,28 +126,28 @@ private fun TopIcon(achievement: AchievementUi) {
     when {
         achievement.ownedLevel == achievement.maxLevel -> {
             Icon(
-                imageVector = Icons.Filled.Done,
-                contentDescription = "megszerezve",
-                tint = ExtendedTheme.colorScheme.success.color,
-                modifier = Modifier.size(40.dp),
+                    imageVector = Icons.Filled.Done,
+                    contentDescription = "megszerezve",
+                    tint = ExtendedTheme.colorScheme.success.color,
+                    modifier = Modifier.size(40.dp),
 
-                )
+                    )
         }
 
         achievement.ownedLevel > 0 -> {
             Text(
-                text = "${achievement.ownedLevel}/${achievement.maxLevel}",
-                style = MaterialTheme.typography.bodyMedium,
-                modifier = Modifier.padding(2.dp)
+                    text = "${achievement.ownedLevel}/${achievement.maxLevel}",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(2.dp)
             )
         }
 
         achievement.mandatory -> {
             Icon(
-                imageVector = Icons.Filled.PriorityHigh,
-                contentDescription = "kötelező",
-                tint = ExtendedTheme.colorScheme.warning.color,
-                modifier = Modifier.size(40.dp)
+                    imageVector = Icons.Filled.PriorityHigh,
+                    contentDescription = "kötelező",
+                    tint = ExtendedTheme.colorScheme.warning.color,
+                    modifier = Modifier.size(40.dp)
             )
         }
     }
@@ -155,32 +155,32 @@ private fun TopIcon(achievement: AchievementUi) {
 
 @Composable
 private fun StatusCard(
-    colors: CardColors,
-    icon: @Composable () -> Unit,
-    text: String,
-    onClick: () -> Unit = {}
+        colors: CardColors,
+        icon: @Composable () -> Unit,
+        text: String,
+        onClick: () -> Unit = {}
 ) {
     Card(
-        onClick = onClick,
-        colors = colors,
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(4.dp)
+            onClick = onClick,
+            colors = colors,
+            modifier = Modifier
+		            .fillMaxWidth()
+		            .padding(4.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(6.dp)) {
             Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier
-                    .size(35.dp)
-                    .clip(CircleShape)
-                    .background(MaterialTheme.colorScheme.background)
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+		                    .size(35.dp)
+		                    .clip(CircleShape)
+		                    .background(MaterialTheme.colorScheme.background)
             ) {
                 icon()
             }
             Text(
-                text = text, modifier = Modifier
-                    .padding(8.dp)
-                    .align(Alignment.CenterVertically)
+                    text = text, modifier = Modifier
+		            .padding(8.dp)
+		            .align(Alignment.CenterVertically)
             )
         }
     }
@@ -189,79 +189,79 @@ private fun StatusCard(
 @Composable
 private fun OwnedStatusCard(achievement: AchievementUi) {
     StatusCard(
-        colors = CardDefaults.cardColors(
-            containerColor = ExtendedTheme.colorScheme.success.colorContainer,
-            contentColor = ExtendedTheme.colorScheme.success.onColorContainer
-        ),
-        icon = {
-            Icon(
-                imageVector = Icons.Filled.EmojiEvents,
-                contentDescription = "Acsi megszerezve",
-                tint = ExtendedTheme.colorScheme.success.color,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(2.dp)
-            )
-        },
-        text = when {
-            (achievement.ownedLevel == achievement.maxLevel && achievement.maxLevel == 1) ->
-                "Szép munka! Ezt az acsit már megszerezted."
+            colors = CardDefaults.cardColors(
+                    containerColor = ExtendedTheme.colorScheme.success.colorContainer,
+                    contentColor = ExtendedTheme.colorScheme.success.onColorContainer
+            ),
+            icon = {
+                Icon(
+                        imageVector = Icons.Filled.EmojiEvents,
+                        contentDescription = "Acsi megszerezve",
+                        tint = ExtendedTheme.colorScheme.success.color,
+                        modifier = Modifier
+		                        .fillMaxSize()
+		                        .padding(2.dp)
+                )
+            },
+            text = when {
+                (achievement.ownedLevel == achievement.maxLevel && achievement.maxLevel == 1) ->
+                    "Szép munka! Ezt az acsit már megszerezted."
 
-            (achievement.ownedLevel == achievement.maxLevel && achievement.maxLevel > 1) ->
-                "Szép munka! Ennek az acsinak mind a(z) ${achievement.maxLevel} szintjét megszerezted."
+                (achievement.ownedLevel == achievement.maxLevel && achievement.maxLevel > 1) ->
+                    "Szép munka! Ennek az acsinak mind a(z) ${achievement.maxLevel} szintjét megszerezted."
 
-            else ->
-                "Az acsi ${achievement.maxLevel} szintjéből már ${achievement.ownedLevel} szintet sikerült megszerezned. Csak így tovább!"
-        }
+                else ->
+                    "Az acsi ${achievement.maxLevel} szintjéből már ${achievement.ownedLevel} szintet sikerült megszerezned. Csak így tovább!"
+            }
     )
 }
 
 @Composable
 private fun MandatoryStatusCard() {
     StatusCard(
-        colors = CardDefaults.cardColors(
-            containerColor = ExtendedTheme.colorScheme.warning.colorContainer,
-            contentColor = ExtendedTheme.colorScheme.warning.onColorContainer
-        ),
-        icon = {
-            Icon(
-                imageVector = Icons.Filled.PriorityHigh,
-                contentDescription = "Kötelező acsi",
-                tint = ExtendedTheme.colorScheme.warning.color,
-                modifier = Modifier
-                    .fillMaxSize()
-            )
-        },
-        text = "Ennek az acsinak a megszerzése kötelező a szezonban."
+            colors = CardDefaults.cardColors(
+                    containerColor = ExtendedTheme.colorScheme.warning.colorContainer,
+                    contentColor = ExtendedTheme.colorScheme.warning.onColorContainer
+            ),
+            icon = {
+                Icon(
+                        imageVector = Icons.Filled.PriorityHigh,
+                        contentDescription = "Kötelező acsi",
+                        tint = ExtendedTheme.colorScheme.warning.color,
+                        modifier = Modifier
+                                .fillMaxSize()
+                )
+            },
+            text = "Ennek az acsinak a megszerzése kötelező a szezonban."
     )
 }
 
 @Composable
 private fun OwnersGrid(
-    achievement: AchievementUi,
-    ownersByLevel: SortedMap<Int, List<User>>,
-    navController: NavController
+        achievement: AchievementUi,
+        ownersByLevel: SortedMap<Int, List<User>>,
+        navController: NavController
 ) {
     val dropdownStates =
-        remember {
-            mutableStateMapOf<Int, Boolean>().apply {
-                achievement.levelDescriptions.keys.forEach { key ->
-                    this[key] = false
+            remember {
+                mutableStateMapOf<Int, Boolean>().apply {
+                    achievement.levelDescriptions.keys.forEach { key ->
+                        this[key] = false
+                    }
                 }
             }
-        }
     LazyVerticalGrid(columns = GridCells.Adaptive(150.dp)) {
         for ((level, description) in achievement.levelDescriptions) {
             item(
-                span = { GridItemSpan(maxLineSpan) },
+                    span = { GridItemSpan(maxLineSpan) },
             ) { LevelCard(dropdownStates, level, achievement.name, description) }
 
             if (dropdownStates[level] == true) { //comparing with true because value is nullable
                 if (ownersByLevel[level].isNullOrEmpty()) {
                     item(span = { GridItemSpan(maxLineSpan) }) {
                         Text(
-                            text = "Az egyik tag sem tart ezen a szinten.",
-                            style = MaterialTheme.typography.bodyLarge,
+                                text = "Az egyik tag sem tart ezen a szinten.",
+                                style = MaterialTheme.typography.bodyLarge,
                         )
                     }
                 } else {
@@ -276,43 +276,43 @@ private fun OwnersGrid(
 
 @Composable
 fun LevelCard(
-    dropdownStates: SnapshotStateMap<Int, Boolean>,
-    level: Int,
-    name: String,
-    description: String
+        dropdownStates: SnapshotStateMap<Int, Boolean>,
+        level: Int,
+        name: String,
+        description: String
 ) {
 
     Card(
-        onClick = { dropdownStates[level] = !dropdownStates[level]!! },
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(4.dp)
+            onClick = { dropdownStates[level] = !dropdownStates[level]!! },
+            modifier = Modifier
+		            .fillMaxWidth()
+		            .padding(4.dp)
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Column {
                 Text(
-                    text = if (dropdownStates.size == 1) name else "$level. Szint",
-                    style = MaterialTheme.typography.titleMedium,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        text = if (dropdownStates.size == 1) name else "$level. Szint",
+                        style = MaterialTheme.typography.titleMedium,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                 )
                 Text(
-                    text = description,
-                    style = MaterialTheme.typography.bodySmall,
-                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                        text = description,
+                        style = MaterialTheme.typography.bodySmall,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
             when (dropdownStates[level]) {
                 true -> Icon(
-                    imageVector = Icons.Default.KeyboardArrowUp,
-                    contentDescription = "dropdown",
-                    modifier = Modifier.size(30.dp)
+                        imageVector = Icons.Default.KeyboardArrowUp,
+                        contentDescription = "dropdown",
+                        modifier = Modifier.size(30.dp)
                 )
 
                 false -> Icon(
-                    imageVector = Icons.Default.KeyboardArrowDown,
-                    contentDescription = "dropdown",
-                    modifier = Modifier.size(30.dp)
+                        imageVector = Icons.Default.KeyboardArrowDown,
+                        contentDescription = "dropdown",
+                        modifier = Modifier.size(30.dp)
                 )
 
                 else -> {
@@ -326,30 +326,30 @@ fun LevelCard(
 @Composable
 private fun OwnerCard(owner: User, navController: NavController) {
     Card(
-        onClick = { navigateToUser(owner, navController) },
-        modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(4.dp)
+            onClick = { navigateToUser(owner, navController) },
+            modifier = Modifier
+		            .fillMaxWidth()
+		            .wrapContentHeight()
+		            .padding(4.dp)
     ) {
         Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Start
         ) {
             AsyncImage(
-                model = owner.photoURL,
-                contentDescription = "User's profile picture",
-                modifier = Modifier
-                    .size(50.dp)
-                    .padding(6.dp)
-                    .clip(CircleShape)
+                    model = owner.photoURL,
+                    contentDescription = "User's profile picture",
+                    modifier = Modifier
+		                    .size(50.dp)
+		                    .padding(6.dp)
+		                    .clip(CircleShape)
             )
             Text(
-                text = owner.name,
-                softWrap = false,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleMedium
+                    text = owner.name,
+                    softWrap = false,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.titleMedium
             )
         }
     }

@@ -4,4 +4,4 @@ import androidx.recyclerview.widget.RecyclerView
 import mok.it.app.mokapp.databinding.CardPhonebookItemBinding
 
 class PhoneBookViewHolder(val binding: CardPhonebookItemBinding) :
-    RecyclerView.ViewHolder(binding.root)
+        RecyclerView.ViewHolder(binding.root)

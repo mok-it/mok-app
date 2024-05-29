@@ -12,19 +12,19 @@ import mok.it.app.mokapp.R
 
 class AboutFragment : Fragment() {
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?
     ): View? {
         super.onCreate(savedInstanceState)
         return AboutPage(context)
-            .setImage(R.drawable.ic_app_icon)
-            .setDescription(getString(R.string.about_description))
-            .addItem(Element().setTitle("Verzió: ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"))
-            .addGroup("Elérhetőségeink")
-            .addWebsite("https://www.mokegyesulet.hu/", "Egyesületi weboldal")
-            .addPlayStore("mok.it.app.mokapp", "Play Store")
-            .addGitHub("mok-it", "GitHub")
-            .addGroup("Írd meg, ha hibát találtál vagy ötleted van!")
-            .addWebsite("https://forms.gle/gcY7XgyiYaNBoGNf9", "Form")
-            .create()
+                .setImage(R.drawable.ic_app_icon)
+                .setDescription(getString(R.string.about_description))
+                .addItem(Element().setTitle("Verzió: ${BuildConfig.VERSION_NAME} (${BuildConfig.VERSION_CODE})"))
+                .addGroup("Elérhetőségeink")
+                .addWebsite("https://www.mokegyesulet.hu/", "Egyesületi weboldal")
+                .addPlayStore("mok.it.app.mokapp", "Play Store")
+                .addGitHub("mok-it", "GitHub")
+                .addGroup("Írd meg, ha hibát találtál vagy ötleted van!")
+                .addWebsite("https://forms.gle/gcY7XgyiYaNBoGNf9", "Form")
+                .create()
     }
 }

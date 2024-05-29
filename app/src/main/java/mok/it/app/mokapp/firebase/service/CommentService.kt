@@ -14,21 +14,21 @@ import mok.it.app.mokapp.utility.Utility.TAG
 object CommentService {
     fun addComment(projectId: String, comment: Comment) {
         Firebase.firestore.collection(Collections.PROJECTS).document(projectId)
-            .collection(Collections.COMMENTS)
-            .add(comment).addOnSuccessListener { documentReference ->
-                Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
-            }.addOnFailureListener { e ->
-                Log.e(TAG, "Error adding document", e)
-            }
+                .collection(Collections.COMMENTS)
+                .add(comment).addOnSuccessListener { documentReference ->
+                    Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
+                }.addOnFailureListener { e ->
+                    Log.e(TAG, "Error adding document", e)
+                }
     }
 
     fun getComments(projectId: String): LiveData<List<Comment>> =
-        Firebase.firestore.collection(Collections.PROJECTS).document(projectId)
-            .collection(Collections.COMMENTS)
-            .orderBy("time")
-            .snapshots()
-            .map { s ->
-                s.toObjects(Comment::class.java)
-            }
-            .asLiveData()
+            Firebase.firestore.collection(Collections.PROJECTS).document(projectId)
+                    .collection(Collections.COMMENTS)
+                    .orderBy("time")
+                    .snapshots()
+                    .map { s ->
+                        s.toObjects(Comment::class.java)
+                    }
+                    .asLiveData()
 }

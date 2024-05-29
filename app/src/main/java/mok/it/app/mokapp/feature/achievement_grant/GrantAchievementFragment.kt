@@ -46,8 +46,8 @@ class GrantAchievementFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
@@ -60,16 +60,16 @@ class GrantAchievementFragment : Fragment() {
                                 items(users) { user ->
                                     UserAmountCard(user, maxLevel) { amount ->
                                         viewModel.onEvent(
-                                            GrantAchievementEvent.SetAmount(amount, user)
+                                                GrantAchievementEvent.SetAmount(amount, user)
                                         )
                                     }
                                 }
                             }
                             Button(
-                                onClick = {
-                                    viewModel.onEvent(GrantAchievementEvent.Save)
-                                    findNavController().popBackStack()
-                                },
+                                    onClick = {
+                                        viewModel.onEvent(GrantAchievementEvent.Save)
+                                        findNavController().popBackStack()
+                                    },
                             ) {
                                 Text(text = "Mentés")
                             }
@@ -88,49 +88,49 @@ fun UserAmountCard(user: UserAchievementLevelUi, maxAmount: Int, onAmountChange:
     Card(modifier = Modifier.padding(3.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             AsyncImage(
-                model = user.photoURL,
-                contentDescription = "User photo",
-                modifier = Modifier
-                    .padding(6.dp)
-                    .width(50.dp)
-                    .height(50.dp)
-                    .clip(CircleShape)
+                    model = user.photoURL,
+                    contentDescription = "User photo",
+                    modifier = Modifier
+		                    .padding(6.dp)
+		                    .width(50.dp)
+		                    .height(50.dp)
+		                    .clip(CircleShape)
             )
             Text(text = user.name, modifier = Modifier.weight(1f))
             if (maxAmount == 1) {
                 Checkbox(
-                    checked = user.ownedLevel == 1,
-                    onCheckedChange = { onAmountChange(if (it) 1 else 0) })
+                        checked = user.ownedLevel == 1,
+                        onCheckedChange = { onAmountChange(if (it) 1 else 0) })
             } else {
                 Button(
-                    onClick = { onAmountChange(user.ownedLevel - 1) },
-                    enabled = user.ownedLevel > 0,
-                    shape = CircleShape,
-                    modifier = Modifier.size(40.dp),
-                    contentPadding = PaddingValues(0.dp)
+                        onClick = { onAmountChange(user.ownedLevel - 1) },
+                        enabled = user.ownedLevel > 0,
+                        shape = CircleShape,
+                        modifier = Modifier.size(40.dp),
+                        contentPadding = PaddingValues(0.dp)
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_remove),
-                        contentDescription = "remove"
+                            painter = painterResource(id = R.drawable.ic_remove),
+                            contentDescription = "remove"
                     )
                 }
                 Text(
-                    text = user.ownedLevel.toString(),
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(12.dp)
+                        text = user.ownedLevel.toString(),
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(12.dp)
                 )
                 Button(
-                    onClick = { onAmountChange(user.ownedLevel + 1) },
-                    enabled = user.ownedLevel < maxAmount,
-                    shape = CircleShape,
-                    modifier = Modifier
-                        .padding(end = 6.dp)
-                        .size(40.dp),
-                    contentPadding = PaddingValues(0.dp),
+                        onClick = { onAmountChange(user.ownedLevel + 1) },
+                        enabled = user.ownedLevel < maxAmount,
+                        shape = CircleShape,
+                        modifier = Modifier
+		                        .padding(end = 6.dp)
+		                        .size(40.dp),
+                        contentPadding = PaddingValues(0.dp),
                 ) {
                     Icon(
-                        painter = painterResource(id = R.drawable.ic_add),
-                        contentDescription = "add"
+                            painter = painterResource(id = R.drawable.ic_add),
+                            contentDescription = "add"
                     )
                 }
             }

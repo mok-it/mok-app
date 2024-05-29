@@ -16,11 +16,11 @@ import mok.it.app.mokapp.model.User
 import mok.it.app.mokapp.utility.Utility.TAG
 
 data class AdminPanelUiState(
-    val stateModified: Boolean = false,
-    /**
-     * userId -> badgeValue (on the current project) mapping
-     */
-    val sliderValues: Map<String, Int> = emptyMap(),
+        val stateModified: Boolean = false,
+        /**
+         * userId -> badgeValue (on the current project) mapping
+         */
+        val sliderValues: Map<String, Int> = emptyMap(),
 )
 
 class AdminPanelViewModel(val projectId: String) : ViewModel() {
@@ -31,7 +31,7 @@ class AdminPanelViewModel(val projectId: String) : ViewModel() {
     val members: LiveData<List<User>> = UserService.getMembersForProject(projectId)
     val project: LiveData<Project> = ProjectService.getProjectData(projectId).asLiveData()
     private val userBadges: LiveData<Map<String, Int>> =
-        UserService.getProjectUsersAndBadges(projectId).asLiveData()
+            UserService.getProjectUsersAndBadges(projectId).asLiveData()
 
     init {
         // Ha egy user megszerzett mancsainak értéke megváltozik, miközben valamelyik slider módosítva lett,
@@ -52,30 +52,30 @@ class AdminPanelViewModel(val projectId: String) : ViewModel() {
 
     fun updateSliderValue(userId: String, value: Int) {
         _uiState.value = _uiState.value.copy(
-            sliderValues = _uiState.value.sliderValues + (userId to value)
+                sliderValues = _uiState.value.sliderValues + (userId to value)
         )
         updateStateModified()
     }
 
     fun resetSliderValues() {
         _uiState.value = _uiState.value.copy(
-            sliderValues = userBadges.value ?: emptyMap()
+                sliderValues = userBadges.value ?: emptyMap()
         )
         updateStateModified()
     }
 
     fun saveAllUserBadges() {
         UserService.setProjectBadgesOfMultipleUsers(
-            projectId = projectId,
-            userIdToBadgeValueMap = _uiState.value.sliderValues
+                projectId = projectId,
+                userIdToBadgeValueMap = _uiState.value.sliderValues
         )
 
         members.value?.let { membersList ->
             CloudMessagingService.sendNotificationToUsers(
-                title = "Mancso(ka)t kaptál",
-                messageBody = "Gratulálunk! A(z) ${project.value?.name ?: "Ismeretlen nevű"}" +
-                        " projektben ${membersList.size} db mancsot szereztél!",
-                adresseeUserList = membersList
+                    title = "Mancso(ka)t kaptál",
+                    messageBody = "Gratulálunk! A(z) ${project.value?.name ?: "Ismeretlen nevű"}" +
+                            " projektben ${membersList.size} db mancsot szereztél!",
+                    adresseeUserList = membersList
             )
         } ?: Log.e(TAG, "Members is null when trying to send notification")
     }

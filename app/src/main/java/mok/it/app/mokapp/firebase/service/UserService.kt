@@ -32,41 +32,41 @@ import kotlin.math.min
 object UserService {
     private const val USERDOCNOTFOUND = "User document not found"
     fun setProjectBadgesOfUser(
-        userId: String,
-        badgeId: String,
-        badgeAmount: Int,
-        onComplete: () -> Unit,
-        onFailure: (Exception) -> Unit,
+            userId: String,
+            badgeId: String,
+            badgeAmount: Int,
+            onComplete: () -> Unit,
+            onFailure: (Exception) -> Unit,
     ) {
         val userDocumentRef = Firebase.firestore.collection(Collections.USERS)
-            .document(userId)
+                .document(userId)
 
         userDocumentRef.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
                 val currentBadges =
-                    documentSnapshot.data?.get("projectBadges") as? HashMap<String, Int>
-                        ?: hashMapOf()
+                        documentSnapshot.data?.get("projectBadges") as? HashMap<String, Int>
+                                ?: hashMapOf()
                 currentBadges[badgeId] = badgeAmount
 
                 userDocumentRef.update("projectBadges", currentBadges)
-                    .addOnSuccessListener {
-                        onComplete.invoke()
-                    }
-                    .addOnFailureListener { e ->
-                        onFailure.invoke(e)
-                    }
+                        .addOnSuccessListener {
+                            onComplete.invoke()
+                        }
+                        .addOnFailureListener { e ->
+                            onFailure.invoke(e)
+                        }
             } else {
                 onFailure.invoke(Exception(USERDOCNOTFOUND))
             }
         }
-            .addOnFailureListener { e ->
-                onFailure.invoke(e)
-            }
+                .addOnFailureListener { e ->
+                    onFailure.invoke(e)
+                }
     }
 
     fun setProjectBadgesOfMultipleUsers(
-        userIdToBadgeValueMap: Map<String, Int>,
-        projectId: String,
+            userIdToBadgeValueMap: Map<String, Int>,
+            projectId: String,
     ) {
         val db = Firebase.firestore
         val batch = db.batch()
@@ -80,18 +80,18 @@ object UserService {
     }
 
     fun getBadgeAmountSum(
-        userId: String,
-        onComplete: (Int) -> Unit,
-        onFailure: (Exception) -> Unit,
+            userId: String,
+            onComplete: (Int) -> Unit,
+            onFailure: (Exception) -> Unit,
     ) {
         val userDocumentRef = Firebase.firestore.collection(Collections.USERS)
-            .document(userId)
+                .document(userId)
 
         userDocumentRef.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
                 val currentBadges =
-                    documentSnapshot.data?.get("projectBadges") as? HashMap<String, Int>
-                        ?: hashMapOf()
+                        documentSnapshot.data?.get("projectBadges") as? HashMap<String, Int>
+                                ?: hashMapOf()
 
                 // Calculate the sum of badge amounts
                 val sum = currentBadges.values.sum()
@@ -101,64 +101,64 @@ object UserService {
                 onFailure.invoke(Exception(USERDOCNOTFOUND))
             }
         }
-            .addOnFailureListener { e ->
-                onFailure.invoke(e)
-            }
+                .addOnFailureListener { e ->
+                    onFailure.invoke(e)
+                }
     }
 
     fun getProjectBadges(
-        userId: String,
-        onComplete: (Map<String, Int>) -> Unit,
-        onFailure: (Exception) -> Unit,
+            userId: String,
+            onComplete: (Map<String, Int>) -> Unit,
+            onFailure: (Exception) -> Unit,
     ) {
         val userDocumentRef = Firebase.firestore.collection(Collections.USERS)
-            .document(userId)
+                .document(userId)
 
         userDocumentRef.get().addOnSuccessListener { documentSnapshot ->
             if (documentSnapshot.exists()) {
                 val projectBadges =
-                    documentSnapshot.data?.get("projectBadges") as? Map<String, Int> ?: mapOf()
+                        documentSnapshot.data?.get("projectBadges") as? Map<String, Int> ?: mapOf()
 
                 onComplete.invoke(projectBadges)
             } else {
                 onFailure.invoke(Exception(USERDOCNOTFOUND))
             }
         }
-            .addOnFailureListener { e ->
-                onFailure.invoke(e)
-            }
+                .addOnFailureListener { e ->
+                    onFailure.invoke(e)
+                }
     }
 
     /**
      * Returns a Flow containing a map of userIds and the amount of badges they collected on the project with the specified projectId.
      * */
     fun getProjectUsersAndBadges(projectId: String): Flow<Map<String, Int>> =
-        Firebase.firestore.collection(Collections.USERS)
-            .whereGreaterThanOrEqualTo("projectBadges.$projectId", 0)
-            .snapshots()
-            .map { querySnapshot ->
-                querySnapshot.documents.mapNotNull { document ->
-                    val projectBadges = document["projectBadges"] as? Map<String, Long>
-                    Log.d(TAG, "projectBadges: $projectBadges of user: ${document["name"]}")
-                    val badgeAmount = projectBadges?.get(projectId)?.toInt()
-                    if (badgeAmount != null) {
-                        document.id to badgeAmount
-                    } else {
-                        null
+            Firebase.firestore.collection(Collections.USERS)
+                    .whereGreaterThanOrEqualTo("projectBadges.$projectId", 0)
+                    .snapshots()
+                    .map { querySnapshot ->
+                        querySnapshot.documents.mapNotNull { document ->
+                            val projectBadges = document["projectBadges"] as? Map<String, Long>
+                            Log.d(TAG, "projectBadges: $projectBadges of user: ${document["name"]}")
+                            val badgeAmount = projectBadges?.get(projectId)?.toInt()
+                            if (badgeAmount != null) {
+                                document.id to badgeAmount
+                            } else {
+                                null
+                            }
+                        }.toMap()
                     }
-                }.toMap()
-            }
-            .filterNotNull()
+                    .filterNotNull()
 
     fun addUsersToProject(
-        projectId: String,
-        userIds: List<String>,
-        onComplete: () -> Unit = {},
-        onFailure: (Exception) -> Unit = {},
+            projectId: String,
+            userIds: List<String>,
+            onComplete: () -> Unit = {},
+            onFailure: (Exception) -> Unit = {},
     ) {
         val batch = Firebase.firestore.batch()
         val projectDocumentRef = Firebase.firestore
-            .collection(Collections.PROJECTS).document(projectId)
+                .collection(Collections.PROJECTS).document(projectId)
 
         for (userId in userIds) {
             val userDocumentRef = Firebase.firestore.collection(Collections.USERS).document(userId)
@@ -167,23 +167,23 @@ object UserService {
         }
 
         batch.commit()
-            .addOnSuccessListener {
-                onComplete.invoke()
-            }
-            .addOnFailureListener { e ->
-                onFailure.invoke(e)
-            }
+                .addOnSuccessListener {
+                    onComplete.invoke()
+                }
+                .addOnFailureListener { e ->
+                    onFailure.invoke(e)
+                }
     }
 
     fun removeUserFromProject(
-        projectId: String,
-        userId: String,
-        onComplete: () -> Unit,
-        onFailure: (Exception) -> Unit,
+            projectId: String,
+            userId: String,
+            onComplete: () -> Unit,
+            onFailure: (Exception) -> Unit,
     ) {
         val batch = Firebase.firestore.batch()
         val projectDocumentRef = Firebase.firestore
-            .collection(Collections.PROJECTS).document(projectId)
+                .collection(Collections.PROJECTS).document(projectId)
 
         val userDocumentRef = Firebase.firestore.collection(Collections.USERS).document(userId)
 
@@ -196,58 +196,60 @@ object UserService {
                 batch.update(projectDocumentRef, "members", FieldValue.arrayRemove(userId))
 
                 batch.commit()
-                    .addOnSuccessListener {
-                        onComplete.invoke()
-                    }
-                    .addOnFailureListener { e ->
-                        onFailure.invoke(e)
-                    }
+                        .addOnSuccessListener {
+                            onComplete.invoke()
+                        }
+                        .addOnFailureListener { e ->
+                            onFailure.invoke(e)
+                        }
             }
         }
-            .addOnFailureListener { e ->
-                onFailure.invoke(e)
-            }
+                .addOnFailureListener { e ->
+                    onFailure.invoke(e)
+                }
     }
 
     data class BadgeData(
-        var finishedProjectCount: Int,
-        var finishedProjectBadgeSum: Int,
-        var category: Category,
+            var finishedProjectCount: Int,
+            var finishedProjectBadgeSum: Int,
+            var category: Category,
     )
 
     fun getBadgeSumForUserInEachCategory(
-        userId: String,
+            userId: String,
     ): LiveData<List<BadgeData>> {
         val badgesLiveData: MutableLiveData<List<BadgeData>> = MutableLiveData()
         Firebase.firestore.collection(Collections.PROJECTS).get()
-            .addOnSuccessListener { querySnapshot ->
-                val projects =
-                    querySnapshot.documents.mapNotNull { it.toObject(Project::class.java) }
-                val categories = projects.map { it.categoryEnum }.distinct()
+                .addOnSuccessListener { querySnapshot ->
+                    val projects =
+                            querySnapshot.documents.mapNotNull { it.toObject(Project::class.java) }
+                    val categories = projects.map { it.categoryEnum }.distinct()
 
-                Firebase.firestore.collection(Collections.USERS).document(userId).get()
-                    .addOnSuccessListener { documentSnapshot ->
-                        if (documentSnapshot.exists()) {
-                            val projectBadges =
-                                documentSnapshot.data?.get("projectBadges") as? Map<String, Long>
-                                    ?: mapOf()
+                    Firebase.firestore.collection(Collections.USERS).document(userId).get()
+                            .addOnSuccessListener { documentSnapshot ->
+                                if (documentSnapshot.exists()) {
+                                    val projectBadges =
+                                            documentSnapshot.data?.get("projectBadges") as? Map<String, Long>
+                                                    ?: mapOf()
 
-                            val badgeDataList = categories.map { category ->
-                                val projectsInCategory =
-                                    projects.filter { it.categoryEnum == category }
+                                    val badgeDataList = categories.map { category ->
+                                        val projectsInCategory =
+                                                projects.filter { it.categoryEnum == category }
 
-                                val finishedProjectCount =
-                                    projectsInCategory.count { it.id in projectBadges.keys }
-                                val finishedProjectBadgeSum =
-                                    projectsInCategory.sumOf { projectBadges[it.id] ?: 0 }.toInt()
+                                        val finishedProjectCount =
+                                                projectsInCategory.count { it.id in projectBadges.keys }
+                                        val finishedProjectBadgeSum =
+                                                projectsInCategory.sumOf {
+                                                    projectBadges[it.id] ?: 0
+                                                }.toInt()
 
-                                BadgeData(finishedProjectCount, finishedProjectBadgeSum, category)
+                                        BadgeData(finishedProjectCount, finishedProjectBadgeSum, category)
+                                    }
+
+                                    badgesLiveData.value = badgeDataList
+                                }
                             }
-
-                            badgesLiveData.value = badgeDataList
-                        }
-                    }
-            }
+                }
 
         return badgesLiveData
     }
@@ -256,47 +258,47 @@ object UserService {
         val db = Firebase.firestore
 
         db.collection(Collections.PROJECTS).document(projectId).get()
-            .addOnSuccessListener { projectSnapshot ->
-                val project = projectSnapshot.toObject(Project::class.java)
+                .addOnSuccessListener { projectSnapshot ->
+                    val project = projectSnapshot.toObject(Project::class.java)
 
-                project?.members?.forEach { userId ->
-                    db.collection(Collections.USERS).document(userId).get()
-                        .addOnSuccessListener { userSnapshot ->
-                            val user = userSnapshot.toObject(User::class.java)
+                    project?.members?.forEach { userId ->
+                        db.collection(Collections.USERS).document(userId).get()
+                                .addOnSuccessListener { userSnapshot ->
+                                    val user = userSnapshot.toObject(User::class.java)
 
-                            user?.projectBadges?.get(projectId)?.let { projectBadgeValue ->
-                                user.projectBadges[projectId] =
-                                    min(projectBadgeValue, project.maxBadges)
-                                db.collection(Collections.USERS).document(userId).set(user)
-                            }
-                        }
+                                    user?.projectBadges?.get(projectId)?.let { projectBadgeValue ->
+                                        user.projectBadges[projectId] =
+                                                min(projectBadgeValue, project.maxBadges)
+                                        db.collection(Collections.USERS).document(userId).set(user)
+                                    }
+                                }
+                    }
                 }
-            }
     }
 
     private fun isProjectInCategory(
-        projectId: String,
-        category: String,
-        onComplete: (Boolean) -> Unit,
+            projectId: String,
+            category: String,
+            onComplete: (Boolean) -> Unit,
     ) {
         val projectDocumentRef = Firebase.firestore.collection(Collections.PROJECTS)
-            .document(projectId)
+                .document(projectId)
 
         projectDocumentRef.get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val projectSnapshot = task.result
+                .addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        val projectSnapshot = task.result
 
-                    if (projectSnapshot != null && projectSnapshot.exists()) {
-                        val projectCategory = projectSnapshot.getString("category")
-                        onComplete.invoke(projectCategory == category)
+                        if (projectSnapshot != null && projectSnapshot.exists()) {
+                            val projectCategory = projectSnapshot.getString("category")
+                            onComplete.invoke(projectCategory == category)
+                        } else {
+                            onComplete.invoke(false)
+                        }
                     } else {
                         onComplete.invoke(false)
                     }
-                } else {
-                    onComplete.invoke(false)
                 }
-            }
     }
 
     fun getMembersForProject(projectId: String): LiveData<List<User>> {
@@ -312,7 +314,7 @@ object UserService {
                     model.members.map { memberId ->
                         async {
                             val memberDocRef = Firebase.firestore
-                                .collection(Collections.USERS).document(memberId)
+                                    .collection(Collections.USERS).document(memberId)
                             memberDocRef.get().await().toObject(User::class.java)
                         }
                     }.awaitAll().filterNotNull() // Filter out any failed fetches
@@ -328,31 +330,31 @@ object UserService {
     fun getMostRecentComment(projectId: String): LiveData<Comment> {
         val mostRecentComment = MutableLiveData<Comment>()
         Firebase.firestore.collection(Collections.PROJECTS).document(projectId)
-            .collection(Collections.COMMENTS)
-            .orderBy("time", Query.Direction.DESCENDING).limit(1)
-            .get()
-            .addOnSuccessListener { collection ->
-                if (collection != null && collection.documents.isNotEmpty()) {
-                    mostRecentComment.value =
-                        collection.documents[0].toObject(Comment::class.java)!!
+                .collection(Collections.COMMENTS)
+                .orderBy("time", Query.Direction.DESCENDING).limit(1)
+                .get()
+                .addOnSuccessListener { collection ->
+                    if (collection != null && collection.documents.isNotEmpty()) {
+                        mostRecentComment.value =
+                                collection.documents[0].toObject(Comment::class.java)!!
+                    }
                 }
-            }
         return mostRecentComment
     }
 
     fun getUser(userId: String): Flow<User> =
-        Firebase.firestore.collection(Collections.USERS).document(userId)
-            .snapshots()
-            .map { s ->
-                s.toObject(User::class.java)
-            }
-            .filterNotNull()
+            Firebase.firestore.collection(Collections.USERS).document(userId)
+                    .snapshots()
+                    .map { s ->
+                        s.toObject(User::class.java)
+                    }
+                    .filterNotNull()
 
     fun getUsers(): Flow<List<User>> {
         return Firebase.firestore.collection(Collections.USERS)
-            .orderBy("name", Query.Direction.ASCENDING)
-            .snapshots()
-            .map { s -> s.toObjects(User::class.java) }
+                .orderBy("name", Query.Direction.ASCENDING)
+                .snapshots()
+                .map { s -> s.toObjects(User::class.java) }
     }
 
     fun updateFcmTokenIfEmptyOrOutdated() {
@@ -372,9 +374,9 @@ object UserService {
                 }
             } else {
                 Log.w(
-                    TAG,
-                    "Fetching FCM registration token failed",
-                    task.exception
+                        TAG,
+                        "Fetching FCM registration token failed",
+                        task.exception
                 )
             }
         }
@@ -390,22 +392,22 @@ object UserService {
             }
 
             Firebase.firestore.collection(Collections.USERS)
-                .document(userModel.documentId)
-                .update("fcmToken", token)
-                .addOnSuccessListener {
-                    Log.d(TAG, "onNewToken: token uploaded to firestore, new token: $token")
-                }
-                .addOnFailureListener { exception ->
-                    Log.d(TAG, "onNewToken: token upload failed", exception)
-                }
+                    .document(userModel.documentId)
+                    .update("fcmToken", token)
+                    .addOnSuccessListener {
+                        Log.d(TAG, "onNewToken: token uploaded to firestore, new token: $token")
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.d(TAG, "onNewToken: token upload failed", exception)
+                    }
         }
     }
 
     fun getUsers(userIds: List<String>): Flow<List<User>> {
         val ids = userIds.ifEmpty { listOf("_") }
         return Firebase.firestore.collection(Collections.USERS)
-            .whereIn(FieldPath.documentId(), ids)
-            .snapshots()
-            .map { s -> s.toObjects(User::class.java) }
+                .whereIn(FieldPath.documentId(), ids)
+                .snapshots()
+                .map { s -> s.toObjects(User::class.java) }
     }
 }

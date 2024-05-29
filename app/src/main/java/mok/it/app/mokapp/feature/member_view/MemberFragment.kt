@@ -45,16 +45,16 @@ class MemberFragment : Fragment() {
     private val args: MemberFragmentArgs by navArgs()
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?,
     ): View =
-        ComposeView(requireContext()).apply {
-            setContent {
-                MokAppTheme {
-                    MembersScreen()
+            ComposeView(requireContext()).apply {
+                setContent {
+                    MokAppTheme {
+                        MembersScreen()
+                    }
                 }
             }
-        }
 
     @Composable
     private fun MembersScreen() {
@@ -66,9 +66,9 @@ class MemberFragment : Fragment() {
                 UserCard(args.user, findNavController())
                 MutualProjectsOfUsers(userModel, args.user, viewModel) {
                     findNavController().navigate(
-                        MemberFragmentDirections.actionMemberFragmentToDetailsFragment(
-                            it.id
-                        )
+                            MemberFragmentDirections.actionMemberFragmentToDetailsFragment(
+                                    it.id
+                            )
                     )
                 }
             }
@@ -77,29 +77,29 @@ class MemberFragment : Fragment() {
 
     @Composable
     private fun MutualProjectsOfUsers(
-        thisUser: User,
-        otherUser: User,
-        viewModel: MemberViewModel,
-        onProjectClick: (Project) -> Unit,
+            thisUser: User,
+            otherUser: User,
+            viewModel: MemberViewModel,
+            onProjectClick: (Project) -> Unit,
     ) {
         val mutualProjectIds =
-            thisUser.projectBadges.keys.intersect(otherUser.projectBadges.keys.toSet()).toList()
+                thisUser.projectBadges.keys.intersect(otherUser.projectBadges.keys.toSet()).toList()
 
         val mutualProjects by viewModel.getProjectsByIds(mutualProjectIds).observeAsState(listOf())
 
         Column {
             Text(
-                text = "Közös projektjeitek",
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                    text = "Közös projektjeitek",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
             )
             if (mutualProjects.isEmpty()) {
                 Text("Nincsenek közös projektjeitek :(", modifier = Modifier.padding(16.dp))
             } else {
                 LazyVerticalGrid(
-                    columns = GridCells.Fixed(2),
-                    contentPadding = PaddingValues(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                        columns = GridCells.Fixed(2),
+                        contentPadding = PaddingValues(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     items(mutualProjects) { project ->
                         ProjectCard(project, onProjectClick)
@@ -112,27 +112,27 @@ class MemberFragment : Fragment() {
     @Composable
     private fun ProjectCard(project: Project, onClick: (Project) -> Unit) {
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            shape = RoundedCornerShape(8.dp),
-            onClick = { onClick(project) }
+                modifier = Modifier
+		                .fillMaxWidth()
+		                .padding(8.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                shape = RoundedCornerShape(8.dp),
+                onClick = { onClick(project) }
         ) {
             Row(modifier = Modifier.padding(16.dp)) {
                 AsyncImage(
-                    model = project.icon,
-                    contentDescription = "Project icon",
-                    modifier = Modifier
-                        .size(50.dp)
-                        .clip(RoundedCornerShape(15))
-                        .padding(end = 8.dp),
-                    contentScale = ContentScale.Inside
+                        model = project.icon,
+                        contentDescription = "Project icon",
+                        modifier = Modifier
+		                        .size(50.dp)
+		                        .clip(RoundedCornerShape(15))
+		                        .padding(end = 8.dp),
+                        contentScale = ContentScale.Inside
                 )
                 Text(
-                    text = project.name,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Bold,
+                        text = project.name,
+                        style = MaterialTheme.typography.bodyLarge,
+                        fontWeight = FontWeight.Bold,
                 )
             }
         }

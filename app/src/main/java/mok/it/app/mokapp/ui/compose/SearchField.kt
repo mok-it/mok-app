@@ -35,41 +35,41 @@ fun SearchFieldPreview() {
 
 @Composable
 fun SearchField(
-    searchQuery: String,
-    chipState: ChipTextFieldState<Chip>,
-    onValueChange: (String) -> Unit,
+        searchQuery: String,
+        chipState: ChipTextFieldState<Chip>,
+        onValueChange: (String) -> Unit,
 ) {
     val focusRequester = remember { FocusRequester() }
     val focusManager = LocalFocusManager.current
 
     ChipTextField(
-        state = chipState,
-        value = searchQuery,
-        onValueChange = { onValueChange(it) },
-        onSubmit = { text -> Chip(text.trim()) },
-        label = { Text("Keresés") },
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth()
-            .focusRequester(focusRequester),
-        leadingIcon = {
-            Icon(
-                imageVector = Icons.Filled.Search,
-                contentDescription = "Search Icon"
-            )
-        },
-        trailingIcon = {
-            if (searchQuery.isNotEmpty()) {
-                IconButton(onClick = {
-                    onValueChange("")
-                    focusManager.clearFocus()
-                }) {
-                    Icon(
-                        imageVector = Icons.Filled.Close,
-                        contentDescription = "Clear Search"
-                    )
+            state = chipState,
+            value = searchQuery,
+            onValueChange = { onValueChange(it) },
+            onSubmit = { text -> Chip(text.trim()) },
+            label = { Text("Keresés") },
+            modifier = Modifier
+		            .padding(8.dp)
+		            .fillMaxWidth()
+		            .focusRequester(focusRequester),
+            leadingIcon = {
+                Icon(
+                        imageVector = Icons.Filled.Search,
+                        contentDescription = "Search Icon"
+                )
+            },
+            trailingIcon = {
+                if (searchQuery.isNotEmpty()) {
+                    IconButton(onClick = {
+                        onValueChange("")
+                        focusManager.clearFocus()
+                    }) {
+                        Icon(
+                                imageVector = Icons.Filled.Close,
+                                contentDescription = "Clear Search"
+                        )
+                    }
                 }
-            }
-        },
+            },
     )
 }

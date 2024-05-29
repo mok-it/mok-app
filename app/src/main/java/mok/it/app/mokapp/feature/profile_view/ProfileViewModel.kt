@@ -7,7 +7,7 @@ import mok.it.app.mokapp.firebase.service.UserService
 class ProfileViewModel : ViewModel() {
 
     val userBadgeDataInEachCategory = UserService.getBadgeSumForUserInEachCategory(
-        userId = userModel.documentId,
+            userId = userModel.documentId,
     )
 }
 

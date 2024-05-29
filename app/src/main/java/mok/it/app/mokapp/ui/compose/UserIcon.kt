@@ -17,19 +17,19 @@ import mok.it.app.mokapp.model.User
 
 @Composable
 fun UserIcon(
-    navController: NavController,
-    user: User,
-    modifier: Modifier = Modifier,
-    enableOnClick: Boolean = true,
+        navController: NavController,
+        user: User,
+        modifier: Modifier = Modifier,
+        enableOnClick: Boolean = true,
 ) {
     AsyncImage(
-        model = user.photoURL,
-        contentDescription = "User Profile Picture",
-        placeholder = painterResource(id = R.drawable.no_image_icon),
-        modifier = modifier
-            .size(30.dp)
-            .clip(CircleShape)
-            .let { if (enableOnClick) it.clickable { navigateToUser(user, navController) } else it }
+            model = user.photoURL,
+            contentDescription = "User Profile Picture",
+            placeholder = painterResource(id = R.drawable.no_image_icon),
+            modifier = modifier
+		            .size(30.dp)
+		            .clip(CircleShape)
+		            .let { if (enableOnClick) it.clickable { navigateToUser(user, navController) } else it }
     )
 }
 

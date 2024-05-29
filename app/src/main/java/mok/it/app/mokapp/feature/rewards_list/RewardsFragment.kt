@@ -66,16 +66,16 @@ import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 
 class RewardsFragment : Fragment() {
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?,
     ): View =
-        ComposeView(requireContext()).apply {
-            setContent {
-                MokAppTheme {
-                    RewardsScreen()
+            ComposeView(requireContext()).apply {
+                setContent {
+                    MokAppTheme {
+                        RewardsScreen()
+                    }
                 }
             }
-        }
 
     @Composable
     private fun RewardsScreen() {
@@ -85,26 +85,26 @@ class RewardsFragment : Fragment() {
         Surface {
             Column {
                 Card(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    shape = RoundedCornerShape(8.dp)
+                        modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(8.dp),
+                        shape = RoundedCornerShape(8.dp)
                 ) {
                     Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(8.dp),
-                        horizontalArrangement = Arrangement.SpaceAround
+                            modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(8.dp),
+                            horizontalArrangement = Arrangement.SpaceAround
                     ) {
                         Text(
-                            text = "Mancsaid száma",
-                            style = MaterialTheme.typography.headlineSmall,
-                            modifier = Modifier
-                                .padding(16.dp)
+                                text = "Mancsaid száma",
+                                style = MaterialTheme.typography.headlineSmall,
+                                modifier = Modifier
+                                        .padding(16.dp)
                         )
                         BadgeIcon(
-                            badgeNumberText = userModel.remainingBadges.toString(),
-                            modifier = Modifier.padding(8.dp)
+                                badgeNumberText = userModel.remainingBadges.toString(),
+                                modifier = Modifier.padding(8.dp)
                         )
                     }
                 }
@@ -127,9 +127,9 @@ class RewardsFragment : Fragment() {
     //TODO too complex, should be refactored at some point
     @Composable
     fun RewardItem(
-        reward: Reward,
-        canBeBought: (Reward) -> Boolean = { true },
-        viewModel: RewardsViewModel,
+            reward: Reward,
+            canBeBought: (Reward) -> Boolean = { true },
+            viewModel: RewardsViewModel,
     ) {
         var cardOpen by rememberSaveable { mutableStateOf(false) }
 
@@ -139,128 +139,128 @@ class RewardsFragment : Fragment() {
         var editingPrice by rememberSaveable { mutableIntStateOf(reward.price) }
 
         val lottieComposition by rememberLottieComposition(
-            LottieCompositionSpec.RawRes(R.raw.loading)
+                LottieCompositionSpec.RawRes(R.raw.loading)
         )
         val lottiePainter = rememberLottiePainter(
-            composition = lottieComposition,
-            enableMergePaths = true
+                composition = lottieComposition,
+                enableMergePaths = true
         )
 
         when (showDialog) {
             DialogType.DELETE -> {
                 OkCancelDialog(
-                    title = "Jutalom törlése",
-                    text = "Biztosan törölni szeretnéd a jutalmat? Azoknak, akik már igényelték a jutalmat, nem fog ezzel eltűnni.",
-                    positiveButtonText = "Törlés",
-                    onConfirm = {
-                        viewModel.deleteReward(reward)
-                        showDialog = DialogType.NONE
-                    },
-                    onDismiss = { showDialog = DialogType.NONE })
+                        title = "Jutalom törlése",
+                        text = "Biztosan törölni szeretnéd a jutalmat? Azoknak, akik már igényelték a jutalmat, nem fog ezzel eltűnni.",
+                        positiveButtonText = "Törlés",
+                        onConfirm = {
+                            viewModel.deleteReward(reward)
+                            showDialog = DialogType.NONE
+                        },
+                        onDismiss = { showDialog = DialogType.NONE })
             }
 
             DialogType.SAVE -> {
                 OkCancelDialog(
-                    title = "Változtatások mentése",
-                    text = "Biztosan menteni szeretnéd a változtatásokat? Ha változtattál árat, akkor akik már igényelték a jutalmat, azoknak továbbra is a régi ár lesz érvényben. ",
-                    positiveButtonText = "Mentés",
-                    onConfirm = {
-                        viewModel.updateReward(
-                            reward.copy(
-                                quantity = editingQuantity,
-                                price = editingPrice
+                        title = "Változtatások mentése",
+                        text = "Biztosan menteni szeretnéd a változtatásokat? Ha változtattál árat, akkor akik már igényelték a jutalmat, azoknak továbbra is a régi ár lesz érvényben. ",
+                        positiveButtonText = "Mentés",
+                        onConfirm = {
+                            viewModel.updateReward(
+                                    reward.copy(
+                                            quantity = editingQuantity,
+                                            price = editingPrice
+                                    )
                             )
-                        )
-                        cardOpen = false
-                        showDialog = DialogType.NONE
-                    },
-                    onDismiss = { showDialog = DialogType.NONE })
+                            cardOpen = false
+                            showDialog = DialogType.NONE
+                        },
+                        onDismiss = { showDialog = DialogType.NONE })
             }
 
             DialogType.REQUEST -> {
                 OkCancelDialog(
-                    title = "Jutalom igénylése",
-                    text = "Biztosan igényelni szeretnéd a jutalmat? ${reward.price} mancs kerül majd levonásra tőled. Az igénylés nem visszamondható.",
-                    positiveButtonText = "Törlés",
-                    onConfirm = {
-                        viewModel.requestReward(reward)
-                        showDialog = DialogType.NONE
-                    },
-                    onDismiss = { showDialog = DialogType.NONE })
+                        title = "Jutalom igénylése",
+                        text = "Biztosan igényelni szeretnéd a jutalmat? ${reward.price} mancs kerül majd levonásra tőled. Az igénylés nem visszamondható.",
+                        positiveButtonText = "Törlés",
+                        onConfirm = {
+                            viewModel.requestReward(reward)
+                            showDialog = DialogType.NONE
+                        },
+                        onDismiss = { showDialog = DialogType.NONE })
             }
 
             DialogType.NONE -> {/*do nothing*/
             }
         }
         Card(
-            onClick = {},
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            enabled = canBeBought(reward),
+                onClick = {},
+                modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                enabled = canBeBought(reward),
         )
         {
             Row(
-                modifier = Modifier
-                    .padding(4.dp)
-                    .fillMaxWidth()
-                    .height(IntrinsicSize.Max),
-                horizontalArrangement = Arrangement.Start
+                    modifier = Modifier
+                            .padding(4.dp)
+                            .fillMaxWidth()
+                            .height(IntrinsicSize.Max),
+                    horizontalArrangement = Arrangement.Start
             ) {
                 AsyncImage(
-                    model = reward.icon,
-                    contentDescription = "Icon of the reward",
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clip(RoundedCornerShape(50)),
-                    contentScale = ContentScale.Crop,
-                    error = painterResource(id = R.drawable.no_image_icon),
-                    placeholder = lottiePainter, //TODO does it move though? I don't think so
-                    colorFilter = if (canBeBought(reward)) null else
-                        ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
+                        model = reward.icon,
+                        contentDescription = "Icon of the reward",
+                        modifier = Modifier
+                                .size(80.dp)
+                                .clip(RoundedCornerShape(50)),
+                        contentScale = ContentScale.Crop,
+                        error = painterResource(id = R.drawable.no_image_icon),
+                        placeholder = lottiePainter, //TODO does it move though? I don't think so
+                        colorFilter = if (canBeBought(reward)) null else
+                            ColorFilter.colorMatrix(ColorMatrix().apply { setToSaturation(0f) })
                 )
                 Column(
-                    modifier = Modifier
-                        .padding(4.dp)
-                        .weight(1f),
-                    horizontalAlignment = Alignment.Start,
+                        modifier = Modifier
+                                .padding(4.dp)
+                                .weight(1f),
+                        horizontalAlignment = Alignment.Start,
                 ) {
                     if (!cardOpen) {
                         OpenRewardCardContent(reward)
                     } else {
                         Text(
-                            text = reward.name,
-                            style = MaterialTheme.typography.bodyLarge,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(bottom = 16.dp)
+                                text = reward.name,
+                                style = MaterialTheme.typography.bodyLarge,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(bottom = 16.dp)
                         )
 
                         EditNumericValue(
-                            editingQuantity,
-                            "Mennyiség",
-                            onValueChange = { editingQuantity = it })
+                                editingQuantity,
+                                "Mennyiség",
+                                onValueChange = { editingQuantity = it })
                         EditNumericValue(
-                            editingPrice,
-                            "Ár",
-                            onValueChange = { editingPrice = it })
+                                editingPrice,
+                                "Ár",
+                                onValueChange = { editingPrice = it })
 
                         Row(
-                            modifier = Modifier
-                                .padding(top = 16.dp, bottom = 8.dp),
-                            horizontalArrangement = Arrangement.SpaceBetween
+                                modifier = Modifier
+                                        .padding(top = 16.dp, bottom = 8.dp),
+                                horizontalArrangement = Arrangement.SpaceBetween
                         ) {
                             Button(
-                                modifier = Modifier.padding(end = 8.dp),
-                                onClick = {
-                                    showDialog = DialogType.SAVE
-                                }) {
+                                    modifier = Modifier.padding(end = 8.dp),
+                                    onClick = {
+                                        showDialog = DialogType.SAVE
+                                    }) {
                                 Text("Mentés")
                             }
                             OutlinedButton(
-                                onClick = {
-                                    editingQuantity = reward.quantity
-                                    editingPrice = reward.price
-                                },
+                                    onClick = {
+                                        editingQuantity = reward.quantity
+                                        editingPrice = reward.price
+                                    },
                             ) {
                                 Text(stringResource(R.string.cancel))
                             }
@@ -268,56 +268,56 @@ class RewardsFragment : Fragment() {
                     }
                 }
                 Column(
-                    modifier = Modifier
-                        .padding(end = 12.dp, top = 12.dp)
-                        .fillMaxHeight(),
+                        modifier = Modifier
+                                .padding(end = 12.dp, top = 12.dp)
+                                .fillMaxHeight(),
                 ) {
                     BadgeIcon(reward.price.toString(), isEnabled = canBeBought(reward))
                     if (canBeBought(reward)) {
                         IconButton(
-                            onClick = { showDialog = DialogType.REQUEST },
+                                onClick = { showDialog = DialogType.REQUEST },
                         )
                         {
                             Icon(
-                                imageVector = Icons.Filled.AddCircle,
-                                contentDescription = "Request reward",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(32.dp)
+                                    imageVector = Icons.Filled.AddCircle,
+                                    contentDescription = "Request reward",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(32.dp)
                             )
                         }
                     }
                     if (LocalInspectionMode.current || userModel.roleAtLeast(Role.ADMIN)) { // for the sake of preview
                         IconButton(
-                            onClick = {
-                                showDialog = DialogType.DELETE
-                                cardOpen = false
-                            },
+                                onClick = {
+                                    showDialog = DialogType.DELETE
+                                    cardOpen = false
+                                },
                         )
                         {
                             Icon(
-                                imageVector = Icons.Filled.Delete,
-                                contentDescription = stringResource(R.string.request_reward_contentdescription),
-                                tint = MaterialTheme.colorScheme.error,
+                                    imageVector = Icons.Filled.Delete,
+                                    contentDescription = stringResource(R.string.request_reward_contentdescription),
+                                    tint = MaterialTheme.colorScheme.error,
                             )
                         }
                         if (cardOpen) {
                             Spacer(
-                                modifier = Modifier.weight(
-                                    1f
-                                )
+                                    modifier = Modifier.weight(
+                                            1f
+                                    )
                             )
                         }
                         IconButton(
-                            onClick = { cardOpen = !cardOpen },
-                            modifier = Modifier
-                                .weight(1f, false)
+                                onClick = { cardOpen = !cardOpen },
+                                modifier = Modifier
+                                        .weight(1f, false)
                         )
                         {
                             Icon(
-                                imageVector = if (cardOpen) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
-                                contentDescription = "Edit reward",
-                                tint = MaterialTheme.colorScheme.primary,
-                                modifier = Modifier.size(32.dp)
+                                    imageVector = if (cardOpen) Icons.Default.ExpandLess else Icons.Default.ExpandMore,
+                                    contentDescription = "Edit reward",
+                                    tint = MaterialTheme.colorScheme.primary,
+                                    modifier = Modifier.size(32.dp)
                             )
                         }
                     }
@@ -329,20 +329,20 @@ class RewardsFragment : Fragment() {
     @Composable
     private fun OpenRewardCardContent(reward: Reward) {
         Text(
-            text = reward.name,
-            style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(top = 8.dp),
-            fontWeight = FontWeight.Bold
+                text = reward.name,
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(top = 8.dp),
+                fontWeight = FontWeight.Bold
         )
         Text(
-            text = stringResource(R.string.quantity, reward.quantity),
-            style = MaterialTheme.typography.titleSmall,
-            modifier = Modifier.padding(top = 4.dp)
+                text = stringResource(R.string.quantity, reward.quantity),
+                style = MaterialTheme.typography.titleSmall,
+                modifier = Modifier.padding(top = 4.dp)
         )
     }
 
     private fun canBeBoughtByCurrentUser(reward: Reward) =
-        userModel.remainingBadges >= reward.price
-                && reward.quantity > 0
-                && !userModel.requestedRewards.contains(reward.documentId)
+            userModel.remainingBadges >= reward.price
+                    && reward.quantity > 0
+                    && !userModel.requestedRewards.contains(reward.documentId)
 }

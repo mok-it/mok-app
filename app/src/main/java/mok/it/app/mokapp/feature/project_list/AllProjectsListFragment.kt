@@ -61,8 +61,8 @@ class AllProjectsListFragment : Fragment() {
     //    var edited: Boolean = false,
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?,
     ): View {
         return ComposeView(requireContext()).apply {
             lifecycleScope.launch { setupTopMenu() }
@@ -73,24 +73,24 @@ class AllProjectsListFragment : Fragment() {
                     val filteredProjects by viewModel.filteredProjects.collectAsState(initial = emptyList())
                     MokAppTheme {
                         AllProjectsListScreen(
-                            searchQuery = searchQuery,
-                            chipState = chipState,
-                            filteredProjects = filteredProjects,
-                            onCreateProject = {
-                                findNavController().navigate(
-                                    AllProjectsListFragmentDirections.actionAllProjectsListFragmentToCreateProjectFragment(
-                                        args.category
+                                searchQuery = searchQuery,
+                                chipState = chipState,
+                                filteredProjects = filteredProjects,
+                                onCreateProject = {
+                                    findNavController().navigate(
+                                            AllProjectsListFragmentDirections.actionAllProjectsListFragmentToCreateProjectFragment(
+                                                    args.category
+                                            )
                                     )
-                                )
-                            },
-                            onSearchValueChange = { viewModel.onSearchValueChange(it) },
-                            onNavigateToProject = { project ->
-                                val action =
-                                    AllProjectsListFragmentDirections.actionAllProjectsListFragmentToDetailsFragment(
-                                        project.id
-                                    )
-                                findNavController().navigate(action)
-                            }
+                                },
+                                onSearchValueChange = { viewModel.onSearchValueChange(it) },
+                                onNavigateToProject = { project ->
+                                    val action =
+                                            AllProjectsListFragmentDirections.actionAllProjectsListFragmentToDetailsFragment(
+                                                    project.id
+                                            )
+                                    findNavController().navigate(action)
+                                }
                         )
                     }
                 }
@@ -116,10 +116,10 @@ class AllProjectsListFragment : Fragment() {
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menu.add(R.id.menu, R.id.menu, 0, R.string.delete)
-                    .setIcon(R.drawable.ic_three_dots)
-                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                        .setIcon(R.drawable.ic_three_dots)
+                        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
                 menu.getItem(0).icon?.mutate()
-                    ?.setTint(resources.getColor(R.color.md_theme_onPrimary))
+                        ?.setTint(resources.getColor(R.color.md_theme_onPrimary))
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -140,12 +140,12 @@ class AllProjectsListFragment : Fragment() {
 
 @Composable
 fun AllProjectsListScreen(
-    searchQuery: String,
-    chipState: ChipTextFieldState<Chip>,
-    filteredProjects: List<Project>,
-    onCreateProject: () -> Unit,
-    onSearchValueChange: (String) -> Unit,
-    onNavigateToProject: (Project) -> Unit,
+        searchQuery: String,
+        chipState: ChipTextFieldState<Chip>,
+        filteredProjects: List<Project>,
+        onCreateProject: () -> Unit,
+        onSearchValueChange: (String) -> Unit,
+        onNavigateToProject: (Project) -> Unit,
 ) {
     val lazyListState = rememberLazyListState()
 
@@ -153,9 +153,9 @@ fun AllProjectsListScreen(
         val user by userModelFlow.collectAsState(initial = User())
         if (user.roleAtLeast(Role.AREA_MANAGER)) {
             FloatingActionButton(
-                onClick = onCreateProject,
-                modifier = Modifier
-                    .padding(16.dp),
+                    onClick = onCreateProject,
+                    modifier = Modifier
+                            .padding(16.dp),
             ) {
                 Icon(Icons.Filled.Add, contentDescription = "Add Project")
             }
@@ -164,23 +164,23 @@ fun AllProjectsListScreen(
         Surface {
             Column {
                 SearchField(
-                    searchQuery = searchQuery,
-                    chipState = chipState,
-                    onValueChange = onSearchValueChange,
+                        searchQuery = searchQuery,
+                        chipState = chipState,
+                        onValueChange = onSearchValueChange,
                 )
                 if (filteredProjects.isEmpty()) {
                     Text(
-                        text = "Nincsenek a feltételeknek megfelelő projektek",
-                        modifier = Modifier
-                            .padding(16.dp),
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            text = "Nincsenek a feltételeknek megfelelő projektek",
+                            modifier = Modifier
+                                    .padding(16.dp),
+                            style = MaterialTheme.typography.headlineSmall,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
                 } else {
                     LazyColumn(state = lazyListState) {
                         items(filteredProjects) { project ->
                             ProjectCard(
-                                project = project, onClick = onNavigateToProject
+                                    project = project, onClick = onNavigateToProject
                             )
                         }
                     }

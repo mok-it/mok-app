@@ -22,52 +22,52 @@ import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 
 @Composable
 fun ImageItemCard(
-    asyncImageModel: Any?,
-    asyncImageContentDescription: String? = null,
-    mainText: String,
-    subText: String,
-    icon: @Composable () -> Unit,
-    colors: CardColors = CardDefaults.cardColors(),
-    onClick: () -> Unit
+        asyncImageModel: Any?,
+        asyncImageContentDescription: String? = null,
+        mainText: String,
+        subText: String,
+        icon: @Composable () -> Unit,
+        colors: CardColors = CardDefaults.cardColors(),
+        onClick: () -> Unit
 ) {
     MokAppTheme {
 
         Card(
-            onClick = onClick,
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            shape = RoundedCornerShape(8.dp),
-            colors = colors
+                onClick = onClick,
+                modifier = Modifier
+		                .fillMaxWidth()
+		                .padding(8.dp),
+                shape = RoundedCornerShape(8.dp),
+                colors = colors
         ) {
             Row(
-                modifier = Modifier.padding(end = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.padding(end = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
             ) {
                 AsyncImage(
-                    model = asyncImageModel,
-                    contentDescription = asyncImageContentDescription,
-                    modifier = Modifier
-                        .size(80.dp)
-                        .padding(8.dp),
-                    contentScale = ContentScale.Fit
+                        model = asyncImageModel,
+                        contentDescription = asyncImageContentDescription,
+                        modifier = Modifier
+		                        .size(80.dp)
+		                        .padding(8.dp),
+                        contentScale = ContentScale.Fit
                 )
                 Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp)
+                        modifier = Modifier
+		                        .weight(1f)
+		                        .padding(8.dp)
                 ) {
                     Text(
-                        text = mainText,
-                        style = MaterialTheme.typography.titleMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
+                            text = mainText,
+                            style = MaterialTheme.typography.titleMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                     )
                     Text(
-                        text = subText,
-                        style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 2,
-                        overflow = TextOverflow.Ellipsis
+                            text = subText,
+                            style = MaterialTheme.typography.bodyMedium,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
                     )
                 }
                 icon()

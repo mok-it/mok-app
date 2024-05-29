@@ -12,26 +12,26 @@ import mok.it.app.mokapp.databinding.CardProjectCategoryBinding
 import mok.it.app.mokapp.model.Project
 
 class ProjectCategoriesAdapter(
-    private val categoryNames: List<String>,
-    private val collectedBadges: List<List<Pair<Project, Int>>>,
-    private val listener: ProjectsAdapter.ProjectClickedListener
+        private val categoryNames: List<String>,
+        private val collectedBadges: List<List<Pair<Project, Int>>>,
+        private val listener: ProjectsAdapter.ProjectClickedListener
 ) :
 
-    RecyclerView.Adapter<ProjectCategoryViewHolder>() {
+        RecyclerView.Adapter<ProjectCategoryViewHolder>() {
 
     var context: Context? = null
 
     override fun onCreateViewHolder(viewGroup: ViewGroup, viewType: Int) =
-        ProjectCategoryViewHolder(
-            CardProjectCategoryBinding
-                .inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
-        )
+            ProjectCategoryViewHolder(
+                    CardProjectCategoryBinding
+                            .inflate(LayoutInflater.from(viewGroup.context), viewGroup, false)
+            )
 
     override fun onBindViewHolder(holder: ProjectCategoryViewHolder, position: Int) {
         val catNameTv: TextView = holder.binding.projectCategoryName
         val catEmptyTv: TextView = holder.binding.noCompletedProjects
         val collectedBadgesRV: RecyclerView =
-            holder.binding.completedProjects
+                holder.binding.completedProjects
 
         catNameTv.text = categoryNames[position]
 
@@ -43,7 +43,7 @@ class ProjectCategoriesAdapter(
             collectedBadgesRV.visibility = View.VISIBLE
             collectedBadgesRV.adapter = ProjectsAdapter(collectedBadges[position], listener)
             collectedBadgesRV.layoutManager =
-                GridLayoutManager(this.context, 2, LinearLayoutManager.VERTICAL, false)
+                    GridLayoutManager(this.context, 2, LinearLayoutManager.VERTICAL, false)
         }
     }
 

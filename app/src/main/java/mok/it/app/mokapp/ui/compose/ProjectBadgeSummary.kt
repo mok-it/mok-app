@@ -25,40 +25,40 @@ import mok.it.app.mokapp.feature.profile_view.ProfileViewModel
 @Composable
 fun ProjectBadgeSummary(viewModel: ProfileViewModel) {
     val projectDataListState =
-        viewModel.userBadgeDataInEachCategory.observeAsState().value?.sortedByDescending { it.finishedProjectBadgeSum }
-            ?: emptyList()
+            viewModel.userBadgeDataInEachCategory.observeAsState().value?.sortedByDescending { it.finishedProjectBadgeSum }
+                    ?: emptyList()
 
     Column {
         HorizontalDivider()
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            shape = RoundedCornerShape(8.dp),
+                modifier = Modifier
+		                .fillMaxWidth()
+		                .padding(16.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+                shape = RoundedCornerShape(8.dp),
         ) {
             Text(
-                text = stringResource(
-                    R.string.collectedBadgesSummary,
-                    projectDataListState.sumOf { it.finishedProjectBadgeSum }
-                ),
-                modifier = Modifier.padding(8.dp),
-                fontWeight = FontWeight.Bold
+                    text = stringResource(
+                            R.string.collectedBadgesSummary,
+                            projectDataListState.sumOf { it.finishedProjectBadgeSum }
+                    ),
+                    modifier = Modifier.padding(8.dp),
+                    fontWeight = FontWeight.Bold
             )
             Text(
-                text = stringResource(
-                    R.string.collectedProjectsSummary,
-                    projectDataListState.sumOf { it.finishedProjectBadgeSum }
-                ),
-                modifier = Modifier.padding(8.dp),
-                fontWeight = FontWeight.Bold
+                    text = stringResource(
+                            R.string.collectedProjectsSummary,
+                            projectDataListState.sumOf { it.finishedProjectBadgeSum }
+                    ),
+                    modifier = Modifier.padding(8.dp),
+                    fontWeight = FontWeight.Bold
             )
         }
 
         LazyVerticalGrid(
-            columns = GridCells.Fixed(2),
-            contentPadding = PaddingValues(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                columns = GridCells.Fixed(2),
+                contentPadding = PaddingValues(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(projectDataListState) { badgeData ->
                 BadgeCard(badgeData)

@@ -43,58 +43,58 @@ import mok.it.app.mokapp.ui.model.AchievementUi
 class TasksFragment : Fragment() {
     private val viewModel: TasksViewModel by viewModels()
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?,
     ): View =
-        ComposeView(requireContext()).apply {
-            setContent {
-                val achievements by viewModel.achievements.collectAsState(initial = emptyList())
-                val projects by viewModel.projects.collectAsState(initial = emptyList())
-                val earnedBadges by viewModel.earnedBadges.collectAsState(initial = 0)
-                val requiredBadges = viewModel.requiredBadges
-                MokAppTheme {
-                    TasksScreen(
-                        achievements,
-                        { achievement ->
-                            findNavController().navigate(
-                                TasksFragmentDirections.actionTasksFragmentToAchievementDetailsFragment(
-                                    achievement.id
-                                )
-                            )
-                        },
-                        projects,
-                        { project ->
-                            findNavController().navigate(
-                                TasksFragmentDirections.actionTasksFragmentToDetailsFragment(
-                                    project.id
-                                )
-                            )
-                        },
-                        earnedBadges,
-                        requiredBadges
-                    )
+            ComposeView(requireContext()).apply {
+                setContent {
+                    val achievements by viewModel.achievements.collectAsState(initial = emptyList())
+                    val projects by viewModel.projects.collectAsState(initial = emptyList())
+                    val earnedBadges by viewModel.earnedBadges.collectAsState(initial = 0)
+                    val requiredBadges = viewModel.requiredBadges
+                    MokAppTheme {
+                        TasksScreen(
+                                achievements,
+                                { achievement ->
+                                    findNavController().navigate(
+                                            TasksFragmentDirections.actionTasksFragmentToAchievementDetailsFragment(
+                                                    achievement.id
+                                            )
+                                    )
+                                },
+                                projects,
+                                { project ->
+                                    findNavController().navigate(
+                                            TasksFragmentDirections.actionTasksFragmentToDetailsFragment(
+                                                    project.id
+                                            )
+                                    )
+                                },
+                                earnedBadges,
+                                requiredBadges
+                        )
+                    }
                 }
             }
-        }
 }
 
 @Composable
 fun TasksScreen(
-    achievements: List<AchievementUi>,
-    onAchievementClck: (AchievementUi) -> Unit,
-    projects: List<Project>,
-    onProjectClick: (Project) -> Unit,
-    earnedBadges: Int,
-    requiredBadges: Int
+        achievements: List<AchievementUi>,
+        onAchievementClck: (AchievementUi) -> Unit,
+        projects: List<Project>,
+        onProjectClick: (Project) -> Unit,
+        earnedBadges: Int,
+        requiredBadges: Int
 ) {
     Surface {
         LazyColumn {
             item { AllBadgesCard(earnedBadges, requiredBadges) }
             item {
                 Text(
-                    text = "Kötelező acsik:",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(start = 8.dp, top = 16.dp)
+                        text = "Kötelező acsik:",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(start = 8.dp, top = 16.dp)
                 )
             }
             items(achievements) { achievement ->
@@ -102,9 +102,9 @@ fun TasksScreen(
             }
             item {
                 Text(
-                    text = "Projektjeim:",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(start = 8.dp, top = 16.dp)
+                        text = "Projektjeim:",
+                        style = MaterialTheme.typography.titleLarge,
+                        modifier = Modifier.padding(start = 8.dp, top = 16.dp)
                 )
             }
             items(projects) { project ->
@@ -118,57 +118,57 @@ fun TasksScreen(
 @Composable
 fun AllBadgesCard(earnedBadges: Int, requiredBadges: Int) {
     val color =
-        if (earnedBadges >= requiredBadges) ExtendedTheme.colorScheme.success.color
-        else ExtendedTheme.colorScheme.warning.colorContainer
+            if (earnedBadges >= requiredBadges) ExtendedTheme.colorScheme.success.color
+            else ExtendedTheme.colorScheme.warning.colorContainer
     val text = buildAnnotatedString {
         withStyle(style = SpanStyle(color = color)) {
             append(
-                earnedBadges.toString()
+                    earnedBadges.toString()
             )
         }
         append("/$requiredBadges")
     }
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+		            .fillMaxWidth()
+		            .padding(8.dp),
+            shape = RoundedCornerShape(8.dp),
     ) {
         Row(
-            modifier = Modifier.padding(end = 8.dp),
-            verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier.padding(end = 8.dp),
+                verticalAlignment = Alignment.CenterVertically
         ) {
             Column(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(8.dp)
+                    modifier = Modifier
+		                    .weight(1f)
+		                    .padding(8.dp)
             ) {
                 Text(
-                    text = "Összes mancs",
-                    style = MaterialTheme.typography.titleLarge,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
+                        text = "Összes mancs",
+                        style = MaterialTheme.typography.titleLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                 )
                 Text(
-                    text = text,
-                    style = MaterialTheme.typography.titleLarge,
-                    maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                        text = text,
+                        style = MaterialTheme.typography.titleLarge,
+                        maxLines = 2,
+                        overflow = TextOverflow.Ellipsis
                 )
             }
             Icon(
-                painter = painterResource(id = R.drawable.paw_solid),
-                tint = ExtendedTheme.colorScheme.success.colorContainer,
-                contentDescription = "Mancs",
-                modifier = Modifier.size(50.dp)
+                    painter = painterResource(id = R.drawable.paw_solid),
+                    tint = ExtendedTheme.colorScheme.success.colorContainer,
+                    contentDescription = "Mancs",
+                    modifier = Modifier.size(50.dp)
             )
             Icon(
-                painter = painterResource(id = R.drawable.paw_solid),
-                tint = MaterialTheme.colorScheme.primary,
-                contentDescription = "Mancs",
-                modifier = Modifier
-                    .padding(start = 10.dp)
-                    .size(50.dp)
+                    painter = painterResource(id = R.drawable.paw_solid),
+                    tint = MaterialTheme.colorScheme.primary,
+                    contentDescription = "Mancs",
+                    modifier = Modifier
+		                    .padding(start = 10.dp)
+		                    .size(50.dp)
             )
         }
     }

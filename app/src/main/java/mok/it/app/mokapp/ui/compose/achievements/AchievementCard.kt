@@ -21,52 +21,52 @@ import mok.it.app.mokapp.ui.model.AchievementUi
 
 @Composable
 fun AchievementCard(
-    achievement: AchievementUi,
-    showCompleteOnFirstLevel: Boolean,
-    onClick: (AchievementUi) -> Unit
+        achievement: AchievementUi,
+        showCompleteOnFirstLevel: Boolean,
+        onClick: (AchievementUi) -> Unit
 ) {
     ImageItemCard(
-        asyncImageModel = achievement.icon,
-        asyncImageContentDescription = "acsi ikon",
-        mainText = achievement.name,
-        subText = (if (showCompleteOnFirstLevel) achievement.firstDescription else achievement.currentDescription)
-            ?: LocalContext.current.getString(R.string.achievement_missing_description),
-        icon = {
-            when {
-                achievement.ownedLevel == achievement.maxLevel ||
-                        (achievement.ownedLevel >= 1 && showCompleteOnFirstLevel) -> {
-                    Icon(
-                        imageVector = Icons.Filled.Done,
-                        contentDescription = "megszerezve",
-                        tint = ExtendedTheme.colorScheme.success.color,
-                        modifier = Modifier.size(40.dp)
-                    )
-                }
+            asyncImageModel = achievement.icon,
+            asyncImageContentDescription = "acsi ikon",
+            mainText = achievement.name,
+            subText = (if (showCompleteOnFirstLevel) achievement.firstDescription else achievement.currentDescription)
+                    ?: LocalContext.current.getString(R.string.achievement_missing_description),
+            icon = {
+                when {
+                    achievement.ownedLevel == achievement.maxLevel ||
+                            (achievement.ownedLevel >= 1 && showCompleteOnFirstLevel) -> {
+                        Icon(
+                                imageVector = Icons.Filled.Done,
+                                contentDescription = "megszerezve",
+                                tint = ExtendedTheme.colorScheme.success.color,
+                                modifier = Modifier.size(40.dp)
+                        )
+                    }
 
-                achievement.ownedLevel > 0 -> {
-                    Card(
-                        modifier = Modifier
-                            .wrapContentSize()
-                            .padding(6.dp)
-                    ) {
-                        Text(
-                            text = "${achievement.ownedLevel}/${achievement.maxLevel}",
-                            style = MaterialTheme.typography.bodyMedium,
-                            modifier = Modifier.padding(2.dp)
+                    achievement.ownedLevel > 0 -> {
+                        Card(
+                                modifier = Modifier
+		                                .wrapContentSize()
+		                                .padding(6.dp)
+                        ) {
+                            Text(
+                                    text = "${achievement.ownedLevel}/${achievement.maxLevel}",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    modifier = Modifier.padding(2.dp)
+                            )
+                        }
+                    }
+
+                    achievement.mandatory -> {
+                        Icon(
+                                imageVector = Icons.Filled.PriorityHigh,
+                                contentDescription = "kötelező",
+                                tint = ExtendedTheme.colorScheme.warning.color,
+                                modifier = Modifier.size(40.dp)
                         )
                     }
                 }
-
-                achievement.mandatory -> {
-                    Icon(
-                        imageVector = Icons.Filled.PriorityHigh,
-                        contentDescription = "kötelező",
-                        tint = ExtendedTheme.colorScheme.warning.color,
-                        modifier = Modifier.size(40.dp)
-                    )
-                }
-            }
-        },
-        onClick = { onClick(achievement) }
+            },
+            onClick = { onClick(achievement) }
     )
 }

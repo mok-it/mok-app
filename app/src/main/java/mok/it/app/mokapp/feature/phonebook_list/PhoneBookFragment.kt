@@ -35,8 +35,8 @@ class PhoneBookFragment : Fragment() {
     lateinit var adapter: FirestoreRecyclerAdapter<*, *>
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         binding = FragmentPhoneListBinding.inflate(inflater, container, false)
         return binding.root
@@ -52,10 +52,10 @@ class PhoneBookFragment : Fragment() {
         initializeAdapter()
 
         adapter.stateRestorationPolicy =
-            RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
+                RecyclerView.Adapter.StateRestorationPolicy.PREVENT_WHEN_EMPTY
         binding.recyclerView.adapter = adapter
         binding.recyclerView.layoutManager =
-            WrapContentLinearLayoutManager(this.context)
+                WrapContentLinearLayoutManager(this.context)
     }
 
     private fun isTelephonyEnabled(): Boolean {
@@ -65,78 +65,78 @@ class PhoneBookFragment : Fragment() {
 
     private fun initializeAdapter() {
         val options: FirestoreRecyclerOptions<User?> = FirestoreRecyclerOptions.Builder<User>()
-            .setQuery(
-                Firebase.firestore.collection(Collections.USERS).orderBy("name"),
-                User::class.java
-            )
-            .build()
+                .setQuery(
+                        Firebase.firestore.collection(Collections.USERS).orderBy("name"),
+                        User::class.java
+                )
+                .build()
 
         adapter =
-            object : FirestoreRecyclerAdapter<User?, PhoneBookViewHolder?>(options) {
-                lateinit var context: Context
+                object : FirestoreRecyclerAdapter<User?, PhoneBookViewHolder?>(options) {
+                    lateinit var context: Context
 
-                override fun onCreateViewHolder(parent: ViewGroup, i: Int) = PhoneBookViewHolder(
-                    CardPhonebookItemBinding.inflate(
-                        LayoutInflater.from(parent.context),
-                        parent,
-                        false
+                    override fun onCreateViewHolder(parent: ViewGroup, i: Int) = PhoneBookViewHolder(
+                            CardPhonebookItemBinding.inflate(
+                                    LayoutInflater.from(parent.context),
+                                    parent,
+                                    false
+                            )
                     )
-                )
 
-                override fun onBindViewHolder(
-                    holder: PhoneBookViewHolder,
-                    position: Int,
-                    model: User
-                ) {
-                    val ivImg: ImageView = holder.binding.contactImage
-                    Utility.loadImage(ivImg, model.photoURL, context)
-                    holder.binding.contactName.text = model.name
-                    holder.binding.phoneNumber.text =
-                        model.phoneNumber.ifEmpty { getString(R.string.no_phone_number) }
+                    override fun onBindViewHolder(
+                            holder: PhoneBookViewHolder,
+                            position: Int,
+                            model: User
+                    ) {
+                        val ivImg: ImageView = holder.binding.contactImage
+                        Utility.loadImage(ivImg, model.photoURL, context)
+                        holder.binding.contactName.text = model.name
+                        holder.binding.phoneNumber.text =
+                                model.phoneNumber.ifEmpty { getString(R.string.no_phone_number) }
 
-                    holder.binding.contactItem.setOnClickListener {
-                        findNavController().navigate(
-                            PhoneBookFragmentDirections.actionGlobalMemberFragment(
-                                model
+                        holder.binding.contactItem.setOnClickListener {
+                            findNavController().navigate(
+                                    PhoneBookFragmentDirections.actionGlobalMemberFragment(
+                                            model
+                                    )
                             )
-                        )
-                    }
+                        }
 
-                    holder.binding.callButton.setOnClickListener {
-                        // if the device is capable of making phone calls, the button opens the dialer
-                        if (isTelephonyEnabled() && model.phoneNumber.isNotEmpty()) {
-                            val intent = Intent(Intent.ACTION_DIAL)
-                            intent.data = Uri.parse("tel:${model.phoneNumber}}")
-                            this.context.let { it2 ->
-                                ContextCompat.startActivity(
-                                    it2,
-                                    intent,
-                                    null
+                        holder.binding.callButton.setOnClickListener {
+                            // if the device is capable of making phone calls, the button opens the dialer
+                            if (isTelephonyEnabled() && model.phoneNumber.isNotEmpty()) {
+                                val intent = Intent(Intent.ACTION_DIAL)
+                                intent.data = Uri.parse("tel:${model.phoneNumber}}")
+                                this.context.let { it2 ->
+                                    ContextCompat.startActivity(
+                                            it2,
+                                            intent,
+                                            null
+                                    )
+                                }
+                            } else if (model.phoneNumber.isEmpty()) // if the user doesn't have a phone number, it shows a toast
+                                Toast.makeText(
+                                        context,
+                                        getString(R.string.no_phone_number),
+                                        Toast.LENGTH_SHORT
+                                ).show()
+                            else // ...if not, it copies the number to the clipboard
+                            {
+                                val clipboard =
+                                        this.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
+                                val clip = android.content.ClipData.newPlainText(
+                                        "label",
+                                        model.phoneNumber
                                 )
+                                clipboard.setPrimaryClip(clip)
                             }
-                        } else if (model.phoneNumber.isEmpty()) // if the user doesn't have a phone number, it shows a toast
-                            Toast.makeText(
-                                context,
-                                getString(R.string.no_phone_number),
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        else // ...if not, it copies the number to the clipboard
-                        {
-                            val clipboard =
-                                this.context.getSystemService(Context.CLIPBOARD_SERVICE) as android.content.ClipboardManager
-                            val clip = android.content.ClipData.newPlainText(
-                                "label",
-                                model.phoneNumber
-                            )
-                            clipboard.setPrimaryClip(clip)
                         }
                     }
-                }
 
-                override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
-                    super.onAttachedToRecyclerView(recyclerView)
-                    context = recyclerView.context
+                    override fun onAttachedToRecyclerView(recyclerView: RecyclerView) {
+                        super.onAttachedToRecyclerView(recyclerView)
+                        context = recyclerView.context
+                    }
                 }
-            }
     }
 }

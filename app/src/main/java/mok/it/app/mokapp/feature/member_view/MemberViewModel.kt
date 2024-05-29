@@ -8,5 +8,5 @@ import mok.it.app.mokapp.model.Project
 
 class MemberViewModel : ViewModel() {
     fun getProjectsByIds(mutualProjectIds: List<String>): LiveData<List<Project>> =
-        ProjectService.getProjectsByIds(mutualProjectIds).asLiveData()
+            ProjectService.getProjectsByIds(mutualProjectIds).asLiveData()
 }

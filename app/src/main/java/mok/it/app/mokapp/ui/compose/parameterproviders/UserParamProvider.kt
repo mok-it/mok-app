@@ -5,8 +5,8 @@ import mok.it.app.mokapp.model.User
 
 class UserParamProvider : PreviewParameterProvider<User> {
     override val values = sequenceOf(
-        User(
-            name = "Példa Pál",
-        ),
+            User(
+                    name = "Példa Pál",
+            ),
     )
 }

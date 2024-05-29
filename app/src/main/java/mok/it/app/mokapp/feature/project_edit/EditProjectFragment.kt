@@ -24,15 +24,15 @@ class EditProjectFragment : CreateProjectFragment() {
         binding.projectDescription.setText(args.project.description)
         Log.d(TAG, "category dropdown count: ${binding.projectTerulet.adapter.count}")
         binding.projectTerulet.setText(
-            args.project.categoryEnum.toString(),
-            false
+                args.project.categoryEnum.toString(),
+                false
         )
         val cal: Calendar = Calendar.getInstance()
         cal.time = args.project.deadline
         binding.datePicker.updateDate(
-            cal[Calendar.YEAR],
-            cal[Calendar.MONTH],
-            cal[Calendar.DAY_OF_MONTH]
+                cal[Calendar.YEAR],
+                cal[Calendar.MONTH],
+                cal[Calendar.DAY_OF_MONTH]
         )
         badgeValue = args.project.maxBadges
         selectedProjectLeader = args.project.projectLeader
@@ -70,17 +70,17 @@ class EditProjectFragment : CreateProjectFragment() {
 
     private fun commitEditedBadgeToDatabase(): Boolean {
         val deadline = Date(
-            binding.datePicker.year - 1900,
-            binding.datePicker.month,
-            binding.datePicker.dayOfMonth
+                binding.datePicker.year - 1900,
+                binding.datePicker.month,
+                binding.datePicker.dayOfMonth
         )
         val editedProject = Project(
-            name = binding.projectName.text.toString(),
-            description = binding.projectDescription.text.toString(),
-            category = binding.projectTerulet.text.toString(),
-            maxBadges = badgeValue,
-            deadline = deadline,
-            projectLeader = selectedProjectLeader,
+                name = binding.projectName.text.toString(),
+                description = binding.projectDescription.text.toString(),
+                category = binding.projectTerulet.text.toString(),
+                maxBadges = badgeValue,
+                deadline = deadline,
+                projectLeader = selectedProjectLeader,
         )
         ProjectService.updateProject(args.project.id, editedProject)
 

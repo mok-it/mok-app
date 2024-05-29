@@ -14,21 +14,21 @@ object MiscService {
     fun getLinks(): LiveData<List<Link>> {
         val linksLiveData: MutableLiveData<List<Link>> = MutableLiveData()
         Firebase.firestore.collection(Collections.LINKS).get()
-            .addOnSuccessListener { querySnapshot ->
-                val linksList = mutableListOf<Link>()
+                .addOnSuccessListener { querySnapshot ->
+                    val linksList = mutableListOf<Link>()
 
-                for (document in querySnapshot.documents) {
-                    val link = document.toObject(Link::class.java)
-                    link?.let {
-                        linksList.add(it)
+                    for (document in querySnapshot.documents) {
+                        val link = document.toObject(Link::class.java)
+                        link?.let {
+                            linksList.add(it)
+                        }
                     }
-                }
 
-                linksLiveData.value = linksList
-            }
-            .addOnFailureListener { exception ->
-                Log.e(TAG, "Failed to retrieve links: $exception")
-            }
+                    linksLiveData.value = linksList
+                }
+                .addOnFailureListener { exception ->
+                    Log.e(TAG, "Failed to retrieve links: $exception")
+                }
         return linksLiveData
     }
 }

@@ -18,22 +18,22 @@ class LinksViewModel : ViewModel() {
             val cleanSearchQuery = searchQuery.value.trim().unaccent()
             links.filter { link ->
                 isLinkMatched(
-                    link, cleanSearchQuery, chipState.value
+                        link, cleanSearchQuery, chipState.value
                 )
             }.sortedWith(compareBy({ it.category }, { it.title }))
         }
 
     private fun isLinkMatched(
-        link: Link,
-        cleanSearchQuery: String,
-        chipState: ChipTextFieldState<Chip>,
+            link: Link,
+            cleanSearchQuery: String,
+            chipState: ChipTextFieldState<Chip>,
     ): Boolean {
         val cleanSearchWords =
-            chipState.chips.map { it.text.trim().unaccent() } + cleanSearchQuery.trim().unaccent()
+                chipState.chips.map { it.text.trim().unaccent() } + cleanSearchQuery.trim().unaccent()
 
         return cleanSearchWords.all {
             link.title.unaccent().contains(it, ignoreCase = true) || link.category.unaccent()
-                .contains(it, ignoreCase = true)
+                    .contains(it, ignoreCase = true)
         }
     }
 

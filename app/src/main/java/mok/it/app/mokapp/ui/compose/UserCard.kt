@@ -22,22 +22,22 @@ import mok.it.app.mokapp.model.User
 
 @Composable
 fun UserCard(
-    user: User,
-    navController: NavController,
-    enableOnClick: Boolean = true,
+        user: User,
+        navController: NavController,
+        enableOnClick: Boolean = true,
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(8.dp)
+            modifier = Modifier
+		            .fillMaxWidth()
+		            .padding(16.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            shape = RoundedCornerShape(8.dp)
     ) {
         Row(modifier = Modifier.padding(16.dp)) {
             UserIcon(
-                navController = navController, user = user, modifier = Modifier
+                    navController = navController, user = user, modifier = Modifier
                     .size(100.dp),
-                enableOnClick = enableOnClick
+                    enableOnClick = enableOnClick
             )
 
             Column(modifier = Modifier.padding(horizontal = 16.dp)) {
@@ -45,8 +45,8 @@ fun UserCard(
 
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = user.nickname.ifEmpty { "Nincs becenév megadva" },
-                    style = MaterialTheme.typography.bodyMedium
+                        text = user.nickname.ifEmpty { "Nincs becenév megadva" },
+                        style = MaterialTheme.typography.bodyMedium
                 )
 
                 Spacer(modifier = Modifier.height(4.dp))
@@ -54,8 +54,8 @@ fun UserCard(
 
                 Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = user.phoneNumber.ifEmpty { stringResource(R.string.no_phone_number) },
-                    style = MaterialTheme.typography.bodySmall
+                        text = user.phoneNumber.ifEmpty { stringResource(R.string.no_phone_number) },
+                        style = MaterialTheme.typography.bodySmall
                 )
             }
         }

@@ -24,14 +24,14 @@ fun DataBlockPreview() {
 fun DataBlock(label: String, data: Any, needsDivider: Boolean = true) {
     Column {
         Row(
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier
+		                .padding(8.dp)
+		                .fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
         ) {
             Text(
-                text = label, style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Normal
+                    text = label, style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Normal
             )
             Text(text = data.toString(), style = MaterialTheme.typography.bodyMedium)
         }

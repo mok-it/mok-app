@@ -18,16 +18,16 @@ import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 
 class ProfileFragment : Fragment() {
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?,
     ): View =
-        ComposeView(requireContext()).apply {
-            setContent {
-                MokAppTheme {
-                    ProfileScreen()
+            ComposeView(requireContext()).apply {
+                setContent {
+                    MokAppTheme {
+                        ProfileScreen()
+                    }
                 }
             }
-        }
 
     @Composable
     fun ProfileScreen() {
@@ -35,9 +35,9 @@ class ProfileFragment : Fragment() {
         Surface {
             Column {
                 UserCard(
-                    user = userModel,
-                    navController = findNavController(),
-                    enableOnClick = false,
+                        user = userModel,
+                        navController = findNavController(),
+                        enableOnClick = false,
                 )
                 ProjectBadgeSummary(viewModel)
             }

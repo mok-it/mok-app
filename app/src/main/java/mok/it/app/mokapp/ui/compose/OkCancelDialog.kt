@@ -10,33 +10,33 @@ import mok.it.app.mokapp.R
 
 @Composable
 fun OkCancelDialog(
-    title: String? = null,
-    text: String,
-    positiveButtonText: String = "OK",
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
+        title: String? = null,
+        text: String,
+        positiveButtonText: String = "OK",
+        onConfirm: () -> Unit,
+        onDismiss: () -> Unit,
 ) =
-    AlertDialog(
-        title = {
-            title?.let {
-                Text(it)
-            }
-        },
-        onDismissRequest = { onDismiss() },
-        confirmButton = {
-            Button(
-                onClick = {
-                    onConfirm()
-                    onDismiss()
-                }) {
-                Text(positiveButtonText)
-            }
-        },
-        dismissButton = {
-            OutlinedButton(onClick = { onDismiss() }) {
-                Text(stringResource(R.string.cancel))
-            }
-        },
-        text = {
-            Text(text)
-        })
+        AlertDialog(
+                title = {
+                    title?.let {
+                        Text(it)
+                    }
+                },
+                onDismissRequest = { onDismiss() },
+                confirmButton = {
+                    Button(
+                            onClick = {
+                                onConfirm()
+                                onDismiss()
+                            }) {
+                        Text(positiveButtonText)
+                    }
+                },
+                dismissButton = {
+                    OutlinedButton(onClick = { onDismiss() }) {
+                        Text(stringResource(R.string.cancel))
+                    }
+                },
+                text = {
+                    Text(text)
+                })

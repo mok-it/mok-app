@@ -29,14 +29,14 @@ class AchievementDetailsFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         return ComposeView(requireContext()).apply {
             setContent {
                 MokAppTheme {
                     val owners: SortedMap<Int, List<User>> by viewModel.owners.collectAsState(
-                        sortedMapOf()
+                            sortedMapOf()
                     )
                     val achievement by viewModel.achievement.collectAsState(initial = null)
                     Surface {
@@ -45,28 +45,28 @@ class AchievementDetailsFragment : Fragment() {
                             val achievementModel by viewModel.achievementModel.collectAsState(null)
                             Column {
                                 AchievementDetails(
-                                    achievement,
-                                    owners,
-                                    viewModel.isUserAdmin,
-                                    navController = findNavController(),
-                                    onEditClick = {
-                                        achievementModel?.let {
-                                            findNavController().navigate(
-                                                AchievementDetailsFragmentDirections.actionAchievementDetailsFragmentToUpdateAchievementFragment(
-                                                    it
+                                        achievement,
+                                        owners,
+                                        viewModel.isUserAdmin,
+                                        navController = findNavController(),
+                                        onEditClick = {
+                                            achievementModel?.let {
+                                                findNavController().navigate(
+                                                        AchievementDetailsFragmentDirections.actionAchievementDetailsFragmentToUpdateAchievementFragment(
+                                                                it
+                                                        )
                                                 )
-                                            )
-                                        } ?: run { handleNullAchievement() }
-                                    },
-                                    onGrantClick = {
-                                        achievementModel?.let {
-                                            findNavController().navigate(
-                                                AchievementDetailsFragmentDirections.actionAchievementDetailsFragmentToGrantAchievementFragment(
-                                                    it.id
+                                            } ?: run { handleNullAchievement() }
+                                        },
+                                        onGrantClick = {
+                                            achievementModel?.let {
+                                                findNavController().navigate(
+                                                        AchievementDetailsFragmentDirections.actionAchievementDetailsFragmentToGrantAchievementFragment(
+                                                                it.id
+                                                        )
                                                 )
-                                            )
-                                        } ?: run { handleNullAchievement() }
-                                    }
+                                            } ?: run { handleNullAchievement() }
+                                        }
                                 )
                             }
                         } ?: run { LoadingScreen() }
@@ -78,9 +78,9 @@ class AchievementDetailsFragment : Fragment() {
 
     private fun handleNullAchievement() {
         Toast.makeText(
-            context,
-            "Hiba történt. Kérlek próbáld újra később.",
-            Toast.LENGTH_SHORT
+                context,
+                "Hiba történt. Kérlek próbáld újra később.",
+                Toast.LENGTH_SHORT
         ).show()
         Log.wtf(TAG, "Achievement model is null")
     }

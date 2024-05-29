@@ -18,22 +18,22 @@ import mok.it.app.mokapp.firebase.service.UserService
 @Composable
 fun BadgeCard(badgeData: UserService.BadgeData) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        shape = RoundedCornerShape(8.dp)
+            modifier = Modifier
+		            .fillMaxWidth()
+		            .padding(8.dp),
+            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+            shape = RoundedCornerShape(8.dp)
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(
-                text = badgeData.category.toString(),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
+                    text = badgeData.category.toString(),
+                    style = MaterialTheme.typography.bodyLarge,
+                    fontWeight = FontWeight.Bold,
             )
             Text(
-                text =
-                badgeData.finishedProjectBadgeSum.toString(),
-                style = MaterialTheme.typography.bodyMedium,
+                    text =
+                    badgeData.finishedProjectBadgeSum.toString(),
+                    style = MaterialTheme.typography.bodyMedium,
             )
         }
     }

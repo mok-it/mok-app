@@ -21,23 +21,23 @@ import java.util.Date
 @Parcelize
 data class Project(
 
-    @DocumentId
-    val id: String = "",
+        @DocumentId
+        val id: String = "",
 
-    @Deprecated("Use categoryEnum instead")
-    val category: String = "", // can't mark it private, but don't use it
-    val created: Date = Date(),
-    val creator: String = "",
-    val deadline: Date = Date(),
-    val description: String = "",
-    val icon: String = "",
-    val members: List<String> = ArrayList(),
-    val name: String = "",
-    @get:PropertyName("overall_progress")
-    val overallProgress: Int = 0,
-    val comments: List<String> = ArrayList(),
-    val maxBadges: Int = 1,
-    val projectLeader: String = "",
+        @Deprecated("Use categoryEnum instead")
+        val category: String = "", // can't mark it private, but don't use it
+        val created: Date = Date(),
+        val creator: String = "",
+        val deadline: Date = Date(),
+        val description: String = "",
+        val icon: String = "",
+        val members: List<String> = ArrayList(),
+        val name: String = "",
+        @get:PropertyName("overall_progress")
+        val overallProgress: Int = 0,
+        val comments: List<String> = ArrayList(),
+        val maxBadges: Int = 1,
+        val projectLeader: String = "",
 ) : Parcelable {
 
     val categoryEnum: Category

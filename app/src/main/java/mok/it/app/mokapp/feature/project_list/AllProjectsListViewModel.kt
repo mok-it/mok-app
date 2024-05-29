@@ -16,14 +16,14 @@ class AllProjectsListViewModel : ViewModel() {
         get() = _projects.map { projects ->
             projects.filter { project ->
                 isProjectMatched(
-                    project,
-                    searchQuery.value,
-                    chipState.value
+                        project,
+                        searchQuery.value,
+                        chipState.value
                 )
             }
-                .sortedWith(
-                    compareBy({ it.categoryEnum }, { it.name })
-                )
+                    .sortedWith(
+                            compareBy({ it.categoryEnum }, { it.name })
+                    )
         }
     private val _searchQuery = mutableStateOf("")
     val searchQuery get() = _searchQuery
@@ -31,12 +31,12 @@ class AllProjectsListViewModel : ViewModel() {
     val chipState get() = _chipState
 
     private fun isProjectMatched(
-        project: Project,
-        cleanSearchQuery: String,
-        chipState: ChipTextFieldState<Chip>
+            project: Project,
+            cleanSearchQuery: String,
+            chipState: ChipTextFieldState<Chip>
     ): Boolean {
         val cleanSearchWords =
-            chipState.chips.map { it.text.trim().unaccent() } + cleanSearchQuery.trim().unaccent()
+                chipState.chips.map { it.text.trim().unaccent() } + cleanSearchQuery.trim().unaccent()
 
         return cleanSearchWords.all {
             project.name.unaccent().contains(it, ignoreCase = true)

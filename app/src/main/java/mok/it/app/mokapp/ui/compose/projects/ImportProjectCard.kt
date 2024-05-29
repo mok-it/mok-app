@@ -22,48 +22,48 @@ import mok.it.app.mokapp.ui.compose.BadgeIcon
 fun ImportProjectCard(project: Project) {
 
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
-        shape = RoundedCornerShape(8.dp),
+            modifier = Modifier
+		            .fillMaxWidth()
+		            .padding(8.dp),
+            shape = RoundedCornerShape(8.dp),
     ) {
         Column {
 
             Row(
-                modifier = Modifier.padding(end = 8.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier.padding(end = 8.dp),
+                    verticalAlignment = Alignment.CenterVertically
             ) {
                 AsyncImage(
-                    model = project.icon,
-                    contentDescription = "Projekt ikon",
-                    modifier = Modifier
-                        .size(80.dp)
-                        .padding(8.dp),
-                    contentScale = ContentScale.Fit
+                        model = project.icon,
+                        contentDescription = "Projekt ikon",
+                        modifier = Modifier
+		                        .size(80.dp)
+		                        .padding(8.dp),
+                        contentScale = ContentScale.Fit
                 )
                 Column(
-                    modifier = Modifier
-                        .weight(1f)
-                        .padding(8.dp)
+                        modifier = Modifier
+		                        .weight(1f)
+		                        .padding(8.dp)
                 ) {
                     Text(
-                        text = project.name,
-                        style = MaterialTheme.typography.titleMedium,
+                            text = project.name,
+                            style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
-                        text = project.description,
-                        style = MaterialTheme.typography.bodyMedium,
+                            text = project.description,
+                            style = MaterialTheme.typography.bodyMedium,
                     )
                 }
                 BadgeIcon(badgeNumberText = project.maxBadges.toString())
             }
             Text(
-                text = "Határidő: ${project.deadline}",
-                style = MaterialTheme.typography.bodyMedium,
+                    text = "Határidő: ${project.deadline}",
+                    style = MaterialTheme.typography.bodyMedium,
             )
             Text(
-                text = "Kategória: ${project.categoryEnum}",
-                style = MaterialTheme.typography.bodyMedium
+                    text = "Kategória: ${project.categoryEnum}",
+                    style = MaterialTheme.typography.bodyMedium
             )
         }
     }

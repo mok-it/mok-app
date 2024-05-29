@@ -14,28 +14,26 @@ import mok.it.app.mokapp.utility.Utility.TAG
 @Suppress("DEPRECATION")
 @Parcelize
 data class User(
-    @DocumentId
-    val documentId: String = "",
+        @DocumentId val documentId: String = "",
 
-    val email: String = "",
-    val name: String = "",
-    val photoURL: String = "",
-    val phoneNumber: String = "",
-    val requestedRewards: List<String> = ArrayList(),
-    /**
-     * The total number of badges the user has earned in the current season. It is calculated by a cloud function, so do not modify.
-     */
-    val allBadges: Int = 0,
-    /**
-     * The number of badges the user has earned and didn't spend in the current season. It is calculated by a cloud function, so do not modify.
-     */
-    val remainingBadges: Int = 0,
-    val fcmToken: String = "",
-    val nickname: String = "",
-    val projectBadges: MutableMap<String, Int> = HashMap(),
-    val achievements: MutableMap<String, Int> = HashMap(),
-    @Deprecated("Use roleEnum instead")
-    var role: String = "",
+        val email: String = "",
+        val name: String = "",
+        val photoURL: String = "",
+        val phoneNumber: String = "",
+        val requestedRewards: List<String> = ArrayList(),
+        /**
+         * The total number of badges the user has earned in the current season. It is calculated by a cloud function, so do not modify.
+         */
+        val allBadges: Int = 0,
+        /**
+         * The number of badges the user has earned and didn't spend in the current season. It is calculated by a cloud function, so do not modify.
+         */
+        val remainingBadges: Int = 0,
+        val fcmToken: String = "",
+        val nickname: String = "",
+        val projectBadges: MutableMap<String, Int> = HashMap(),
+        val achievements: MutableMap<String, Int> = HashMap(),
+        @Deprecated("Use roleEnum instead") var role: String = "",
 ) : Parcelable {
     var roleEnum: Role
         get() = try {

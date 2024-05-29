@@ -6,8 +6,8 @@ import mok.it.app.mokapp.databinding.ActivityMainBinding
 
 interface UpdateStrategy {
     fun shouldUpdate(info: AppUpdateInfo): Boolean
-    abstract val installStateUpdatedListener: InstallStateUpdatedListener
-    abstract fun startUpdate(info: AppUpdateInfo, binding: ActivityMainBinding)
+    val installStateUpdatedListener: InstallStateUpdatedListener
+    fun startUpdate(info: AppUpdateInfo, binding: ActivityMainBinding)
     fun onResume() {
         //only needed in Immediate updates
     }

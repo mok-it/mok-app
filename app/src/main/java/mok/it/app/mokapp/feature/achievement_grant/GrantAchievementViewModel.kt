@@ -18,7 +18,7 @@ class GrantAchievementViewModel(private val achievementId: String) : ViewModel()
     val maxLevel = _maxLevel.asStateFlow()
 
     private var _users: MutableStateFlow<List<UserAchievementLevelUi>> =
-        MutableStateFlow(emptyList())
+            MutableStateFlow(emptyList())
 
     init {
         _achevement.map { it.levelDescriptions.size }.asLiveData().observeForever {
@@ -39,15 +39,15 @@ class GrantAchievementViewModel(private val achievementId: String) : ViewModel()
                 val u = _users.value.find { it.userId == event.user.userId }
                 if (u != null) {
                     _users.value =
-                        _users.value.map { x ->
-                            if (x.userId == u.userId) x.copy(
-                                ownedLevel =
-                                if (event.amount > maxLevel.value) maxLevel.value
-                                else if (event.amount < 0) 0
-                                else event.amount
-                            )
-                            else x
-                        }
+                            _users.value.map { x ->
+                                if (x.userId == u.userId) x.copy(
+                                        ownedLevel =
+                                        if (event.amount > maxLevel.value) maxLevel.value
+                                        else if (event.amount < 0) 0
+                                        else event.amount
+                                )
+                                else x
+                            }
                 }
             }
 
@@ -61,14 +61,14 @@ class GrantAchievementViewModel(private val achievementId: String) : ViewModel()
 
 sealed class GrantAchievementEvent {
     data class SetAmount(val amount: Int, val user: UserAchievementLevelUi) :
-        GrantAchievementEvent()
+            GrantAchievementEvent()
 
     data object Save : GrantAchievementEvent()
 }
 
 
 class GrantAchievementViewModelFactory(private val achievementId: String) :
-    ViewModelProvider.Factory {
+        ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(GrantAchievementViewModel::class.java)) {
             return GrantAchievementViewModel(achievementId) as T

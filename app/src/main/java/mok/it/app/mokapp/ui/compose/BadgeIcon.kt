@@ -21,26 +21,26 @@ import mok.it.app.mokapp.R
 @Composable
 fun BadgeIcon(badgeNumberText: String, modifier: Modifier = Modifier, isEnabled: Boolean = true) {
     Box(
-        contentAlignment = Alignment.Center,
-        //modifier = Modifier.align(Alignment.Bottom)
+            contentAlignment = Alignment.Center,
+            //modifier = Modifier.align(Alignment.Bottom)
     ) {
         Image(
-            painter = painterResource(id = R.drawable.badgeicon),
-            contentDescription = "Badge icon",
-            colorFilter = if (isEnabled) null else ColorFilter.colorMatrix(ColorMatrix().apply {
-                setToSaturation(
-                    0f
-                )
-            }),
-            contentScale = ContentScale.Crop,
-            modifier = modifier
-                .clip(RoundedCornerShape(8.dp))
+                painter = painterResource(id = R.drawable.badgeicon),
+                contentDescription = "Badge icon",
+                colorFilter = if (isEnabled) null else ColorFilter.colorMatrix(ColorMatrix().apply {
+                    setToSaturation(
+                            0f
+                    )
+                }),
+                contentScale = ContentScale.Crop,
+                modifier = modifier
+                        .clip(RoundedCornerShape(8.dp))
         )
         Text(
-            text = badgeNumberText,
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(top = 6.dp),
-            color = Color.White
+                text = badgeNumberText,
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(top = 6.dp),
+                color = Color.White
         )
     }
 }

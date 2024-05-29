@@ -11,5 +11,5 @@ import mok.it.app.mokapp.model.User
 class CommentsViewModel : ViewModel() {
     fun getUserById(userId: String): LiveData<User> = UserService.getUser(userId).asLiveData()
     fun getComments(projectId: String): LiveData<List<Comment>> =
-        CommentService.getComments(projectId)
+            CommentService.getComments(projectId)
 }

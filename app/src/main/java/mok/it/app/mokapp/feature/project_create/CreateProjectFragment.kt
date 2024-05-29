@@ -52,8 +52,8 @@ open class CreateProjectFragment : DialogFragment() {
     protected var badgeValue = 1
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         binding = FragmentCreateProjectBinding.inflate(inflater, container, false)
         initializeDropdown()
@@ -62,8 +62,8 @@ open class CreateProjectFragment : DialogFragment() {
 
     private fun initializeDropdown() {
         val adapter = ArrayAdapter(
-            requireContext(), R.layout.mcs_dropdown_item,
-            Category.entries.toTypedArray()
+                requireContext(), R.layout.mcs_dropdown_item,
+                Category.entries.toTypedArray()
         )
         binding.projectTerulet.setAdapter(adapter)
     }
@@ -120,16 +120,16 @@ open class CreateProjectFragment : DialogFragment() {
         // The user has unsaved changes, thus warning them before closing the dialog
         (context as Activity).let {
             MaterialDialog.Builder(it)
-                .setTitle(it.getString(R.string.unsaved_changes))
-                .setNegativeButton(it.getString(R.string.discard)) { dialogInterface, _ ->
-                    findNavController().navigateUp()
-                    dialogInterface.dismiss()
-                }
-                .setPositiveButton(it.getString(R.string.edit)) { dialogInterface, _ ->
-                    dialogInterface.dismiss()
-                }
-                .build()
-                .show()
+                    .setTitle(it.getString(R.string.unsaved_changes))
+                    .setNegativeButton(it.getString(R.string.discard)) { dialogInterface, _ ->
+                        findNavController().navigateUp()
+                        dialogInterface.dismiss()
+                    }
+                    .setPositiveButton(it.getString(R.string.edit)) { dialogInterface, _ ->
+                        dialogInterface.dismiss()
+                    }
+                    .build()
+                    .show()
         }
     }
 
@@ -143,28 +143,28 @@ open class CreateProjectFragment : DialogFragment() {
         }
 
         val deadline = Date(
-            binding.datePicker.year - 1900,
-            binding.datePicker.month,
-            binding.datePicker.dayOfMonth
+                binding.datePicker.year - 1900,
+                binding.datePicker.month,
+                binding.datePicker.dayOfMonth
         )
 
         val project = Project(
-            category = binding.projectTerulet.text.toString(),
-            created = Date(),
-            creator = userModel.documentId,
-            deadline = deadline,
-            description = binding.projectDescription.text.toString(),
-            projectLeader = selectedProjectLeader,
-            icon = "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef",
-            name = binding.projectName.text.toString(),
-            maxBadges = badgeValue,
+                category = binding.projectTerulet.text.toString(),
+                created = Date(),
+                creator = userModel.documentId,
+                deadline = deadline,
+                description = binding.projectDescription.text.toString(),
+                projectLeader = selectedProjectLeader,
+                icon = "https://firebasestorage.googleapis.com/v0/b/mokapp-51f86.appspot.com/o/under_construction_badge.png?alt=media&token=3341868d-5aa8-4f1b-a8b6-f36f24317fef",
+                name = binding.projectName.text.toString(),
+                maxBadges = badgeValue,
         )
         addProject(project)
 
         CloudMessagingService.sendNotificationToUsers(
-            "Új projekt lett létrehozva",
-            "${userModel.name} egy új projektet hozott létre az alábbi névvel: ${binding.projectName.text}",
-            users.filterNot { it.documentId == userModel.documentId }
+                "Új projekt lett létrehozva",
+                "${userModel.name} egy új projektet hozott létre az alábbi névvel: ${binding.projectName.text}",
+                users.filterNot { it.documentId == userModel.documentId }
         )
     }
 
@@ -206,15 +206,15 @@ open class CreateProjectFragment : DialogFragment() {
     }
 
     private fun snackbar(textResource: Int) = Snackbar.make(
-        binding.root,
-        textResource,
-        Snackbar.LENGTH_SHORT
+            binding.root,
+            textResource,
+            Snackbar.LENGTH_SHORT
     ).show()
 
     fun toast(textResource: Int) = Toast.makeText(
-        context,
-        textResource,
-        Toast.LENGTH_SHORT
+            context,
+            textResource,
+            Toast.LENGTH_SHORT
     ).show()
 
     protected open fun getUsers() {
@@ -230,19 +230,19 @@ open class CreateProjectFragment : DialogFragment() {
     protected fun projectLeaderDialog() {
         var checkedItem = users.indexOfFirst { it.documentId == selectedProjectLeader }
         AlertDialog.Builder(context)
-            .setTitle("Válassz projektvezetőt!")
-            .setSingleChoiceItems(names, checkedItem) { _, which ->
-                checkedItem = which
-            }
-            .setPositiveButton("Ok") { _, _ ->
-                if (checkedItem != -1) {
-                    selectedProjectLeader = users[checkedItem].documentId
+                .setTitle("Válassz projektvezetőt!")
+                .setSingleChoiceItems(names, checkedItem) { _, which ->
+                    checkedItem = which
                 }
-            }
-            .setNegativeButton("Mégsem") { dialog, _ ->
-                dialog.cancel()
-            }
-            .create()
-            .show()
+                .setPositiveButton("Ok") { _, _ ->
+                    if (checkedItem != -1) {
+                        selectedProjectLeader = users[checkedItem].documentId
+                    }
+                }
+                .setNegativeButton("Mégsem") { dialog, _ ->
+                    dialog.cancel()
+                }
+                .create()
+                .show()
     }
 }

@@ -25,8 +25,8 @@ import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 import mok.it.app.mokapp.utility.Utility.TAG
 
 class ImmediateUpdateStrategy(
-    private val appUpdateManager: AppUpdateManager,
-    private val context: AppCompatActivity
+        private val appUpdateManager: AppUpdateManager,
+        private val context: AppCompatActivity
 ) : UpdateStrategy {
     private val updateType = AppUpdateType.IMMEDIATE
 
@@ -34,25 +34,25 @@ class ImmediateUpdateStrategy(
         when (state.installStatus()) {
             InstallStatus.DOWNLOADED -> {
                 Toast.makeText(
-                    context,
-                    "Új verzió letöltve. Telepítés...",
-                    Toast.LENGTH_LONG
+                        context,
+                        "Új verzió letöltve. Telepítés...",
+                        Toast.LENGTH_LONG
                 ).show()
             }
 
             InstallStatus.INSTALLED -> {
                 Toast.makeText(
-                    context,
-                    "Frissítés telepítve. Az alkalmazás újraindul.",
-                    Toast.LENGTH_LONG
+                        context,
+                        "Frissítés telepítve. Az alkalmazás újraindul.",
+                        Toast.LENGTH_LONG
                 ).show()
             }
 
             InstallStatus.CANCELED -> {
                 Toast.makeText(
-                    context,
-                    "Frissítés megszakítva. Az alkalmazás használatához frissítés szükséges.",
-                    Toast.LENGTH_LONG
+                        context,
+                        "Frissítés megszakítva. Az alkalmazás használatához frissítés szükséges.",
+                        Toast.LENGTH_LONG
                 ).show()
                 showMandatoryScreen()
             }
@@ -61,42 +61,42 @@ class ImmediateUpdateStrategy(
 
     override fun shouldUpdate(info: AppUpdateInfo): Boolean {
         val isUpdateAvailable =
-            info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
         val isUpdateAllowed = info.isImmediateUpdateAllowed
         return isUpdateAllowed && isUpdateAvailable
     }
 
     override fun startUpdate(info: AppUpdateInfo, binding: ActivityMainBinding) {
         val appUpdateOptions = AppUpdateOptions.newBuilder(updateType)
-            .setAllowAssetPackDeletion(true)
-            .setAppUpdateType(updateType)
-            .build()
+                .setAllowAssetPackDeletion(true)
+                .setAppUpdateType(updateType)
+                .build()
         appUpdateManager.startUpdateFlow(info, context, appUpdateOptions)
-            .addOnSuccessListener {
-                if (it == RESULT_OK) {
-                    Log.i(TAG, "Az app frissítése sikeres.")
-                    context.setContentView(binding.root)
-                } else {
-                    if (it == 0) {
-                        Log.w(TAG, "Update declined by user.")
-                        Toast.makeText(
-                            context,
-                            "Az alkalmazás használatához frissítés szükséges.",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                .addOnSuccessListener {
+                    if (it == RESULT_OK) {
+                        Log.i(TAG, "Az app frissítése sikeres.")
+                        context.setContentView(binding.root)
+                    } else {
+                        if (it == 0) {
+                            Log.w(TAG, "Update declined by user.")
+                            Toast.makeText(
+                                    context,
+                                    "Az alkalmazás használatához frissítés szükséges.",
+                                    Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                        showMandatoryScreen()
                     }
+                }
+                .addOnFailureListener {
+                    Log.e(TAG, "app update failed")
+                    Toast.makeText(
+                            context,
+                            "Frissítés sikertelen. Az alkalmazás használatához frissítés szükséges.",
+                            Toast.LENGTH_SHORT
+                    ).show()
                     showMandatoryScreen()
                 }
-            }
-            .addOnFailureListener {
-                Log.e(TAG, "app update failed")
-                Toast.makeText(
-                    context,
-                    "Frissítés sikertelen. Az alkalmazás használatához frissítés szükséges.",
-                    Toast.LENGTH_SHORT
-                ).show()
-                showMandatoryScreen()
-            }
     }
 
 
@@ -104,21 +104,21 @@ class ImmediateUpdateStrategy(
         appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
             if (info.updateAvailability() == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS) {
                 val appUpdateOptions = AppUpdateOptions.newBuilder(updateType)
-                    .setAllowAssetPackDeletion(true)
-                    .setAppUpdateType(updateType)
-                    .build()
+                        .setAllowAssetPackDeletion(true)
+                        .setAppUpdateType(updateType)
+                        .build()
                 appUpdateManager.startUpdateFlow(info, context, appUpdateOptions)
-                    .addOnCanceledListener {
-                        Log.w(TAG, "app update cancelled")
-                        Toast.makeText(
-                            context,
-                            "Frissítés megszakítva. Az alkalmazás használatához frissítés szükséges.",
-                            Toast.LENGTH_SHORT
-                        ).show()
-                        showMandatoryScreen()
-                    }
-                    .addOnCompleteListener { Log.i(TAG, "app updated succesfully") }
-                    .addOnFailureListener { Log.e(TAG, "app update failed") }
+                        .addOnCanceledListener {
+                            Log.w(TAG, "app update cancelled")
+                            Toast.makeText(
+                                    context,
+                                    "Frissítés megszakítva. Az alkalmazás használatához frissítés szükséges.",
+                                    Toast.LENGTH_SHORT
+                            ).show()
+                            showMandatoryScreen()
+                        }
+                        .addOnCompleteListener { Log.i(TAG, "app updated succesfully") }
+                        .addOnFailureListener { Log.e(TAG, "app update failed") }
             }
         }
     }
@@ -136,9 +136,9 @@ class ImmediateUpdateStrategy(
 fun MandatoryUpdateScreen() {
     Surface {
         Text(
-            text = "Az alkalmazás használatához frissítés szükséges. Kérjük, frissítsd az alkalmazást a play áruházban.",
-            style = MaterialTheme.typography.bodyMedium,
-            modifier = Modifier.padding(12.dp)
+                text = "Az alkalmazás használatához frissítés szükséges. Kérjük, frissítsd az alkalmazást a play áruházban.",
+                style = MaterialTheme.typography.bodyMedium,
+                modifier = Modifier.padding(12.dp)
         )
     }
 }

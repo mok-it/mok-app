@@ -17,15 +17,15 @@ import mok.it.app.mokapp.ui.recyclerview.ProjectsAdapter
 
 
 class MyBadgesFragment :
-    Fragment(), ProjectsAdapter.ProjectClickedListener {
+        Fragment(), ProjectsAdapter.ProjectClickedListener {
     private val binding get() = _binding!!
     private var _binding: FragmentMyBadgesBinding? = null
 
     private var collectedBadges: ArrayList<Pair<Project, Int>> = ArrayList()
     private val viewModel: MyBadgesViewModel by viewModels()
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMyBadgesBinding.inflate(inflater, container, false)
         return binding.root
@@ -53,19 +53,19 @@ class MyBadgesFragment :
             }
         }
         binding.recyclerView.adapter = ProjectCategoriesAdapter(
-            Category.toList(),
-            categoryProjects,
-            this
+                Category.toList(),
+                categoryProjects,
+                this
         )
         binding.recyclerView.layoutManager =
-            LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
+                LinearLayoutManager(this.context, LinearLayoutManager.VERTICAL, false)
     }
 
     override fun onProjectClicked(projectId: String) {
         findNavController().navigate(
-            MyBadgesFragmentDirections.actionMyBadgesFragmentToDetailsFragment(
-                projectId
-            )
+                MyBadgesFragmentDirections.actionMyBadgesFragmentToDetailsFragment(
+                        projectId
+                )
         )
     }
 

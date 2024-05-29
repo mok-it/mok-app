@@ -22,9 +22,9 @@ class RewardsViewModel : ViewModel() {
     }
 
     val rewards: StateFlow<List<Reward>> = RewardsService.getAllRewards()
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = emptyList()
-        )
+            .stateIn(
+                    scope = viewModelScope,
+                    started = SharingStarted.WhileSubscribed(5000),
+                    initialValue = emptyList()
+            )
 }

@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         navHeaderBinding = NavHeaderBinding.bind(binding.navView.getHeaderView(0))
         setContentView(
-            ComposeView(this).apply { setContent { MokAppTheme { LoadingScreen() } } }
+                ComposeView(this).apply { setContent { MokAppTheme { LoadingScreen() } } }
         )
         setupNavigation()
         setupBackPressed()
@@ -83,7 +83,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun setupNavigation() {
         val navHostFragment =
-            supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+                supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
         navController = navHostFragment.navController
         setSupportActionBar(binding.toolbar)
         val appBarConfiguration = AppBarConfiguration(navController.graph, binding.drawerLayout)
@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
         //Ha a listfragment-re navigálunk, töltődjön újra a fejléc (regisztráció után ez tölti be)
         navController.addOnDestinationChangedListener { _, destination, _ ->
             if (destination.id == R.id.allProjectsListFragment && currentUser != null) refreshCurrentUserAndUserModel(
-                this
+                    this
             ) {
                 loadApp()
             }
@@ -167,9 +167,9 @@ class MainActivity : AppCompatActivity() {
             refreshCurrentUserAndUserModel(this) { loadApp() }
         }
         val requestOptions =
-            RequestOptions().apply(RequestOptions().transform(CenterCrop(), RoundedCorners(26)))
+                RequestOptions().apply(RequestOptions().transform(CenterCrop(), RoundedCorners(26)))
         Glide.with(this).load(currentUser?.photoUrl).apply(requestOptions.override(250, 250))
-            .into(navHeaderBinding.image)
+                .into(navHeaderBinding.image)
     }
 
     private fun setMenuVisibility() {
@@ -214,11 +214,11 @@ class MainActivity : AppCompatActivity() {
         currentUser = null
         FirebaseAuth.getInstance().signOut()
         GoogleSignIn.getClient(
-            this,
-            GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
+                this,
+                GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).build()
         )
-            .signOut()
-            .addOnSuccessListener { navController.navigate(R.id.action_global_loginFragment) }
+                .signOut()
+                .addOnSuccessListener { navController.navigate(R.id.action_global_loginFragment) }
     }
 
     private fun checkForUpdates() {
@@ -227,26 +227,26 @@ class MainActivity : AppCompatActivity() {
             return
         }
         strategy =
-            if (Firebase.remoteConfig.getLong("latestBreakingVersion").toInt() >
-                BuildConfig.VERSION_CODE
-            )
-                ImmediateUpdateStrategy(appUpdateManager, this)
-            else
-                FlexibleUpdateStrategy(appUpdateManager, this)
+                if (Firebase.remoteConfig.getLong("latestBreakingVersion").toInt() >
+                        BuildConfig.VERSION_CODE
+                )
+                    ImmediateUpdateStrategy(appUpdateManager, this)
+                else
+                    FlexibleUpdateStrategy(appUpdateManager, this)
         appUpdateManager.registerListener(strategy.installStateUpdatedListener)
 
         appUpdateManager.appUpdateInfo.addOnSuccessListener { info ->
             if (strategy.shouldUpdate(info)) {
                 strategy.startUpdate(
-                    info,
-                    binding
+                        info,
+                        binding
                 )
             } else if (info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE && Firebase.remoteConfig.getLong(
-                    "latestBreakingVersion"
-                ).toInt() > BuildConfig.VERSION_CODE
+                            "latestBreakingVersion"
+                    ).toInt() > BuildConfig.VERSION_CODE
             ) {
                 Toast.makeText(this, "Frissítés szükséges, de hiba történt.", Toast.LENGTH_LONG)
-                    .show()
+                        .show()
             } else {
                 setContentView(binding.root)
             }

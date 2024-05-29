@@ -47,8 +47,8 @@ class AddOrRemoveMembersFragment : DialogFragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?,
     ): View = ComposeView(requireContext()).apply {
         setContent {
             MokAppTheme {
@@ -69,35 +69,35 @@ class AddOrRemoveMembersFragment : DialogFragment() {
         var showDialog by rememberSaveable { mutableStateOf(DialogType.NONE) }
 
         Scaffold(
-            bottomBar = {
-                Button(modifier = Modifier
-                    .padding(8.dp)
-                    .fillMaxWidth(),
-                    enabled = uiState.selectedUsersChanged,
-                    onClick = {
-                        showDialog = DialogType.CONFIRM
-                    }) {
-                    Text(text = "Mentés")
-                }
-            },
+                bottomBar = {
+                    Button(modifier = Modifier
+                            .padding(8.dp)
+                            .fillMaxWidth(),
+                            enabled = uiState.selectedUsersChanged,
+                            onClick = {
+                                showDialog = DialogType.CONFIRM
+                            }) {
+                        Text(text = "Mentés")
+                    }
+                },
         ) { padding ->
             Column(
-                modifier = Modifier.padding(bottom = padding.calculateBottomPadding())
+                    modifier = Modifier.padding(bottom = padding.calculateBottomPadding())
             ) {
                 when (showDialog) {
                     DialogType.CONFIRM -> {
                         OkCancelDialog(
-                            text = "Biztos, hogy el szeretnéd menteni a módosításokat? Ha valakit törölsz a projektből, az elveszíti az eddigi összes rajta megszerzett mancsot.",
-                            onConfirm = {
-                                viewModel.updateMembersOfProject()
-                                Toast.makeText(
-                                    context, "Résztvevők listája módosítva!", Toast.LENGTH_SHORT
-                                ).show()
-                                showDialog = DialogType.NONE
-                            },
-                            onDismiss = {
-                                showDialog = DialogType.NONE
-                            },
+                                text = "Biztos, hogy el szeretnéd menteni a módosításokat? Ha valakit törölsz a projektből, az elveszíti az eddigi összes rajta megszerzett mancsot.",
+                                onConfirm = {
+                                    viewModel.updateMembersOfProject()
+                                    Toast.makeText(
+                                            context, "Résztvevők listája módosítva!", Toast.LENGTH_SHORT
+                                    ).show()
+                                    showDialog = DialogType.NONE
+                                },
+                                onDismiss = {
+                                    showDialog = DialogType.NONE
+                                },
                         )
                     }
 
@@ -105,17 +105,17 @@ class AddOrRemoveMembersFragment : DialogFragment() {
                     }
                 }
                 SearchField(
-                    searchQuery = searchQuery,
-                    chipState = chipState,
-                    onValueChange = { viewModel.onSearchValueChange(it) },
+                        searchQuery = searchQuery,
+                        chipState = chipState,
+                        onValueChange = { viewModel.onSearchValueChange(it) },
                 )
 
                 LazyColumn {// selected users
                     items(selectedUsers) { user ->
                         UserRow(
-                            user,
-                            true,
-                            findNavController(),
+                                user,
+                                true,
+                                findNavController(),
                         ) { _ ->
                             viewModel.userSelectionClicked(user)
                         }
@@ -126,9 +126,9 @@ class AddOrRemoveMembersFragment : DialogFragment() {
                         }
                         items(unselectedFilteredUsers) { user ->// all unselected users matching the search criteria
                             UserRow(
-                                user,
-                                false,
-                                findNavController(),
+                                    user,
+                                    false,
+                                    findNavController(),
                             ) { _ ->
                                 viewModel.userSelectionClicked(user)
                             }
@@ -136,10 +136,10 @@ class AddOrRemoveMembersFragment : DialogFragment() {
                     } else {
                         item {
                             Text(
-                                text = "Nincsenek a feltételeknek megfelelő tagok",
-                                modifier = Modifier.padding(16.dp),
-                                style = MaterialTheme.typography.headlineSmall,
-                                textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                                    text = "Nincsenek a feltételeknek megfelelő tagok",
+                                    modifier = Modifier.padding(16.dp),
+                                    style = MaterialTheme.typography.headlineSmall,
+                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
                             )
                         }
                     }

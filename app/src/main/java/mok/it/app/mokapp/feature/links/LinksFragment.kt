@@ -45,16 +45,16 @@ import java.util.Locale
 class LinksFragment : Fragment() {
     private val viewModel: LinksViewModel by viewModels()
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?,
     ): View =
-        ComposeView(requireContext()).apply {
-            setContent {
-                MokAppTheme {
-                    LinksFragment()
+            ComposeView(requireContext()).apply {
+                setContent {
+                    MokAppTheme {
+                        LinksFragment()
+                    }
                 }
             }
-        }
 
     @SuppressLint("NotConstructor")
     @Composable
@@ -66,17 +66,17 @@ class LinksFragment : Fragment() {
         Surface {
             Column {
                 SearchField(
-                    searchQuery = searchQuery,
-                    chipState = chipState,
-                    onValueChange = { viewModel.onSearchValueChange(it) },
+                        searchQuery = searchQuery,
+                        chipState = chipState,
+                        onValueChange = { viewModel.onSearchValueChange(it) },
                 )
                 if (filteredLinks.isEmpty()) {
                     Text(
-                        text = "Nincsenek a feltételeknek megfelelő linkek",
-                        modifier = Modifier
-                            .padding(16.dp),
-                        style = MaterialTheme.typography.headlineSmall,
-                        textAlign = androidx.compose.ui.text.style.TextAlign.Center
+                            text = "Nincsenek a feltételeknek megfelelő linkek",
+                            modifier = Modifier
+                                    .padding(16.dp),
+                            style = MaterialTheme.typography.headlineSmall,
+                            textAlign = androidx.compose.ui.text.style.TextAlign.Center
                     )
                 } else {
                     LazyColumn(modifier = Modifier.fillMaxSize()) {
@@ -96,38 +96,38 @@ class LinksFragment : Fragment() {
     @Composable
     fun LinkCard(link: Link, onLinkClick: (Link) -> Unit) {
         Card(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp)
-                .clickable { onLinkClick(link) },
-            shape = RoundedCornerShape(8.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                modifier = Modifier
+		                .fillMaxWidth()
+		                .padding(8.dp)
+		                .clickable { onLinkClick(link) },
+                shape = RoundedCornerShape(8.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
-                verticalAlignment = Alignment.CenterVertically
+                    modifier = Modifier
+		                    .fillMaxWidth()
+		                    .padding(16.dp),
+                    verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_link),
-                    contentDescription = "Link icon",
-                    modifier = Modifier.size(50.dp)
+                        painter = painterResource(id = R.drawable.ic_link),
+                        contentDescription = "Link icon",
+                        modifier = Modifier.size(50.dp)
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(
-                        text = link.title,
-                        style = MaterialTheme.typography.bodyLarge,
-                        fontWeight = FontWeight.Bold
+                            text = link.title,
+                            style = MaterialTheme.typography.bodyLarge,
+                            fontWeight = FontWeight.Bold
                     )
                     Text(
-                        text = link.category.replaceFirstChar {
-                            if (it.isLowerCase()) it.titlecase(
-                                Locale.ROOT
-                            ) else it.toString()
-                        },
-                        style = MaterialTheme.typography.bodyMedium,
+                            text = link.category.replaceFirstChar {
+                                if (it.isLowerCase()) it.titlecase(
+                                        Locale.ROOT
+                                ) else it.toString()
+                            },
+                            style = MaterialTheme.typography.bodyMedium,
                     )
                 }
             }

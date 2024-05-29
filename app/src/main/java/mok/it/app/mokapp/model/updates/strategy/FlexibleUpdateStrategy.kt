@@ -15,12 +15,12 @@ import mok.it.app.mokapp.databinding.ActivityMainBinding
 private const val updateType = AppUpdateType.FLEXIBLE
 
 class FlexibleUpdateStrategy(
-    private val appUpdateManager: AppUpdateManager,
-    private val context: AppCompatActivity
+        private val appUpdateManager: AppUpdateManager,
+        private val context: AppCompatActivity
 ) : UpdateStrategy {
     override fun shouldUpdate(info: AppUpdateInfo): Boolean {
         val isUpdateAvailable =
-            info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                info.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
         val isUpdateAllowed = info.isFlexibleUpdateAllowed
         return isUpdateAllowed && isUpdateAvailable
     }
@@ -29,9 +29,9 @@ class FlexibleUpdateStrategy(
         when (state.installStatus()) {
             InstallStatus.DOWNLOADED -> {
                 Toast.makeText(
-                    context,
-                    "A frissítés befejezéséhez indítsd újra az appot.",
-                    Toast.LENGTH_LONG
+                        context,
+                        "A frissítés befejezéséhez indítsd újra az appot.",
+                        Toast.LENGTH_LONG
                 ).show()
             }
         }
@@ -40,9 +40,9 @@ class FlexibleUpdateStrategy(
     override fun startUpdate(info: AppUpdateInfo, binding: ActivityMainBinding) {
         context.setContentView(binding.root)
         val appUpdateOptions = AppUpdateOptions.newBuilder(updateType)
-            .setAllowAssetPackDeletion(true)
-            .setAppUpdateType(updateType)
-            .build()
+                .setAllowAssetPackDeletion(true)
+                .setAppUpdateType(updateType)
+                .build()
         appUpdateManager.startUpdateFlow(info, context, appUpdateOptions)
     }
 

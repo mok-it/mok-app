@@ -30,43 +30,44 @@ import mok.it.app.mokapp.ui.compose.theme.MokAppTheme
 class AchievementsFragment : Fragment() {
     private val viewModel: AchievementListViewModel by viewModels()
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View =
-        ComposeView(requireContext()).apply {
-            setContent {
-                MokAppTheme {
-                    val achievements by viewModel.achievements.collectAsState(emptyList())
-                    Scaffold(
-                        floatingActionButton = {
-                            if (FirebaseUserObject.userModel.roleAtLeast(Role.ADMIN)) {
-                                FloatingActionButton(
-                                    onClick = {
-                                        findNavController().navigate(
-                                            AchievementsFragmentDirections.actionAchievementsFragmentToCreateAchievementFragment()
-                                        )
-                                    },
-                                    modifier = Modifier
-                                        .padding(16.dp),
-                                ) {
-                                    Icon(Icons.Filled.Add, contentDescription = "Acsi Létrehozása")
-                                }
-                            }
-                        }
-                    ) { padding ->
-                        Surface {
-                            Column(modifier = Modifier.padding(padding)) {
-                                LazyColumn {
-                                    items(achievements) { achievement ->
-                                        AchievementCard(
-                                            achievement = achievement,
-                                            showCompleteOnFirstLevel = false
+            ComposeView(requireContext()).apply {
+                setContent {
+                    MokAppTheme {
+                        val achievements by viewModel.achievements.collectAsState(emptyList())
+                        Scaffold(
+                                floatingActionButton = {
+                                    if (FirebaseUserObject.userModel.roleAtLeast(Role.ADMIN)) {
+                                        FloatingActionButton(
+                                                onClick = {
+                                                    findNavController().navigate(
+                                                            AchievementsFragmentDirections.actionAchievementsFragmentToCreateAchievementFragment()
+                                                    )
+                                                },
+                                                modifier = Modifier
+                                                        .padding(16.dp),
                                         ) {
-                                            findNavController().navigate(
-                                                AchievementsFragmentDirections.actionAchievementsFragmentToAchievementDetailsFragment(
-                                                    achievement.id
+                                            Icon(Icons.Filled.Add, contentDescription = "Acsi Létrehozása")
+                                        }
+                                    }
+                                }
+                        ) { padding ->
+                            Surface {
+                                Column(modifier = Modifier.padding(padding)) {
+                                    LazyColumn {
+                                        items(achievements) { achievement ->
+                                            AchievementCard(
+                                                    achievement = achievement,
+                                                    showCompleteOnFirstLevel = false
+                                            ) {
+                                                findNavController().navigate(
+                                                        AchievementsFragmentDirections.actionAchievementsFragmentToAchievementDetailsFragment(
+                                                                achievement.id
+                                                        )
                                                 )
-                                            )
+                                            }
                                         }
                                     }
                                 }
@@ -75,5 +76,4 @@ class AchievementsFragment : Fragment() {
                     }
                 }
             }
-        }
 }

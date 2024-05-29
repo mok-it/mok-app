@@ -55,8 +55,8 @@ object Utility {
      */
     fun DialogFragment.setFullScreen() {
         dialog?.window?.setLayout(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
         )
     }
 
@@ -66,18 +66,18 @@ object Utility {
      * fails, leaves the image empty and logs an error message.
      */
     fun <T> loadImage(
-        imageView: ImageView,
-        imageURLOrDrawable: T?,
-        context: Context,
-        callback: Callback? = null
+            imageView: ImageView,
+            imageURLOrDrawable: T?,
+            context: Context,
+            callback: Callback? = null
     ) {
         if (tryLoadingImage(imageView, imageURLOrDrawable, context, callback)) return
         if (tryLoadingImage(
-                imageView,
-                R.drawable.no_image_icon,
-                context,
-                callback
-            )
+                        imageView,
+                        R.drawable.no_image_icon,
+                        context,
+                        callback
+                )
         ) return
     }
 
@@ -88,10 +88,10 @@ object Utility {
      * @return true if the function succeeded, false if failed
      */
     private fun <T> tryLoadingImage(
-        imageView: ImageView,
-        imageURLOrDrawable: T?,
-        context: Context,
-        callback: Callback? = null
+            imageView: ImageView,
+            imageURLOrDrawable: T?,
+            context: Context,
+            callback: Callback? = null
     ): Boolean {
         val circularProgressDrawable = CircularProgressDrawable(context).apply {
             strokeWidth = 5f
@@ -107,12 +107,12 @@ object Utility {
                     is Int -> load(imageURLOrDrawable)
                     else -> throw IllegalArgumentException("Unsupported type of imageURLOrDrawable")
                 }
-                    .placeholder(circularProgressDrawable)
-                    .apply {
-                        if (callback != null) this.into(imageView, callback) else this.into(
-                            imageView
-                        )
-                    }
+                        .placeholder(circularProgressDrawable)
+                        .apply {
+                            if (callback != null) this.into(imageView, callback) else this.into(
+                                    imageView
+                            )
+                        }
             }
             true
         } catch (e: Exception) {

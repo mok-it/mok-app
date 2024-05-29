@@ -21,19 +21,19 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun EditNumericValue(value: Int, name: String, onValueChange: (Int) -> Unit = {}) {
     Row(
-        verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically,
     ) {
         IconButton(onClick = { onValueChange(value - 1) }, modifier = Modifier.size(48.dp)) {
             Icon(imageVector = Icons.Default.RemoveCircle, contentDescription = "Decrease $name")
         }
         OutlinedTextField(
-            value = value.toString(),
-            onValueChange = { newValue: String ->
-                onValueChange(newValue.toIntOrNull() ?: 0)
-            },
-            label = { Text(name) },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.width(100.dp)
+                value = value.toString(),
+                onValueChange = { newValue: String ->
+                    onValueChange(newValue.toIntOrNull() ?: 0)
+                },
+                label = { Text(name) },
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                modifier = Modifier.width(100.dp)
         )
         IconButton(onClick = { onValueChange(value + 1) }, modifier = Modifier.size(48.dp)) {
             Icon(imageVector = Icons.Default.AddCircle, contentDescription = "Increase $name")

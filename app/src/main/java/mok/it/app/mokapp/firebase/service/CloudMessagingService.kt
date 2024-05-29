@@ -18,9 +18,9 @@ class CloudMessagingService : FirebaseMessagingService() {
 
     companion object {
         fun sendNotificationToUsersById(
-            title: String,
-            messageBody: String,
-            adresseeUserIdList: List<String>,
+                title: String,
+                messageBody: String,
+                adresseeUserIdList: List<String>,
         ) {
             val adresseeUserIds = adresseeUserIdList.distinct()
 
@@ -28,49 +28,49 @@ class CloudMessagingService : FirebaseMessagingService() {
             { "too many users to send notification to (the limit is 10)" }
 
             Firebase.firestore.collection(Collections.USERS)
-                .whereIn(FieldPath.documentId(), adresseeUserIds)
-                .get().addOnSuccessListener { documents ->
-                    val addresseeUserList = ArrayList<User>()
-                    for (document in documents) {
-                        addresseeUserList.add(document.toObject(User::class.java))
+                    .whereIn(FieldPath.documentId(), adresseeUserIds)
+                    .get().addOnSuccessListener { documents ->
+                        val addresseeUserList = ArrayList<User>()
+                        for (document in documents) {
+                            addresseeUserList.add(document.toObject(User::class.java))
+                        }
+                        sendNotificationToUsers(title, messageBody, addresseeUserList)
                     }
-                    sendNotificationToUsers(title, messageBody, addresseeUserList)
-                }
-                .addOnFailureListener { exception ->
-                    Log.d(TAG, "failed to get users: ", exception)
-                }
+                    .addOnFailureListener { exception ->
+                        Log.d(TAG, "failed to get users: ", exception)
+                    }
         }
 
         fun sendNotificationToUsers(
-            title: String,
-            messageBody: String,
-            adresseeUserList: List<User>,
+                title: String,
+                messageBody: String,
+                adresseeUserList: List<User>,
         ) {
             adresseeUserList.distinct().forEach { addresseeUser ->
                 Log.d(
-                    TAG,
-                    "sending notification to ${addresseeUser.name}, FCM token: ${addresseeUser.fcmToken}"
+                        TAG,
+                        "sending notification to ${addresseeUser.name}, FCM token: ${addresseeUser.fcmToken}"
                 )
                 val data = hashMapOf(
-                    "message" to hashMapOf(
-                        "title" to title,
-                        "body" to messageBody,
-                        "icon" to "gs://mokapp-51f86.appspot.com/Feladatellenőrzés 16 feladat ellenőrzése.png",
-                        "click_action" to "",
-                    ),
-                    "fcmToken" to addresseeUser.fcmToken
+                        "message" to hashMapOf(
+                                "title" to title,
+                                "body" to messageBody,
+                                "icon" to "gs://mokapp-51f86.appspot.com/Feladatellenőrzés 16 feladat ellenőrzése.png",
+                                "click_action" to "",
+                        ),
+                        "fcmToken" to addresseeUser.fcmToken
                 )
 
                 Firebase.functions
-                    .getHttpsCallable("sendNotification")
-                    .call(data)
-                    .continueWith { task ->
-                        if (!task.isSuccessful) {
-                            Log.e(TAG, "Error calling cloud function", task.exception)
-                        } else {
-                            Log.d(TAG, "Notification sent successfully")
+                        .getHttpsCallable("sendNotification")
+                        .call(data)
+                        .continueWith { task ->
+                            if (!task.isSuccessful) {
+                                Log.e(TAG, "Error calling cloud function", task.exception)
+                            } else {
+                                Log.d(TAG, "Notification sent successfully")
+                            }
                         }
-                    }
             }
         }
     }

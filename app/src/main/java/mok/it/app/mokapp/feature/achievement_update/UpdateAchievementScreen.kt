@@ -25,24 +25,24 @@ fun UpdateAchievementScreen(viewModel: EditAchievementViewModel, onNavigateBack:
         Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
             EditAchievement(viewModel)
             Row(
-                horizontalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
+                    horizontalArrangement = Arrangement.Center,
+                    modifier = Modifier.fillMaxWidth()
             ) {
                 Button(
-                    onClick = {
-                        viewModel.onEvent(EditAchievementEvent.Update)
-                        onNavigateBack()
-                    },
-                    modifier = Modifier
-                        .width(120.dp)
-                        .padding()
+                        onClick = {
+                            viewModel.onEvent(EditAchievementEvent.Update)
+                            onNavigateBack()
+                        },
+                        modifier = Modifier
+		                        .width(120.dp)
+		                        .padding()
                 ) {
                     Text(text = "Módosítás")
                 }
                 Spacer(modifier = Modifier.width(20.dp))
                 Button(
-                    onClick = onNavigateBack,
-                    modifier = Modifier.width(120.dp)
+                        onClick = onNavigateBack,
+                        modifier = Modifier.width(120.dp)
                 ) {
                     Text(text = "Mégse")
                 }

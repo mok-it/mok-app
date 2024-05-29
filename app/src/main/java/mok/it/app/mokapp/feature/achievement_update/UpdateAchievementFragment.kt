@@ -29,8 +29,8 @@ class UpdateAchievementFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?
     ): View {
         setupTopMenu()
         return ComposeView(requireContext()).apply {
@@ -47,10 +47,10 @@ class UpdateAchievementFragment : Fragment() {
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menu.add(R.id.delete, R.id.delete, 0, R.string.delete)
-                    .setIcon(R.drawable.ic_delete)
-                    .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                        .setIcon(R.drawable.ic_delete)
+                        .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
                 menu.getItem(0).icon?.mutate()
-                    ?.setTint(resources.getColor(R.color.md_theme_onPrimary))
+                        ?.setTint(resources.getColor(R.color.md_theme_onPrimary))
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
@@ -58,8 +58,8 @@ class UpdateAchievementFragment : Fragment() {
                     R.id.delete -> {
                         viewModel.onEvent(EditAchievementEvent.Delete)
                         findNavController().popBackStack(
-                            destinationId = R.id.achievementsFragment,
-                            inclusive = false
+                                destinationId = R.id.achievementsFragment,
+                                inclusive = false
                         )
 
                         true

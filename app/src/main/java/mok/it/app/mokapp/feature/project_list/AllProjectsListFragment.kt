@@ -118,6 +118,7 @@ class AllProjectsListFragment : Fragment() {
                 menu.add(R.id.menu, R.id.menu, 0, R.string.delete)
                         .setIcon(R.drawable.ic_three_dots)
                         .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                @Suppress("DEPRECATION")
                 menu.getItem(0).icon?.mutate()
                         ?.setTint(resources.getColor(R.color.md_theme_onPrimary))
             }

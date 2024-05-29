@@ -49,6 +49,7 @@ class UpdateAchievementFragment : Fragment() {
                 menu.add(R.id.delete, R.id.delete, 0, R.string.delete)
                         .setIcon(R.drawable.ic_delete)
                         .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS)
+                @Suppress("DEPRECATION")
                 menu.getItem(0).icon?.mutate()
                         ?.setTint(resources.getColor(R.color.md_theme_onPrimary))
             }

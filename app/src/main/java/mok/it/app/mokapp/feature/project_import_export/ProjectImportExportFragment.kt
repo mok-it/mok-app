@@ -57,8 +57,8 @@ class ProjectImportExportFragment : Fragment() {
     private val selectFile =
             registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
                 Log.i(TAG, "selected file at path: " + (uri?.path ?: "null"))
-                uri?.let { uri ->
-                    requireContext().contentResolver.openInputStream(uri)?.use {
+                uri?.let { notNullUri ->
+                    requireContext().contentResolver.openInputStream(notNullUri)?.use {
                         Log.i(TAG, "Reading CSV")
                         viewModel.selectImport(
                                 try {
@@ -175,8 +175,8 @@ fun ImportExportScreen(
                     Row(
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             modifier = Modifier
-		                            .fillMaxWidth()
-		                            .padding(vertical = 8.dp)
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp)
                     ) {
                         AdminButton(
                                 modifier = Modifier.weight(1f),
@@ -196,9 +196,9 @@ fun ImportExportScreen(
                     item {
                         Card(
                                 modifier = Modifier
-		                                .fillMaxWidth()
-		                                .wrapContentHeight()
-		                                .padding(8.dp),
+                                        .fillMaxWidth()
+                                        .wrapContentHeight()
+                                        .padding(8.dp),
                                 colors = CardColors(
                                         containerColor = ExtendedTheme.colorScheme.warning.colorContainer,
                                         contentColor = ExtendedTheme.colorScheme.warning.onColorContainer,
@@ -229,8 +229,8 @@ fun ImportExportScreen(
                                         imageVector = Icons.Default.Info,
                                         contentDescription = "Infó",
                                         modifier = Modifier
-		                                        .padding(8.dp)
-		                                        .size(30.dp),
+                                                .padding(8.dp)
+                                                .size(30.dp),
                                         tint = MaterialTheme.colorScheme.primary
                                 )
                                 Text(
@@ -261,8 +261,8 @@ fun ImportExportScreen(
                     Row(
                             horizontalArrangement = Arrangement.SpaceEvenly,
                             modifier = Modifier
-		                            .fillMaxWidth()
-		                            .padding(vertical = 8.dp)
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp)
                     ) {
                         AdminButton(
                                 modifier = Modifier.weight(1f),

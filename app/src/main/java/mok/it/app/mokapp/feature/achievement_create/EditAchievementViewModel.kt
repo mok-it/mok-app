@@ -56,6 +56,7 @@ class EditAchievementViewModelFactory(private val achievement: Achievement) :
         ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(EditAchievementViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
             return EditAchievementViewModel(achievement) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

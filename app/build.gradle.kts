@@ -23,16 +23,16 @@ android {
         versionName = "5.1.0"
 
         testInstrumentationRunner =
-            "androidx.test.runner.AndroidJUnitRunner"
+                "androidx.test.runner.AndroidJUnitRunner"
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false //TODO: investigate why minify breaks the app in release build
+            isMinifyEnabled = false //TODO: investigate why minify breaks the app in release build -> if this is fixed, enable "shrinkResources" as well
             proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro" //contents were edited by trial and error to fix release build
-                //modify the file so that it minimizes app size while keeping the app functional
+                    getDefaultProguardFile("proguard-android-optimize.txt"),
+                    "proguard-rules.pro" //contents were edited by trial and error to fix release build
+                    //modify the file so that it minimizes app size while keeping the app functional
             )
         }
     }

@@ -26,6 +26,5 @@
 -keep class mok.it.app.mokapp.model.enums.Role {*;}
 -keep class mok.it.app.mokapp.model.Reward {*;}
 -keep class mok.it.app.mokapp.model.Link {*;}
--keep class mok.it.app.mokapp.model.RewardRequest {*;}
 -keep class mok.it.app.mokapp.model.Comment {*;}
 -keep class mok.it.app.mokapp.model.Achievement {*;}

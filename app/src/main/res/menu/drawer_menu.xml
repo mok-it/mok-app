@@ -9,10 +9,6 @@
             android:icon="@drawable/ic_person"
             android:title="@string/profile" />
         <item
-            android:id="@+id/myBadgesFragment"
-            android:icon="@drawable/paw_solid"
-            android:title="@string/my_badges" />
-        <item
             android:id="@+id/tasksFragment"
             android:icon="@drawable/ic_checklist"
             android:title="@string/tasks" />
@@ -25,7 +21,6 @@
             android:icon="@drawable/ic_star"
             android:title="@string/rewards" />
         <item
-            android:id="@+id/adminFragment"
             android:icon="@drawable/ic_admin"
             android:title="@string/admin"
             android:visible="false"

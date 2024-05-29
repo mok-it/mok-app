@@ -32,11 +32,6 @@ class AddOrRemoveMembersViewModel(val projectId: String) : ViewModel() {
 
     val project: LiveData<Project> = ProjectService.getProjectData(projectId).asLiveData()
     val users: LiveData<List<User>> = UserService.getUsers().asLiveData()
-    val selectedUsers: LiveData<List<User>> = users.map { users ->
-        users.filter { user ->
-            _uiState.value.selectedUserIds.contains(user.documentId)
-        }
-    }
 
     private val _searchQuery = mutableStateOf("")
     val searchQuery get() = _searchQuery
@@ -75,15 +70,14 @@ class AddOrRemoveMembersViewModel(val projectId: String) : ViewModel() {
         _uiState.value = _uiState.value.copy(selectedUsersChanged = selectedUsersChanged)
     }
 
-    val unselectedFilteredUsers
+    val filteredUsers
         get() =
-            selectedUsers.map { users ->
+            users.map { users ->
                 users
                         .filter { user ->
                             isUserMatched(
-                                    user, searchQuery.value, chipState.value
+                                    user, searchQuery.value
                             )
-                                    && !_uiState.value.selectedUserIds.contains(user.documentId)
                         }
                         .sortedWith(
                                 compareBy { it.name }
@@ -93,10 +87,9 @@ class AddOrRemoveMembersViewModel(val projectId: String) : ViewModel() {
     private fun isUserMatched(
             user: User,
             cleanSearchQuery: String,
-            chipState: ChipTextFieldState<Chip>,
     ): Boolean {
         val cleanSearchWords =
-                chipState.chips.map { it.text.trim().unaccent() } + cleanSearchQuery.trim().unaccent()
+                chipState.value.chips.map { it.text.trim().unaccent() } + cleanSearchQuery.trim().unaccent()
 
         // users are searchable by name or nickname
         return cleanSearchWords.all {
@@ -110,11 +103,11 @@ class AddOrRemoveMembersViewModel(val projectId: String) : ViewModel() {
     }
 }
 
-@Suppress("UNCHECKED_CAST")
 class AddOrRemoveMembersViewModelFactory(private val projectId: String) :
         ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AddOrRemoveMembersViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
             return AddOrRemoveMembersViewModel(projectId) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

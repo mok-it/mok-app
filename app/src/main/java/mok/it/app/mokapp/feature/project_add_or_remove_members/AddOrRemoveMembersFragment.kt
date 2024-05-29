@@ -63,8 +63,8 @@ class AddOrRemoveMembersFragment : DialogFragment() {
 
         val searchQuery by viewModel.searchQuery
         val chipState by viewModel.chipState
-        val selectedUsers by viewModel.selectedUsers.observeAsState(initial = emptyList())
-        val unselectedFilteredUsers by viewModel.unselectedFilteredUsers.observeAsState(initial = emptyList())
+        val users by viewModel.users.observeAsState(initial = emptyList())
+        val filteredUsers by viewModel.filteredUsers.observeAsState(initial = emptyList())
 
         var showDialog by rememberSaveable { mutableStateOf(DialogType.NONE) }
 
@@ -72,27 +72,21 @@ class AddOrRemoveMembersFragment : DialogFragment() {
                 bottomBar = {
                     Button(modifier = Modifier
                             .padding(8.dp)
-                            .fillMaxWidth(),
-                            enabled = uiState.selectedUsersChanged,
-                            onClick = {
-                                showDialog = DialogType.CONFIRM
-                            }) {
+                            .fillMaxWidth(), enabled = uiState.selectedUsersChanged, onClick = {
+                        showDialog = DialogType.CONFIRM
+                    }) {
                         Text(text = "Mentés")
                     }
                 },
         ) { padding ->
-            Column(
-                    modifier = Modifier.padding(bottom = padding.calculateBottomPadding())
-            ) {
+            Column(modifier = Modifier.padding(bottom = padding.calculateBottomPadding())) {
                 when (showDialog) {
                     DialogType.CONFIRM -> {
                         OkCancelDialog(
                                 text = "Biztos, hogy el szeretnéd menteni a módosításokat? Ha valakit törölsz a projektből, az elveszíti az eddigi összes rajta megszerzett mancsot.",
                                 onConfirm = {
                                     viewModel.updateMembersOfProject()
-                                    Toast.makeText(
-                                            context, "Résztvevők listája módosítva!", Toast.LENGTH_SHORT
-                                    ).show()
+                                    Toast.makeText(context, "Résztvevők listája módosítva!", Toast.LENGTH_SHORT).show()
                                     showDialog = DialogType.NONE
                                 },
                                 onDismiss = {
@@ -111,23 +105,23 @@ class AddOrRemoveMembersFragment : DialogFragment() {
                 )
 
                 LazyColumn {// selected users
-                    items(selectedUsers) { user ->
+                    items(users.filter { uiState.selectedUserIds.contains(it.documentId) }) { user ->
                         UserRow(
                                 user,
-                                true,
+                                uiState.selectedUserIds.contains(user.documentId),
                                 findNavController(),
                         ) { _ ->
                             viewModel.userSelectionClicked(user)
                         }
                     }
-                    if (unselectedFilteredUsers.isNotEmpty()) {
+                    if (filteredUsers.isNotEmpty()) {
                         item {
                             HorizontalDivider(modifier = Modifier.padding(8.dp))
                         }
-                        items(unselectedFilteredUsers) { user ->// all unselected users matching the search criteria
+                        items(filteredUsers.filter { !uiState.selectedUserIds.contains(it.documentId) }) { user ->// all unselected users matching the search criteria
                             UserRow(
                                     user,
-                                    false,
+                                    uiState.selectedUserIds.contains(user.documentId),
                                     findNavController(),
                             ) { _ ->
                                 viewModel.userSelectionClicked(user)
@@ -135,12 +129,7 @@ class AddOrRemoveMembersFragment : DialogFragment() {
                         }
                     } else {
                         item {
-                            Text(
-                                    text = "Nincsenek a feltételeknek megfelelő tagok",
-                                    modifier = Modifier.padding(16.dp),
-                                    style = MaterialTheme.typography.headlineSmall,
-                                    textAlign = androidx.compose.ui.text.style.TextAlign.Center
-                            )
+                            Text(text = "Nincsenek a feltételeknek megfelelő tagok", modifier = Modifier.padding(16.dp), style = MaterialTheme.typography.headlineSmall, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
                         }
                     }
                 }

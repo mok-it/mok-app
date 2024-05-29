@@ -52,7 +52,7 @@ class GrantAchievementViewModel(private val achievementId: String) : ViewModel()
             }
 
             is GrantAchievementEvent.Save -> {
-                val levels = _users.value.map { it.userId to it.ownedLevel }.toMap()
+                val levels = _users.value.associate { it.userId to it.ownedLevel }
                 AchievementService.grantAchievement(achievementId, levels)
             }
         }
@@ -71,6 +71,7 @@ class GrantAchievementViewModelFactory(private val achievementId: String) :
         ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(GrantAchievementViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
             return GrantAchievementViewModel(achievementId) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

@@ -82,10 +82,10 @@ class AdminPanelViewModel(val projectId: String) : ViewModel() {
 
 }
 
-@Suppress("UNCHECKED_CAST")
 class AdminPanelViewModelFactory(private val projectId: String) : ViewModelProvider.Factory {
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AdminPanelViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
             return AdminPanelViewModel(projectId) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

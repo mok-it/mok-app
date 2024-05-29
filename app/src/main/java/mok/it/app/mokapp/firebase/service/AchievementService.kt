@@ -47,8 +47,9 @@ object AchievementService {
         val userDocRef = Firebase.firestore.collection(Collections.USERS).document(user.documentId)
         userDocRef.get()
                 .addOnSuccessListener { document ->
+                    @Suppress("UNCHECKED_CAST")
                     val ownedAchievements =
-                            document.get("achievements") as? MutableMap<String, Int>
+                            document["achievements"] as? MutableMap<String, Int>
                                     ?: mutableMapOf()
                     ownedAchievements[achievementId] = level
                     userDocRef.update("achievements", ownedAchievements)
@@ -80,9 +81,9 @@ object AchievementService {
     }
 
     fun insertAchievement(achievement: AchievementEntity) {
-        val achievement = achievement.copy(id = "")
+        val newAchievment = achievement.copy(id = "")
         Firebase.firestore.collection(Collections.ACHIEVMENTS)
-                .add(achievement)
+                .add(newAchievment)
                 .addOnSuccessListener { documentReference ->
                     Log.d(TAG, "DocumentSnapshot written with ID: ${documentReference.id}")
                 }

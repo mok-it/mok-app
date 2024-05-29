@@ -94,6 +94,7 @@ object ProjectService {
         val batch = db.batch()
 
         try {
+            @Suppress("UNCHECKED_CAST")
             val originalMembers =
                     (db.collection(Collections.PROJECTS).document(projectId)
                             .get().await()["members"] as List<String>).toSet()

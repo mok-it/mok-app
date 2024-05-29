@@ -42,8 +42,10 @@ class AchievementDetailsViewModel(private val achievementId: String) : ViewModel
 
 class AchievementDetailsViewModelFactory(private val achievementId: String) :
         ViewModelProvider.Factory {
+
     override fun <T : ViewModel> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(AchievementDetailsViewModel::class.java)) {
+            @Suppress("UNCHECKED_CAST")
             return AchievementDetailsViewModel(achievementId) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")

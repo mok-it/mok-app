@@ -6,27 +6,47 @@ const axios = require("axios");
 admin.initializeApp();
 
 const db = admin.firestore();
+
+exports.sendNotification = functions.https.onCall(async (data, context) => {
+  const message = data.message;
+  const fcmToken = data.fcmToken;
+
+  const payload = {
+    notification: {
+      title: message.title,
+      body: message.body,
+      icon: message.icon,
+      click_action: message.click_action,
+    },
+  };
+
+  await admin.messaging().sendToDevice(fcmToken, payload);
+});
+
 // User létrehozásánál a userc collectionban létrehozzuk a neki megfelelő documentet a szükséges attribútumokkal
 // Ez csak akkor fut le, ha a user emailjet validalni tudjuk, hogy egy mokoshoz tartozik
 exports.createUser = functions.auth.user().onCreate((user) => {
   // Check if the user's email matches your desired criteria.
   GetMokMember(user.email).then((result) => {
-    if (result && /MOK/.test(result.mok_status)) {
+    //mokapp71 is a test account required for Google Play
+    if (
+      user.email == "mokapp71@gmail.com" ||
+      (result && /MOK/.test(result.mok_status))
+    ) {
       // Email is valid, create the user.
-      log("user created", user.email, user.uid);
       db.collection("users")
         .doc(user.uid)
         .set({
           email: user.email,
           name: user.displayName,
-          isCreator: false,
-          admin: false,
           photoURL: user.photoURL,
-          joinedBadges: [],
-          collectedBadges: [],
-          categories: ["Univerzális"],
           phoneNumber: result.phone ? result.phone : "",
+          allBadges: 0,
+          remainingBadges: 0,
+          role: "BASIC_USER",
+          projectBadges: {},
         });
+      log("user created", user.email, user.uid);
     } else {
       // Email is not valid, delete the user.
       return admin.auth().deleteUser(user.uid);
@@ -55,7 +75,7 @@ async function GetMokMember(email) {
   }
 }
 
-exports.updatePointsOnBadgeCollectionChange = functions.firestore
+exports.updateOnBadgeCollectionChange = functions.firestore
   .document("users/{userId}")
   .onUpdate(async (change, context) => {
     const userId = context.params.userId;
@@ -64,28 +84,24 @@ exports.updatePointsOnBadgeCollectionChange = functions.firestore
     const oldUser = change.before.data();
     const newUser = change.after.data();
 
-    // Only update points if the collectedBadges field has changed
-    if (oldUser.collectedBadges === newUser.collectedBadges) {
+    // Only update fields if the user got/lost some badges or requested a reward
+    if (
+      oldUser.projectBadges === newUser.projectBadges &&
+      oldUser.requestedRewards === newUser.requestedRewards
+    ) {
       return null;
     }
 
-    // Calculate the sum of all badge values
-    const badgeIds = newUser.collectedBadges;
-    let points = 0;
-    for (const badgeId of badgeIds) {
-      const projectDoc = await admin
-        .firestore()
-        .collection("projects")
-        .doc(badgeId)
-        .get();
-      const projectValue = projectDoc.data().value;
-      points += projectValue;
-    }
-    //log points
-    functions.logger.log("points: " + points + " points");
+    const allBadges = Object.values(newUser.projectBadges).reduce(
+      (acc, val) => acc + val,
+      0
+    );
 
-    // Subtract the sum of requested rewards from the user's points
+    functions.logger.log("all badges: " + allBadges);
 
+    // Subtract the sum of requested rewards from the user's badges
+
+    let remainingBadges = allBadges;
     const rewardIds = newUser.requestedRewards;
     if (rewardIds != undefined) {
       for (const rewardId of rewardIds) {
@@ -94,14 +110,18 @@ exports.updatePointsOnBadgeCollectionChange = functions.firestore
           .collection("rewards")
           .doc(rewardId)
           .get();
-        const rewardValue = rewardDoc.data().price;
-        points -= rewardValue;
+
+        remainingBadges -= rewardDoc.data().price;
       }
       functions.logger.log(
-        "price of all requested stuff: " + points + " points"
+        "price of all requested stuff: " + remainingBadges + " badges"
       );
     }
 
-    // Update the user's points field
-    await admin.firestore().collection("users").doc(userId).update({ points });
+    // Update the user's fields
+    await admin
+      .firestore()
+      .collection("users")
+      .doc(userId)
+      .update({ remainingBadges: remainingBadges, allBadges: allBadges });
   });

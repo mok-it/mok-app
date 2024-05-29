@@ -5,6 +5,8 @@ import android.util.Log
 import com.google.firebase.firestore.DocumentId
 import com.google.firebase.firestore.PropertyName
 import kotlinx.parcelize.Parcelize
+import mok.it.app.mokapp.model.enums.Category
+import mok.it.app.mokapp.utility.Utility.TAG
 import mok.it.app.mokapp.utility.Utility.unaccent
 import java.util.Date
 
@@ -19,24 +21,23 @@ import java.util.Date
 @Parcelize
 data class Project(
 
-    @DocumentId
-    val id: String = "",
-    @Deprecated("Use categoryEnum instead")
-    val category: String = "", // can't mark it private, but don't use it
-    val created: Date = Date(),
-    val creator: String = "",
-    val deadline: Date = Date(),
-    val description: String = "",
-    val leaders: List<String> = ArrayList(),
-    val icon: String = "",
-    val members: List<String> = ArrayList(),
-    override val name: String = "",
-    @get:PropertyName("overall_progress")
-    val overallProgress: Int = 0,
-    val mandatory: Boolean = false,
-    val tasks: List<String> = ArrayList(),
-    val comments: List<String> = ArrayList(),
-    val maxBadges: Int = 1,
+        @DocumentId
+        val id: String = "",
+
+        @Deprecated("Use categoryEnum instead")
+        val category: String = "", // can't mark it private, but don't use it
+        val created: Date = Date(),
+        val creator: String = "",
+        val deadline: Date = Date(),
+        val description: String = "",
+        val icon: String = "",
+        val members: List<String> = ArrayList(),
+        val name: String = "",
+        @get:PropertyName("overall_progress")
+        val overallProgress: Int = 0,
+        val comments: List<String> = ArrayList(),
+        val maxBadges: Int = 1,
+        val projectLeader: String = "",
 ) : Parcelable, Searchable {
 
     val categoryEnum: Category
@@ -44,7 +45,7 @@ data class Project(
             return try {
                 Category.valueOf(category.replace(" ", "").uppercase().unaccent())
             } catch (e: Exception) {
-                Log.e("Project", "Category not found: $category")
+                Log.e(TAG, "Category not found: $category")
                 Category.UNIVERZALIS
             }
         }

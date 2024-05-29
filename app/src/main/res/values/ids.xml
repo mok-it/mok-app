@@ -1,12 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <item name="description_textview" type="id" />
-    <item name="email_button" type="id" />
-    <item name="creator_textview" type="id" />
-    <item name="deadline_textview" type="id" />
-    <item name="progressBar" type="id" />
-    <item name="disc_name_textview" type="id" />
-    <item name="avatar_imagebutton" type="id" />
-    <item name="filter" type="id" />
     <item name="share" type="id" />
+    <item name="delete" type="id" />
+    <item name="menu" type="id" />
 </resources>

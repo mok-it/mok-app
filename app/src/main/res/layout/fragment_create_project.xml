@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         app:layout_constrainedHeight="true"
         app:layout_constraintHeight_max="0dp"
-        tools:context=".fragments.CreateProjectFragment">
+        tools:context=".feature.project_create.CreateProjectFragment">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/linearLayout2"
@@ -35,7 +35,7 @@
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="@+id/textViewTitle"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/red_dark" />
+                app:tint="@color/md_theme_error" />
 
             <TextView
                 android:id="@+id/textViewTitle"
@@ -126,33 +126,31 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="@string/badge_value"
-                    />
+                    android:text="@string/badge_value" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal"
-                    android:gravity="center_horizontal"
+                    android:layout_height="60dp"
                     android:layout_gravity="center_vertical"
-                    >
+                    android:gravity="center_horizontal"
+                    android:orientation="horizontal">
 
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnDecreaseValue"
-                        android:layout_marginEnd="16dp"
+                        style="@style/Widget.MaterialComponents.Button.Icon"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        style="@style/Widget.MaterialComponents.Button.Icon"
-                        app:icon="@drawable/ic_remove"
-                        app:iconSize="30dp"
-                        app:iconGravity="textStart"
-                        android:padding="0dp"
-                        app:iconPadding="0dp"
+                        android:layout_marginEnd="16dp"
                         android:insetLeft="0dp"
                         android:insetTop="0dp"
                         android:insetRight="0dp"
                         android:insetBottom="0dp"
+                        android:padding="0dp"
+                        app:icon="@drawable/ic_remove"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:iconSize="30dp"
                         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
 
                     <TextView
@@ -165,19 +163,19 @@
 
                     <com.google.android.material.button.MaterialButton
                         android:id="@+id/btnIncreaseValue"
-                        android:layout_marginStart="16dp"
+                        style="@style/Widget.MaterialComponents.Button.Icon"
                         android:layout_width="40dp"
                         android:layout_height="40dp"
-                        style="@style/Widget.MaterialComponents.Button.Icon"
-                        app:icon="@drawable/ic_add"
-                        app:iconSize="30dp"
-                        app:iconGravity="textStart"
-                        android:padding="0dp"
-                        app:iconPadding="0dp"
+                        android:layout_marginStart="16dp"
                         android:insetLeft="0dp"
                         android:insetTop="0dp"
                         android:insetRight="0dp"
                         android:insetBottom="0dp"
+                        android:padding="0dp"
+                        app:icon="@drawable/ic_add"
+                        app:iconGravity="textStart"
+                        app:iconPadding="0dp"
+                        app:iconSize="30dp"
                         app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.App.CornerSize50Percent" />
                 </LinearLayout>
 
@@ -185,20 +183,17 @@
                     android:id="@+id/icon_select_card"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:background="@color/darker_gray"
                     app:cardCornerRadius="@dimen/design_corner_radius">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@color/lighter_gray">
+                        android:visibility="gone">
 
                         <TextView
-                            android:id="@+id/textView4"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="@string/choose_icon"
-                            android:textColor="@color/blue_dark"
                             app:layout_constraintBottom_toBottomOf="@+id/imageView"
                             app:layout_constraintEnd_toStartOf="@+id/imageView"
                             app:layout_constraintStart_toStartOf="parent"
@@ -221,6 +216,11 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
                 </androidx.cardview.widget.CardView>
 
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/deadline" />
+
                 <DatePicker
                     android:id="@+id/datePicker"
                     android:layout_width="match_parent"
@@ -229,7 +229,7 @@
                     android:datePickerMode="spinner" />
 
                 <androidx.cardview.widget.CardView
-                    android:id="@+id/editorSelect"
+                    android:id="@+id/projectLeaderSelect"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@android:color/darker_gray"
@@ -237,8 +237,7 @@
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:background="@color/lighter_gray">
+                        android:layout_height="wrap_content">
 
                         <TextView
                             android:id="@+id/textView5"
@@ -248,8 +247,7 @@
                             android:layout_marginTop="8dp"
                             android:layout_marginEnd="8dp"
                             android:layout_marginBottom="8dp"
-                            android:text="@string/choose_manager"
-                            android:textColor="@color/blue_dark"
+                            android:text="@string/choose_project_leader"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
@@ -267,7 +265,6 @@
                         android:id="@+id/create_button"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:backgroundTint="@color/blue_dark"
                         android:text="@string/create"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"

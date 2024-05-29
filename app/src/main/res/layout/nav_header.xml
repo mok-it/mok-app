@@ -2,11 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="196dp"
-    android:background="@color/blue"
     android:gravity="bottom"
     android:orientation="vertical"
-    android:padding="16dp"
-    android:theme="@style/ThemeOverlay.AppCompat.Dark">
+    android:padding="16dp">
 
     <ImageView
         android:id="@+id/image"
@@ -15,7 +13,6 @@
         android:layout_marginTop="8dp"
         android:contentDescription="@string/profile_pic"
         android:src="@mipmap/ic_launcher_round" />
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -32,24 +29,28 @@
                 android:layout_height="wrap_content"
                 android:paddingTop="8dp"
                 android:text="@tools:sample/full_names"
+                android:textColor="?attr/colorOnBackground"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
             <TextView
                 android:id="@+id/emailText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/placeholder_email_address" />
+                android:text="@string/placeholder_email_address"
+                android:textColor="?attr/colorOnBackground" />
 
         </LinearLayout>
+
+        <Space
+            android:layout_width="10dp"
+            android:layout_height="0dp" />
 
         <ImageButton
             android:id="@+id/refreshButton"
             android:layout_width="50dp"
             android:layout_height="match_parent"
-            android:background="@color/blue"
             android:contentDescription="@string/refresh"
             android:src="@drawable/ic_refresh" />
     </LinearLayout>
-
 
 </LinearLayout>

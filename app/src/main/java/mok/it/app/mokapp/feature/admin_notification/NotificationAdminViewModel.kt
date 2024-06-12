@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.feature.login.viewmodels
+package mok.it.app.mokapp.feature.admin_notification
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import mok.it.app.mokapp.feature.login.NotificationAdminFragment.RadioOption
+import mok.it.app.mokapp.feature.admin_notification.NotificationAdminFragment.RadioOption
 import mok.it.app.mokapp.firebase.service.CloudMessagingService
 import mok.it.app.mokapp.firebase.service.ProjectService
 import mok.it.app.mokapp.firebase.service.UserService

@@ -1,6 +1,6 @@
-package mok.it.app.mokapp.feature.login.viewmodels
+package mok.it.app.mokapp.feature.admin_notification
 
-import mok.it.app.mokapp.feature.login.NotificationAdminFragment.RadioOption
+import mok.it.app.mokapp.feature.admin_notification.NotificationAdminFragment.RadioOption
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
 

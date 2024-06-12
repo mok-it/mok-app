@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.feature.login
+package mok.it.app.mokapp.feature.admin_notification
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -43,7 +43,6 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.feature.login.viewmodels.NotificationAdminViewModel
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.Searchable
 import mok.it.app.mokapp.model.User

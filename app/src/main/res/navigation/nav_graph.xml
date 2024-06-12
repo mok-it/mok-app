@@ -156,7 +156,7 @@
     </fragment>
     <fragment
         android:id="@+id/notificationAdminFragment"
-        android:name="mok.it.app.mokapp.feature.login.NotificationAdminFragment"
+        android:name="mok.it.app.mokapp.feature.admin_notification.NotificationAdminFragment"
         android:label="Értesítésküldés" />
     <fragment
         android:id="@+id/achievementsFragment"

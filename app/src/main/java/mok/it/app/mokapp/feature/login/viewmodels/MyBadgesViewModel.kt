@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.fragments.viewmodels
+package mok.it.app.mokapp.feature.login.viewmodels
 
 import androidx.lifecycle.ViewModel
 

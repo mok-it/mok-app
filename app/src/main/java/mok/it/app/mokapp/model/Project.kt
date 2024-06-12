@@ -32,7 +32,7 @@ data class Project(
         val description: String = "",
         val icon: String = "",
         val members: List<String> = ArrayList(),
-        val name: String = "",
+        override val name: String = "",
         @get:PropertyName("overall_progress")
         val overallProgress: Int = 0,
         val comments: List<String> = ArrayList(),

@@ -11,7 +11,7 @@ class CategoryTest {
     @Test
     fun testUniversalis() {
         val upperCaseWithoutSpace =
-            Category.UNIVERZALIS.toString().uppercase(Locale.getDefault()).replace(" ", "")
+                Category.UNIVERZALIS.toString().uppercase(Locale.getDefault()).replace(" ", "")
         val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("UNIVERZALIS", result)
     }
@@ -19,7 +19,7 @@ class CategoryTest {
     @Test
     fun testSzervezetFejlesztes() {
         val upperCaseWithoutSpace =
-            Category.SZERVEZETFEJLESZTES.toString().uppercase(Locale.getDefault()).replace(" ", "")
+                Category.SZERVEZETFEJLESZTES.toString().uppercase(Locale.getDefault()).replace(" ", "")
         val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("SZERVEZETFEJLESZTES", result)
     }
@@ -27,7 +27,7 @@ class CategoryTest {
     @Test
     fun testFeladatsor() {
         val upperCaseWithoutSpace =
-            Category.FELADATSOR.toString().uppercase(Locale.getDefault()).replace(" ", "")
+                Category.FELADATSOR.toString().uppercase(Locale.getDefault()).replace(" ", "")
         val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("FELADATSOR", result)
     }
@@ -35,7 +35,7 @@ class CategoryTest {
     @Test
     fun testMediaEsDIV() {
         val upperCaseWithoutSpace =
-            Category.MEDIAESDIY.toString().uppercase(Locale.getDefault()).replace(" ", "")
+                Category.MEDIAESDIY.toString().uppercase(Locale.getDefault()).replace(" ", "")
         val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("MEDIAESDIY", result)
     }
@@ -43,7 +43,7 @@ class CategoryTest {
     @Test
     fun testIT() {
         val upperCaseWithoutSpace =
-            Category.IT.toString().uppercase(Locale.getDefault()).replace(" ", "")
+                Category.IT.toString().uppercase(Locale.getDefault()).replace(" ", "")
         val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("IT", result)
     }
@@ -51,7 +51,7 @@ class CategoryTest {
     @Test
     fun testPedagogia() {
         val upperCaseWithoutSpace =
-            Category.PEDAGOGIA.toString().uppercase(Locale.getDefault()).replace(" ", "")
+                Category.PEDAGOGIA.toString().uppercase(Locale.getDefault()).replace(" ", "")
         val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("PEDAGOGIA", result)
     }
@@ -59,8 +59,8 @@ class CategoryTest {
     @Test
     fun testNyariTaborElokeszites() {
         val upperCaseWithoutSpace =
-            Category.NYARITABORIELOKESZITES.toString().uppercase(Locale.getDefault())
-                .replace(" ", "")
+                Category.NYARITABORIELOKESZITES.toString().uppercase(Locale.getDefault())
+                        .replace(" ", "")
         val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("NYARITABORIELOKESZITES", result)
     }
@@ -68,8 +68,8 @@ class CategoryTest {
     @Test
     fun testEvkoziTaborElokeszites() {
         val upperCaseWithoutSpace =
-            Category.EVKOZITABORIELOKESZITES.toString().uppercase(Locale.getDefault())
-                .replace(" ", "")
+                Category.EVKOZITABORIELOKESZITES.toString().uppercase(Locale.getDefault())
+                        .replace(" ", "")
         val result = upperCaseWithoutSpace.unaccent()
         Assert.assertEquals("EVKOZITABORIELOKESZITES", result)
     }

@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.fragments
+package mok.it.app.mokapp.feature.login
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -41,9 +41,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.fragment.app.viewModels
 import mok.it.app.mokapp.R
-import mok.it.app.mokapp.fragments.viewmodels.NotificationAdminViewModel
+import mok.it.app.mokapp.feature.login.viewmodels.NotificationAdminViewModel
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.Searchable
 import mok.it.app.mokapp.model.User
@@ -66,17 +66,18 @@ class NotificationAdminFragment : Fragment() {
     }
 
     override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?,
+            inflater: LayoutInflater, container: ViewGroup?,
+            savedInstanceState: Bundle?,
     ): View =
-        ComposeView(requireContext()).apply {
-            setContent {
-                BasicForm()
+            ComposeView(requireContext()).apply {
+                setContent {
+                    val viewModel: NotificationAdminViewModel by viewModels()
+                    BasicForm(viewModel = viewModel)
+                }
             }
-        }
 
     @Composable
-    fun BasicForm(viewModel: NotificationAdminViewModel = viewModel()) {
+    fun BasicForm(viewModel: NotificationAdminViewModel) {
         val uiState by viewModel.uiState.collectAsState()
 
         val projects by viewModel.projects.observeAsState(initial = emptyList())
@@ -88,65 +89,65 @@ class NotificationAdminFragment : Fragment() {
 
         if (uiState.showDialog) {
             AlertDialog(
-                onDismissRequest = { viewModel.setDialogState(false) },
-                confirmButton = {
-                    Button(onClick = {
-                        viewModel.sendNotification()
-                        viewModel.setDialogState(false)
-                    }) {
-                        Text(stringResource(R.string.ok))
-                    }
-                },
-                dismissButton = {
-                    OutlinedButton(onClick = { viewModel.setDialogState(false) }) {
-                        Text(stringResource(R.string.cancel))
-                    }
-                },
-                text = {
-                    Text(
-                        stringResource(
-                            R.string.notification_confirmation,
-                            usersToSendNotificationTo?.size ?: 0
+                    onDismissRequest = { viewModel.setDialogState(false) },
+                    confirmButton = {
+                        Button(onClick = {
+                            viewModel.sendNotification()
+                            viewModel.setDialogState(false)
+                        }) {
+                            Text(stringResource(R.string.ok))
+                        }
+                    },
+                    dismissButton = {
+                        OutlinedButton(onClick = { viewModel.setDialogState(false) }) {
+                            Text(stringResource(R.string.cancel))
+                        }
+                    },
+                    text = {
+                        Text(
+                                stringResource(
+                                        R.string.notification_confirmation,
+                                        usersToSendNotificationTo?.size ?: 0
+                                )
                         )
-                    )
-                })
+                    })
         }
         Column(modifier = Modifier.padding(16.dp)) {
             OutlinedTextField(
-                value = uiState.notificationTitle,
-                onValueChange = { viewModel.setNotificationTitle(it) },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text("Cím") },
+                    value = uiState.notificationTitle,
+                    onValueChange = { viewModel.setNotificationTitle(it) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Cím") },
             )
             Spacer(modifier = Modifier.height(16.dp))
             OutlinedTextField(
-                value = uiState.notificationText,
-                onValueChange = { viewModel.setNotificationText(it) },
-                singleLine = true,
-                modifier = Modifier.fillMaxWidth(),
-                label = { Text("Szöveg") }
+                    value = uiState.notificationText,
+                    onValueChange = { viewModel.setNotificationText(it) },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth(),
+                    label = { Text("Szöveg") }
             )
             Column(
-                Modifier
-                    .selectableGroup()
-                    .fillMaxSize()
+                    Modifier
+                            .selectableGroup()
+                            .fillMaxSize()
             ) {
                 RadioOption.entries.forEach { radioOption ->
                     RadioButtonRow(
-                        selectedOption = uiState.selectedOption,
-                        radioOption = radioOption,
-                        onOptionSelected = viewModel::onRadioOptionSelected
+                            selectedOption = uiState.selectedOption,
+                            radioOption = radioOption,
+                            onOptionSelected = viewModel::onRadioOptionSelected
                     )
                 }
                 // if the selected option deals with users
                 if (uiState.selectedOption == RadioOption.EVERYONE_EXCEPT
-                    || uiState.selectedOption == RadioOption.SPECIFIC_PEOPLE
+                        || uiState.selectedOption == RadioOption.SPECIFIC_PEOPLE
                 ) {
                     if (users.isNotEmpty()) {
                         MultiSelectList(
-                            users as List<Searchable>,
-                            uiState.selectedUsers.toMutableSet()
+                                users as List<Searchable>,
+                                uiState.selectedUsers.toMutableSet()
                         ) { item ->
                             viewModel.selectedUserClicked(item as User)
                         }
@@ -156,8 +157,8 @@ class NotificationAdminFragment : Fragment() {
                 } else if (uiState.selectedOption == RadioOption.PROJECT_MEMBERS) {
                     if (projects.isNotEmpty()) {
                         MultiSelectList(
-                            projects as List<Searchable>,
-                            uiState.selectedProjects.toMutableSet()
+                                projects as List<Searchable>,
+                                uiState.selectedProjects.toMutableSet()
                         ) { item ->
                             viewModel.selectedProjectClicked(item as Project)
                         }
@@ -167,19 +168,19 @@ class NotificationAdminFragment : Fragment() {
                 }
                 Spacer(modifier = Modifier.weight(1f))
                 Button(
-                    onClick = {
-                        //TODO check the validness of the form fields, i.e. title and text are not empty
+                        onClick = {
+                            //TODO check the validness of the form fields, i.e. title and text are not empty
 
-                        viewModel.setDialogState(true)
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .align(Alignment.End)
+                            viewModel.setDialogState(true)
+                        },
+                        modifier = Modifier
+                                .fillMaxWidth()
+                                .align(Alignment.End)
                 ) {
                     Text(
-                        "Küldés ennyi embernek: ${
-                            usersToSendNotificationTo?.size ?: 0
-                        }"
+                            "Küldés ennyi embernek: ${
+                                usersToSendNotificationTo?.size ?: 0
+                            }"
                     )
                 }
             }
@@ -188,9 +189,9 @@ class NotificationAdminFragment : Fragment() {
 
     @Composable
     fun <T : Searchable> MultiSelectList(
-        items: List<T>,
-        selectedItems: MutableSet<T>,
-        onItemSelected: (T) -> Unit,
+            items: List<T>,
+            selectedItems: MutableSet<T>,
+            onItemSelected: (T) -> Unit,
     ) {
         var searchQuery by remember { mutableStateOf("") }
 
@@ -200,29 +201,29 @@ class NotificationAdminFragment : Fragment() {
 
         Column {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(vertical = 8.dp)
-                    .height(56.dp)
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp)
+                            .height(56.dp)
             ) {
                 OutlinedTextField(
-                    value = searchQuery,
-                    onValueChange = { searchQuery = it },
-                    label = { Text("Keresés") },
-                    modifier = Modifier
-                        .weight(1f),
-                    leadingIcon = {
-                        Icon(
-                            imageVector = Icons.Filled.Search,
-                            contentDescription = "Search Icon"
-                        )
-                    },
+                        value = searchQuery,
+                        onValueChange = { searchQuery = it },
+                        label = { Text("Keresés") },
+                        modifier = Modifier
+                                .weight(1f),
+                        leadingIcon = {
+                            Icon(
+                                    imageVector = Icons.Filled.Search,
+                                    contentDescription = "Search Icon"
+                            )
+                        },
                 )
             }
             LazyColumn(
-                modifier = Modifier
-                    .height(200.dp)
+                    modifier = Modifier
+                            .height(200.dp)
             ) {
                 items(filteredUsers) { item ->
                     RadioButtonRow(onItemSelected, item, selectedItems)
@@ -233,62 +234,62 @@ class NotificationAdminFragment : Fragment() {
 
     @Composable
     private fun <T : Searchable> RadioButtonRow(
-        onItemSelected: (T) -> Unit,
-        item: T,
-        selectedItems: MutableSet<T>,
+            onItemSelected: (T) -> Unit,
+            item: T,
+            selectedItems: MutableSet<T>,
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .clickable
-                {
-                    onItemSelected(item)
-                    if (selectedItems.contains(item)) {
-                        selectedItems.remove(item)
-                    } else {
-                        selectedItems.add(item)
-                    }
-                }
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically
+                modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .clickable
+                        {
+                            onItemSelected(item)
+                            if (selectedItems.contains(item)) {
+                                selectedItems.remove(item)
+                            } else {
+                                selectedItems.add(item)
+                            }
+                        }
+                        .padding(horizontal = 16.dp),
+                verticalAlignment = Alignment.CenterVertically
         ) {
             Checkbox(
-                checked = selectedItems.contains(item),
-                onCheckedChange = null // Accessibility: 'selectable' handles state
+                    checked = selectedItems.contains(item),
+                    onCheckedChange = null // Accessibility: 'selectable' handles state
             )
             Text(
-                text = item.name,
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(start = 16.dp)
+                    text = item.name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(start = 16.dp)
             )
         }
     }
 
     @Composable
     fun RadioButtonRow(
-        selectedOption: RadioOption,
-        radioOption: RadioOption,
-        onOptionSelected: (RadioOption) -> Unit,
+            selectedOption: RadioOption,
+            radioOption: RadioOption,
+            onOptionSelected: (RadioOption) -> Unit,
     ) {
         Row(
-            Modifier
-                .fillMaxWidth()
-                .height(48.dp)
-                .selectable(
-                    selected = selectedOption == radioOption,
-                    onClick = { onOptionSelected(radioOption) },
-                    role = Role.RadioButton
-                ), verticalAlignment = Alignment.CenterVertically
+                Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .selectable(
+                                selected = selectedOption == radioOption,
+                                onClick = { onOptionSelected(radioOption) },
+                                role = Role.RadioButton
+                        ), verticalAlignment = Alignment.CenterVertically
         ) {
             RadioButton(
-                selected = selectedOption == radioOption,
-                onClick = null // null recommended for accessibility with screenreaders
+                    selected = selectedOption == radioOption,
+                    onClick = null // null recommended for accessibility with screenreaders
             )
             Text(
-                text = radioOption.toString(),
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(start = 16.dp)
+                    text = radioOption.toString(),
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(start = 16.dp)
             )
         }
     }

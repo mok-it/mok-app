@@ -90,7 +90,7 @@
         android:label="@string/rewards" />
     <fragment
         android:id="@+id/phoneBookFragment"
-        android:name="mok.it.app.mokapp.fragments.PhoneBookFragment"
+        android:name="mok.it.app.mokapp.feature.phonebook.PhoneBookFragment"
         android:label="Telefonkönyv" />
     <fragment
         android:id="@+id/linksFragment"
@@ -156,7 +156,7 @@
     </fragment>
     <fragment
         android:id="@+id/notificationAdminFragment"
-        android:name="mok.it.app.mokapp.fragments.NotificationAdminFragment"
+        android:name="mok.it.app.mokapp.feature.login.NotificationAdminFragment"
         android:label="Értesítésküldés" />
     <fragment
         android:id="@+id/achievementsFragment"

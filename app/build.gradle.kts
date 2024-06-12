@@ -55,11 +55,11 @@ android {
 }
 val material3Verion = "1.2.1"
 val androidxCoreVersion = "1.13.1"
-val androidxAppcompatVersion = "1.6.1"
+val androidxAppcompatVersion = "1.7.0"
 val androidxConstraintlayoutVersion = "2.1.4"
 val androidxNavigationVersion = "2.7.7"
 val androidxLegacySupportVersion = "1.0.0"
-val androidxLifecycleVersion = "2.8.0"
+val androidxLifecycleVersion = "2.8.1"
 val androidxComposeRuntimeVersion = "1.6.7"
 val androidxCardviewVersion = "1.0.0"
 val androidxRecyclerviewVersion = "1.3.2"
@@ -69,7 +69,7 @@ val kotlinxCoroutinesVersion = "1.8.1"
 val glideVersion = "4.16.0"
 val composeVersion = "1.6.7"
 val coilComposeVersion = "2.6.0"
-val firebaseBomVersion = "33.0.0"
+val firebaseBomVersion = "33.1.0"
 val firebaseUiVersion = "8.0.2"
 val picassoVersion = "2.71828"
 val circleimageviewVersion = "3.1.0"
@@ -82,6 +82,9 @@ val androidxFragmentVersion = "1.7.1"
 val chiptextfieldVersion = "0.7.0-alpha03"
 val playUpdateVersion = "2.1.0"
 val csvVersion = "1.11.0"
+val jUnitVersion = "1.1.5"
+val basicJUnitVersion = "4.13.2"
+val espressoVersion = "3.5.1"
 
 dependencies {
     // Androidx
@@ -106,10 +109,6 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:$kotlinxCoroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:$kotlinxCoroutinesVersion")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-play-services:$kotlinxCoroutinesVersion")
-
-    // Testing
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     //Glide
     implementation("com.github.bumptech.glide:glide:$glideVersion")
@@ -177,5 +176,10 @@ dependencies {
 
     //Parse csv
     implementation("org.apache.commons:commons-csv:$csvVersion")
+
+    // Testing
+    testImplementation("androidx.test.ext:junit:$jUnitVersion")
+    testImplementation("junit:junit:$basicJUnitVersion")
+    androidTestImplementation("androidx.test.espresso:espresso-core:$espressoVersion")
 }
 apply(plugin = "com.google.gms.google-services")

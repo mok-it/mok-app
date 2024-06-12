@@ -6,6 +6,7 @@ import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.firestore
 import com.google.firebase.firestore.snapshots
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.tasks.await
@@ -15,14 +16,19 @@ import mok.it.app.mokapp.utility.Utility.TAG
 
 object ProjectService {
 
-    fun getProjectsByIds(projectIds: List<String>): Flow<List<Project>> =
-            Firebase.firestore.collection(Collections.PROJECTS)
-                    .whereIn(FieldPath.documentId(), projectIds)
-                    .snapshots()
-                    .map { s ->
-                        s.toObjects(Project::class.java)
-                    }
-                    .filterNotNull()
+    fun getProjectsByIds(projectIds: List<String>): Flow<List<Project>> {
+        if (projectIds.isEmpty()) {
+            Log.d(TAG, "No project IDs provided")
+            return emptyFlow()
+        }
+        return Firebase.firestore.collection(Collections.PROJECTS)
+                .whereIn(FieldPath.documentId(), projectIds)
+                .snapshots()
+                .map { s ->
+                    s.toObjects(Project::class.java)
+                }
+                .filterNotNull()
+    }
 
     fun getProjectData(projectId: String): Flow<Project> =
             Firebase.firestore.collection(Collections.PROJECTS).document(projectId)

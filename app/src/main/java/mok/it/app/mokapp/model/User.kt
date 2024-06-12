@@ -17,7 +17,7 @@ data class User(
         @DocumentId val documentId: String = "",
 
         val email: String = "",
-        val name: String = "",
+        override val name: String = "",
         val photoURL: String = "",
         val phoneNumber: String = "",
         val requestedRewards: List<String> = ArrayList(),

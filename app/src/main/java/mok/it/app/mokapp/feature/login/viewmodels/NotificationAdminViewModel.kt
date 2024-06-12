@@ -1,4 +1,4 @@
-package mok.it.app.mokapp.fragments.viewmodels
+package mok.it.app.mokapp.feature.login.viewmodels
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.ViewModel
@@ -13,20 +13,20 @@ import kotlinx.coroutines.flow.emitAll
 import kotlinx.coroutines.flow.flatMapConcat
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.flowOf
-import mok.it.app.mokapp.firebase.MyFirebaseMessagingService
-import mok.it.app.mokapp.fragments.NotificationAdminFragment.RadioOption
+import mok.it.app.mokapp.feature.login.NotificationAdminFragment.RadioOption
+import mok.it.app.mokapp.firebase.service.CloudMessagingService
+import mok.it.app.mokapp.firebase.service.ProjectService
+import mok.it.app.mokapp.firebase.service.UserService
 import mok.it.app.mokapp.model.Project
 import mok.it.app.mokapp.model.User
-import mok.it.app.mokapp.service.ProjectService
-import mok.it.app.mokapp.service.UserService
 
 class NotificationAdminViewModel : ViewModel() {
 
     private val _uiState = MutableStateFlow(NotificationAdminUiState())
     val uiState: StateFlow<NotificationAdminUiState> = _uiState.asStateFlow()
 
-    val projects: LiveData<List<Project>> = ProjectService.getAllProjects()
-    val users: LiveData<List<User>> = UserService.getAllUsers()
+    val projects: LiveData<List<Project>> = ProjectService.getAllProjects().asLiveData()
+    val users: LiveData<List<User>> = UserService.getUsers().asLiveData()
 
     fun setDialogState(showDialog: Boolean) {
         _uiState.value = _uiState.value.copy(showDialog = showDialog)
@@ -34,47 +34,47 @@ class NotificationAdminViewModel : ViewModel() {
 
     fun sendNotification() {
         TODO("do not send while developing")
-        MyFirebaseMessagingService.sendNotificationToUsers(
-            uiState.value.notificationTitle, uiState.value.notificationText,
-            getUsersToSendNotificationTo.value?.toList() ?: emptyList()
+        CloudMessagingService.sendNotificationToUsers(
+                uiState.value.notificationTitle, uiState.value.notificationText,
+                getUsersToSendNotificationTo.value?.toList() ?: emptyList()
         )
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val getUsersToSendNotificationTo: LiveData<List<User>> =
-        when (uiState.value.selectedOption) {
-            RadioOption.EVERYONE -> {
-                users
-            }
+            when (uiState.value.selectedOption) {
+                RadioOption.EVERYONE -> {
+                    users
+                }
 
-            RadioOption.EVERYONE_EXCEPT -> {
-                users.asFlow()
-                    .flatMapConcat { allUsers ->
-                        flow {
-                            emit(allUsers.filter { user ->
-                                !uiState.value.selectedUsers.contains(user)
-                            })
-                        }
-                    }.asLiveData()
-            }
+                RadioOption.EVERYONE_EXCEPT -> {
+                    users.asFlow()
+                            .flatMapConcat { allUsers ->
+                                flow {
+                                    emit(allUsers.filter { user ->
+                                        !uiState.value.selectedUsers.contains(user)
+                                    })
+                                }
+                            }.asLiveData()
+                }
 
-            RadioOption.SPECIFIC_PEOPLE -> {
-                flowOf(uiState.value.selectedUsers).asLiveData()
-            }
+                RadioOption.SPECIFIC_PEOPLE -> {
+                    flowOf(uiState.value.selectedUsers).asLiveData()
+                }
 
-            RadioOption.PROJECT_MEMBERS -> {
-                uiState.value.selectedProjects.asFlow()
-                    .flatMapConcat { project ->
-                        if (project.members.isNotEmpty()) {
-                            flow {
-                                emitAll(UserService.getUsersById(project.members)) // emit users for each project
-                            }
-                        } else {
-                            flowOf(emptyList()) // emit empty list for empty projects
-                        }
-                    }.asLiveData()
+                RadioOption.PROJECT_MEMBERS -> {
+                    uiState.value.selectedProjects.asFlow()
+                            .flatMapConcat { project ->
+                                if (project.members.isNotEmpty()) {
+                                    flow {
+                                        emitAll(UserService.getUsers(project.members)) // emit users for each project
+                                    }
+                                } else {
+                                    flowOf(emptyList()) // emit empty list for empty projects
+                                }
+                            }.asLiveData()
+                }
             }
-        }
 
     fun setNotificationTitle(title: String) {
         _uiState.value = _uiState.value.copy(notificationTitle = title)

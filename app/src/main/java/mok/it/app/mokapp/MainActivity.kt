@@ -28,11 +28,17 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.firestore
 import com.google.firebase.remoteconfig.remoteConfig
 import com.google.firebase.remoteconfig.remoteConfigSettings
+import kotlinx.coroutines.DelicateCoroutinesApi
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.flow.firstOrNull
+import kotlinx.coroutines.launch
 import mok.it.app.mokapp.databinding.ActivityMainBinding
 import mok.it.app.mokapp.databinding.NavHeaderBinding
 import mok.it.app.mokapp.firebase.FirebaseUserObject.currentUser
 import mok.it.app.mokapp.firebase.FirebaseUserObject.refreshCurrentUserAndUserModel
+import mok.it.app.mokapp.firebase.FirebaseUserObject.userModelFlow
 import mok.it.app.mokapp.firebase.service.UserService.updateFcmTokenIfEmptyOrOutdated
+import mok.it.app.mokapp.model.enums.Role
 import mok.it.app.mokapp.model.updates.strategy.FlexibleUpdateStrategy
 import mok.it.app.mokapp.model.updates.strategy.ImmediateUpdateStrategy
 import mok.it.app.mokapp.model.updates.strategy.UpdateStrategy
@@ -154,10 +160,13 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    @OptIn(DelicateCoroutinesApi::class)
     private fun loadApp() {
         setHeader()
-        setMenuVisibility()
         updateFcmTokenIfEmptyOrOutdated()
+        GlobalScope.launch {
+            setMenuVisibility()
+        }
     }
 
     private fun setHeader() {
@@ -172,9 +181,9 @@ class MainActivity : AppCompatActivity() {
                 .into(navHeaderBinding.image)
     }
 
-    private fun setMenuVisibility() {
+    private suspend fun setMenuVisibility() {
         val adminMenuGroup = binding.navView.menu.findItem(R.id.adminMenuGroup)
-        adminMenuGroup.isVisible = userModel.admin
+        adminMenuGroup.isVisible = userModelFlow.firstOrNull()?.roleAtLeast(Role.ADMIN) ?: false
     }
 
     override fun onSupportNavigateUp(): Boolean {

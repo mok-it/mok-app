@@ -55,11 +55,6 @@ class AllProjectsListFragment : Fragment() {
     private val args: AllProjectsListFragmentArgs by navArgs()
     private val viewModel: AllProjectsListViewModel by viewModels()
 
-    //filteringhez:
-    //    var achieved: Boolean = false,
-    //    var joined: Boolean = false,
-    //    var edited: Boolean = false,
-
     override fun onCreateView(
             inflater: LayoutInflater, container: ViewGroup?,
             savedInstanceState: Bundle?,

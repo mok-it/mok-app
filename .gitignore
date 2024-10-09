@@ -99,3 +99,5 @@ lint/tmp/
 .idea/other.xml
 .idea/appInsightsSettings.xml
 .idea/copilot/chatSessions/
+
+.idea/caches/

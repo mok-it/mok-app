@@ -43,6 +43,7 @@ mindenkinek egy dokumentum.
 - `projectBadges` (MutableMap(String, Int)): Azok a projektek, amikhez a user csatlakozott. A kulcs
   a projekt id-je, az érték az eddig megszerzett mancsok száma.
 - `role` (String): A felhasználó szerepe. Értékkészlete a [Role](#role) enum értékei.
+- `mokStatus` (String): A felhasználó egyesületi státusza. Értékkészlete: `MÖK`, `UP`, `PreMÖK`, `Holdudvar`, `Alumni`, `Pártoló`, `Külsős`. 
 
 ## rewards
 

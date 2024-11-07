@@ -59,6 +59,8 @@ Ebben a collectionben a projektek vannak tárolva.
 - `comments` (Collection([Comment](#comment))): A projekt kommentjeinek subcollectionje.
 - `maxBadges` (Int): A projektben maximális megszerezhető mancsérték. Ezt speciális esetben túl lehet lépni, ha valaki nagyon sok effortot tett bele.
 - `projectLeader` (String): A projektvezető id-je.
+- `start` (Date): A projekt indulása.
+- `end` (Date): A projekt vége.
 
 Értékek, amik jelenleg nincsenek az appban használva, de a db-ben szerepelnek:
 - `overall_progress` (Int): A projekt összesített előrehaladása 0-tól 100-ig. 

@@ -23,15 +23,14 @@ exports.sendNotification = functions.https.onCall(async (data, context) => {
   await admin.messaging().sendToDevice(fcmToken, payload);
 });
 
-// User létrehozásánál a userc collectionban létrehozzuk a neki megfelelő documentet a szükséges attribútumokkal
+// User létrehozásánál a users collectionban létrehozzuk a neki megfelelő documentet a szükséges attribútumokkal
 // Ez csak akkor fut le, ha a user emailjet validalni tudjuk, hogy egy mokoshoz tartozik
 exports.createUser = functions.auth.user().onCreate((user) => {
   // Check if the user's email matches your desired criteria.
   GetMokMember(user.email).then((result) => {
     //mokapp71 is a test account required for Google Play
     if (
-      user.email == "mokapp71@gmail.com" ||
-      (result && /MOK/.test(result.mok_status))
+      user.email == "mokapp71@gmail.com" || result != null
     ) {
       // Email is valid, create the user.
       db.collection("users")
@@ -39,37 +38,73 @@ exports.createUser = functions.auth.user().onCreate((user) => {
         .set({
           email: user.email,
           name: user.displayName,
+          mokStatus: result.mokStatus,
           photoURL: user.photoURL,
           phoneNumber: result.phone ? result.phone : "",
           allBadges: 0,
           remainingBadges: 0,
           role: "BASIC_USER",
           projectBadges: {},
+        }).then(async () => {
+          // Delete the user from the 'users_pending' collection
+          const snapshot = await db.collection('users_pending').where('email', '==', user.email).get();
+          if (!snapshot.empty) {
+            const doc = snapshot.docs[0];
+            await doc.ref.delete();
+          }
+          return(log("User created and Pending deleted:", user.email, user.uid));
         });
-      log("user created", user.email, user.uid);
     } else {
       // Email is not valid, delete the user.
-      return admin.auth().deleteUser(user.uid);
+      admin.auth().deleteUser(user.uid);
+      log("AUTH DELETED");
+      return;
     }
   });
 });
 
 async function GetMokMember(email) {
   try {
-    const apiUrl = "https://nevezes.medvematek.hu/api/MOKAuthenticate/";
-    const requestBody = { email: email };
-
-    const response = await axios.post(apiUrl, requestBody);
-
-    if (response.status === 200) {
-      return response.data;
-    } else {
-      // Handle the case when the API request is not successful (e.g., it's not a 200 response).
-      log("API request failed, response code is not 200:", response.statusText);
-      return null;
+    // Search for the email in the 'users' collection
+    const usersSnapshot = await db.collection('users').where('email', '==', email).get();
+    if (!usersSnapshot.empty) {
+      const userDoc = usersSnapshot.docs[0];
+      const userData = userDoc.data();
+      return userData;
     }
+
+    // If not found, search for the email in the 'users_pending' collection
+    const pendingSnapshot = await db.collection('users_pending').where('email', '==', email).get();
+    if (!pendingSnapshot.empty) {
+      const pendingDoc = pendingSnapshot.docs[0];
+      const pendingData = pendingDoc.data();
+      if (pendingData.status === "allowed") {
+        return {
+          email: pendingData.email,
+          mokStatus: pendingData.mokStatus
+        };
+      } else if (pendingData.status === "pending") {
+        log("Login request is still pending:", email);
+        return null;
+      } else if (pendingData.status === "denied") {
+        log("Login request is denied:", email);
+        return null;
+      }
+    }
+
+    // If not found in both collections, create a new document in 'users_pending' collection
+    const newPendingUser = {
+      email: email,
+      status: "pending",
+      mokStatus: "Inaktív",
+      type: "login"
+    };
+    await db.collection('users_pending').doc(email).set(newPendingUser);
+    log("Login request created:", email);
+    return null;
+
   } catch (error) {
-    // Handle any other errors that may occur during the request.
+    // Handle any errors that may occur during the request.
     log("An error occurred:", error.message);
     return null;
   }

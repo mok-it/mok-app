@@ -75,6 +75,7 @@ Ebben a collectionben a pecsétek vannak tárolva.
 - `multiplier` (number): A pecsét szorzó értéke (pl. 0 => nem ér mancsot, 1 => 5db ér egy mancsot, 2 => 2.5db ér egy mancsot).
 - `maximum` (number): Egy user legfeljebb hányat szerezhet a mancsból.
 - `responsible` (String): A felelős felhasználó id-ja. Ez a user is osztogathatja a pecsétet.
+- `stampsPerBadge` (number): Megadja, hogy hány pecsét ér egy mancsot
 
 ## links
 

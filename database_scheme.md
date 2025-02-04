@@ -33,7 +33,7 @@ Ebben a collectionben a felhasználók vannak tárolva. Regisztrációkor automa
 - `fcmToken` (String): A felhasználó Firebase Cloud Messaging tokenje. Ezzel lehet értesítéseket küldeni neki az appba.
 - `nickname` (String): A felhasználó beceneve.
 - `projectBadges` (MutableMap(String, Int)): Azok a projektek, amikhez a user csatlakozott. A kulcs a projekt id-je, az érték az eddig megszerzett mancsok száma.
-- `badges` (MutableMap(String, Int)): Azok a badgek, amiket a user megszerzett. A kulcs a badge id-je, az érték pedig azt írja le, hogy hányszor szerezte meg.
+- `stamps` (MutableMap(String, Int)): Azok a pecsétek, amiket a user megszerzett. A kulcs a pecsét id-je, az érték pedig azt írja le, hogy hányszor szerezte meg.
 - `role` (String): A felhasználó szerepe. Értékkészlete a [Role](#role) enum értékei.
 
 ## rewards
@@ -67,7 +67,7 @@ Ebben a collectionben a projektek vannak tárolva.
 - `overall_progress` (Int): A projekt összesített előrehaladása 0-tól 100-ig. 
 - `creator` (String): A projekt létrehozója. Háthajóleszvalamire-alapon tároljuk.
 
-## badges (*szezonális*)
+## stamps (*szezonális*)
 
 Ebben a collectionben a pecsétek vannak tárolva.
 

@@ -44,6 +44,7 @@ mindenkinek egy dokumentum.
   a projekt id-je, az érték az eddig megszerzett mancsok száma.
 - `role` (String): A felhasználó szerepe. Értékkészlete a [Role](#role) enum értékei.
 - `mokStatus` (String): A felhasználó egyesületi státusza. Értékkészlete: `MÖK`, `UP`, `PreMÖK`, `Holdudvar`, `Alumni`, `Pártoló`, `Külsős`. 
+- `permissions`: (List(String)): A felhasználó jogosultságai. Tartalmazhat terület (Category enum), projekt és pecsét id-t is.
 
 ## rewards
 

@@ -40,21 +40,7 @@ jobs:
 
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
-
-      # Print SHA fingerprints from keystore
-      - name: Print SHA fingerprints from keystore
-        run: |
-          KEYSTORE_PATH="${{ github.workspace }}/mokapp_keystore.jks"
-          ALIAS="your_alias"  # Replace with your alias
-          KEYSTORE_PASSWORD="your_keystore_password"  # Replace with your keystore password
-          KEY_PASSWORD="your_key_password"  # Replace with your key password
-
-          # Print SHA1
-          keytool -list -v -keystore "$KEYSTORE_PATH" -alias "$ALIAS" -storepass "$KEYSTORE_PASSWORD" -keypass "$KEY_PASSWORD" | grep "SHA1"
-
-          # Print SHA256
-          keytool -list -v -keystore "$KEYSTORE_PATH" -alias "$ALIAS" -storepass "$KEYSTORE_PASSWORD" -keypass "$KEY_PASSWORD" | grep "SHA256"
-
+        
       # Create Bundle AAB Release
       - name: Build app bundle release (AAB) - ${{ env.main_project_module }} module
         run: ./gradlew ${{ env.main_project_module }}:bundleRelease

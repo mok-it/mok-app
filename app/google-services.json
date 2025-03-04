@@ -1,6 +1,7 @@
 {
   "project_info": {
     "project_number": "820619458315",
+    "firebase_url": "https://mokapp-51f86-default-rtdb.europe-west1.firebasedatabase.app",
     "project_id": "mokapp-51f86",
     "storage_bucket": "mokapp-51f86.appspot.com"
   },
@@ -14,11 +15,131 @@
       },
       "oauth_client": [
         {
+          "client_id": "820619458315-2nmvnlej6nn992isfidgi6kvqd6dlllu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mok.it.app.mokapp",
+            "certificate_hash": "517db30459b2895ecbc7dd006b92e6ef8295ab74"
+          }
+        },
+        {
+          "client_id": "820619458315-3h4lp1gio7jltfqn17v8oq808pbt6fjm.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mok.it.app.mokapp",
+            "certificate_hash": "5b2cbf4490b512ff8f798976e391470b0c95a4a6"
+          }
+        },
+        {
+          "client_id": "820619458315-5ktdd164ibp6hojksbr6ass41t0v3jdf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mok.it.app.mokapp",
+            "certificate_hash": "acd7bf566e950643166a39394a442609c5d30414"
+          }
+        },
+        {
+          "client_id": "820619458315-62fumee1m5rluiqs9nkn01sim928jmog.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mok.it.app.mokapp",
+            "certificate_hash": "0c512124578b1966dc92c13b4cee5fb454f2fa5e"
+          }
+        },
+        {
+          "client_id": "820619458315-8eh63of5gdks7j2jbd00jg1o0ududov7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mok.it.app.mokapp",
+            "certificate_hash": "e9db70127c95cbe61d2869c5825f76c7e7b26946"
+          }
+        },
+        {
+          "client_id": "820619458315-dl239ud4mlnkfnrbla0rvl0ah3s27a24.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mok.it.app.mokapp",
+            "certificate_hash": "1e4deba82392f34d27cbc4e93b3954640cbc292b"
+          }
+        },
+        {
           "client_id": "820619458315-dm9m5hj2m9l13uul7l35tt5l150h9ckg.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "mok.it.app.mokapp",
             "certificate_hash": "6444b177e779aeaba599a5ce01aa501767e4417b"
+          }
+        },
+        {
+          "client_id": "820619458315-gqg10avbbti0idedpdt6dtic678psp6t.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mok.it.app.mokapp",
+            "certificate_hash": "508c27f6d3386d17dcd9c6ee162f35e17f3c7704"
+          }
+        },
+        {
+          "client_id": "820619458315-j6a8upis3mn4cmed5afs94od0b8fl8gu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mok.it.app.mokapp",
+            "certificate_hash": "fb413733fd5b55ce725be94dce92d79e1ef348df"
+          }
+        },
+        {
+          "client_id": "820619458315-jplpcu1sqd7f69b0egrojqmigt5qj4dj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mok.it.app.mokapp",
+            "certificate_hash": "10992a1839eba8acc23bd640e8c85e1c020be0b8"
+          }
+        },
+        {
+          "client_id": "820619458315-km859c64mtvtshjhe1fpqevbfhf4nhuq.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mok.it.app.mokapp",
+            "certificate_hash": "ada6106d1175dea49b0ad3bc0e29031829613488"
+          }
+        },
+        {
+          "client_id": "820619458315-limckgdlagtgj2ogmfsjrnhoivcq584e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mok.it.app.mokapp",
+            "certificate_hash": "28a60139ad88cdbba4ebc95f908cfb531abde9c2"
+          }
+        },
+        {
+          "client_id": "820619458315-o0lj9q5f05ed4hnhc5sfcnasn9qch96v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mok.it.app.mokapp",
+            "certificate_hash": "bf5fd7c5af7057257dd2cc3e6e97c79251c38d2a"
+          }
+        },
+        {
+          "client_id": "820619458315-p3gc5nf2rv4iju7gavk81kt0ha3k3c8d.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mok.it.app.mokapp",
+            "certificate_hash": "95d924c729f24c23c1a6b26e990aac3e3c929019"
+          }
+        },
+        {
+          "client_id": "820619458315-qb6roqukvn5td5vj8m2u4uugkfqo8u2f.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mok.it.app.mokapp",
+            "certificate_hash": "ee5e96eb0688c6c27fde9b9bb116737ae2e45a84"
+          }
+        },
+        {
+          "client_id": "820619458315-qds323vvi48ps1q32odrh8k6otmpf94l.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "mok.it.app.mokapp",
+            "certificate_hash": "3dcf6654f70e76a5e19f0f93cf9dd19dbcaf7241"
           }
         },
         {

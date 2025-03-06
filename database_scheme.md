@@ -85,6 +85,17 @@ Ebben a collectionben fontos dokumentumokra mutató linkek vannak.
 - `url` (String): A link URL-je.
 - `category` (String): A link kategóriája. Nincs enumként kezelve jelenleg.
 
+## Receipts
+
+Ebben a collectionben a területek pénzköltéseiből keletkező számlákat adminisztráljuk.
+
+- `category` (String): A terület. Értékkészlete a [Category](#category) enum értékei.
+- `text` (String): Lerírás, hogy mire költöttünk
+- `date` (Date): A költés időpontja.
+- `amount` (number): Az elköltött pénz forintban.
+- `createdBy` (String): A létrehozó user id-ja.
+- `isArrived` (Boolean): Beérkezett-e a számla.
+
 ## Comment
 
 - `time` (Timestamp): A komment időbélyege.

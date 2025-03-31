@@ -35,6 +35,7 @@ Ebben a collectionben a felhasználók vannak tárolva. Regisztrációkor automa
 - `projectBadges` (MutableMap(String, Int)): Azok a projektek, amikhez a user csatlakozott. A kulcs a projekt id-je, az érték az eddig megszerzett mancsok száma.
 - `stamps` (MutableMap(String, Int)): Azok a pecsétek, amiket a user megszerzett. A kulcs a pecsét id-je, az érték pedig azt írja le, hogy hányszor szerezte meg.
 - `role` (String): A felhasználó szerepe. Értékkészlete a [Role](#role) enum értékei.
+- `notifications` (Collection([Notification](#notifications))): A felhasználónak küldött appon belüli értesítések.
 
 ## rewards
 
@@ -111,6 +112,13 @@ Ebben a collectionben ún. "acsik" vannak tárolva. A koncepció még kiforróba
 - `description` (String): Az acsi leírása.
 - `icon` (String): Az acsi ikonjának URL-je.
 - `mandatory` (Boolean): Az acsi kötelező-e.
+
+## Notifications
+
+- `title` (String): Az értesítés címe.
+- `description` (String): Az értesítés leírása.
+- `timestamp` (Date): A keletkezés időpontja.
+- `isSeen` (Boolean): A felhasználó látta-e az értesítést.
 
 # Enumok
 A Firestore-ban nem lehet sajnos enumokat tárolni, viszont vannak use case-ek, ahol csak egy megadott halmaz elemeit szeretnénk megengedni, mint érték. Ezért az app az alábbi enumokat használja.

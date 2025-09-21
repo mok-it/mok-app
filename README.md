@@ -6,9 +6,9 @@
 [![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=mok-it_mok-app&metric=reliability_rating)](https://sonarcloud.io/summary/new_code?id=mok-it_mok-app)
 [![Lines of Code](https://sonarcloud.io/api/project_badges/measure?project=mok-it_mok-app&metric=ncloc)](https://sonarcloud.io/summary/new_code?id=mok-it_mok-app)
 
-# Jelenlegi állapot
+# Jelenlegi állapot - **archív**
 
-Az app archiválásra került. Ennek oka részben a fejlesztői kapacitás radikális csökkenése, részben pedig az, hogy a [Mancsok](https://mokapp-51f86.web.app/) mára gyakorlatilag teljesen utolérte funkcionálisan a Mök appot (sőt, többet is tud), így nincs értelme tovább fenntartani egy Android-specifikus megoldást. Az alkalmazást a Play store-ból nem szedjük le, szóval véges ideig még [elérhető](https://play.google.com/store/apps/details?id=mok.it.app.mokapp) (amíg a fiók megszüntetésre nem kerül, és/vagy nem szedi le a Google, mert nem felel meg valami új policynak), viszont innentől se új feature-ök, se bugfixek, sem pedig karbantartás nem fog történni az appon. 
+Az app a**rchiválásra került**. Ennek oka részben a fejlesztői kapacitás radikális csökkenése, részben pedig az, hogy a [Mancsok](https://mokapp-51f86.web.app/) mára gyakorlatilag teljesen utolérte funkcionálisan a Mök appot (sőt, többet is tud), így nincs értelme tovább fenntartani egy Android-specifikus megoldást. Az alkalmazást a Play store-ból nem szedjük le, szóval véges ideig még [elérhető](https://play.google.com/store/apps/details?id=mok.it.app.mokapp) (amíg a fiók megszüntetésre nem kerül, és/vagy nem szedi le a Google, mert nem felel meg valami új policynak), viszont innentől se új feature-ök, se bugfixek, sem pedig karbantartás nem fog történni az appon. 
 
 Köszi mindenkinek, aki a használatával vagy a fejlesztésével hozzájárult az app megvalósulásához!
 

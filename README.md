@@ -8,8 +8,7 @@
 
 ## Adatbázisséma
 
-Az adatbázis sémájának leírását a következő fájlban
-találod: [database_scheme.md](database_scheme.md)
+Az adatbázis sémájának leírását a [Mancsok projektben](https://github.com/mok-it/mancsok/) találod. 
 
 ## Mental Model
 
